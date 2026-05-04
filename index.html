@@ -397,12 +397,12 @@
   <p class="section-title" style="margin-top:20px">Ambiente</p>
   <div class="amb-grid">
     <div class="card">
-      <div class="card-label">Temperatura</div>
+      <div class="card-label">Temperatura exterior</div>
       <div class="card-value" id="val-tamb">—</div>
       <div class="card-unit">°C</div>
     </div>
     <div class="card">
-      <div class="card-label">Humedad</div>
+      <div class="card-label">Humedad relativa</div>
       <div class="card-value" id="val-hum">—</div>
       <div class="card-unit">%</div>
     </div>
@@ -413,7 +413,7 @@
   <div class="meteo-grid">
 
     <div class="meteo-card" id="card-zambretti">
-      <div class="card-label">Pronóstico Zambretti</div>
+      <div class="card-label">Pronóstico</div>
       <div class="meteo-letra" id="val-zambretti-letra">—</div>
       <div class="meteo-txt" id="val-zambretti-txt">Sin datos</div>
       <div class="meteo-sub">Basado en presión y tendencia</div>
@@ -429,7 +429,7 @@
   </div>
 
   <div class="footer">
-    Piscina Valentin Somni &nbsp;·&nbsp; Node-RED → Tailscale Funnel → GitHub Pages<br>
+    Piscina Valentin Somni Hotel & Suites<br>
     Actualización automática cada 15 s
   </div>
 
@@ -441,8 +441,8 @@
 
   const RANGES = {
     ph:   { min: 6.5, max: 8.0 },
-    orp:  { min: 400, max: 900 },
-    ppm:  { min: 0,   max: 3   },
+    orp:  { min: 600, max: 700 },
+    ppm:  { min: 0,   max: 2   },
     temp: { min: 15,  max: 35  },
   };
 
