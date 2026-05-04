@@ -14,8 +14,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
-
-/* ── HEADER NORMAL ── */
 header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .header-left{display:flex;align-items:center;gap:16px;}
 .logo{width:140px}.logo img{width:100%}
@@ -24,8 +22,8 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .status-pill{font-family:var(--mono);font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
 .conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .4s;flex-shrink:0;}
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
+.conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-/* ── MAIN ── */
 main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-out;}
 .fade-out { opacity: 0; }
 
@@ -33,42 +31,44 @@ main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-
 .grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
 .card{background:white;border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;padding:16px;opacity:0;transform:translateY(8px);animation:fadeIn .45s ease forwards;transition:border-left-color .3s;}
 .card.ok-card  {border-left-color:var(--ok);}
+.card.warn-card{border-left-color:var(--warn);}
+.card.bad-card {border-left-color:var(--danger);}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
-
 .card-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
 .card-value-row{display:flex;align-items:baseline;gap:5px;margin-top:4px;}
-.card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;}
+.card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;transition:color .3s;}
 .card-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
 .bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
 .bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
-.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
+.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
 .meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
-.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;}
-.meteo-badge{padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;}
-.badge-ok{background:rgba(61,122,90,.1); color:var(--ok);}
+.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
+.badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
 
-.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
-.prev-scroll::-webkit-scrollbar{height:6px;}
-.prev-scroll::-webkit-scrollbar-track{background:var(--soft);border-radius:10px;}
-.prev-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-.prev-hora{flex-shrink:0;width:85px;background:white;border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;}
-.prev-hora.ahora{border-color:var(--ok);background:#f0f7f3;}
+.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.prev-scroll::-webkit-scrollbar{height:4px;}
+.prev-scroll::-webkit-scrollbar-track{background:transparent;}
+.prev-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.prev-hora{flex-shrink:0;width:72px;background:white;border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;}
+.prev-hora.ahora{border-color:#3d7a5a;background:#f0f7f3;}
 .ph-hora{font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:4px;}
-.ph-icon{font-size:1.6rem;line-height:1;margin-bottom:4px;}
-.ph-temp{font-family:var(--mono);font-size:1rem;font-weight:600;}
-.ph-rain{font-size:0.65rem;color:#4a7db5;font-weight:600;margin-top:2px;}
+.ph-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
+.ph-temp{font-family:var(--mono);font-size:0.95rem;font-weight:500;}
+.ph-rain{font-size:0.6rem;color:#4a7db5;font-weight:700;margin-top:2px;}
 
-.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);padding-bottom:20px;}
+.error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
+.error-banner.visible{display:block;}
+.alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
+.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
 
-/* ── ESTILOS TV ACTIVADOS (?tv=1) ── */
+/* ── ESTILOS TV ── */
 body.tv-active main{max-width:100%;padding:40px;}
 body.tv-active .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
 body.tv-active .card{padding:28px 24px;}
 body.tv-active .card-value{font-size:4rem;}
-body.tv-active .status-pill{font-size:2.4rem;font-weight:500;}
-
-/* HEADER ESTRECHO EN TV */
+body.tv-active .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
 body.tv-active header{padding:8px 40px; height: auto; min-height: 60px;} 
 body.tv-active .logo{width:180px;}
 body.tv-active .header-title-main{font-size:1.4rem; line-height: 1.1;}
@@ -76,6 +76,8 @@ body.tv-active .header-title-sub{font-size:0.9rem;}
 </style>
 </head>
 <body>
+
+<div class="alert" id="alert">⚠️ Parámetros fuera de rango</div>
 
 <header>
   <div class="header-left">
@@ -92,6 +94,10 @@ body.tv-active .header-title-sub{font-size:0.9rem;}
 </header>
 
 <main id="main-content">
+  <div class="error-banner" id="error-banner">
+    <span id="txt-error-msg">⚠️ Error de conexión — No se puede contactar con la API.</span>
+  </div>
+
   <p class="section-title" id="txt-sec-water">Parámetros del agua</p>
   <div class="grid-main">
     <div class="card ok-card"><div class="card-label">pH</div><div class="card-value-row"><span class="card-value" id="val-ph">--</span><span class="card-unit">pH</span></div><div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div></div>
@@ -108,7 +114,7 @@ body.tv-active .header-title-sub{font-size:0.9rem;}
 
   <p class="section-title" id="txt-sec-meteo">Condición actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="meteo-phrase">Actualizando...</div>
+    <div class="meteo-frase" id="txt-meteo-phrase">Actualizando clima...</div>
     <div class="meteo-sub">
         <span class="meteo-badge badge-ok" id="txt-meteo-badge">Óptimo</span>
         <span id="txt-meteo-sub">Ideal para el baño</span>
@@ -124,9 +130,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const isTVMode = urlParams.get('tv') === '1';
 if (isTVMode) document.body.classList.add('tv-active');
 
-// Memoria para Node-RED
-let poolData = { ph: "--", orp: "--", cl: "--", tempw: "--", tamb: "--", hum: "--" };
-
 const translations = [
   { lang: 'es-ES', hour12: false, texts: { pool: 'Piscina Exterior', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas 24 horas', orp: 'ORP / Redox', cl: 'Cloro libre', tempW: 'Temp agua', tempA: 'Temp exterior', hum: 'Humedad', now: 'AHORA' } },
   { lang: 'en-GB', hour12: true, texts: { pool: 'Outdoor Pool', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: 'Next 24 hours forecast', orp: 'ORP / Redox', cl: 'Free Chlorine', tempW: 'Water Temp', tempA: 'Outdoor Temp', hum: 'Humidity', now: 'NOW' } },
@@ -140,7 +143,7 @@ async function getForecast() {
     try {
         const res = await fetch(`https://open-meteo.com`);
         weatherData = await res.json();
-        updateUI();
+        updateUI(true); // Solo forzar render de previsión aquí
     } catch (e) { console.error("Error Clima"); }
 }
 
@@ -153,11 +156,14 @@ function getWeatherIcon(code) {
     return '⛈️';
 }
 
-function updateUI() {
+function updateUI(updateForecast = false) {
     const data = translations[currentLangIndex];
     const now = new Date();
+    
+    // 1. RELOJ (Siempre se actualiza)
     document.getElementById('clock').textContent = now.toLocaleTimeString(data.lang, {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:data.hour12});
 
+    // 2. TRADUCCIÓN DE ETIQUETAS (Sin tocar los valores "id=val-...")
     document.getElementById('txt-pool-title').textContent = data.texts.pool;
     document.getElementById('txt-sec-water').textContent = data.texts.secWater;
     document.getElementById('txt-sec-air').textContent = data.texts.secAir;
@@ -171,15 +177,8 @@ function updateUI() {
     document.getElementById('txt-meteo-sub').textContent = data.texts.meteoSub;
     document.getElementById('txt-meteo-badge').textContent = data.texts.meteoBadge;
 
-    // Valores Node-RED
-    document.getElementById('val-ph').textContent = poolData.ph;
-    document.getElementById('val-orp').textContent = poolData.orp;
-    document.getElementById('val-cl').textContent = poolData.cl;
-    document.getElementById('val-tempw').textContent = poolData.tempw;
-    document.getElementById('val-tamb').textContent = poolData.tamb;
-    document.getElementById('val-hum').textContent = poolData.hum;
-
-    if (weatherData) {
+    // 3. PREVISIÓN (Solo se redibuja si cambia el idioma o cargan datos nuevos)
+    if (weatherData && updateForecast) {
         const container = document.getElementById('forecast-container');
         container.innerHTML = '';
         const currentHour = now.getHours();
@@ -198,32 +197,34 @@ function updateUI() {
                 div.innerHTML = `<div class="ph-hora">${hLabel}</div><div class="ph-icon">${getWeatherIcon(code)}</div><div class="ph-temp">${temp}°</div><div class="ph-rain">${rain}%</div>`;
                 container.appendChild(div);
             }
-            document.getElementById('meteo-phrase').textContent = "Paguera, Mallorca: " + getWeatherIcon(weatherData.hourly.weather_code[startIndex]);
+            document.getElementById('txt-meteo-phrase').textContent = "Paguera, Mallorca: " + getWeatherIcon(weatherData.hourly.weather_code[startIndex]);
         }
     }
 }
 
-// Inyección Node-RED
-window.updateValues = function(newData) {
-    poolData = {...poolData, ...newData};
-    updateUI();
-};
+// Reloj cada segundo (sin tocar etiquetas para no saturar)
+setInterval(() => {
+    const data = translations[currentLangIndex];
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString(data.lang, {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:data.hour12});
+}, 1000);
 
-setInterval(updateUI, 1000);
 getForecast(); 
 setInterval(getForecast, 1800000);
 
+// Rotación TV
 if (isTVMode) {
     setInterval(() => {
         document.getElementById('main-content').classList.add('fade-out');
         setTimeout(() => {
             currentLangIndex = (currentLangIndex + 1) % translations.length;
-            updateUI();
+            updateUI(true); // Actualiza etiquetas e iconos al cambiar idioma
             document.getElementById('main-content').classList.remove('fade-out');
         }, 500);
     }, 10000);
 }
-updateUI();
+
+// Carga inicial de etiquetas
+updateUI(true);
 </script>
 </body>
 </html>
