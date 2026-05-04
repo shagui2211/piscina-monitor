@@ -22,9 +22,7 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .status-pill{font-family:var(--mono);font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
 .conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .4s;flex-shrink:0;}
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
-.conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-/* Contenedor principal con transición */
 main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-out;}
 .fade-out { opacity: 0; }
 
@@ -32,61 +30,39 @@ main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-
 .grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
 .card{background:white;border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;padding:16px;opacity:0;transform:translateY(8px);animation:fadeIn .45s ease forwards;transition:border-left-color .3s;}
 .card.ok-card  {border-left-color:var(--ok);}
-.card.warn-card{border-left-color:var(--warn);}
-.card.bad-card {border-left-color:var(--danger);}
 @keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
 .card-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
 .card-value-row{display:flex;align-items:baseline;gap:5px;margin-top:4px;}
-.card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;transition:color .3s;}
+.card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;}
 .card-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
 .bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
 .bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
-.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
+.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
 .meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
-.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
-.badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
-.badge-warn   {background:rgba(176,125,42,.1);color:var(--warn);}
-.badge-danger {background:rgba(201,75,75,.1); color:var(--danger);}
+.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;}
+.meteo-badge{padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;}
+.badge-ok{background:rgba(61,122,90,.1); color:var(--ok);}
 
-.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
-.prev-scroll::-webkit-scrollbar{height:4px;}
-.prev-scroll::-webkit-scrollbar-track{background:transparent;}
-.prev-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
-.prev-hora{flex-shrink:0;width:72px;background:white;border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;}
-.prev-hora.ahora{border-color:#3d7a5a;background:#f0f7f3;}
-.ph-hora{font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:4px;}
-.ph-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
-.ph-temp{font-family:var(--mono);font-size:0.95rem;font-weight:500;}
-.ph-lluvia{font-size:0.6rem;color:var(--muted);margin-top:2px;}
+.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
+.prev-scroll::-webkit-scrollbar{height:6px;}
+.prev-scroll::-webkit-scrollbar-track{background:var(--soft);border-radius:10px;}
+.prev-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+.prev-hora{flex-shrink:0;width:85px;background:white;border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;}
+.prev-hora.ahora{border-color:var(--ok);background:#f0f7f3;}
+.ph-hora{font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
+.ph-icon{font-size:1.6rem;line-height:1;margin-bottom:4px;}
+.ph-temp{font-family:var(--mono);font-size:1rem;font-weight:600;}
 
-.error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
-.error-banner.visible{display:block;}
-.alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
-.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
-
-/* ── ESTILOS TV ACTIVADOS POR CLASE ── */
+/* TV MODE ACTIVADO POR ?tv=1 */
 body.tv-active main{max-width:100%;padding:40px;}
 body.tv-active .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
 body.tv-active .card{padding:28px 24px;}
 body.tv-active .card-value{font-size:4rem;}
-body.tv-active .card-unit{font-size:1.4rem;}
-body.tv-active .card-label{font-size:1rem;}
-body.tv-active .section-title{font-size:1rem;margin:30px 0 14px;}
-body.tv-active .meteo-frase{font-size:1.4rem;}
-body.tv-active .meteo-card{padding:24px 28px;}
-body.tv-active header{padding:24px 40px;}
-body.tv-active .logo{width:200px;}
-body.tv-active .header-title-main{font-size:1.6rem;}
-body.tv-active .header-title-sub{font-size:1rem;}
-body.tv-active .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
-body.tv-active .conn-dot{width:14px;height:14px;}
+body.tv-active .status-pill{font-size:2.4rem;font-weight:500;}
 </style>
 </head>
 <body>
-
-<div class="alert" id="alert">⚠️ Parámetros fuera de rango</div>
 
 <header>
   <div class="header-left">
@@ -103,98 +79,74 @@ body.tv-active .conn-dot{width:14px;height:14px;}
 </header>
 
 <main id="main-content">
-  <div class="error-banner" id="error-banner">
-    <span id="txt-error-msg">⚠️ Error de conexión — No se puede contactar con la API.</span>
-  </div>
-
   <p class="section-title" id="txt-sec-water">Parámetros del agua</p>
   <div class="grid-main">
-    <div class="card ok-card" id="card-ph">
-      <div class="card-label">pH</div>
-      <div class="card-value-row"><span class="card-value" id="val-ph">7.2</span><span class="card-unit">pH</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ph" style="width:70%; background:var(--ok);"></div></div>
-    </div>
-    <div class="card ok-card" id="card-orp">
-      <div class="card-label" id="txt-label-orp">ORP / Redox</div>
-      <div class="card-value-row"><span class="card-value" id="val-orp">745</span><span class="card-unit">mV</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-orp" style="width:80%; background:var(--ok);"></div></div>
-    </div>
-    <div class="card ok-card" id="card-ppm">
-      <div class="card-label" id="txt-label-cl">Cloro libre</div>
-      <div class="card-value-row"><span class="card-value" id="val-ppm">1.2</span><span class="card-unit">ppm</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ppm" style="width:60%; background:var(--ok);"></div></div>
-    </div>
-    <div class="card ok-card" id="card-temp">
-      <div class="card-label" id="txt-label-tempw">Temp agua</div>
-      <div class="card-value-row"><span class="card-value" id="val-temp">24.5</span><span class="card-unit">°C</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-temp" style="width:50%; background:var(--ok);"></div></div>
-    </div>
+    <div class="card ok-card"><div class="card-label">pH</div><div class="card-value-row"><span class="card-value" id="val-ph">--</span><span class="card-unit">pH</span></div><div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div></div>
+    <div class="card ok-card"><div class="card-label" id="txt-label-orp">ORP / Redox</div><div class="card-value-row"><span class="card-value" id="val-orp">--</span><span class="card-unit">mV</span></div><div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div></div>
+    <div class="card ok-card"><div class="card-label" id="txt-label-cl">Cloro libre</div><div class="card-value-row"><span class="card-value" id="val-cl">--</span><span class="card-unit">ppm</span></div><div class="bar-wrap"><div class="bar-fill" id="bar-cl"></div></div></div>
+    <div class="card ok-card"><div class="card-label" id="txt-label-tempw">Temp agua</div><div class="card-value-row"><span class="card-value" id="val-tempw">--</span><span class="card-unit">°C</span></div><div class="bar-wrap"><div class="bar-fill" id="bar-tempw"></div></div></div>
   </div>
 
-  <p class="section-title" id="txt-sec-air">Ambiente</p>
+  <p class="section-title" id="txt-sec-air">Ambiente (Paguera)</p>
   <div class="grid-main">
-    <div class="card">
-      <div class="card-label" id="txt-label-tempa">Temp exterior</div>
-      <div class="card-value-row"><span class="card-value" id="val-tamb">28</span><span class="card-unit">°C</span></div>
-    </div>
-    <div class="card">
-      <div class="card-label" id="txt-label-hum">Humedad</div>
-      <div class="card-value-row"><span class="card-value" id="val-hum">60</span><span class="card-unit">%</span></div>
-    </div>
+    <div class="card"><div class="card-label" id="txt-label-tempa">Temp exterior</div><div class="card-value-row"><span class="card-value" id="val-tamb">--</span><span class="card-unit">°C</span></div></div>
+    <div class="card"><div class="card-label" id="txt-label-hum">Humedad</div><div class="card-value-row"><span class="card-value" id="val-hum">--</span><span class="card-unit">%</span></div></div>
   </div>
 
   <p class="section-title" id="txt-sec-meteo">Condición actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="txt-meteo-phrase">Cielo despejado con brisa ligera</div>
+    <div class="meteo-frase" id="meteo-phrase">Cargando clima de Paguera...</div>
     <div class="meteo-sub">
         <span class="meteo-badge badge-ok" id="txt-meteo-badge">Óptimo</span>
         <span id="txt-meteo-sub">Ideal para el baño</span>
     </div>
   </div>
 
-  <p class="section-title" id="txt-sec-prev">Previsión próximas horas</p>
-  <div class="prev-scroll" id="prev-container">
-    <div class="prev-hora ahora">
-      <div class="ph-hora">AHORA</div>
-      <div class="ph-icon">☀️</div>
-      <div class="ph-temp">28°</div>
-      <div class="ph-lluvia">0%</div>
-    </div>
-    <div class="prev-hora"><div class="ph-hora">15:00</div><div class="ph-icon">☀️</div><div class="ph-temp">30°</div><div class="ph-lluvia">0%</div></div>
-    <div class="prev-hora"><div class="ph-hora">16:00</div><div class="ph-icon">🌤️</div><div class="ph-temp">29°</div><div class="ph-lluvia">5%</div></div>
+  <p class="section-title" id="txt-sec-prev">Previsión próximas 24 horas</p>
+  <div class="prev-scroll" id="forecast-container">
+    <!-- Generado automáticamente por API externa -->
   </div>
 
-  <div class="footer">VALENTIN HOTELS - SISTEMA DE MONITOREO EN TIEMPO REAL</div>
+  <div class="footer">VALENTIN HOTELS - Paguera, Mallorca</div>
 </main>
 
 <script>
-// DETECCIÓN DE MODO TV MEDIANTE TU PARÁMETRO ?tv=1
 const urlParams = new URLSearchParams(window.location.search);
 const isTVMode = urlParams.get('tv') === '1';
-
-if (isTVMode) {
-    document.body.classList.add('tv-active');
-}
+if (isTVMode) document.body.classList.add('tv-active');
 
 const translations = [
-  { lang: 'es-ES', hour12: false, texts: { pool: 'Piscina Exterior', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas horas', orp: 'ORP / Redox', cl: 'Cloro libre', tempW: 'Temp agua', tempA: 'Temp exterior', hum: 'Humedad', meteoPh: 'Cielo despejado con brisa ligera', meteoSub: 'Ideal para el baño', meteoBadge: 'Óptimo', error: '⚠️ Error de conexión — API', alert: '⚠️ Parámetros fuera de rango' } },
-  { lang: 'en-GB', hour12: true, texts: { pool: 'Outdoor Pool', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: 'Next hours forecast', orp: 'ORP / Redox', cl: 'Free Chlorine', tempW: 'Water Temp', tempA: 'Outdoor Temp', hum: 'Humidity', meteoPh: 'Clear sky with a light breeze', meteoSub: 'Perfect for swimming', meteoBadge: 'Optimal', error: '⚠️ Connection Error — API', alert: '⚠️ Parameters out of range' } },
-  { lang: 'de-DE', hour12: false, texts: { pool: 'Außenpool', secWater: 'Wasserparameter', secAir: 'Umgebung', secMeteo: 'Aktueller Zustand', secPrev: 'Vorhersage nächste Stunden', orp: 'ORP / Redox', cl: 'Freies Chlor', tempW: 'Wassertemp.', tempA: 'Außentemp.', hum: 'Feuchtigkeit', meteoPh: 'Heiterer Himmel bei leichter Brise', meteoSub: 'Ideal zum Schwimmen', meteoBadge: 'Optimal', error: '⚠️ Verbindungsfehler — API', alert: '⚠️ Parameter außerhalb Bereich' } }
+  { lang: 'es-ES', hour12: false, texts: { pool: 'Piscina Exterior', secWater: 'Parámetros del agua', secAir: 'Ambiente (Paguera)', secMeteo: 'Condición actual', secPrev: 'Previsión próximas 24 horas', orp: 'ORP / Redox', cl: 'Cloro libre', tempW: 'Temp agua', tempA: 'Temp exterior', hum: 'Humedad', meteoSub: 'Ideal para el baño', meteoBadge: 'Óptimo', now: 'AHORA' } },
+  { lang: 'en-GB', hour12: true, texts: { pool: 'Outdoor Pool', secWater: 'Water Parameters', secAir: 'Environment (Paguera)', secMeteo: 'Current Condition', secPrev: 'Next 24 hours forecast', orp: 'ORP / Redox', cl: 'Free Chlorine', tempW: 'Water Temp', tempA: 'Outdoor Temp', hum: 'Humidity', meteoSub: 'Perfect for swimming', meteoBadge: 'Optimal', now: 'NOW' } },
+  { lang: 'de-DE', hour12: false, texts: { pool: 'Außenpool', secWater: 'Wasserparameter', secAir: 'Umgebung (Paguera)', secMeteo: 'Aktueller Zustand', secPrev: '24-Stunden-Vorhersage', orp: 'ORP / Redox', cl: 'Freies Chlor', tempW: 'Wassertemp.', tempA: 'Außentemp.', hum: 'Feuchtigkeit', meteoSub: 'Ideal zum Schwimmen', meteoBadge: 'Optimal', now: 'JETZT' } }
 ];
 
 let currentLangIndex = 0;
-const mainContent = document.getElementById('main-content');
+let weatherData = null;
+
+// Solo la previsión es automática desde API
+async function getForecast() {
+    try {
+        const res = await fetch(`https://open-meteo.com`);
+        weatherData = await res.json();
+        updateUI();
+    } catch (e) { console.error("Error al cargar previsión"); }
+}
+
+function getWeatherIcon(code) {
+    if (code <= 1) return '☀️';
+    if (code <= 3) return '🌤️';
+    if (code <= 48) return '☁️';
+    if (code <= 67) return '🌦️';
+    if (code <= 82) return '🌧️';
+    return '⛈️';
+}
 
 function updateUI() {
     const data = translations[currentLangIndex];
     const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString(data.lang, {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:data.hour12});
 
-    // Actualizar Reloj
-    document.getElementById('clock').textContent = now.toLocaleTimeString(data.lang, {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: data.hour12
-    });
-
-    // Actualizar todos los textos traducibles
     document.getElementById('txt-pool-title').textContent = data.texts.pool;
     document.getElementById('txt-sec-water').textContent = data.texts.secWater;
     document.getElementById('txt-sec-air').textContent = data.texts.secAir;
@@ -205,30 +157,43 @@ function updateUI() {
     document.getElementById('txt-label-tempw').textContent = data.texts.tempW;
     document.getElementById('txt-label-tempa').textContent = data.texts.tempA;
     document.getElementById('txt-label-hum').textContent = data.texts.hum;
-    document.getElementById('txt-meteo-phrase').textContent = data.texts.meteoPh;
     document.getElementById('txt-meteo-sub').textContent = data.texts.meteoSub;
     document.getElementById('txt-meteo-badge').textContent = data.texts.meteoBadge;
-    document.getElementById('txt-error-msg').textContent = data.texts.error;
-    document.getElementById('alert').textContent = data.texts.alert;
+
+    if (weatherData) {
+        const container = document.getElementById('forecast-container');
+        container.innerHTML = '';
+        const currentHour = now.getHours();
+        for (let i = 0; i < 24; i++) {
+            const temp = Math.round(weatherData.hourly.temperature_2m[i]);
+            const code = weatherData.hourly.weather_code[i];
+            const hLabel = i === 0 ? data.texts.now : ((currentHour + i) % 24) + ':00';
+            const div = document.createElement('div');
+            div.className = `prev-hora ${i === 0 ? 'ahora' : ''}`;
+            div.innerHTML = `<div class="ph-hora">${hLabel}</div><div class="ph-icon">${getWeatherIcon(code)}</div><div class="ph-temp">${temp}°</div>`;
+            container.appendChild(div);
+        }
+        document.getElementById('meteo-phrase').textContent = "Paguera, Mallorca";
+    }
 }
 
 // Reloj cada segundo
 setInterval(updateUI, 1000);
+// Previsión cada 15 min
+getForecast();
+setInterval(getForecast, 900000);
 
-// Rotación de idiomas con FADE SOLO SI ?tv=1
+// Rotación TV
 if (isTVMode) {
     setInterval(() => {
-        mainContent.classList.add('fade-out');
+        document.getElementById('main-content').classList.add('fade-out');
         setTimeout(() => {
             currentLangIndex = (currentLangIndex + 1) % translations.length;
             updateUI();
-            mainContent.classList.remove('fade-out');
+            document.getElementById('main-content').classList.remove('fade-out');
         }, 500);
     }, 10000);
 }
-
-// Inicio inmediato
-updateUI();
 </script>
 </body>
 </html>
