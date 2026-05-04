@@ -11,19 +11,10 @@
 :root{
   --bg:#f5f7f6;
   --surface:#ffffff;
-  --card:#ffffff;
   --border:#dfe5e2;
-
   --accent:#5f7f73;
-  --accent2:#4e6a60;
-
-  --ok:#5f7f73;
-  --warn:#c8a96a;
-  --danger:#c94b4b;
-
   --text:#1f2a2a;
   --muted:#6b7c7a;
-
   --mono:'DM Mono', monospace;
   --sans:'Outfit', sans-serif;
 }
@@ -44,7 +35,6 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  flex-wrap:wrap;
 }
 
 .header-left{
@@ -56,29 +46,20 @@ header{
 .logo{width:140px}
 .logo img{width:100%}
 
-.header-title{
-  display:flex;
-  flex-direction:column;
-}
-
 .header-title-main{
   font-size:1rem;
   font-weight:600;
-  color:var(--text);
-  line-height:1.2;
 }
 
 .header-title-sub{
   font-size:0.7rem;
   color:var(--muted);
-  font-weight:300;
 }
 
-/* STATUS */
-.status-pill{
+#clock{
   font-family:var(--mono);
-  font-size:0.7rem;
-  color:var(--muted);
+  font-size:1.2rem;
+  color:var(--accent);
 }
 
 /* LAYOUT */
@@ -95,7 +76,6 @@ main{
   text-transform:uppercase;
 }
 
-/* GRID */
 .grid-main{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
@@ -104,27 +84,11 @@ main{
 
 /* CARD */
 .card{
-  background:var(--card);
+  background:white;
   border:1px solid var(--border);
   border-radius:12px;
   padding:16px;
   position:relative;
-  box-shadow:0 4px 12px rgba(0,0,0,0.04);
-}
-
-.card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:3px;
-  background:var(--accent);
-  border-radius:12px 12px 0 0;
-  opacity:.4;
-}
-
-.card-label{
-  font-size:0.7rem;
-  color:var(--muted);
 }
 
 .card-value{
@@ -132,36 +96,25 @@ main{
   font-size:2.2rem;
 }
 
-.card-unit{
-  font-size:0.8rem;
+.card-label{
+  font-size:0.7rem;
   color:var(--muted);
 }
 
-.bar-wrap{
-  height:4px;
-  background:var(--border);
-  margin-top:10px;
-}
-
-.bar-fill{
-  height:100%;
-  background:var(--accent);
-  transition:.5s;
-}
-
-/* METEO */
+/* METEO MEJORADO */
 .meteo-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
 }
 
-/* ESTADO */
-.estado-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
+.meteo-card{
+  text-align:center;
+  padding:20px;
+}
+
+.meteo-icon{
+  font-size:3rem;
 }
 
 /* FOOTER */
@@ -173,46 +126,23 @@ main{
   font-family:var(--mono);
 }
 
-/* ===== MODO TV ===== */
+/* ===== TV MODE ===== */
 body.tv header{
-  background:white;
-  border-bottom:1px solid var(--border);
-  padding:16px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:10;
 }
 
-body.tv .header-left{
-   display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-body.tv .logo{width:140px}
-body.tv .logo img{width:100%}
-
-body.tv .header-title{
- display:flex;
-  flex-direction:column;
+body.tv #clock{
+  font-size:2.2rem;
 }
 
 body.tv .header-title-main{
-  font-size:1rem;
-  font-weight:600;
-  color:var(--text);
-  line-height:1.2;
+  font-size:1.4rem;
 }
 
 body.tv .header-title-sub{
-  font-size:0.7rem;
-  color:var(--muted);
-  font-weight:300;
-}
-
-body.tv .status-pill{
-  font-size:0.85rem;
+  font-size:1rem;
 }
 
 body.tv main{
@@ -225,10 +155,6 @@ body.tv .grid-main{
   gap:30px;
 }
 
-body.tv .card{
-  padding:30px;
-}
-
 body.tv .card-value{
   font-size:4rem;
 }
@@ -237,16 +163,11 @@ body.tv .card-label{
   font-size:1rem;
 }
 
-body.tv .bar-wrap,
-body.tv .card-unit{
-  display:none;
+body.tv .meteo-icon{
+  font-size:5rem;
 }
 
-body.tv .meteo-grid{
-  margin-top:40px;
-}
-
-body.tv .estado-card{
+body.tv .meteo-card{
   font-size:1.4rem;
 }
 </style>
@@ -259,12 +180,13 @@ body.tv .estado-card{
     <div class="logo">
       <img src="assets/logo.png" alt="Valentin Hotels">
     </div>
-    <div class="header-title">
-      <span class="header-title-main">Piscina Exterior</span>
-      <span class="header-title-sub">Somni Hotel &amp; Suites</span>
+    <div>
+      <div class="header-title-main">Piscina Exterior</div>
+      <div class="header-title-sub">Somni Hotel & Suites</div>
     </div>
   </div>
-  <div class="status-pill" id="last-update">Conectando…</div>
+
+  <div id="clock">--:--:--</div>
 </header>
 
 <main>
@@ -272,135 +194,70 @@ body.tv .estado-card{
 <p class="section-title">Parámetros del agua</p>
 
 <div class="grid-main">
-
-<div class="card">
-<div class="card-label">pH</div>
-<div class="card-value" id="val-ph">—</div>
-<div class="card-unit">pH</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">ORP</div>
-<div class="card-value" id="val-orp">—</div>
-<div class="card-unit">mV</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">Cloro</div>
-<div class="card-value" id="val-ppm">—</div>
-<div class="card-unit">ppm</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">Temp agua</div>
-<div class="card-value" id="val-temp">—</div>
-<div class="card-unit">°C</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
-</div>
-
+  <div class="card"><div class="card-label">pH</div><div class="card-value" id="val-ph">—</div></div>
+  <div class="card"><div class="card-label">ORP</div><div class="card-value" id="val-orp">—</div></div>
+  <div class="card"><div class="card-label">Cloro</div><div class="card-value" id="val-ppm">—</div></div>
+  <div class="card"><div class="card-label">Temp agua</div><div class="card-value" id="val-temp">—</div></div>
 </div>
 
 <p class="section-title">Ambiente</p>
 
 <div class="grid-main">
-<div class="card">
-<div class="card-label">Temp exterior</div>
-<div class="card-value" id="val-tamb">—</div>
-</div>
-
-<div class="card">
-<div class="card-label">Humedad relativa</div>
-<div class="card-value" id="val-hum">—</div>
-</div>
+  <div class="card"><div class="card-label">Temp exterior</div><div class="card-value" id="val-tamb">—</div></div>
+  <div class="card"><div class="card-label">Humedad</div><div class="card-value" id="val-hum">—</div></div>
 </div>
 
 <p class="section-title">Meteorología</p>
 
 <div class="meteo-grid">
-<div class="card">
-<div id="val-zambretti-letra">—</div>
-<div id="val-zambretti-txt">Sin datos</div>
+  <div class="card meteo-card">
+    <div class="meteo-icon" id="meteo-icon">🌤️</div>
+    <div id="val-zambretti-txt">Sin datos</div>
+  </div>
+  <div class="card meteo-card">
+    <div id="val-condicion-txt">Sin datos</div>
+  </div>
 </div>
 
-<div class="card">
-<div id="val-condicion-icon">🌥️</div>
-<div id="val-condicion-txt">Sin datos</div>
-</div>
-</div>
-
-<p class="section-title">Estado</p>
-<div class="estado-card">
-<div id="estado-text">Cargando...</div>
-</div>
-
-<div class="footer">
-Valentin Hotels & Resorts
-</div>
+<div class="footer">Valentin Hotels & Resorts</div>
 
 </main>
 
 <script>
 const API='https://control-piscinas.tailf7bca2.ts.net/api/piscina';
 
-function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
-
-const R={ph:{min:6.5,max:8},orp:{min:600,max:750},ppm:{min:0,max:2.5},temp:{min:15,max:35}};
-
-function set(id,val,p){
-document.getElementById('val-'+id).textContent=val;
-document.getElementById('bar-'+id).style.width=p+'%';
+function updateClock(){
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('es-ES');
 }
-
-function icono(t){
-if(!t)return'🌥️';
-t=t.toLowerCase();
-if(t.includes('lluvia'))return'🌧️';
-if(t.includes('tormenta'))return'⛈️';
-if(t.includes('sol'))return'☀️';
-return'⛅';
-}
+setInterval(updateClock,1000);
+updateClock();
 
 async function load(){
 try{
 let r=await fetch(API);
 let d=await r.json();
 
-set('ph',d.ph?.toFixed(2),pct(d.ph,R.ph));
-set('orp',Math.round(d.orp),pct(d.orp,R.orp));
-set('ppm',d.ppm?.toFixed(2),pct(d.ppm,R.ppm));
-set('temp',d.temp_agua?.toFixed(1),pct(d.temp_agua,R.temp));
+document.getElementById('val-ph').textContent=d.ph?.toFixed(2);
+document.getElementById('val-orp').textContent=Math.round(d.orp);
+document.getElementById('val-ppm').textContent=d.ppm?.toFixed(2);
+document.getElementById('val-temp').textContent=d.temp_agua?.toFixed(1);
 
 document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
 document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
 
-document.getElementById('estado-text').textContent=d.estado||'OK';
-
-document.getElementById('val-zambretti-letra').textContent=d.zambretti_letra||'—';
 document.getElementById('val-zambretti-txt').textContent=d.zambretti_txt||'Sin datos';
-
-document.getElementById('val-condicion-icon').textContent=icono(d.condicion_txt);
 document.getElementById('val-condicion-txt').textContent=d.condicion_txt||'Sin datos';
 
-document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
-
-}catch(e){
-document.getElementById('last-update').textContent='Error conexión';
-}
+}catch(e){}
 }
 
 load();
 setInterval(load,15000);
 
-/* ACTIVAR TV */
 if(location.search.includes('tv=1')){
 document.body.classList.add('tv');
 }
-
-/* REFRESH SEGURIDAD TV */
-setInterval(()=>location.reload(),300000);
 </script>
 
 </body>
