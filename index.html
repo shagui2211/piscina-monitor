@@ -369,7 +369,7 @@
       <div class="card-label">Cloro libre</div>
       <div class="card-value" id="val-ppm">—</div>
       <div class="card-unit">ppm</div>
-      <div class="card-range" id="range-ppm">SP: 0.5 – 1.5 ppm</div>
+      <div class="card-range" id="range-ppm">SP: 0.5 – 2.0 ppm</div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ppm" style="width:0%"></div></div>
     </div>
 
@@ -441,8 +441,8 @@
 
   const RANGES = {
     ph:   { min: 6.5, max: 8.0 },
-    orp:  { min: 600, max: 700 },
-    ppm:  { min: 0,   max: 2   },
+    orp:  { min: 600, max: 750 },
+    ppm:  { min: 0,   max: 2.5   },
     temp: { min: 15,  max: 35  },
   };
 
@@ -450,8 +450,8 @@
     return Math.max(0, Math.min(100, (val - r.min) / (r.max - r.min) * 100));
   }
   function phStatus(v)  { return v >= 7.2 && v <= 7.6 ? 'ok' : v >= 7.0 && v <= 7.8 ? 'warn' : 'bad'; }
-  function orpStatus(v) { return v >= 650 && v <= 750 ? 'ok' : v >= 500 && v <= 800 ? 'warn' : 'bad'; }
-  function ppmStatus(v) { return v >= 0.5 && v <= 1.5 ? 'ok' : v >= 0.2 && v <= 2.5 ? 'warn' : 'bad'; }
+  function orpStatus(v) { return v >= 640 && v <= 700 ? 'ok' : v >= 500 && v <= 800 ? 'warn' : 'bad'; }
+  function ppmStatus(v) { return v >= 0.5 && v <= 2.0 ? 'ok' : v >= 0.2 && v <= 2.5 ? 'warn' : 'bad'; }
 
   function setCard(id, val, status, barPct) {
     const card  = document.getElementById('card-' + id);
