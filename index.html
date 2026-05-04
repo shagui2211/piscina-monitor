@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Piscina Valentin</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Piscina Valentin</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
 
 <style>
 :root{
@@ -44,6 +44,7 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
 }
 
 .header-left{
@@ -52,12 +53,8 @@ header{
   gap:16px;
 }
 
-.logo{
-  width:140px;
-}
-.logo img{
-  width:100%;
-}
+.logo{width:140px}
+.logo img{width:100%}
 
 h1{
   font-size:1.1rem;
@@ -141,6 +138,40 @@ main{
 .bar-fill{
   height:100%;
   background:var(--accent);
+  transition:.5s;
+}
+
+/* METEO */
+.meteo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.meteo-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+}
+
+.meteo-letra{
+  font-size:2.5rem;
+  font-family:var(--mono);
+  color:var(--accent);
+}
+
+.meteo-icon{
+  font-size:2rem;
+}
+
+.meteo-txt{
+  font-size:0.85rem;
+}
+
+.meteo-sub{
+  font-size:0.7rem;
+  color:var(--muted);
 }
 
 /* ESTADO */
@@ -149,7 +180,6 @@ main{
   border:1px solid var(--border);
   border-radius:12px;
   padding:16px;
-  margin-top:10px;
 }
 
 /* FOOTER */
@@ -170,7 +200,7 @@ main{
     <div class="logo">
       <img src="assets/logo.png" alt="Valentin Hotels">
     </div>
-    <h1>Piscina Valentin</h1>
+    <h1>Piscina Exterior Valentin Somni Hotel & Suites</h1>
   </div>
   <div class="status-pill" id="last-update">Conectando…</div>
 </header>
@@ -179,30 +209,30 @@ main{
 
 <p class="section-title">Parámetros del agua</p>
 
-<div class="grid-main" id="grid-agua">
+<div class="grid-main">
 
-<div class="card" id="card-ph">
+<div class="card">
   <div class="card-label">pH</div>
   <div class="card-value" id="val-ph">—</div>
   <div class="card-unit">pH</div>
   <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
 </div>
 
-<div class="card" id="card-orp">
+<div class="card">
   <div class="card-label">ORP</div>
   <div class="card-value" id="val-orp">—</div>
   <div class="card-unit">mV</div>
   <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
 </div>
 
-<div class="card" id="card-ppm">
+<div class="card">
   <div class="card-label">Cloro</div>
   <div class="card-value" id="val-ppm">—</div>
   <div class="card-unit">ppm</div>
   <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
 </div>
 
-<div class="card" id="card-temp">
+<div class="card">
   <div class="card-label">Temp agua</div>
   <div class="card-value" id="val-temp">—</div>
   <div class="card-unit">°C</div>
@@ -227,13 +257,33 @@ main{
 </div>
 </div>
 
+<p class="section-title">Meteorología</p>
+
+<div class="meteo-grid">
+
+<div class="meteo-card">
+  <div class="card-label">Zambretti</div>
+  <div class="meteo-letra" id="val-zambretti-letra">—</div>
+  <div class="meteo-txt" id="val-zambretti-txt">Sin datos</div>
+  <div class="meteo-sub">Predicción</div>
+</div>
+
+<div class="meteo-card">
+  <div class="card-label">Condición</div>
+  <div class="meteo-icon" id="val-condicion-icon">🌥️</div>
+  <div class="meteo-txt" id="val-condicion-txt">Sin datos</div>
+  <div class="meteo-sub" id="val-condicion-sub">—</div>
+</div>
+
+</div>
+
 <p class="section-title">Estado</p>
 <div class="estado-card">
   <div id="estado-text">Cargando...</div>
 </div>
 
 <div class="footer">
-Valentin Hotels · Monitor piscina
+Valentin Hotels & Resorts
 </div>
 
 </main>
@@ -251,6 +301,16 @@ temp:{min:15,max:35}
 
 function pct(v,r){
 return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));
+}
+
+function icono(desc){
+if(!desc)return'🌥️';
+desc=desc.toLowerCase();
+if(desc.includes('lluvia'))return'🌧️';
+if(desc.includes('tormenta'))return'⛈️';
+if(desc.includes('nube'))return'☁️';
+if(desc.includes('sol'))return'☀️';
+return'🌥️';
 }
 
 function setCard(id,val,p){
@@ -272,6 +332,13 @@ document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
 document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
 
 document.getElementById('estado-text').textContent=d.estado||'OK';
+
+document.getElementById('val-zambretti-letra').textContent=d.zambretti_letra||'—';
+document.getElementById('val-zambretti-txt').textContent=d.zambretti_txt||'Sin datos';
+
+document.getElementById('val-condicion-icon').textContent=icono(d.condicion_txt);
+document.getElementById('val-condicion-txt').textContent=d.condicion_txt||'Sin datos';
+document.getElementById('val-condicion-sub').textContent=d.condicion_sub||'—';
 
 document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
 
