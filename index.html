@@ -183,7 +183,7 @@
       transition: width 0.7s ease, background 0.4s;
     }
 
-    /* ── ESTADO ── */
+    /* ── SECCIÓN TÍTULOS ── */
     .section-title {
       font-size: 0.7rem;
       font-weight: 600;
@@ -193,6 +193,7 @@
       margin: 24px 0 10px;
     }
 
+    /* ── ESTADO ── */
     .estado-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -217,61 +218,72 @@
       margin-top: 2px;
     }
 
-    /* ── RELÉS ── */
-    .reles-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .rele {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--muted);
-      transition: all 0.3s;
-    }
-
-    .rele.on {
-      color: var(--text);
-      border-color: #1d3d52;
-      background: #0d2030;
-    }
-
-    .rele .rele-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--border);
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-    .rele.on .rele-dot {
-      background: var(--ok);
-      box-shadow: 0 0 6px var(--ok);
-    }
-
-    /* ── AMBIENTE ── */
+    /* ── AMBIENTE (2 columnas) ── */
     .amb-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 14px;
       margin-top: 10px;
     }
 
-    /* ── FOOTER ── */
-    .footer {
-      text-align: center;
-      margin-top: 40px;
+    /* ── METEOROLOGÍA (2 columnas) ── */
+    .meteo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .meteo-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .meteo-card:hover { transform: translateY(-2px); border-color: #243d52; }
+    .meteo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0.35;
+      border-radius: 14px 14px 0 0;
+    }
+    .meteo-card.ok-card::before   { background: var(--ok);    opacity: 0.6; }
+    .meteo-card.warn-card::before { background: var(--warn);  opacity: 0.6; }
+    .meteo-card.bad-card::before  { background: var(--danger);opacity: 0.6; }
+
+    .meteo-letra {
+      font-family: var(--mono);
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+      margin-bottom: 8px;
+      transition: color 0.4s;
+    }
+
+    .meteo-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .meteo-txt {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .meteo-sub {
       font-size: 0.65rem;
       color: var(--muted);
+      margin-top: 6px;
       font-family: var(--mono);
-      line-height: 2;
     }
 
     /* ── ERROR BANNER ── */
@@ -291,15 +303,21 @@
     @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
     .loading .card-value { animation: pulse 1.5s ease-in-out infinite; }
 
-    /* ── ÚLTIMA ACTUALIZACIÓN ── */
-    #last-update {
+    #last-update { font-family: var(--mono); font-size: 0.7rem; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.65rem;
+      color: var(--muted);
       font-family: var(--mono);
-      font-size: 0.7rem;
+      line-height: 2;
     }
 
-    /* responsive */
     @media (max-width: 500px) {
-      .amb-grid { grid-template-columns: 1fr 1fr; }
+      .amb-grid   { grid-template-columns: 1fr 1fr; }
+      .meteo-grid { grid-template-columns: 1fr; }
       .card-value { font-size: 1.8rem; }
     }
   </style>
@@ -375,16 +393,6 @@
     </div>
   </div>
 
-  <!-- RELÉS -->
-  <p class="section-title" style="margin-top:20px">Relés activos</p>
-  <div class="reles-grid" id="reles-grid">
-    <div class="rele" id="rele-bomba">    <div class="rele-dot"></div>Bomba</div>
-    <div class="rele" id="rele-cloro">   <div class="rele-dot"></div>Dosif. Cloro</div>
-    <div class="rele" id="rele-acido">   <div class="rele-dot"></div>Dosif. Ácido</div>
-    <div class="rele" id="rele-luz">     <div class="rele-dot"></div>Luz</div>
-    <div class="rele" id="rele-flocul">  <div class="rele-dot"></div>Floculante</div>
-  </div>
-
   <!-- AMBIENTE -->
   <p class="section-title" style="margin-top:20px">Ambiente</p>
   <div class="amb-grid">
@@ -398,11 +406,26 @@
       <div class="card-value" id="val-hum">—</div>
       <div class="card-unit">%</div>
     </div>
-    <div class="card">
-      <div class="card-label">Presión</div>
-      <div class="card-value" id="val-pres">—</div>
-      <div class="card-unit">hPa</div>
+  </div>
+
+  <!-- METEOROLOGÍA -->
+  <p class="section-title" style="margin-top:20px">Meteorología</p>
+  <div class="meteo-grid">
+
+    <div class="meteo-card" id="card-zambretti">
+      <div class="card-label">Pronóstico Zambretti</div>
+      <div class="meteo-letra" id="val-zambretti-letra">—</div>
+      <div class="meteo-txt" id="val-zambretti-txt">Sin datos</div>
+      <div class="meteo-sub">Basado en presión y tendencia</div>
     </div>
+
+    <div class="meteo-card" id="card-condicion">
+      <div class="card-label">Condición climática</div>
+      <div class="meteo-icon" id="val-condicion-icon">🌥️</div>
+      <div class="meteo-txt" id="val-condicion-txt">Sin datos</div>
+      <div class="meteo-sub" id="val-condicion-sub">—</div>
+    </div>
+
   </div>
 
   <div class="footer">
@@ -413,159 +436,130 @@
 </main>
 
 <script>
-  // ─────────────────────────────────────────────────
-  //  ⚙️  CONFIGURACIÓN  ─ cambia esta URL
-  // ─────────────────────────────────────────────────
   const API_URL = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
-  //   ^^ Sustituye por tu URL de Tailscale Funnel ^^
-  // ─────────────────────────────────────────────────
-
   const INTERVAL_MS = 15_000;
 
-  // Rangos para barras (min, max display)
   const RANGES = {
-    ph:   { min: 6.5, max: 8.0, spMin: 7.2, spMax: 7.6 },
-    orp:  { min: 400, max: 900, spMin: 650, spMax: 750 },
-    ppm:  { min: 0,   max: 3,   spMin: 0.5, spMax: 1.5 },
-    temp: { min: 15,  max: 35,  spMin: 20,  spMax: 32  },
+    ph:   { min: 6.5, max: 8.0 },
+    orp:  { min: 400, max: 900 },
+    ppm:  { min: 0,   max: 3   },
+    temp: { min: 15,  max: 35  },
   };
 
   function pct(val, r) {
     return Math.max(0, Math.min(100, (val - r.min) / (r.max - r.min) * 100));
   }
+  function phStatus(v)  { return v >= 7.2 && v <= 7.6 ? 'ok' : v >= 7.0 && v <= 7.8 ? 'warn' : 'bad'; }
+  function orpStatus(v) { return v >= 650 && v <= 750 ? 'ok' : v >= 500 && v <= 800 ? 'warn' : 'bad'; }
+  function ppmStatus(v) { return v >= 0.5 && v <= 1.5 ? 'ok' : v >= 0.2 && v <= 2.5 ? 'warn' : 'bad'; }
 
-  function phStatus(v) {
-    if (v >= 7.2 && v <= 7.6) return 'ok';
-    if (v >= 7.0 && v <= 7.8) return 'warn';
-    return 'bad';
-  }
-  function orpStatus(v) {
-    if (v >= 650 && v <= 750) return 'ok';
-    if (v >= 500 && v <= 800) return 'warn';
-    return 'bad';
-  }
-  function ppmStatus(v) {
-    if (v >= 0.5 && v <= 1.5) return 'ok';
-    if (v >= 0.2 && v <= 2.5) return 'warn';
-    return 'bad';
-  }
-
-  function setCard(id, val, unit, status, barPct, barId) {
-    const card = document.getElementById('card-' + id);
-    const valEl = document.getElementById('val-' + id);
-    const barEl = document.getElementById('bar-' + id);
-
+  function setCard(id, val, status, barPct) {
+    const card  = document.getElementById('card-' + id);
+    const valEl = document.getElementById('val-'  + id);
+    const barEl = document.getElementById('bar-'  + id);
     card.className = 'card ' + status + '-card';
     valEl.textContent = val;
     valEl.style.color = status === 'ok' ? 'var(--ok)' : status === 'warn' ? 'var(--warn)' : 'var(--danger)';
-
     if (barEl) {
       barEl.style.width = barPct + '%';
       barEl.style.background = status === 'ok' ? 'var(--ok)' : status === 'warn' ? 'var(--warn)' : 'var(--danger)';
     }
   }
 
-  function setRele(id, on) {
-    const el = document.getElementById('rele-' + id);
-    if (!el) return;
-    el.className = 'rele' + (on ? ' on' : '');
-  }
-
   function setEstado(estado, detalle) {
-    const iconEl   = document.getElementById('estado-icon');
-    const textEl   = document.getElementById('estado-text');
-    const detailEl = document.getElementById('estado-detail');
-    const card     = document.getElementById('estado-card');
-
     const s = (estado || '').toUpperCase();
     let icon = '✅', color = 'var(--ok)';
+    if (s.includes('ALARM') || s.includes('FALLO') || s.includes('ERROR')) { icon = '🚨'; color = 'var(--danger)'; }
+    else if (s.includes('STANDBY') || s.includes('ESPERA') || s.includes('AJUST')) { icon = '⚙️'; color = 'var(--warn)'; }
+    document.getElementById('estado-icon').textContent   = icon;
+    document.getElementById('estado-text').textContent   = estado  || 'OK';
+    document.getElementById('estado-detail').textContent = detalle || '';
+    document.getElementById('estado-text').style.color   = color;
+  }
 
-    if (s.includes('ALARM') || s.includes('FALLO') || s.includes('ERROR')) {
-      icon = '🚨'; color = 'var(--danger)';
-    } else if (s.includes('STANDBY') || s.includes('ESPERA') || s.includes('AJUST')) {
-      icon = '⚙️'; color = 'var(--warn)';
-    }
+  function iconoCondicion(desc) {
+    if (!desc) return '🌥️';
+    const d = desc.toLowerCase();
+    if (d.includes('tormenta'))                          return '⛈️';
+    if (d.includes('lluvia'))                            return '🌧️';
+    if (d.includes('niebla') || d.includes('bruma'))     return '🌫️';
+    if (d.includes('estratos') || d.includes('nublado')) return '☁️';
+    if (d.includes('nubes'))                             return '⛅';
+    if (d.includes('parcial'))                           return '⛅';
+    if (d.includes('despejado') || d.includes('sol'))    return '☀️';
+    return '🌥️';
+  }
 
-    iconEl.textContent   = icon;
-    textEl.textContent   = estado  || 'OK';
-    detailEl.textContent = detalle || '';
-    textEl.style.color   = color;
+  function colorZambretti(color) {
+    if (color === 'ok')     return 'var(--ok)';
+    if (color === 'warn')   return 'var(--warn)';
+    if (color === 'danger') return 'var(--danger)';
+    return 'var(--accent)';
   }
 
   function updateUI(d) {
-    // Limpiar loading
     document.getElementById('grid-agua').classList.remove('loading');
 
-    // pH
-    const ph = parseFloat(d.ph ?? d.pH ?? 0);
-    const phS = phStatus(ph);
-    setCard('ph', ph.toFixed(2), 'pH', phS, pct(ph, RANGES.ph), 'bar-ph');
+    const ph   = parseFloat(d.ph  ?? 0);
+    const orp  = parseFloat(d.orp ?? 0);
+    const ppm  = parseFloat(d.ppm ?? 0);
+    const temp = parseFloat(d.temp_agua ?? 0);
 
-    // ORP
-    const orp = parseFloat(d.orp ?? d.ORP ?? 0);
-    const orpS = orpStatus(orp);
-    setCard('orp', Math.round(orp), 'mV', orpS, pct(orp, RANGES.orp), 'bar-orp');
-
-    // PPM
-    const ppm = parseFloat(d.ppm ?? d.cloro ?? 0);
-    const ppmS = ppmStatus(ppm);
-    setCard('ppm', ppm.toFixed(2), 'ppm', ppmS, pct(ppm, RANGES.ppm), 'bar-ppm');
-
-    // Temp agua
-    const temp = parseFloat(d.temp_agua ?? d.temp ?? 0);
-    const tempS = temp >= 20 && temp <= 32 ? 'ok' : 'warn';
-    setCard('temp', temp.toFixed(1), '°C', tempS, pct(temp, RANGES.temp), 'bar-temp');
+    setCard('ph',   ph.toFixed(2),    phStatus(ph),   pct(ph,   RANGES.ph));
+    setCard('orp',  Math.round(orp),  orpStatus(orp), pct(orp,  RANGES.orp));
+    setCard('ppm',  ppm.toFixed(2),   ppmStatus(ppm), pct(ppm,  RANGES.ppm));
+    setCard('temp', temp.toFixed(1),  temp >= 20 && temp <= 32 ? 'ok' : 'warn', pct(temp, RANGES.temp));
 
     // Ambiente
-    const tamb = d.temp_ambiente ?? d.temp_amb ?? null;
+    const tamb = d.temp_ambiente ?? null;
     const hum  = d.humedad ?? null;
-    const pres = d.presion ?? d.presión ?? null;
     document.getElementById('val-tamb').textContent = tamb != null ? parseFloat(tamb).toFixed(1) : '—';
     document.getElementById('val-hum').textContent  = hum  != null ? parseFloat(hum).toFixed(1)  : '—';
-    document.getElementById('val-pres').textContent = pres != null ? Math.round(pres)             : '—';
 
-    // Estado
+    // Estado sistema
     setEstado(d.estado, d.detalle);
 
-    // Relés (acepta nombres flexibles)
-    setRele('bomba',   d.rele_bomba   ?? d.bomba   ?? false);
-    setRele('cloro',   d.rele_cloro   ?? d.cloro_rele ?? false);
-    setRele('acido',   d.rele_acido   ?? d.acido   ?? false);
-    setRele('luz',     d.rele_luz     ?? d.luz      ?? false);
-    setRele('flocul',  d.rele_flocul  ?? d.floculante ?? false);
+    // Setpoints dinámicos
+    if (d.sp_ph_min  && d.sp_ph_max)  document.getElementById('range-ph').textContent  = `SP: ${d.sp_ph_min} – ${d.sp_ph_max}`;
+    if (d.sp_orp_min && d.sp_orp_max) document.getElementById('range-orp').textContent = `SP: ${d.sp_orp_min} – ${d.sp_orp_max} mV`;
 
-    // Setpoints dinámicos (si vienen de la API)
-    if (d.sp_ph_min && d.sp_ph_max)
-      document.getElementById('range-ph').textContent = `SP: ${d.sp_ph_min} – ${d.sp_ph_max}`;
-    if (d.sp_orp_min && d.sp_orp_max)
-      document.getElementById('range-orp').textContent = `SP: ${d.sp_orp_min} – ${d.sp_orp_max} mV`;
+    // Zambretti
+    const zbLetra = d.zambretti_letra ?? '—';
+    const zbTxt   = d.zambretti_txt   ?? 'Sin datos';
+    const zbColor = d.zambretti_color ?? 'off';
+    const letraEl = document.getElementById('val-zambretti-letra');
+    letraEl.textContent  = zbLetra;
+    letraEl.style.color  = colorZambretti(zbColor);
+    document.getElementById('val-zambretti-txt').textContent = zbTxt;
+
+    // Condición climática
+    const condTxt = d.condicion_txt ?? 'Sin datos';
+    const condSub = d.condicion_sub ?? '—';
+    document.getElementById('val-condicion-icon').textContent = iconoCondicion(condTxt);
+    document.getElementById('val-condicion-txt').textContent  = condTxt;
+    document.getElementById('val-condicion-sub').textContent  = condSub;
   }
 
   async function fetchData() {
     const dot    = document.getElementById('conn-dot');
     const upd    = document.getElementById('last-update');
     const banner = document.getElementById('error-banner');
-
     try {
-      const res = await fetch(API_URL, { cache: 'no-store' });
+      const res  = await fetch(API_URL, { cache: 'no-store' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-
       banner.classList.remove('visible');
-      dot.className = 'dot ok';
-      const now = new Date();
-      upd.textContent = now.toLocaleTimeString('es-ES');
-
+      dot.className   = 'dot ok';
+      upd.textContent = new Date().toLocaleTimeString('es-ES');
       updateUI(data);
     } catch (err) {
-      dot.className = 'dot danger';
+      dot.className   = 'dot danger';
       upd.textContent = 'Error · ' + new Date().toLocaleTimeString('es-ES');
       banner.classList.add('visible');
       console.error('API error:', err);
     }
   }
 
-  // Arranque
   fetchData();
   setInterval(fetchData, INTERVAL_MS);
 </script>
