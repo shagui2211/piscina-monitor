@@ -13,7 +13,7 @@
   --mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
 header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .header-left{display:flex;align-items:center;gap:16px;}
 .logo{width:140px}.logo img{width:100%}
@@ -24,7 +24,7 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-/* Contenedor con transición para el cambio de idioma */
+/* Contenedor principal con transición */
 main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-out;}
 .fade-out { opacity: 0; }
 
@@ -42,7 +42,6 @@ main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-
 .bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
 .bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
-/* ── METEO UNIFICADO ── */
 .meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
 .meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
 .meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -50,9 +49,7 @@ main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-
 .badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
 .badge-warn   {background:rgba(176,125,42,.1);color:var(--warn);}
 .badge-danger {background:rgba(201,75,75,.1); color:var(--danger);}
-.badge-off    {background:var(--soft);        color:var(--muted);}
 
-/* ── PREVISIÓN 24H ── */
 .prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
 .prev-scroll::-webkit-scrollbar{height:4px;}
 .prev-scroll::-webkit-scrollbar-track{background:transparent;}
@@ -63,36 +60,31 @@ main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-
 .ph-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
 .ph-temp{font-family:var(--mono);font-size:0.95rem;font-weight:500;}
 .ph-lluvia{font-size:0.6rem;color:var(--muted);margin-top:2px;}
-.ph-lluvia.riesgo{color:#4a7db5;font-weight:600;}
 
-/* ── ERROR ── */
 .error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
 .error-banner.visible{display:block;}
 .alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
 .footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
 
-/* ── TV MODE ── */
-body.tv main{max-width:100%;padding:40px;}
-body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
-body.tv .card{padding:28px 24px;}
-body.tv .card-value{font-size:4rem;}
-body.tv .card-unit{font-size:1.4rem;}
-body.tv .card-label{font-size:1rem;}
-body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
-body.tv .meteo-frase{font-size:1.4rem;}
-body.tv .meteo-card{padding:24px 28px;}
-body.tv .prev-hora{width:90px;}
-body.tv .ph-icon{font-size:1.8rem;}
-body.tv .ph-temp{font-size:1.2rem;}
-body.tv header{padding:24px 40px;}
-body.tv .logo{width:200px;}
-body.tv .header-title-main{font-size:1.6rem;}
-body.tv .header-title-sub{font-size:1rem;}
-body.tv .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
-body.tv .conn-dot{width:14px;height:14px;}
+/* ── ESTILOS TV ACTIVADOS POR CLASE ── */
+body.tv-active main{max-width:100%;padding:40px;}
+body.tv-active .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
+body.tv-active .card{padding:28px 24px;}
+body.tv-active .card-value{font-size:4rem;}
+body.tv-active .card-unit{font-size:1.4rem;}
+body.tv-active .card-label{font-size:1rem;}
+body.tv-active .section-title{font-size:1rem;margin:30px 0 14px;}
+body.tv-active .meteo-frase{font-size:1.4rem;}
+body.tv-active .meteo-card{padding:24px 28px;}
+body.tv-active header{padding:24px 40px;}
+body.tv-active .logo{width:200px;}
+body.tv-active .header-title-main{font-size:1.6rem;}
+body.tv-active .header-title-sub{font-size:1rem;}
+body.tv-active .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
+body.tv-active .conn-dot{width:14px;height:14px;}
 </style>
 </head>
-<body class="tv">
+<body>
 
 <div class="alert" id="alert">⚠️ Parámetros fuera de rango</div>
 
@@ -101,7 +93,7 @@ body.tv .conn-dot{width:14px;height:14px;}
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
     <div>
       <div class="header-title-main" id="txt-pool-title">Piscina Exterior</div>
-      <div class="header-title-sub">Somni Hotel &amp; Suites</div>
+      <div class="header-title-sub">Somni Hotel & Suites</div>
     </div>
   </div>
   <div class="status-pill">
@@ -110,7 +102,7 @@ body.tv .conn-dot{width:14px;height:14px;}
   </div>
 </header>
 
-<main id="main-container">
+<main id="main-content">
   <div class="error-banner" id="error-banner">
     <span id="txt-error-msg">⚠️ Error de conexión — No se puede contactar con la API.</span>
   </div>
@@ -143,11 +135,11 @@ body.tv .conn-dot{width:14px;height:14px;}
   <div class="grid-main">
     <div class="card">
       <div class="card-label" id="txt-label-tempa">Temp exterior</div>
-      <div class="card-value-row"><span class="card-value">28</span><span class="card-unit">°C</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-tamb">28</span><span class="card-unit">°C</span></div>
     </div>
     <div class="card">
       <div class="card-label" id="txt-label-hum">Humedad</div>
-      <div class="card-value-row"><span class="card-value">60</span><span class="card-unit">%</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-hum">60</span><span class="card-unit">%</span></div>
     </div>
   </div>
 
@@ -161,44 +153,48 @@ body.tv .conn-dot{width:14px;height:14px;}
   </div>
 
   <p class="section-title" id="txt-sec-prev">Previsión próximas horas</p>
-  <div class="prev-scroll">
+  <div class="prev-scroll" id="prev-container">
     <div class="prev-hora ahora">
       <div class="ph-hora">AHORA</div>
       <div class="ph-icon">☀️</div>
       <div class="ph-temp">28°</div>
       <div class="ph-lluvia">0%</div>
     </div>
-    <!-- Repetición para ejemplo visual -->
-    <div class="prev-hora"><div class="ph-hora">14:00</div><div class="ph-icon">☀️</div><div class="ph-temp">29°</div><div class="ph-lluvia">0%</div></div>
     <div class="prev-hora"><div class="ph-hora">15:00</div><div class="ph-icon">☀️</div><div class="ph-temp">30°</div><div class="ph-lluvia">0%</div></div>
     <div class="prev-hora"><div class="ph-hora">16:00</div><div class="ph-icon">🌤️</div><div class="ph-temp">29°</div><div class="ph-lluvia">5%</div></div>
-    <div class="prev-hora"><div class="ph-hora">17:00</div><div class="ph-icon">🌤️</div><div class="ph-temp">28°</div><div class="ph-lluvia">10%</div></div>
   </div>
 
   <div class="footer">VALENTIN HOTELS - SISTEMA DE MONITOREO EN TIEMPO REAL</div>
 </main>
 
 <script>
+// DETECCIÓN DE MODO TV MEDIANTE TU PARÁMETRO ?tv=1
+const urlParams = new URLSearchParams(window.location.search);
+const isTVMode = urlParams.get('tv') === '1';
+
+if (isTVMode) {
+    document.body.classList.add('tv-active');
+}
+
 const translations = [
-  { lang: 'es-ES', hour12: false, texts: { pool: 'Piscina Exterior', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas horas', orp: 'ORP / Redox', cl: 'Cloro libre', tempW: 'Temp agua', tempA: 'Temp exterior', hum: 'Humedad', meteoPh: 'Cielo despejado con brisa ligera', meteoSub: 'Ideal para el baño', meteoBadge: 'Óptimo', error: '⚠️ Error de conexión — No se puede contactar con la API.', alert: '⚠️ Parámetros fuera de rango' } },
-  { lang: 'en-GB', hour12: true, texts: { pool: 'Outdoor Pool', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: 'Next hours forecast', orp: 'ORP / Redox', cl: 'Free Chlorine', tempW: 'Water Temp', tempA: 'Outdoor Temp', hum: 'Humidity', meteoPh: 'Clear sky with a light breeze', meteoSub: 'Perfect for swimming', meteoBadge: 'Optimal', error: '⚠️ Connection Error — Unable to reach API.', alert: '⚠️ Parameters out of range' } },
-  { lang: 'de-DE', hour12: false, texts: { pool: 'Außenpool', secWater: 'Wasserparameter', secAir: 'Umgebung', secMeteo: 'Aktueller Zustand', secPrev: 'Vorhersage nächste Stunden', orp: 'ORP / Redox', cl: 'Freies Chlor', tempW: 'Wassertemp.', tempA: 'Außentemp.', hum: 'Feuchtigkeit', meteoPh: 'Heiterer Himmel bei leichter Brise', meteoSub: 'Ideal zum Schwimmen', meteoBadge: 'Optimal', error: '⚠️ Verbindungsfehler — API nicht erreichbar.', alert: '⚠️ Parameter außerhalb des Bereichs' } }
+  { lang: 'es-ES', hour12: false, texts: { pool: 'Piscina Exterior', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas horas', orp: 'ORP / Redox', cl: 'Cloro libre', tempW: 'Temp agua', tempA: 'Temp exterior', hum: 'Humedad', meteoPh: 'Cielo despejado con brisa ligera', meteoSub: 'Ideal para el baño', meteoBadge: 'Óptimo', error: '⚠️ Error de conexión — API', alert: '⚠️ Parámetros fuera de rango' } },
+  { lang: 'en-GB', hour12: true, texts: { pool: 'Outdoor Pool', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: 'Next hours forecast', orp: 'ORP / Redox', cl: 'Free Chlorine', tempW: 'Water Temp', tempA: 'Outdoor Temp', hum: 'Humidity', meteoPh: 'Clear sky with a light breeze', meteoSub: 'Perfect for swimming', meteoBadge: 'Optimal', error: '⚠️ Connection Error — API', alert: '⚠️ Parameters out of range' } },
+  { lang: 'de-DE', hour12: false, texts: { pool: 'Außenpool', secWater: 'Wasserparameter', secAir: 'Umgebung', secMeteo: 'Aktueller Zustand', secPrev: 'Vorhersage nächste Stunden', orp: 'ORP / Redox', cl: 'Freies Chlor', tempW: 'Wassertemp.', tempA: 'Außentemp.', hum: 'Feuchtigkeit', meteoPh: 'Heiterer Himmel bei leichter Brise', meteoSub: 'Ideal zum Schwimmen', meteoBadge: 'Optimal', error: '⚠️ Verbindungsfehler — API', alert: '⚠️ Parameter außerhalb Bereich' } }
 ];
 
-let currentIdx = 0;
-const isTV = document.body.classList.contains('tv');
-const main = document.getElementById('main-container');
+let currentLangIndex = 0;
+const mainContent = document.getElementById('main-content');
 
-function updateClock() {
-    const data = translations[currentIdx];
+function updateUI() {
+    const data = translations[currentLangIndex];
     const now = new Date();
+
+    // Actualizar Reloj
     document.getElementById('clock').textContent = now.toLocaleTimeString(data.lang, {
         hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: data.hour12
     });
-}
 
-function updateTexts() {
-    const data = translations[currentIdx];
+    // Actualizar todos los textos traducibles
     document.getElementById('txt-pool-title').textContent = data.texts.pool;
     document.getElementById('txt-sec-water').textContent = data.texts.secWater;
     document.getElementById('txt-sec-air').textContent = data.texts.secAir;
@@ -216,25 +212,25 @@ function updateTexts() {
     document.getElementById('alert').textContent = data.texts.alert;
 }
 
-// Bucle de reloj
-setInterval(updateClock, 1000);
+// Reloj cada segundo
+setInterval(updateUI, 1000);
 
-// Bucle de idiomas con fade (solo en TV)
-if (isTV) {
+// Rotación de idiomas con FADE SOLO SI ?tv=1
+if (isTVMode) {
     setInterval(() => {
-        main.classList.add('fade-out');
+        mainContent.classList.add('fade-out');
         setTimeout(() => {
-            currentIdx = (currentIdx + 1) % translations.length;
-            updateTexts();
-            main.classList.remove('fade-out');
+            currentLangIndex = (currentLangIndex + 1) % translations.length;
+            updateUI();
+            mainContent.classList.remove('fade-out');
         }, 500);
     }, 10000);
 }
 
-// Inicio
-updateTexts();
-updateClock();
+// Inicio inmediato
+updateUI();
 </script>
 </body>
 </html>
+
 
