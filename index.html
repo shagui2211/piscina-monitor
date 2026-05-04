@@ -1,308 +1,312 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Piscina Exterior</title>
-
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
-
 <style>
 :root{
-  --bg:#f5f7f6;
-  --surface:#ffffff;
-  --border:#dfe5e2;
-  --accent:#5f7f73;
-  --text:#1f2a2a;
-  --muted:#6b7c7a;
-  --mono:'DM Mono', monospace;
-  --sans:'Outfit', sans-serif;
+  --bg:#f5f7f6;--border:#dfe5e2;
+  --ok:#3d7a5a;--warn:#b07d2a;--danger:#c94b4b;
+  --text:#1f2a2a;--muted:#6b7c7a;--soft:#e8efed;
+  --mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);}
+header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.logo{width:140px}.logo img{width:100%}
+.header-title-main{font-size:1rem;font-weight:600;}
+.header-title-sub{font-size:0.7rem;color:var(--muted);}
+.status-pill{font-family:var(--mono);font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .4s;flex-shrink:0;}
+.conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
+.conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
+main{max-width:960px;margin:auto;padding:20px;}
+.section-title{font-size:0.7rem;color:var(--muted);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em;}
+.grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.card{background:white;border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;padding:16px;opacity:0;transform:translateY(8px);animation:fadeIn .45s ease forwards;transition:border-left-color .3s;}
+.card.ok-card  {border-left-color:var(--ok);}
+.card.warn-card{border-left-color:var(--warn);}
+.card.bad-card {border-left-color:var(--danger);}
+@keyframes fadeIn{to{opacity:1;transform:translateY(0);}}
+.card-label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.card-value-row{display:flex;align-items:baseline;gap:5px;margin-top:4px;}
+.card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;transition:color .3s;}
+.card-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
+.bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
+.bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
-}
+/* ── METEO UNIFICADO ── */
+.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
+.meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
+.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
+.badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
+.badge-warn   {background:rgba(176,125,42,.1);color:var(--warn);}
+.badge-danger {background:rgba(201,75,75,.1); color:var(--danger);}
+.badge-off    {background:var(--soft);        color:var(--muted);}
 
-/* HEADER (igual al tuyo) */
-header{
-  background:white;
-  border-bottom:1px solid var(--border);
-  padding:16px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
+/* ── PREVISIÓN 24H ── */
+.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.prev-scroll::-webkit-scrollbar{height:4px;}
+.prev-scroll::-webkit-scrollbar-track{background:transparent;}
+.prev-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.prev-hora{flex-shrink:0;width:72px;background:white;border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;}
+.prev-hora.ahora{border-color:#3d7a5a;background:#f0f7f3;}
+.ph-hora{font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:4px;}
+.ph-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
+.ph-temp{font-family:var(--mono);font-size:0.95rem;font-weight:500;}
+.ph-lluvia{font-size:0.6rem;color:var(--muted);margin-top:2px;}
+.ph-lluvia.riesgo{color:#4a7db5;font-weight:600;}
 
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
+/* ── ERROR ── */
+.error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
+.error-banner.visible{display:block;}
+.alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
+.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
 
-.logo{width:140px}
-.logo img{width:100%}
-
-.header-title-main{
-  font-size:1rem;
-  font-weight:600;
-}
-
-.header-title-sub{
-  font-size:0.7rem;
-  color:var(--muted);
-}
-
-.status-pill{
-  font-family:var(--mono);
-  font-size:0.8rem;
-  color:var(--muted);
-}
-
-/* LAYOUT */
-main{
-  max-width:960px;
-  margin:auto;
-  padding:20px;
-}
-
-.section-title{
-  font-size:0.7rem;
-  color:var(--muted);
-  margin:20px 0 10px;
-  text-transform:uppercase;
-}
-
-.grid-main{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:14px;
-}
-
-/* CARD (MISMO DISEÑO + animación suave) */
-.card{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
-  position:relative;
-
-  opacity:0;
-  transform:translateY(8px);
-  animation:fadeIn .5s ease forwards;
-}
-
-@keyframes fadeIn{
-  to{opacity:1; transform:translateY(0);}
-}
-
-.card-value{
-  font-family:var(--mono);
-  font-size:2.2rem;
-}
-
-.card-label{
-  font-size:0.7rem;
-  color:var(--muted);
-}
-
-/* BAR (igual pero más suave) */
-.bar-wrap{
-  height:4px;
-  background:var(--border);
-  margin-top:10px;
-  overflow:hidden;
-  border-radius:4px;
-}
-
-.bar-fill{
-  height:100%;
-  background:var(--accent);
-  transition:width .8s ease;
-}
-
-/* METEO MEJORADO SIN CAMBIAR DISEÑO */
-.meteo-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-
-.meteo-icon{
-  font-size:2rem;
-}
-
-/* ALERTA DISCRETA */
-.alert{
-  position:fixed;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#c94b4b;
-  color:white;
-  padding:10px 16px;
-  border-radius:8px;
-  font-family:var(--mono);
-  font-size:0.8rem;
-  display:none;
-  z-index:999;
-}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  margin-top:40px;
-  font-size:0.7rem;
-  color:var(--muted);
-  font-family:var(--mono);
-}
-
-/* ===== TV MODE (NO TOCADO CASI) ===== */
+/* ── TV MODE ── */
 body.tv main{max-width:100%;padding:40px;}
 body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
+body.tv .card{padding:28px 24px;}
 body.tv .card-value{font-size:4rem;}
+body.tv .card-unit{font-size:1.4rem;}
 body.tv .card-label{font-size:1rem;}
-body.tv .bar-wrap,.card-unit{display:none;}
+body.tv .bar-wrap{display:none;}
+body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
+body.tv .meteo-frase{font-size:1.4rem;}
+body.tv .meteo-card{padding:24px 28px;}
+body.tv .prev-hora{width:90px;}
+body.tv .ph-icon{font-size:1.8rem;}
+body.tv .ph-temp{font-size:1.2rem;}
+body.tv header{padding:24px 40px;}
+body.tv .logo{width:200px;}
+body.tv .header-title-main{font-size:1.6rem;}
+body.tv .header-title-sub{font-size:1rem;}
+body.tv .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
+body.tv .conn-dot{width:14px;height:14px;}
 </style>
 </head>
-
 <body>
 
-<div class="alert" id="alert">⚠ Parámetros fuera de rango</div>
+<div class="alert" id="alert">&#x26A0; Par&#225;metros fuera de rango</div>
 
 <header>
   <div class="header-left">
-    <div class="logo">
-      <img src="assets/logo.png">
-    </div>
+    <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
     <div>
       <div class="header-title-main">Piscina Exterior</div>
-      <div class="header-title-sub">Somni Hotel & Suites</div>
+      <div class="header-title-sub">Somni Hotel &amp; Suites</div>
     </div>
   </div>
-  <div class="status-pill" id="last-update">Conectando…</div>
+  <div class="status-pill">
+    <div class="conn-dot" id="conn-dot"></div>
+    <span id="clock">--:--:--</span>
+  </div>
 </header>
 
 <main>
+  <div class="error-banner" id="error-banner">
+    &#x26A0;&#xFE0F; Error de conexi&#243;n &#8212; No se puede contactar con la API.<br>
+    Comprueba que Node-RED y Tailscale Funnel est&#225;n activos.
+  </div>
 
-<p class="section-title">Parámetros del agua</p>
+  <p class="section-title">Par&#225;metros del agua</p>
+  <div class="grid-main">
+    <div class="card" id="card-ph">
+      <div class="card-label">pH</div>
+      <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
+      <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
+    </div>
+    <div class="card" id="card-orp">
+      <div class="card-label">ORP / Redox</div>
+      <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
+      <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
+    </div>
+    <div class="card" id="card-ppm">
+      <div class="card-label">Cloro libre</div>
+      <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">ppm</span></div>
+      <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
+    </div>
+    <div class="card" id="card-temp">
+      <div class="card-label">Temp agua</div>
+      <div class="card-value-row"><span class="card-value" id="val-temp">&#8212;</span><span class="card-unit">&#176;C</span></div>
+      <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
+    </div>
+  </div>
 
-<div class="grid-main">
+  <p class="section-title">Ambiente</p>
+  <div class="grid-main">
+    <div class="card">
+      <div class="card-label">Temp exterior</div>
+      <div class="card-value-row"><span class="card-value" id="val-tamb">&#8212;</span><span class="card-unit">&#176;C</span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Humedad</div>
+      <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
+    </div>
+  </div>
 
-<div class="card">
-<div class="card-label">pH</div>
-<div class="card-value" id="val-ph">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
-</div>
+  <!-- METEOROLOGÍA UNIFICADA -->
+  <p class="section-title">Condici&#243;n actual</p>
+  <div class="meteo-card">
+    <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
+    <div class="meteo-sub">
+      <span id="meteo-badge-alerta"></span>
+      <span id="meteo-tend"></span>
+      <span id="meteo-presion"></span>
+    </div>
+  </div>
 
-<div class="card">
-<div class="card-label">ORP</div>
-<div class="card-value" id="val-orp">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
-</div>
+  <!-- PREVISIÓN 24H -->
+  <p class="section-title">Previsi&#243;n pr&#243;ximas 24 h</p>
+  <div class="prev-scroll" id="prev-24h">
+    <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsi&#243;n&#8230;</div>
+  </div>
 
-<div class="card">
-<div class="card-label">Cloro</div>
-<div class="card-value" id="val-ppm">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">Temp agua</div>
-<div class="card-value" id="val-temp">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
-</div>
-
-</div>
-
-<p class="section-title">Ambiente</p>
-
-<div class="grid-main">
-<div class="card">
-<div class="card-label">Temp exterior</div>
-<div class="card-value" id="val-tamb">—</div>
-</div>
-
-<div class="card">
-<div class="card-label">Humedad</div>
-<div class="card-value" id="val-hum">—</div>
-</div>
-</div>
-
-<p class="section-title">Meteorología</p>
-
-<div class="meteo-grid">
-<div class="card">
-<div class="meteo-icon" id="meteo-icon">⛅</div>
-<div id="val-condicion-txt">Sin datos</div>
-</div>
-
-<div class="card">
-<div id="val-zambretti-txt">Sin datos</div>
-</div>
-</div>
-
-<div class="footer">Valentin Hotels & Resorts</div>
-
+  <div class="footer">Valentin Hotels &amp; Resorts</div>
 </main>
 
 <script>
-const API='https://control-piscinas.tailf7bca2.ts.net/api/piscina';
+var API = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
+
+var R = {
+  ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
+  orp:  {min:400, max:900, okMin:650, okMax:750},
+  ppm:  {min:0,   max:3.0, okMin:0.5, okMax:1.5},
+  temp: {min:15,  max:35,  okMin:20,  okMax:32},
+};
 
 function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
-const R={ph:{min:6.5,max:8},orp:{min:600,max:750},ppm:{min:0,max:2.5},temp:{min:15,max:35}};
 
-function set(id,val,p){
-document.getElementById('val-'+id).textContent=val;
-document.getElementById('bar-'+id).style.width=p+'%';
+function semaforo(v,r){
+  if(v>=r.okMin&&v<=r.okMax)return'ok';
+  var m=(r.okMax-r.okMin)*0.5;
+  if(v>=r.okMin-m&&v<=r.okMax+m)return'warn';
+  return'bad';
 }
+var COLOR={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--danger)'};
 
-function icon(t){
-if(!t)return'⛅';
-t=t.toLowerCase();
-if(t.includes('lluv'))return'🌧️';
-if(t.includes('torment'))return'⛈️';
-if(t.includes('sol'))return'☀️';
-return'⛅';
+function setCard(key,raw,fmt){
+  var r=R[key],s=semaforo(raw,r);
+  document.getElementById('card-'+key).className='card '+s+'-card';
+  var v=document.getElementById('val-'+key);
+  v.textContent=fmt; v.style.color=COLOR[s];
+  var b=document.getElementById('bar-'+key);
+  if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[s];}
 }
 
 function alertCheck(d){
-let bad = d.ph<6.5 || d.ph>7.8 || d.orp<600;
-document.getElementById('alert').style.display = bad?'block':'none';
+  var bad=(d.ph!=null&&semaforo(d.ph,R.ph)==='bad')||
+          (d.orp!=null&&semaforo(d.orp,R.orp)==='bad')||
+          (d.ppm!=null&&semaforo(d.ppm,R.ppm)==='bad');
+  document.getElementById('alert').style.display=bad?'block':'none';
 }
 
+/* ── Meteorología unificada ── */
+function badgeHTML(text,color){
+  var cls='meteo-badge badge-'+(color||'off');
+  return '<span class="'+cls+'">'+text+'</span>';
+}
+
+function renderMeteo(m){
+  if(!m)return;
+  document.getElementById('meteo-frase').textContent=m.frase||'Sin datos';
+
+  var badge='';
+  if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
+    badge=badgeHTML(m.alerta,m.alertaColor);
+  }
+  document.getElementById('meteo-badge-alerta').innerHTML=badge;
+
+  var tend='';
+  if(m.tendencia&&m.tendencia!=='Estable'&&m.tendencia!=='...'){
+    tend='<span style="font-size:.75rem">'+m.tendencia+'</span>';
+  }
+  document.getElementById('meteo-tend').innerHTML=tend;
+
+  var pres='';
+  if(m.presionQFF){
+    pres='<span style="font-size:.75rem;color:var(--muted)">'+
+         m.presionQFF.toFixed(0)+' hPa QFF</span>';
+  }
+  document.getElementById('meteo-presion').innerHTML=pres;
+}
+
+/* ── Previsión 24h ── */
+function renderPrev24(horas){
+  var el=document.getElementById('prev-24h');
+  if(!horas||!horas.length){
+    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsi&#243;n</div>';
+    return;
+  }
+  var html='';
+  horas.forEach(function(h,i){
+    var riesgo=h.lluvia_p>=40;
+    var esAhora=i===0;
+    html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
+    html+='<div class="ph-hora">'+(esAhora?'Ahora':h.hora)+'</div>';
+    html+='<div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div>';
+    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'&#8212;')+'&#176;</div>';
+    if(riesgo||h.lluvia>0){
+      html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
+      html+=(h.lluvia_p||0)+'%';
+      if(h.lluvia>0)html+=' '+h.lluvia.toFixed(1)+'mm';
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  el.innerHTML=html;
+}
+
+/* ── Reloj tick cada segundo ── */
+function tickClock(){
+  document.getElementById('clock').textContent=
+    new Date().toLocaleTimeString('es-ES');
+}
+tickClock();
+setInterval(tickClock,1000);
+
+/* ── Fetch ── */
+var dot=document.getElementById('conn-dot');
+var banner=document.getElementById('error-banner');
+
 async function load(){
-let r=await fetch(API);
-let d=await r.json();
+  try{
+    var res=await fetch(API,{cache:'no-store'});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var d=await res.json();
 
-set('ph',d.ph?.toFixed(2),pct(d.ph,R.ph));
-set('orp',Math.round(d.orp),pct(d.orp,R.orp));
-set('ppm',d.ppm?.toFixed(2),pct(d.ppm,R.ppm));
-set('temp',d.temp_agua?.toFixed(1),pct(d.temp_agua,R.temp));
+    banner.classList.remove('visible');
+    dot.className='conn-dot ok';
 
-document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
-document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
+    setCard('ph',  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
+    setCard('orp', d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
+    setCard('ppm', d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
+    setCard('temp',d.temp_agua!=null?d.temp_agua :0,(+(d.temp_agua||0)).toFixed(1));
 
-document.getElementById('val-condicion-txt').textContent=d.condicion_txt;
-document.getElementById('meteo-icon').textContent=icon(d.condicion_txt);
-document.getElementById('val-zambretti-txt').textContent=d.zambretti_txt;
+    var tamb=d.temp_ambiente!=null?d.temp_ambiente:null;
+    var hum=d.humedad!=null?d.humedad:null;
+    document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'&#8212;';
+    document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'&#8212;';
 
-alertCheck(d);
+    renderMeteo(d.meteo);
+    renderPrev24(d.meteo&&d.meteo.horas24?d.meteo.horas24:[]);
 
-document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
+    alertCheck(d);
+  }catch(err){
+    dot.className='conn-dot danger';
+    banner.classList.add('visible');
+    console.error('API error:',err);
+  }
 }
 
 load();
 setInterval(load,15000);
 
-if(location.search.includes('tv=1')){
-document.body.classList.add('tv');
-}
+if(location.search.includes('tv=1')){document.body.classList.add('tv');}
 </script>
-
 </body>
 </html>
