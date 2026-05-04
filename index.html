@@ -175,33 +175,40 @@ main{
 
 /* ===== MODO TV ===== */
 body.tv header{
-  flex-direction:column;
+  background:white;
+  border-bottom:1px solid var(--border);
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
   align-items:center;
-  justify-content:center;
-  padding:30px 40px 20px;
-  gap:10px;
-  border-bottom:2px solid var(--border);
+  flex-wrap:wrap;
 }
 
 body.tv .header-left{
-  flex-direction:column;
+   display:flex;
   align-items:center;
-  gap:10px;
+  gap:16px;
 }
 
-body.tv .logo{width:100px}
+body.tv .logo{width:140px}
+body.tv .logo img{width:100%}
 
 body.tv .header-title{
-  align-items:center;
-  text-align:center;
+ display:flex;
+  flex-direction:column;
 }
 
 body.tv .header-title-main{
-  font-size:1.8rem;
+  font-size:1rem;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.2;
 }
 
 body.tv .header-title-sub{
-  font-size:1rem;
+  font-size:0.7rem;
+  color:var(--muted);
+  font-weight:300;
 }
 
 body.tv .status-pill{
