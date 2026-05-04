@@ -274,8 +274,24 @@ function alertCheck(d){
 let bad = d.ph<6.5 || d.ph>7.8 || d.orp<600;
 document.getElementById('alert').style.display = bad?'block':'none';
 }
+function unirMeteo(condicion, zambretti){
+  let c = (condicion || '').toLowerCase();
+  let z = (zambretti || '').toLowerCase();
 
-async function load(){
+  let base = 'Tiempo estable';
+
+  // --- condición actual ---
+let meteoFinal = unirMeteo(d.condicion_txt, d.zambretti_txt);
+
+document.getElementById('val-condicion-txt').textContent = meteoFinal;
+  // --- tendencia ---
+  let tendencia = '';
+  if(z.includes('mejora')) tendencia = ' con tendencia a mejora';
+  else if(z.includes('empeora') || z.includes('inest')) tendencia = ' con empeoramiento';
+  else if(z.includes('estable')) tendencia = '';
+
+  return base + tendencia;
+}async function load(){
 let r=await fetch(API);
 let d=await r.json();
 
