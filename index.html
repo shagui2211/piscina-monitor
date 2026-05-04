@@ -9,71 +9,91 @@
 
 <style>
 :root{
+  --bg:#f5f7f6;
+  --surface:#ffffff;
+  --border:#dfe5e2;
+  --accent:#5f7f73;
   --text:#1f2a2a;
   --muted:#6b7c7a;
-  --card:rgba(255,255,255,0.85);
-  --border:rgba(255,255,255,0.3);
-  --accent:#5f7f73;
   --mono:'DM Mono', monospace;
   --sans:'Outfit', sans-serif;
 }
 
+*{box-sizing:border-box;margin:0;padding:0}
+
 body{
-  margin:0;
-  font-family:var(--sans);
+  background:var(--bg);
   color:var(--text);
-  transition: background 2s ease;
-  overflow-x:hidden;
+  font-family:var(--sans);
 }
 
-/* 🌈 BACKGROUND ANIMADO */
-body.sunny{background:linear-gradient(135deg,#fefcea,#f1da36);}
-body.cloudy{background:linear-gradient(135deg,#d7dde8,#757f9a);}
-body.rain{background:linear-gradient(135deg,#314755,#26a0da);}
-body.storm{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);}
-
-/* HEADER */
+/* HEADER (igual al tuyo) */
 header{
+  background:white;
+  border-bottom:1px solid var(--border);
+  padding:16px 24px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 24px;
-  background:rgba(255,255,255,0.7);
-  backdrop-filter:blur(10px);
-  position:sticky;
-  top:0;
+  flex-wrap:wrap;
 }
 
-.logo img{width:130px}
-
-#clock{
-  font-family:var(--mono);
-  font-size:1.4rem;
-}
-
-/* GRID */
-main{
-  padding:20px;
-  max-width:1100px;
-  margin:auto;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+.header-left{
+  display:flex;
+  align-items:center;
   gap:16px;
 }
 
-/* CARD ANIMADA */
+.logo{width:140px}
+.logo img{width:100%}
+
+.header-title-main{
+  font-size:1rem;
+  font-weight:600;
+}
+
+.header-title-sub{
+  font-size:0.7rem;
+  color:var(--muted);
+}
+
+.status-pill{
+  font-family:var(--mono);
+  font-size:0.8rem;
+  color:var(--muted);
+}
+
+/* LAYOUT */
+main{
+  max-width:960px;
+  margin:auto;
+  padding:20px;
+}
+
+.section-title{
+  font-size:0.7rem;
+  color:var(--muted);
+  margin:20px 0 10px;
+  text-transform:uppercase;
+}
+
+.grid-main{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;
+}
+
+/* CARD (MISMO DISEÑO + animación suave) */
 .card{
-  background:var(--card);
+  background:white;
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
-  backdrop-filter:blur(10px);
-  transform:translateY(20px);
+  border-radius:12px;
+  padding:16px;
+  position:relative;
+
   opacity:0;
-  animation:fadeIn 0.8s forwards;
+  transform:translateY(8px);
+  animation:fadeIn .5s ease forwards;
 }
 
 @keyframes fadeIn{
@@ -82,151 +102,206 @@ main{
 
 .card-value{
   font-family:var(--mono);
-  font-size:2.6rem;
+  font-size:2.2rem;
 }
 
 .card-label{
-  font-size:0.8rem;
+  font-size:0.7rem;
   color:var(--muted);
 }
 
-/* 🌤️ METEO */
-.meteo{
-  text-align:center;
-  padding:20px;
+/* BAR (igual pero más suave) */
+.bar-wrap{
+  height:4px;
+  background:var(--border);
+  margin-top:10px;
+  overflow:hidden;
+  border-radius:4px;
+}
+
+.bar-fill{
+  height:100%;
+  background:var(--accent);
+  transition:width .8s ease;
+}
+
+/* METEO MEJORADO SIN CAMBIAR DISEÑO */
+.meteo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
 }
 
 .meteo-icon{
-  font-size:5rem;
-  animation:float 3s ease-in-out infinite;
+  font-size:2rem;
 }
 
-@keyframes float{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-8px);}
-}
-
-/* 🚨 ALERTAS */
-#alert{
+/* ALERTA DISCRETA */
+.alert{
   position:fixed;
-  top:80px;
+  top:10px;
   left:50%;
   transform:translateX(-50%);
-  background:rgba(200,50,50,0.95);
+  background:#c94b4b;
   color:white;
-  padding:14px 24px;
-  border-radius:12px;
+  padding:10px 16px;
+  border-radius:8px;
   font-family:var(--mono);
+  font-size:0.8rem;
   display:none;
-  animation:pulse 1.5s infinite;
   z-index:999;
 }
 
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(255,0,0,0.5);}
-  70%{box-shadow:0 0 0 20px rgba(255,0,0,0);}
-  100%{box-shadow:0 0 0 0 rgba(255,0,0,0);}
-}
-
 /* FOOTER */
-footer{
+.footer{
   text-align:center;
+  margin-top:40px;
   font-size:0.7rem;
   color:var(--muted);
-  margin-top:40px;
+  font-family:var(--mono);
 }
+
+/* ===== TV MODE (NO TOCADO CASI) ===== */
+body.tv main{max-width:100%;padding:40px;}
+body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
+body.tv .card-value{font-size:4rem;}
+body.tv .card-label{font-size:1rem;}
+body.tv .bar-wrap,.card-unit{display:none;}
 </style>
 </head>
 
 <body>
 
-<div id="alert">⚠️ Parámetros fuera de rango</div>
+<div class="alert" id="alert">⚠ Parámetros fuera de rango</div>
 
 <header>
-  <div class="logo"><img src="assets/logo.png"></div>
-  <div id="clock">--:--:--</div>
+  <div class="header-left">
+    <div class="logo">
+      <img src="assets/logo.png">
+    </div>
+    <div>
+      <div class="header-title-main">Piscina Exterior</div>
+      <div class="header-title-sub">Somni Hotel & Suites</div>
+    </div>
+  </div>
+  <div class="status-pill" id="last-update">Conectando…</div>
 </header>
 
 <main>
 
-<div class="grid">
+<p class="section-title">Parámetros del agua</p>
 
-<div class="card"><div class="card-label">pH</div><div class="card-value" id="ph">—</div></div>
-<div class="card"><div class="card-label">ORP</div><div class="card-value" id="orp">—</div></div>
-<div class="card"><div class="card-label">Cloro</div><div class="card-value" id="ppm">—</div></div>
-<div class="card"><div class="card-label">Temp agua</div><div class="card-value" id="temp">—</div></div>
+<div class="grid-main">
+
+<div class="card">
+<div class="card-label">pH</div>
+<div class="card-value" id="val-ph">—</div>
+<div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
+</div>
+
+<div class="card">
+<div class="card-label">ORP</div>
+<div class="card-value" id="val-orp">—</div>
+<div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
+</div>
+
+<div class="card">
+<div class="card-label">Cloro</div>
+<div class="card-value" id="val-ppm">—</div>
+<div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
+</div>
+
+<div class="card">
+<div class="card-label">Temp agua</div>
+<div class="card-value" id="val-temp">—</div>
+<div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
+</div>
 
 </div>
 
-<div class="card meteo">
-  <div class="meteo-icon" id="icon">⛅</div>
-  <div id="weather">Sin datos</div>
+<p class="section-title">Ambiente</p>
+
+<div class="grid-main">
+<div class="card">
+<div class="card-label">Temp exterior</div>
+<div class="card-value" id="val-tamb">—</div>
 </div>
 
-<footer>Valentin Hotels & Resorts</footer>
+<div class="card">
+<div class="card-label">Humedad</div>
+<div class="card-value" id="val-hum">—</div>
+</div>
+</div>
+
+<p class="section-title">Meteorología</p>
+
+<div class="meteo-grid">
+<div class="card">
+<div class="meteo-icon" id="meteo-icon">⛅</div>
+<div id="val-condicion-txt">Sin datos</div>
+</div>
+
+<div class="card">
+<div id="val-zambretti-txt">Sin datos</div>
+</div>
+</div>
+
+<div class="footer">Valentin Hotels & Resorts</div>
 
 </main>
 
 <script>
 const API='https://control-piscinas.tailf7bca2.ts.net/api/piscina';
 
-function clock(){
-  document.getElementById('clock').textContent =
-    new Date().toLocaleTimeString('es-ES');
-}
-setInterval(clock,1000);clock();
+function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
+const R={ph:{min:6.5,max:8},orp:{min:600,max:750},ppm:{min:0,max:2.5},temp:{min:15,max:35}};
 
-/* 🌈 BACKGROUND CLIMA */
-function setBg(txt){
-  txt=(txt||'').toLowerCase();
-
-  document.body.className='';
-
-  if(txt.includes('sol'))document.body.classList.add('sunny');
-  else if(txt.includes('lluv'))document.body.classList.add('rain');
-  else if(txt.includes('torment'))document.body.classList.add('storm');
-  else document.body.classList.add('cloudy');
+function set(id,val,p){
+document.getElementById('val-'+id).textContent=val;
+document.getElementById('bar-'+id).style.width=p+'%';
 }
 
-/* 🌤️ ICONOS MEJORADOS */
-function icon(txt){
-  txt=(txt||'').toLowerCase();
-  if(txt.includes('sol'))return'☀️';
-  if(txt.includes('lluv'))return'🌧️';
-  if(txt.includes('torment'))return'⛈️';
-  if(txt.includes('nube'))return'☁️';
-  return'⛅';
+function icon(t){
+if(!t)return'⛅';
+t=t.toLowerCase();
+if(t.includes('lluv'))return'🌧️';
+if(t.includes('torment'))return'⛈️';
+if(t.includes('sol'))return'☀️';
+return'⛅';
 }
 
-/* 🚨 ALERTAS */
-function checkAlert(d){
-  let bad =
-    d.ph<6.5 || d.ph>7.8 ||
-    d.orp<600 ||
-    d.ppm>2;
-
-  document.getElementById('alert').style.display =
-    bad ? 'block':'none';
+function alertCheck(d){
+let bad = d.ph<6.5 || d.ph>7.8 || d.orp<600;
+document.getElementById('alert').style.display = bad?'block':'none';
 }
 
 async function load(){
 let r=await fetch(API);
 let d=await r.json();
 
-document.getElementById('ph').textContent=d.ph?.toFixed(2);
-document.getElementById('orp').textContent=Math.round(d.orp);
-document.getElementById('ppm').textContent=d.ppm?.toFixed(2);
-document.getElementById('temp').textContent=d.temp_agua?.toFixed(1);
+set('ph',d.ph?.toFixed(2),pct(d.ph,R.ph));
+set('orp',Math.round(d.orp),pct(d.orp,R.orp));
+set('ppm',d.ppm?.toFixed(2),pct(d.ppm,R.ppm));
+set('temp',d.temp_agua?.toFixed(1),pct(d.temp_agua,R.temp));
 
-document.getElementById('weather').textContent=d.condicion_txt;
-document.getElementById('icon').textContent=icon(d.condicion_txt);
+document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
+document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
 
-setBg(d.condicion_txt);
-checkAlert(d);
+document.getElementById('val-condicion-txt').textContent=d.condicion_txt;
+document.getElementById('meteo-icon').textContent=icon(d.condicion_txt);
+document.getElementById('val-zambretti-txt').textContent=d.zambretti_txt;
+
+alertCheck(d);
+
+document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
 }
 
 load();
 setInterval(load,15000);
+
+if(location.search.includes('tv=1')){
+document.body.classList.add('tv');
+}
 </script>
 
 </body>
