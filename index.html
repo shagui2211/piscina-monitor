@@ -2,566 +2,287 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Piscina Valentin Somni</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg:        #07111a;
-      --surface:   #0d1e2c;
-      --card:      #101f2e;
-      --border:    #172838;
-      --accent:    #00b4d8;
-      --accent2:   #0077a8;
-      --ok:        #22c55e;
-      --warn:      #f59e0b;
-      --danger:    #ef4444;
-      --text:      #e2eaf2;
-      --muted:     #5a7a94;
-      --mono:      'DM Mono', monospace;
-      --sans:      'Outfit', sans-serif;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Piscina Valentin</title>
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      min-height: 100vh;
-      padding: 0;
-    }
+<style>
+:root{
+  --bg:#f5f7f6;
+  --surface:#ffffff;
+  --card:#ffffff;
+  --border:#dfe5e2;
 
-    /* ── HEADER ── */
-    header {
-      background: linear-gradient(135deg, #07111a 0%, #0d1e2c 100%);
-      border-bottom: 1px solid var(--border);
-      padding: 20px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+  --accent:#5f7f73;
+  --accent2:#4e6a60;
 
-    .header-left { display: flex; align-items: center; gap: 14px; }
+  --ok:#5f7f73;
+  --warn:#c8a96a;
+  --danger:#c94b4b;
 
-    .logo {
-      width: 42px; height: 42px;
-      background: var(--accent);
-      border-radius: 10px;
-      display: grid; place-items: center;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
+  --text:#1f2a2a;
+  --muted:#6b7c7a;
 
-    header h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.2;
-    }
+  --mono:'DM Mono', monospace;
+  --sans:'Outfit', sans-serif;
+}
 
-    header h1 span {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 300;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-    }
+*{box-sizing:border-box;margin:0;padding:0}
 
-    .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--muted);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 12px;
-    }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+}
 
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--muted);
-      transition: background 0.4s;
-    }
-    .dot.ok     { background: var(--ok);     box-shadow: 0 0 6px var(--ok); }
-    .dot.warn   { background: var(--warn);   box-shadow: 0 0 6px var(--warn); }
-    .dot.danger { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+/* HEADER */
+header{
+  background:white;
+  border-bottom:1px solid var(--border);
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    /* ── LAYOUT ── */
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px 20px 60px;
-    }
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
 
-    /* ── GRID PRINCIPAL ── */
-    .grid-main {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
-    }
+.logo{
+  width:140px;
+}
+.logo img{
+  width:100%;
+}
 
-    /* ── CARD BASE ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px 16px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.2s;
-    }
-    .card:hover { transform: translateY(-2px); border-color: #243d52; }
+h1{
+  font-size:1.1rem;
+  font-weight:500;
+}
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--accent);
-      opacity: 0.35;
-      border-radius: 14px 14px 0 0;
-    }
-    .card.ok-card::before    { background: var(--ok);    opacity: 0.6; }
-    .card.warn-card::before  { background: var(--warn);  opacity: 0.6; }
-    .card.bad-card::before   { background: var(--danger);opacity: 0.6; }
+.status-pill{
+  font-family:var(--mono);
+  font-size:0.7rem;
+  color:var(--muted);
+}
 
-    .card-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
+/* LAYOUT */
+main{
+  max-width:960px;
+  margin:auto;
+  padding:20px;
+}
 
-    .card-value {
-      font-family: var(--mono);
-      font-size: 2.2rem;
-      font-weight: 500;
-      line-height: 1;
-      color: var(--text);
-      transition: color 0.3s;
-    }
-    .card-value.big { font-size: 2.6rem; }
+.section-title{
+  font-size:0.7rem;
+  color:var(--muted);
+  margin:20px 0 10px;
+  text-transform:uppercase;
+}
 
-    .card-unit {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+/* GRID */
+.grid-main{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;
+}
 
-    .card-range {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-top: 8px;
-      font-family: var(--mono);
-    }
+/* CARD */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  position:relative;
+  box-shadow:0 4px 12px rgba(0,0,0,0.04);
+}
 
-    /* ── BARRA DE PROGRESO ── */
-    .bar-wrap {
-      height: 4px;
-      background: var(--border);
-      border-radius: 4px;
-      margin-top: 12px;
-      overflow: hidden;
-    }
+.card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:var(--accent);
+  border-radius:12px 12px 0 0;
+  opacity:.4;
+}
 
-    .bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: var(--accent);
-      transition: width 0.7s ease, background 0.4s;
-    }
+.ok-card::before{background:var(--ok)}
+.warn-card::before{background:var(--warn)}
+.bad-card::before{background:var(--danger)}
 
-    /* ── SECCIÓN TÍTULOS ── */
-    .section-title {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 24px 0 10px;
-    }
+.card-label{
+  font-size:0.7rem;
+  color:var(--muted);
+  margin-bottom:6px;
+}
 
-    /* ── ESTADO ── */
-    .estado-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.card-value{
+  font-family:var(--mono);
+  font-size:2.2rem;
+}
 
-    .estado-icon { font-size: 1.5rem; flex-shrink: 0; }
+.card-unit{
+  font-size:0.8rem;
+  color:var(--muted);
+}
 
-    .estado-text {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.3;
-    }
+.bar-wrap{
+  height:4px;
+  background:var(--border);
+  margin-top:10px;
+  border-radius:4px;
+}
 
-    .estado-detail {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+.bar-fill{
+  height:100%;
+  background:var(--accent);
+}
 
-    /* ── AMBIENTE (2 columnas) ── */
-    .amb-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 10px;
-    }
+/* ESTADO */
+.estado-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  margin-top:10px;
+}
 
-    /* ── METEOROLOGÍA (2 columnas) ── */
-    .meteo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-top: 10px;
-    }
-
-    .meteo-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px 16px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.2s;
-    }
-    .meteo-card:hover { transform: translateY(-2px); border-color: #243d52; }
-    .meteo-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--accent);
-      opacity: 0.35;
-      border-radius: 14px 14px 0 0;
-    }
-    .meteo-card.ok-card::before   { background: var(--ok);    opacity: 0.6; }
-    .meteo-card.warn-card::before { background: var(--warn);  opacity: 0.6; }
-    .meteo-card.bad-card::before  { background: var(--danger);opacity: 0.6; }
-
-    .meteo-letra {
-      font-family: var(--mono);
-      font-size: 2.8rem;
-      font-weight: 700;
-      line-height: 1;
-      color: var(--accent);
-      margin-bottom: 8px;
-      transition: color 0.4s;
-    }
-
-    .meteo-icon {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
-    }
-
-    .meteo-txt {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    .meteo-sub {
-      font-size: 0.65rem;
-      color: var(--muted);
-      margin-top: 6px;
-      font-family: var(--mono);
-    }
-
-    /* ── ERROR BANNER ── */
-    .error-banner {
-      background: #1a0a0a;
-      border: 1px solid #3d1515;
-      border-radius: 10px;
-      padding: 16px 20px;
-      color: #f87171;
-      font-size: 0.8rem;
-      display: none;
-      margin-bottom: 18px;
-    }
-    .error-banner.visible { display: block; }
-
-    /* ── LOADING ── */
-    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
-    .loading .card-value { animation: pulse 1.5s ease-in-out infinite; }
-
-    #last-update { font-family: var(--mono); font-size: 0.7rem; }
-
-    /* ── FOOTER ── */
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 0.65rem;
-      color: var(--muted);
-      font-family: var(--mono);
-      line-height: 2;
-    }
-
-    @media (max-width: 500px) {
-      .amb-grid   { grid-template-columns: 1fr 1fr; }
-      .meteo-grid { grid-template-columns: 1fr; }
-      .card-value { font-size: 1.8rem; }
-    }
-  </style>
+/* FOOTER */
+.footer{
+  text-align:center;
+  margin-top:40px;
+  font-size:0.7rem;
+  color:var(--muted);
+  font-family:var(--mono);
+}
+</style>
 </head>
+
 <body>
 
 <header>
   <div class="header-left">
-    <div class="logo">🏊</div>
-    <h1>
-      Piscina Valentin Somni
-      <span>Monitor en tiempo real</span>
-    </h1>
+    <div class="logo">
+      <img src="assets/logo.png" alt="Valentin Hotels">
+    </div>
+    <h1>Piscina Valentin</h1>
   </div>
-  <div class="status-pill">
-    <div class="dot" id="conn-dot"></div>
-    <span id="last-update">Conectando…</span>
-  </div>
+  <div class="status-pill" id="last-update">Conectando…</div>
 </header>
 
 <main>
 
-  <!-- BANNER ERROR -->
-  <div class="error-banner" id="error-banner">
-    ⚠️ No se puede conectar con la API. Comprueba que Tailscale Funnel está activo.
-  </div>
+<p class="section-title">Parámetros del agua</p>
 
-  <!-- PARÁMETROS AGUA -->
-  <p class="section-title">Parámetros del agua</p>
-  <div class="grid-main loading" id="grid-agua">
+<div class="grid-main" id="grid-agua">
 
-    <div class="card" id="card-ph">
-      <div class="card-label">pH</div>
-      <div class="card-value big" id="val-ph">—</div>
-      <div class="card-unit">pH</div>
-      <div class="card-range" id="range-ph">SP: 7.2 – 7.6</div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ph" style="width:0%"></div></div>
-    </div>
+<div class="card" id="card-ph">
+  <div class="card-label">pH</div>
+  <div class="card-value" id="val-ph">—</div>
+  <div class="card-unit">pH</div>
+  <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
+</div>
 
-    <div class="card" id="card-orp">
-      <div class="card-label">ORP / Redox</div>
-      <div class="card-value" id="val-orp">—</div>
-      <div class="card-unit">mV</div>
-      <div class="card-range" id="range-orp">SP: 650 – 750 mV</div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-orp" style="width:0%"></div></div>
-    </div>
+<div class="card" id="card-orp">
+  <div class="card-label">ORP</div>
+  <div class="card-value" id="val-orp">—</div>
+  <div class="card-unit">mV</div>
+  <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
+</div>
 
-    <div class="card" id="card-ppm">
-      <div class="card-label">Cloro libre</div>
-      <div class="card-value" id="val-ppm">—</div>
-      <div class="card-unit">ppm</div>
-      <div class="card-range" id="range-ppm">SP: 0.5 – 2.0 ppm</div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ppm" style="width:0%"></div></div>
-    </div>
+<div class="card" id="card-ppm">
+  <div class="card-label">Cloro</div>
+  <div class="card-value" id="val-ppm">—</div>
+  <div class="card-unit">ppm</div>
+  <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
+</div>
 
-    <div class="card" id="card-temp">
-      <div class="card-label">Temperatura agua</div>
-      <div class="card-value" id="val-temp">—</div>
-      <div class="card-unit">°C</div>
-      <div class="card-range">Rango habitual: 20–32 °C</div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-temp" style="width:0%"></div></div>
-    </div>
+<div class="card" id="card-temp">
+  <div class="card-label">Temp agua</div>
+  <div class="card-value" id="val-temp">—</div>
+  <div class="card-unit">°C</div>
+  <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
+</div>
 
-  </div>
+</div>
 
-  <!-- ESTADO SISTEMA -->
-  <p class="section-title">Estado del sistema</p>
-  <div class="estado-card" id="estado-card">
-    <div class="estado-icon" id="estado-icon">⏳</div>
-    <div>
-      <div class="estado-text" id="estado-text">Cargando…</div>
-      <div class="estado-detail" id="estado-detail">Obteniendo datos de Node-RED</div>
-    </div>
-  </div>
+<p class="section-title">Ambiente</p>
 
-  <!-- AMBIENTE -->
-  <p class="section-title" style="margin-top:20px">Ambiente</p>
-  <div class="amb-grid">
-    <div class="card">
-      <div class="card-label">Temperatura exterior</div>
-      <div class="card-value" id="val-tamb">—</div>
-      <div class="card-unit">°C</div>
-    </div>
-    <div class="card">
-      <div class="card-label">Humedad relativa</div>
-      <div class="card-value" id="val-hum">—</div>
-      <div class="card-unit">%</div>
-    </div>
-  </div>
+<div class="grid-main">
+<div class="card">
+  <div class="card-label">Temp exterior</div>
+  <div class="card-value" id="val-tamb">—</div>
+  <div class="card-unit">°C</div>
+</div>
 
-  <!-- METEOROLOGÍA -->
-  <p class="section-title" style="margin-top:20px">Meteorología</p>
-  <div class="meteo-grid">
+<div class="card">
+  <div class="card-label">Humedad</div>
+  <div class="card-value" id="val-hum">—</div>
+  <div class="card-unit">%</div>
+</div>
+</div>
 
-    <div class="meteo-card" id="card-zambretti">
-      <div class="card-label">Pronóstico</div>
-      <div class="meteo-letra" id="val-zambretti-letra">—</div>
-      <div class="meteo-txt" id="val-zambretti-txt">Sin datos</div>
-      <div class="meteo-sub">Basado en presión y tendencia</div>
-    </div>
+<p class="section-title">Estado</p>
+<div class="estado-card">
+  <div id="estado-text">Cargando...</div>
+</div>
 
-    <div class="meteo-card" id="card-condicion">
-      <div class="card-label">Condición climática</div>
-      <div class="meteo-icon" id="val-condicion-icon">🌥️</div>
-      <div class="meteo-txt" id="val-condicion-txt">Sin datos</div>
-      <div class="meteo-sub" id="val-condicion-sub">—</div>
-    </div>
-
-  </div>
-
-  <div class="footer">
-    Piscina Valentin Somni Hotel & Suites<br>
-    Actualización automática cada 15 s
-  </div>
+<div class="footer">
+Valentin Hotels · Monitor piscina
+</div>
 
 </main>
 
 <script>
-  const API_URL = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
-  const INTERVAL_MS = 15_000;
+const API_URL='https://control-piscinas.tailf7bca2.ts.net/api/piscina';
+const INTERVAL=15000;
 
-  const RANGES = {
-    ph:   { min: 6.5, max: 8.0 },
-    orp:  { min: 600, max: 750 },
-    ppm:  { min: 0,   max: 2.5   },
-    temp: { min: 15,  max: 35  },
-  };
+const RANGES={
+ph:{min:6.5,max:8},
+orp:{min:600,max:750},
+ppm:{min:0,max:2.5},
+temp:{min:15,max:35}
+};
 
-  function pct(val, r) {
-    return Math.max(0, Math.min(100, (val - r.min) / (r.max - r.min) * 100));
-  }
-  function phStatus(v)  { return v >= 7.2 && v <= 7.6 ? 'ok' : v >= 7.0 && v <= 7.8 ? 'warn' : 'bad'; }
-  function orpStatus(v) { return v >= 640 && v <= 700 ? 'ok' : v >= 500 && v <= 800 ? 'warn' : 'bad'; }
-  function ppmStatus(v) { return v >= 0.5 && v <= 2.0 ? 'ok' : v >= 0.2 && v <= 2.5 ? 'warn' : 'bad'; }
+function pct(v,r){
+return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));
+}
 
-  function setCard(id, val, status, barPct) {
-    const card  = document.getElementById('card-' + id);
-    const valEl = document.getElementById('val-'  + id);
-    const barEl = document.getElementById('bar-'  + id);
-    card.className = 'card ' + status + '-card';
-    valEl.textContent = val;
-    valEl.style.color = status === 'ok' ? 'var(--ok)' : status === 'warn' ? 'var(--warn)' : 'var(--danger)';
-    if (barEl) {
-      barEl.style.width = barPct + '%';
-      barEl.style.background = status === 'ok' ? 'var(--ok)' : status === 'warn' ? 'var(--warn)' : 'var(--danger)';
-    }
-  }
+function setCard(id,val,p){
+document.getElementById('val-'+id).textContent=val;
+document.getElementById('bar-'+id).style.width=p+'%';
+}
 
-  function setEstado(estado, detalle) {
-    const s = (estado || '').toUpperCase();
-    let icon = '✅', color = 'var(--ok)';
-    if (s.includes('ALARM') || s.includes('FALLO') || s.includes('ERROR')) { icon = '🚨'; color = 'var(--danger)'; }
-    else if (s.includes('STANDBY') || s.includes('ESPERA') || s.includes('AJUST')) { icon = '⚙️'; color = 'var(--warn)'; }
-    document.getElementById('estado-icon').textContent   = icon;
-    document.getElementById('estado-text').textContent   = estado  || 'OK';
-    document.getElementById('estado-detail').textContent = detalle || '';
-    document.getElementById('estado-text').style.color   = color;
-  }
+async function fetchData(){
+try{
+const res=await fetch(API_URL);
+const d=await res.json();
 
-  function iconoCondicion(desc) {
-    if (!desc) return '🌥️';
-    const d = desc.toLowerCase();
-    if (d.includes('tormenta'))                          return '⛈️';
-    if (d.includes('lluvia'))                            return '🌧️';
-    if (d.includes('niebla') || d.includes('bruma'))     return '🌫️';
-    if (d.includes('estratos') || d.includes('nublado')) return '☁️';
-    if (d.includes('nubes'))                             return '⛅';
-    if (d.includes('parcial'))                           return '⛅';
-    if (d.includes('despejado') || d.includes('sol'))    return '☀️';
-    return '🌥️';
-  }
+setCard('ph',d.ph?.toFixed(2),pct(d.ph,RANGES.ph));
+setCard('orp',Math.round(d.orp),pct(d.orp,RANGES.orp));
+setCard('ppm',d.ppm?.toFixed(2),pct(d.ppm,RANGES.ppm));
+setCard('temp',d.temp_agua?.toFixed(1),pct(d.temp_agua,RANGES.temp));
 
-  function colorZambretti(color) {
-    if (color === 'ok')     return 'var(--ok)';
-    if (color === 'warn')   return 'var(--warn)';
-    if (color === 'danger') return 'var(--danger)';
-    return 'var(--accent)';
-  }
+document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
+document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
 
-  function updateUI(d) {
-    document.getElementById('grid-agua').classList.remove('loading');
+document.getElementById('estado-text').textContent=d.estado||'OK';
 
-    const ph   = parseFloat(d.ph  ?? 0);
-    const orp  = parseFloat(d.orp ?? 0);
-    const ppm  = parseFloat(d.ppm ?? 0);
-    const temp = parseFloat(d.temp_agua ?? 0);
+document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
 
-    setCard('ph',   ph.toFixed(2),    phStatus(ph),   pct(ph,   RANGES.ph));
-    setCard('orp',  Math.round(orp),  orpStatus(orp), pct(orp,  RANGES.orp));
-    setCard('ppm',  ppm.toFixed(2),   ppmStatus(ppm), pct(ppm,  RANGES.ppm));
-    setCard('temp', temp.toFixed(1),  temp >= 20 && temp <= 32 ? 'ok' : 'warn', pct(temp, RANGES.temp));
+}catch(e){
+document.getElementById('last-update').textContent='Error conexión';
+}
+}
 
-    // Ambiente
-    const tamb = d.temp_ambiente ?? null;
-    const hum  = d.humedad ?? null;
-    document.getElementById('val-tamb').textContent = tamb != null ? parseFloat(tamb).toFixed(1) : '—';
-    document.getElementById('val-hum').textContent  = hum  != null ? parseFloat(hum).toFixed(1)  : '—';
-
-    // Estado sistema
-    setEstado(d.estado, d.detalle);
-
-    // Setpoints dinámicos
-    if (d.sp_ph_min  && d.sp_ph_max)  document.getElementById('range-ph').textContent  = `SP: ${d.sp_ph_min} – ${d.sp_ph_max}`;
-    if (d.sp_orp_min && d.sp_orp_max) document.getElementById('range-orp').textContent = `SP: ${d.sp_orp_min} – ${d.sp_orp_max} mV`;
-
-    // Zambretti
-    const zbLetra = d.zambretti_letra ?? '—';
-    const zbTxt   = d.zambretti_txt   ?? 'Sin datos';
-    const zbColor = d.zambretti_color ?? 'off';
-    const letraEl = document.getElementById('val-zambretti-letra');
-    letraEl.textContent  = zbLetra;
-    letraEl.style.color  = colorZambretti(zbColor);
-    document.getElementById('val-zambretti-txt').textContent = zbTxt;
-
-    // Condición climática
-    const condTxt = d.condicion_txt ?? 'Sin datos';
-    const condSub = d.condicion_sub ?? '—';
-    document.getElementById('val-condicion-icon').textContent = iconoCondicion(condTxt);
-    document.getElementById('val-condicion-txt').textContent  = condTxt;
-    document.getElementById('val-condicion-sub').textContent  = condSub;
-  }
-
-  async function fetchData() {
-    const dot    = document.getElementById('conn-dot');
-    const upd    = document.getElementById('last-update');
-    const banner = document.getElementById('error-banner');
-    try {
-      const res  = await fetch(API_URL, { cache: 'no-store' });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      banner.classList.remove('visible');
-      dot.className   = 'dot ok';
-      upd.textContent = new Date().toLocaleTimeString('es-ES');
-      updateUI(data);
-    } catch (err) {
-      dot.className   = 'dot danger';
-      upd.textContent = 'Error · ' + new Date().toLocaleTimeString('es-ES');
-      banner.classList.add('visible');
-      console.error('API error:', err);
-    }
-  }
-
-  fetchData();
-  setInterval(fetchData, INTERVAL_MS);
+fetchData();
+setInterval(fetchData,INTERVAL);
 </script>
+
 </body>
 </html>
