@@ -1,308 +1,150 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Piscina Exterior</title>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
-
-<style>
-:root{
-  --bg:#f5f7f6;
-  --surface:#ffffff;
-  --border:#dfe5e2;
-  --accent:#5f7f73;
-  --text:#1f2a2a;
-  --muted:#6b7c7a;
-  --mono:'DM Mono', monospace;
-  --sans:'Outfit', sans-serif;
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
-}
-
-/* HEADER (igual al tuyo) */
-header{
-  background:white;
-  border-bottom:1px solid var(--border);
-  padding:16px 24px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.logo{width:140px}
-.logo img{width:100%}
-
-.header-title-main{
-  font-size:1rem;
-  font-weight:600;
-}
-
-.header-title-sub{
-  font-size:0.7rem;
-  color:var(--muted);
-}
-
-.status-pill{
-  font-family:var(--mono);
-  font-size:0.8rem;
-  color:var(--muted);
-}
-
-/* LAYOUT */
-main{
-  max-width:960px;
-  margin:auto;
-  padding:20px;
-}
-
-.section-title{
-  font-size:0.7rem;
-  color:var(--muted);
-  margin:20px 0 10px;
-  text-transform:uppercase;
-}
-
-.grid-main{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:14px;
-}
-
-/* CARD (MISMO DISEÑO + animación suave) */
-.card{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
-  position:relative;
-
-  opacity:0;
-  transform:translateY(8px);
-  animation:fadeIn .5s ease forwards;
-}
-
-@keyframes fadeIn{
-  to{opacity:1; transform:translateY(0);}
-}
-
-.card-value{
-  font-family:var(--mono);
-  font-size:2.2rem;
-}
-
-.card-label{
-  font-size:0.7rem;
-  color:var(--muted);
-}
-
-/* BAR (igual pero más suave) */
-.bar-wrap{
-  height:4px;
-  background:var(--border);
-  margin-top:10px;
-  overflow:hidden;
-  border-radius:4px;
-}
-
-.bar-fill{
-  height:100%;
-  background:var(--accent);
-  transition:width .8s ease;
-}
-
-/* METEO MEJORADO SIN CAMBIAR DISEÑO */
-.meteo-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
-
-.meteo-icon{
-  font-size:2rem;
-}
-
-/* ALERTA DISCRETA */
-.alert{
-  position:fixed;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#c94b4b;
-  color:white;
-  padding:10px 16px;
-  border-radius:8px;
-  font-family:var(--mono);
-  font-size:0.8rem;
-  display:none;
-  z-index:999;
-}
-
-/* FOOTER */
-.footer{
-  text-align:center;
-  margin-top:40px;
-  font-size:0.7rem;
-  color:var(--muted);
-  font-family:var(--mono);
-}
-
-/* ===== TV MODE (NO TOCADO CASI) ===== */
-body.tv main{max-width:100%;padding:40px;}
-body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
-body.tv .card-value{font-size:4rem;}
-body.tv .card-label{font-size:1rem;}
-body.tv .bar-wrap,.card-unit{display:none;}
-</style>
-</head>
-
-<body>
-
-<div class="alert" id="alert">⚠ Parámetros fuera de rango</div>
-
-<header>
-  <div class="header-left">
-    <div class="logo">
-      <img src="assets/logo.png">
-    </div>
-    <div>
-      <div class="header-title-main">Piscina Exterior</div>
-      <div class="header-title-sub">Somni Hotel & Suites</div>
-    </div>
-  </div>
-  <div class="status-pill" id="last-update">Conectando…</div>
-</header>
-
-<main>
-
-<p class="section-title">Parámetros del agua</p>
-
-<div class="grid-main">
-
-<div class="card">
-<div class="card-label">pH</div>
-<div class="card-value" id="val-ph">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">ORP</div>
-<div class="card-value" id="val-orp">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">Cloro</div>
-<div class="card-value" id="val-ppm">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
-</div>
-
-<div class="card">
-<div class="card-label">Temp agua</div>
-<div class="card-value" id="val-temp">—</div>
-<div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
-</div>
-
-</div>
-
-<p class="section-title">Ambiente</p>
-
-<div class="grid-main">
-<div class="card">
-<div class="card-label">Temp exterior</div>
-<div class="card-value" id="val-tamb">—</div>
-</div>
-
-<div class="card">
-<div class="card-label">Humedad</div>
-<div class="card-value" id="val-hum">—</div>
-</div>
-</div>
-
-<p class="section-title">Meteorología</p>
-
-<div class="meteo-grid">
-<div class="card">
-<div class="meteo-icon" id="meteo-icon">⛅</div>
-<div id="val-condicion-txt">Sin datos</div>
-</div>
-
-<div class="card">
-<div id="val-zambretti-txt">Sin datos</div>
-</div>
-</div>
-
-<div class="footer">Valentin Hotels & Resorts</div>
-
-</main>
-
 <script>
 const API='https://control-piscinas.tailf7bca2.ts.net/api/piscina';
 
-function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
-const R={ph:{min:6.5,max:8},orp:{min:600,max:750},ppm:{min:0,max:2.5},temp:{min:15,max:35}};
+/* =========================
+   UTILIDADES BÁSICAS
+========================= */
+
+function pct(v,r){
+  return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));
+}
+
+const R = {
+  ph:{min:6.5,max:8},
+  orp:{min:600,max:750},
+  ppm:{min:0,max:2.5},
+  temp:{min:15,max:35}
+};
 
 function set(id,val,p){
-document.getElementById('val-'+id).textContent=val;
-document.getElementById('bar-'+id).style.width=p+'%';
+  const v = document.getElementById('val-'+id);
+  const b = document.getElementById('bar-'+id);
+  if(v) v.textContent = val ?? '—';
+  if(b) b.style.width = (p || 0) + '%';
 }
 
-function icon(t){
-if(!t)return'⛅';
-t=t.toLowerCase();
-if(t.includes('lluv'))return'🌧️';
-if(t.includes('torment'))return'⛈️';
-if(t.includes('sol'))return'☀️';
-return'⛅';
+/* =========================
+   RELOJ
+========================= */
+
+function clock(){
+  document.getElementById('last-update').textContent =
+    new Date().toLocaleTimeString('es-ES');
+}
+setInterval(clock,1000);
+
+/* =========================
+   METEOROLOGÍA UNIFICADA
+========================= */
+
+function unirMeteo(condicion, zambretti){
+  const c = (condicion || '').toLowerCase();
+  const z = (zambretti || '').toLowerCase();
+
+  let base = 'Tiempo estable';
+
+  // Estado actual
+  if(c.includes('despej')) base = 'Cielos despejados';
+  else if(c.includes('nube')) base = 'Parcialmente nublado';
+  else if(c.includes('lluv')) base = 'Lluvia';
+  else if(c.includes('torment')) base = 'Tormenta';
+
+  // Tendencia (Zambretti)
+  let tendencia = '';
+
+  if(z.includes('mejora')) tendencia = ' con tendencia a mejora';
+  else if(z.includes('empeora') || z.includes('inest')) tendencia = ' con empeoramiento';
+  else if(z.includes('estable')) tendencia = '';
+
+  return base + tendencia;
 }
 
-function alertCheck(d){
-let bad = d.ph<6.5 || d.ph>7.8 || d.orp<600;
-document.getElementById('alert').style.display = bad?'block':'none';
+/* =========================
+   ICONO METEO
+========================= */
+
+function icono(txt){
+  txt = (txt || '').toLowerCase();
+  if(txt.includes('lluv')) return '🌧️';
+  if(txt.includes('torment')) return '⛈️';
+  if(txt.includes('despej')) return '☀️';
+  if(txt.includes('nube')) return '⛅';
+  return '🌤️';
 }
+
+/* =========================
+   ALERTAS CRÍTICAS
+========================= */
+
+function checkAlert(d){
+  const bad =
+    (d.ph && (d.ph < 6.5 || d.ph > 7.8)) ||
+    (d.orp && d.orp < 600) ||
+    (d.ppm && d.ppm > 2.0);
+
+  const alert = document.getElementById('alert');
+  if(alert){
+    alert.style.display = bad ? 'block' : 'none';
+  }
+}
+
+/* =========================
+   CARGA DATOS
+========================= */
 
 async function load(){
-let r=await fetch(API);
-let d=await r.json();
+  try{
+    const r = await fetch(API);
+    const d = await r.json();
 
-set('ph',d.ph?.toFixed(2),pct(d.ph,R.ph));
-set('orp',Math.round(d.orp),pct(d.orp,R.orp));
-set('ppm',d.ppm?.toFixed(2),pct(d.ppm,R.ppm));
-set('temp',d.temp_agua?.toFixed(1),pct(d.temp_agua,R.temp));
+    // Agua
+    set('ph', d.ph?.toFixed(2), pct(d.ph, R.ph));
+    set('orp', Math.round(d.orp), pct(d.orp, R.orp));
+    set('ppm', d.ppm?.toFixed(2), pct(d.ppm, R.ppm));
+    set('temp', d.temp_agua?.toFixed(1), pct(d.temp_agua, R.temp));
 
-document.getElementById('val-tamb').textContent=d.temp_ambiente?.toFixed(1);
-document.getElementById('val-hum').textContent=d.humedad?.toFixed(1);
+    // Ambiente
+    document.getElementById('val-tamb').textContent =
+      d.temp_ambiente?.toFixed(1) ?? '—';
 
-document.getElementById('val-condicion-txt').textContent=d.condicion_txt;
-document.getElementById('meteo-icon').textContent=icon(d.condicion_txt);
-document.getElementById('val-zambretti-txt').textContent=d.zambretti_txt;
+    document.getElementById('val-hum').textContent =
+      d.humedad?.toFixed(1) ?? '—';
 
-alertCheck(d);
+    // METEOROLOGÍA UNIFICADA (AQUÍ ESTÁ LA CLAVE)
+    const meteo = unirMeteo(d.condicion_txt, d.zambretti_txt);
 
-document.getElementById('last-update').textContent=new Date().toLocaleTimeString('es-ES');
+    const meteoTxt = document.getElementById('val-condicion-txt');
+    if(meteoTxt) meteoTxt.textContent = meteo;
+
+    const icon = document.getElementById('meteo-icon');
+    if(icon) icon.textContent = icono(d.condicion_txt);
+
+    // Alertas
+    checkAlert(d);
+
+    // Last update
+    document.getElementById('last-update').textContent =
+      new Date().toLocaleTimeString('es-ES');
+
+  }catch(e){
+    document.getElementById('last-update').textContent =
+      'Error conexión';
+  }
 }
+
+/* =========================
+   INICIO
+========================= */
 
 load();
 setInterval(load,15000);
 
+/* =========================
+   MODO TV
+========================= */
+
 if(location.search.includes('tv=1')){
-document.body.classList.add('tv');
+  document.body.classList.add('tv');
 }
 </script>
-
-</body>
 </html>
