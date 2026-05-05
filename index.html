@@ -41,6 +41,13 @@ main{max-width:960px;margin:auto;padding:20px;}
 .legal-zone{position:absolute;top:0;height:100%;background:rgba(61,122,90,.18);border-radius:4px;z-index:1;transition:left .5s,width .5s;}
 .legal-label{font-size:0.58rem;color:var(--muted);margin-top:4px;font-family:var(--mono);display:flex;justify-content:space-between;}
 
+/* ── AMBIENTE + METEO EN FILA ── */
+.ambiente-meteo-row{display:flex;gap:20px;align-items:flex-start;}
+.ambiente-col{flex:0 0 auto;}
+.ambiente-grid{grid-template-columns:repeat(3,minmax(160px,1fr));}
+.meteo-col{flex:1;min-width:0;}
+.meteo-col .meteo-card{height:calc(100% - 38px);}
+
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
 @media(max-width:600px){.prev7-grid{grid-template-columns:repeat(4,1fr);}}
@@ -189,33 +196,38 @@ body.tv .lang-indicator{
     </div>
   </div>
 
-  <p class="section-title" data-i18n="sec_ambiente">Ambiente</p>
-  <div class="grid-main">
-    <div class="card">
-      <div class="card-label" data-i18n="lbl_tamb">Temp exterior</div>
-      <div class="card-value-row"><span class="card-value" id="val-tamb">&#8212;</span><span class="card-unit">&#176;C</span></div>
+  <div class="ambiente-meteo-row">
+    <div class="ambiente-col">
+      <p class="section-title" data-i18n="sec_ambiente">Ambiente</p>
+      <div class="grid-main ambiente-grid">
+        <div class="card">
+          <div class="card-label" data-i18n="lbl_tamb">Temp exterior</div>
+          <div class="card-value-row"><span class="card-value" id="val-tamb">&#8212;</span><span class="card-unit">&#176;C</span></div>
+        </div>
+        <div class="card">
+          <div class="card-label" data-i18n="lbl_hum">Humedad relativa</div>
+          <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
+        </div>
+        <div class="card">
+          <div class="card-label" data-i18n="lbl_st">Sensaci&#243;n t&#233;rmica</div>
+          <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span></div>
+          <div class="card-st-label" id="st-label"></div>
+        </div>
+      </div>
     </div>
-    <div class="card">
-      <div class="card-label" data-i18n="lbl_hum">Humedad relativa</div>
-      <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
-    </div>
-    <div class="card">
-      <div class="card-label" data-i18n="lbl_st">Sensaci&#243;n t&#233;rmica</div>
-      <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span></div>
-      <div class="card-st-label" id="st-label"></div>
-    </div>
-  </div>
-
-  <!-- METEOROLOGÍA UNIFICADA -->
-  <p class="section-title" data-i18n="sec_condicion">Condici&#243;n actual</p>
-  <div class="meteo-card">
-    <div style="display:flex;align-items:center;gap:14px;">
-      <div id="meteo-icon" style="font-size:2.4rem;line-height:1;flex-shrink:0;"></div>
-      <div style="flex:1;">
-        <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
-        <div class="meteo-sub">
-          <span id="meteo-badge-alerta"></span>
-          <span id="meteo-tend"></span>
+    <!-- METEOROLOGÍA UNIFICADA -->
+    <div class="meteo-col">
+      <p class="section-title" data-i18n="sec_condicion">Condici&#243;n actual</p>
+      <div class="meteo-card">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div id="meteo-icon" style="font-size:2.4rem;line-height:1;flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
+            <div class="meteo-sub">
+              <span id="meteo-badge-alerta"></span>
+              <span id="meteo-tend"></span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
