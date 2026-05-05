@@ -98,6 +98,15 @@ body.tv .header-title-sub { font-size: 1.1rem; }
 body.tv .status-pill { grid-column: 3; justify-self: end; font-size: 4.5rem; font-weight: 600; gap: 20px; }
 body.tv .conn-dot { width: 20px; height: 20px; }
 
+
+/* ── TV LANGUAGE TRANSITION ── */
+.lang-fade{transition:opacity .5s ease;}
+.lang-fade.hiding{opacity:0;}
+body.tv .lang-indicator{
+  position:fixed;bottom:18px;right:24px;
+  font-family:var(--mono);font-size:0.75rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;opacity:.5;
+}
 </style>
 </head>
 <body>
@@ -109,7 +118,7 @@ body.tv .conn-dot { width: 20px; height: 20px; }
   <div class="header-left">
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
     <div>
-      <div class="header-title-main">Piscina Exterior</div>
+      <div class="header-title-main" data-i18n="title">Piscina Exterior</div>
       <div class="header-title-sub">Somni Hotel &amp; Suites</div>
     </div>
   </div>
@@ -125,49 +134,49 @@ body.tv .conn-dot { width: 20px; height: 20px; }
     Comprueba que Node-RED y Tailscale Funnel est&#225;n activos.
   </div>
 
-  <p class="section-title">Par&#225;metros del agua</p>
+  <p class="section-title" data-i18n="sec_agua">Par&#225;metros del agua</p>
   <div class="grid-main">
     <div class="card" id="card-ph">
-      <div class="card-label">pH</div>
+      <div class="card-label" data-i18n="lbl_ph">pH</div>
       <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
     </div>
     <div class="card" id="card-orp">
-      <div class="card-label">ORP / Redox</div>
+      <div class="card-label" data-i18n="lbl_orp">ORP / Redox</div>
       <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
     </div>
     <div class="card" id="card-ppm">
-      <div class="card-label">Cloro libre</div>
+      <div class="card-label" data-i18n="lbl_ppm">Cloro libre</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">ppm</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
     </div>
     <div class="card" id="card-temp">
-      <div class="card-label">Temp agua piscina</div>
+      <div class="card-label" data-i18n="lbl_temp">Temp agua piscina</div>
       <div class="card-value-row"><span class="card-value" id="val-temp">&#8212;</span><span class="card-unit">&#176;C</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
     </div>
   </div>
 
-  <p class="section-title">Ambiente</p>
+  <p class="section-title" data-i18n="sec_ambiente">Ambiente</p>
   <div class="grid-main">
     <div class="card">
-      <div class="card-label">Temp exterior</div>
+      <div class="card-label" data-i18n="lbl_tamb">Temp exterior</div>
       <div class="card-value-row"><span class="card-value" id="val-tamb">&#8212;</span><span class="card-unit">&#176;C</span></div>
     </div>
     <div class="card">
-      <div class="card-label">Humedad relativa</div>
+      <div class="card-label" data-i18n="lbl_hum">Humedad relativa</div>
       <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
     </div>
     <div class="card">
-      <div class="card-label">Sensaci&#243;n t&#233;rmica</div>
+      <div class="card-label" data-i18n="lbl_st">Sensaci&#243;n t&#233;rmica</div>
       <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span></div>
       <div class="card-st-label" id="st-label"></div>
     </div>
   </div>
 
   <!-- METEOROLOGÍA UNIFICADA -->
-  <p class="section-title">Condici&#243;n actual</p>
+  <p class="section-title" data-i18n="sec_condicion">Condici&#243;n actual</p>
   <div class="meteo-card">
     <div style="display:flex;align-items:center;gap:14px;">
       <div id="meteo-icon" style="font-size:2.4rem;line-height:1;flex-shrink:0;"></div>
@@ -182,16 +191,137 @@ body.tv .conn-dot { width: 20px; height: 20px; }
   </div>
 
   <!-- PREVISIÓN 24H -->
-  <p class="section-title">Previsi&#243;n pr&#243;ximas 24 h</p>
+  <p class="section-title" data-i18n="sec_prevision">Previsi&#243;n pr&#243;ximas 24 h</p>
   <div class="prev-scroll" id="prev-24h">
     <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsi&#243;n&#8230;</div>
   </div>
 
   <div class="footer">Valentin Hotels &amp; Resorts</div>
+<div class="lang-indicator" id="lang-indicator"></div>
 </main>
 
 <script>
 var API = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
+
+/* ══════════════════════════════════════════════════════════════
+   INTERNACIONALIZACIÓN — solo activa en modo TV
+   Idiomas: es → en → de → es → ...
+   ══════════════════════════════════════════════════════════════ */
+var LANGS = ['es','en','de'];
+var langIdx = 0;
+var currentLang = 'es';
+var isTvMode = false;
+
+var I18N = {
+  es: {
+    title:         'Piscina Exterior',
+    sec_agua:      'Parámetros del agua',
+    sec_ambiente:  'Ambiente',
+    sec_condicion: 'Condición actual',
+    sec_prevision: 'Previsión próximas 24 h',
+    lbl_ph:        'pH',
+    lbl_orp:       'ORP / Redox',
+    lbl_ppm:       'Cloro libre',
+    lbl_temp:      'Temp agua piscina',
+    lbl_tamb:      'Temp exterior',
+    lbl_hum:       'Humedad relativa',
+    lbl_st:        'Sensación térmica',
+    ahora:         'Ahora',
+    st_labels:     ['Peligroso','Muy caluroso','Caluroso','Cómodo','Agradable','Fresco','Frío'],
+    clock12:       false,
+    locale:        'es-ES',
+    loading:       'Cargando…',
+    no_prev:       'Sin datos de previsión',
+    error_conn:    'Error de conexión — No se puede contactar con la API.',
+    error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
+    alert_txt:     '⚠ Parámetros fuera de rango',
+  },
+  en: {
+    title:         'Outdoor Pool',
+    sec_agua:      'Water parameters',
+    sec_ambiente:  'Environment',
+    sec_condicion: 'Current condition',
+    sec_prevision: 'Next 24 h forecast',
+    lbl_ph:        'pH',
+    lbl_orp:       'ORP / Redox',
+    lbl_ppm:       'Free chlorine',
+    lbl_temp:      'Pool water temp',
+    lbl_tamb:      'Outdoor temp',
+    lbl_hum:       'Relative humidity',
+    lbl_st:        'Feels like',
+    ahora:         'Now',
+    st_labels:     ['Dangerous','Very hot','Hot','Comfortable','Pleasant','Cool','Cold'],
+    clock12:       true,
+    locale:        'en-US',
+    loading:       'Loading…',
+    no_prev:       'No forecast data',
+    error_conn:    'Connection error — Cannot reach the API.',
+    error_check:   'Check that Node-RED and Tailscale Funnel are active.',
+    alert_txt:     '⚠ Parameters out of range',
+  },
+  de: {
+    title:         'Außenpool',
+    sec_agua:      'Wasserparameter',
+    sec_ambiente:  'Umgebung',
+    sec_condicion: 'Aktuelle Bedingung',
+    sec_prevision: 'Vorschau nächste 24 Std.',
+    lbl_ph:        'pH',
+    lbl_orp:       'ORP / Redox',
+    lbl_ppm:       'Freies Chlor',
+    lbl_temp:      'Wassertemperatur',
+    lbl_tamb:      'Außentemperatur',
+    lbl_hum:       'Relative Luftfeuchte',
+    lbl_st:        'Gefühlte Temperatur',
+    ahora:         'Jetzt',
+    st_labels:     ['Gefährlich','Sehr heiß','Heiß','Angenehm','Schön','Kühl','Kalt'],
+    clock12:       false,
+    locale:        'de-DE',
+    loading:       'Lädt…',
+    no_prev:       'Keine Vorschaudaten',
+    error_conn:    'Verbindungsfehler — API nicht erreichbar.',
+    error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
+    alert_txt:     '⚠ Parameter außerhalb des Bereichs',
+  }
+};
+
+function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
+
+function applyLang(){
+  var L = I18N[currentLang] || I18N.es;
+  // Static i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    if(L[key] !== undefined) el.textContent = L[key];
+  });
+  // Language indicator badge (TV only)
+  var ind = document.getElementById('lang-indicator');
+  if(ind) ind.textContent = isTvMode ? currentLang.toUpperCase() : '';
+  // Re-render st-label with current language
+  var stLbl = document.getElementById('st-label');
+  if(stLbl && stLbl.dataset.stIdx !== undefined){
+    stLbl.textContent = L.st_labels[+stLbl.dataset.stIdx] || '';
+  }
+  // Re-render prev-24h "Ahora" label
+  var ahora = document.querySelector('.prev-hora.ahora .ph-hora');
+  if(ahora) ahora.textContent = L.ahora;
+}
+
+/* Crossfade transition for TV language switch */
+function switchLang(){
+  if(!isTvMode) return;
+  var fadeEls = document.querySelectorAll('.lang-fade');
+  // fade out
+  fadeEls.forEach(function(el){ el.classList.add('hiding'); });
+  setTimeout(function(){
+    langIdx = (langIdx + 1) % LANGS.length;
+    currentLang = LANGS[langIdx];
+    applyLang();
+    // fade in
+    fadeEls.forEach(function(el){ el.classList.remove('hiding'); });
+  }, 500);
+}
+
+/* ══════════════════════════════════════════════════════════════ */
 
 var R = {
   ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
@@ -223,10 +353,12 @@ function alertCheck(d){
   var bad=(d.ph!=null&&semaforo(d.ph,R.ph)==='bad')||
           (d.orp!=null&&semaforo(d.orp,R.orp)==='bad')||
           (d.ppm!=null&&semaforo(d.ppm,R.ppm)==='bad');
-  document.getElementById('alert').style.display=bad?'block':'none';
+  var alertEl = document.getElementById('alert');
+  alertEl.textContent = t('alert_txt');
+  alertEl.style.display=bad?'block':'none';
 }
 
-/* ── Meteorología unificada ── */
+/* ── Meteorología ── */
 function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
   return '<span class="'+cls+'">'+text+'</span>';
@@ -236,7 +368,6 @@ function renderMeteo(m){
   if(!m)return;
   document.getElementById('meteo-frase').textContent=m.frase||'Sin datos';
 
-  // Icono WMO de la hora actual de la previsión (si disponible)
   var horas=m.prevision24||m.horas24||[];
   var iconEl=document.getElementById('meteo-icon');
   if(iconEl){
@@ -261,18 +392,18 @@ function renderMeteo(m){
 function renderPrev24(horas){
   var el=document.getElementById('prev-24h');
   if(!horas||!horas.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsi\u00f3n</div>';
+    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">'+t('no_prev')+'</div>';
     return;
   }
   var html='';
   horas.forEach(function(h,i){
     var riesgo=(h.lluvia_p||0)>=40;
     var esAhora=i===0;
-    var icon=(h.wmo&&h.wmo.icon)?h.wmo.icon:'\u26C5';
+    var icon=(h.wmo&&h.wmo.icon)?h.wmo.icon:'⛅';
     html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
-    html+='<div class="ph-hora">'+(esAhora?'Ahora':h.hora)+'</div>';
+    html+='<div class="ph-hora">'+(esAhora?t('ahora'):h.hora)+'</div>';
     html+='<div class="ph-icon">'+icon+'</div>';
-    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'\u2014')+'\u00b0</div>';
+    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
     if(riesgo||h.lluvia>0){
       html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
       html+=(h.lluvia_p||0)+'%';
@@ -284,23 +415,29 @@ function renderPrev24(horas){
   el.innerHTML=html;
 }
 
-/* ── Reloj tick cada segundo ── */
+/* ── Reloj ── */
 function tickClock(){
-  document.getElementById('clock').textContent=
-    new Date().toLocaleTimeString('es-ES');
+  var L = I18N[currentLang] || I18N.es;
+  var opts = L.clock12
+    ? {hour:'numeric', minute:'2-digit', second:'2-digit', hour12:true}
+    : {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false};
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString(L.locale, opts);
 }
 tickClock();
-setInterval(tickClock,1000);
+setInterval(tickClock, 1000);
 
 /* ── Fetch ── */
 var dot=document.getElementById('conn-dot');
 var banner=document.getElementById('error-banner');
+var lastData = null;
 
 async function load(){
   try{
     var res=await fetch(API,{cache:'no-store'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var d=await res.json();
+    lastData = d;
 
     banner.classList.remove('visible');
     dot.className='conn-dot ok';
@@ -315,40 +452,31 @@ async function load(){
     document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'—';
     document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'—';
 
-    // Sensacion termica (formula Steadman simplificada, valida >27C; bajo esa temp usamos ajuste viento-frio)
+    // Sensación térmica
     var stEl=document.getElementById('val-st');
     var stLbl=document.getElementById('st-label');
     if(tamb!=null&&hum!=null){
-      var t=+tamb, h=+hum, st;
-      if(t>=27){
-        // Heat index (Rothfusz)
-        st=-8.78469475556+1.61139411*t+2.33854883889*h
-           -0.14611605*t*h-0.012308094*t*t
-           -0.0164248277778*h*h+0.002211732*t*t*h
-           +0.00072546*t*h*h-0.000003582*t*t*h*h;
+      var tt=+tamb, hh=+hum, st;
+      if(tt>=27){
+        st=-8.78469475556+1.61139411*tt+2.33854883889*hh
+           -0.14611605*tt*hh-0.012308094*tt*tt
+           -0.0164248277778*hh*hh+0.002211732*tt*tt*hh
+           +0.00072546*tt*hh*hh-0.000003582*tt*tt*hh*hh;
         st=Math.round(st*10)/10;
       } else {
-        // A temperaturas bajas la sensacion viene mas del viento; sin datos de viento usamos temp directa con ajuste humedad leve
-        st=Math.round((t-0.4*(1-h/100)*(t-10))*10)/10;
+        st=Math.round((tt-0.4*(1-hh/100)*(tt-10))*10)/10;
       }
       stEl.textContent=st.toFixed(1);
-      // Etiqueta descriptiva
-      var label='';
-      if(st>=35)label='Peligroso';
-      else if(st>=32)label='Muy caluroso';
-      else if(st>=28)label='Caluroso';
-      else if(st>=24)label='Cómodo';
-      else if(st>=18)label='Agradable';
-      else if(st>=10)label='Fresco';
-      else label='Frío';
-      if(stLbl)stLbl.textContent=label;
+      var L = I18N[currentLang]||I18N.es;
+      var stIdx=st>=35?0:st>=32?1:st>=28?2:st>=24?3:st>=18?4:st>=10?5:6;
+      if(stLbl){ stLbl.textContent=L.st_labels[stIdx]; stLbl.dataset.stIdx=stIdx; }
     } else {
       stEl.textContent='—';
-      if(stLbl)stLbl.textContent='';
+      if(stLbl){ stLbl.textContent=''; stLbl.dataset.stIdx=''; }
     }
 
     renderMeteo(d.meteo);
-    var horas = (d.meteo && (d.meteo.horas24 || d.meteo.prevision24)) || [];
+    var horas=(d.meteo&&(d.meteo.horas24||d.meteo.prevision24))||[];
     renderPrev24(horas);
 
     alertCheck(d);
@@ -360,9 +488,19 @@ async function load(){
 }
 
 load();
-setInterval(load,15000);
+setInterval(load, 15000);
 
-if(location.search.includes('tv=1')){document.body.classList.add('tv');}
+/* ── TV mode init ── */
+if(location.search.includes('tv=1')){
+  document.body.classList.add('tv');
+  isTvMode = true;
+  // Add lang-fade class to the main content block for crossfade
+  document.querySelector('main').classList.add('lang-fade');
+  document.querySelector('header').classList.add('lang-fade');
+  // Start language rotation every 15s
+  setInterval(switchLang, 15000);
+}
+
 </script>
 </body>
 </html>
