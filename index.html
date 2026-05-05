@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Piscina Exterior</title>
-<link href="https://googleapis.com" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
   --bg:#f5f7f6;--border:#dfe5e2;
@@ -81,19 +81,17 @@ body.tv .meteo-card{padding:24px 28px;}
 body.tv .prev-hora{width:90px;}
 body.tv .ph-icon{font-size:1.8rem;}
 body.tv .ph-temp{font-size:1.2rem;}
-
-/* Único cambio permitido: Header ultra estrecho en modo TV */
-body.tv header{padding:4px 40px; height: 60px; min-height: 60px;}
-body.tv .logo{width:110px;}
-body.tv .header-title-main{font-size:1.1rem; line-height: 1;}
-body.tv .header-title-sub{font-size:0.7rem;}
+body.tv header{padding:24px 40px;}
+body.tv .logo{width:200px;}
+body.tv .header-title-main{font-size:1.6rem;}
+body.tv .header-title-sub{font-size:1rem;}
 body.tv .status-pill{font-size:2.4rem;font-weight:500;gap:14px;}
 body.tv .conn-dot{width:14px;height:14px;}
 </style>
 </head>
 <body>
 
-<div class="alert" id="alert">&#x26A0; Parámetros fuera de rango</div>
+<div class="alert" id="alert">&#x26A0; Par&#225;metros fuera de rango</div>
 
 <header>
   <div class="header-left">
@@ -111,30 +109,30 @@ body.tv .conn-dot{width:14px;height:14px;}
 
 <main>
   <div class="error-banner" id="error-banner">
-    &#x26A0;&#xFE0F; Error de conexión — No se puede contactar con la API.<br>
-    Comprueba que Node-RED y Tailscale Funnel están activos.
+    &#x26A0;&#xFE0F; Error de conexi&#243;n &#8212; No se puede contactar con la API.<br>
+    Comprueba que Node-RED y Tailscale Funnel est&#225;n activos.
   </div>
 
-  <p class="section-title">Parámetros del agua</p>
+  <p class="section-title">Par&#225;metros del agua</p>
   <div class="grid-main">
     <div class="card" id="card-ph">
       <div class="card-label">pH</div>
-      <div class="card-value-row"><span class="card-value" id="val-ph">—</span><span class="card-unit">pH</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
     </div>
     <div class="card" id="card-orp">
       <div class="card-label">ORP / Redox</div>
-      <div class="card-value-row"><span class="card-value" id="val-orp">—</span><span class="card-unit">mV</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
     </div>
     <div class="card" id="card-ppm">
       <div class="card-label">Cloro libre</div>
-      <div class="card-value-row"><span class="card-value" id="val-ppm">—</span><span class="card-unit">ppm</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">ppm</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
     </div>
     <div class="card" id="card-temp">
       <div class="card-label">Temp agua</div>
-      <div class="card-value-row"><span class="card-value" id="val-temp">—</span><span class="card-unit">°C</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-temp">&#8212;</span><span class="card-unit">&#176;C</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
     </div>
   </div>
@@ -143,18 +141,18 @@ body.tv .conn-dot{width:14px;height:14px;}
   <div class="grid-main">
     <div class="card">
       <div class="card-label">Temp exterior</div>
-      <div class="card-value-row"><span class="card-value" id="val-tamb">—</span><span class="card-unit">°C</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-tamb">&#8212;</span><span class="card-unit">&#176;C</span></div>
     </div>
     <div class="card">
       <div class="card-label">Humedad</div>
-      <div class="card-value-row"><span class="card-value" id="val-hum">—</span><span class="card-unit">%</span></div>
+      <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
     </div>
   </div>
 
   <!-- METEOROLOGÍA UNIFICADA -->
-  <p class="section-title">Condición actual</p>
+  <p class="section-title">Condici&#243;n actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="meteo-frase">Cargando…</div>
+    <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
     <div class="meteo-sub">
       <span id="meteo-badge-alerta"></span>
       <span id="meteo-tend"></span>
@@ -163,16 +161,16 @@ body.tv .conn-dot{width:14px;height:14px;}
   </div>
 
   <!-- PREVISIÓN 24H -->
-  <p class="section-title">Previsión próximas 24 h</p>
+  <p class="section-title">Previsi&#243;n pr&#243;ximas 24 h</p>
   <div class="prev-scroll" id="prev-24h">
-    <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsión…</div>
+    <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsi&#243;n&#8230;</div>
   </div>
 
   <div class="footer">Valentin Hotels &amp; Resorts</div>
 </main>
 
 <script>
-var API = 'https://ts.net';
+var API = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
 
 var R = {
   ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
@@ -241,7 +239,7 @@ function renderMeteo(m){
 function renderPrev24(horas){
   var el=document.getElementById('prev-24h');
   if(!horas||!horas.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsión</div>';
+    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsi&#243;n</div>';
     return;
   }
   var html='';
@@ -251,7 +249,7 @@ function renderPrev24(horas){
     html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
     html+='<div class="ph-hora">'+(esAhora?'Ahora':h.hora)+'</div>';
     html+='<div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div>';
-    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
+    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'&#8212;')+'&#176;</div>';
     if(riesgo||h.lluvia>0){
       html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
       html+=(h.lluvia_p||0)+'%';
@@ -291,8 +289,8 @@ async function load(){
 
     var tamb=d.temp_ambiente!=null?d.temp_ambiente:null;
     var hum=d.humedad!=null?d.humedad:null;
-    document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'—';
-    document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'—';
+    document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'&#8212;';
+    document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'&#8212;';
 
     renderMeteo(d.meteo);
     renderPrev24(d.meteo&&d.meteo.horas24?d.meteo.horas24:[]);
