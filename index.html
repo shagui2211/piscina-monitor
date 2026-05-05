@@ -20,6 +20,14 @@ header{background:white;border-bottom:1px solid var(--border);padding:10px 16px;
 .header-title-main{font-size:0.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .header-title-sub{font-size:0.62rem;color:var(--muted);}
 .status-pill{font-family:var(--mono);font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;}
+@media(max-width:700px){
+  header{display:grid;grid-template-columns:72px 1fr 72px;padding:10px 12px;}
+  .header-left{display:contents;}
+  .logo{grid-column:1;align-self:center;}
+  .header-left > div:last-child{grid-column:2;text-align:center;align-self:center;}
+  .header-title-main{font-size:0.9rem;}
+  .status-pill{grid-column:3;justify-self:end;align-self:center;}
+}
 .conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .4s;flex-shrink:0;}
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
