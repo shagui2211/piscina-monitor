@@ -42,14 +42,14 @@ main{max-width:960px;margin:auto;padding:20px;}
 .legal-label{font-size:0.58rem;color:var(--muted);margin-top:4px;font-family:var(--mono);display:flex;justify-content:space-between;}
 
 /* ── AMBIENTE + METEO EN FILA ── */
-.ambiente-meteo-row{display:flex;gap:20px;align-items:stretch;}
-.ambiente-col{flex:0 0 auto;display:flex;flex-direction:column;}
+.ambiente-meteo-row{display:grid;grid-template-columns:3fr 1.2fr;gap:0 20px;align-items:stretch;}
+.ambiente-col{display:flex;flex-direction:column;}
 .ambiente-col .section-title{flex-shrink:0;}
-.ambiente-grid{grid-template-columns:repeat(3,minmax(160px,1fr));flex:1;}
+.ambiente-grid{grid-template-columns:repeat(3,1fr);flex:1;}
 .ambiente-grid .card{height:100%;}
-.meteo-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+.meteo-col{display:flex;flex-direction:column;}
 .meteo-col .section-title{flex-shrink:0;}
-.meteo-col .meteo-card{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.meteo-col .meteo-card{flex:1;display:flex;align-items:center;}
 
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
@@ -201,7 +201,7 @@ body.tv .lang-indicator{
 
   <div class="ambiente-meteo-row">
     <div class="ambiente-col">
-      <p class="section-title" data-i18n="sec_ambiente">Ambiente</p>
+      <p class="section-title" data-i18n="sec_ambiente">Clima actual</p>
       <div class="grid-main ambiente-grid">
         <div class="card">
           <div class="card-label" data-i18n="lbl_tamb">Temp exterior</div>
@@ -220,7 +220,6 @@ body.tv .lang-indicator{
     </div>
     <!-- METEOROLOGÍA UNIFICADA -->
     <div class="meteo-col">
-      <p class="section-title" data-i18n="sec_condicion">Condici&#243;n actual</p>
       <div class="meteo-card">
         <div style="display:flex;align-items:center;gap:14px;">
           <div id="meteo-icon" style="font-size:2.4rem;line-height:1;flex-shrink:0;"></div>
@@ -262,7 +261,7 @@ var I18N = {
   es: {
     title:         'Piscina Exterior',
     sec_agua:      'Parámetros del agua',
-    sec_ambiente:  'Ambiente',
+    sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
     lbl_ph:        'pH',
@@ -294,7 +293,7 @@ var I18N = {
   en: {
     title:         'Outdoor Pool',
     sec_agua:      'Water parameters',
-    sec_ambiente:  'Environment',
+    sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
     lbl_ph:        'pH',
@@ -326,7 +325,7 @@ var I18N = {
   de: {
     title:         'Außenpool',
     sec_agua:      'Wasserparameter',
-    sec_ambiente:  'Umgebung',
+    sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
     lbl_ph:        'pH',
