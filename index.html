@@ -65,7 +65,7 @@ main{max-width:960px;margin:auto;padding:20px;}
 .badge-danger {background:rgba(201,75,75,.1); color:var(--danger);}
 .badge-off    {background:var(--soft);        color:var(--muted);}
 
-/* ── PREVISIÓN 24H ── */
+/* ── PREVISIÓN 24H (contenedor reutilizado también para 7 días) ── */
 .prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
 .prev-scroll::-webkit-scrollbar{height:4px;}
 .prev-scroll::-webkit-scrollbar-track{background:transparent;}
@@ -96,11 +96,10 @@ body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
 body.tv .meteo-frase{font-size:1.4rem;}
 body.tv .meteo-card{padding:24px 28px;}
 
-
 /* Centrado de Títulos y Reloj Gigante en TV */
 body.tv header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /* Logo | Títulos | Reloj */
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 0px 40px;
   height: 90px;
@@ -108,12 +107,11 @@ body.tv header {
 }
 body.tv .header-left { display: contents; }
 body.tv .logo { width: 100px; grid-column: 1; }
-body.tv .header-left > div:last-child { grid-column: 2; text-align: center; } /* Contenedor de títulos */
+body.tv .header-left > div:last-child { grid-column: 2; text-align: center; }
 body.tv .header-title-main { font-size: 1.8rem; line-height: 1; }
 body.tv .header-title-sub { font-size: 1.1rem; }
 body.tv .status-pill { grid-column: 3; justify-self: end; font-size: 4.5rem; font-weight: 600; gap: 20px; }
 body.tv .conn-dot { width: 20px; height: 20px; }
-
 
 /* ── TV LANGUAGE TRANSITION ── */
 .lang-fade{transition:opacity .5s ease;}
@@ -126,7 +124,6 @@ body.tv .lang-indicator{
 </style>
 </head>
 <body>
-
 
 <div class="alert" id="alert">&#x26A0; Par&#225;metros fuera de rango</div>
 
@@ -209,14 +206,14 @@ body.tv .lang-indicator{
     </div>
   </div>
 
-  <!-- PREVISIÓN 24H -->
-  <p class="section-title" data-i18n="sec_prevision">Previsi&#243;n pr&#243;ximas 24 h</p>
-  <div class="prev-scroll" id="prev-24h">
+  <!-- PREVISIÓN 7 DÍAS -->
+  <p class="section-title" data-i18n="sec_prevision">Previsi&#243;n 7 d&#237;as</p>
+  <div id="prev-24h">
     <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsi&#243;n&#8230;</div>
   </div>
 
   <div class="footer">Valentin Hotels &amp; Resorts</div>
-<div class="lang-indicator" id="lang-indicator"></div>
+  <div class="lang-indicator" id="lang-indicator"></div>
 </main>
 
 <script>
@@ -246,6 +243,7 @@ var I18N = {
     lbl_hum:       'Humedad relativa',
     lbl_st:        'Sensación térmica',
     ahora:         'Ahora',
+    hoy:           'Hoy',
     st_labels:     ['Peligroso','Muy caluroso','Caluroso','Cómodo','Agradable','Fresco','Frío'],
     clock12:       false,
     locale:        'es-ES',
@@ -254,6 +252,7 @@ var I18N = {
     error_conn:    'Error de conexión — No se puede contactar con la API.',
     error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
     alert_txt:     '⚠ Parámetros fuera de rango',
+    dias_cortos:   ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
     wmo: {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',
           45:'Niebla',48:'Niebla helada',51:'Llovizna leve',53:'Llovizna moderada',
           55:'Llovizna intensa',61:'Lluvia leve',63:'Lluvia moderada',65:'Lluvia intensa',
@@ -275,6 +274,7 @@ var I18N = {
     lbl_hum:       'Relative humidity',
     lbl_st:        'Feels like',
     ahora:         'Now',
+    hoy:           'Today',
     st_labels:     ['Dangerous','Very hot','Hot','Comfortable','Pleasant','Cool','Cold'],
     clock12:       true,
     locale:        'en-US',
@@ -283,6 +283,7 @@ var I18N = {
     error_conn:    'Connection error — Cannot reach the API.',
     error_check:   'Check that Node-RED and Tailscale Funnel are active.',
     alert_txt:     '⚠ Parameters out of range',
+    dias_cortos:   ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     wmo: {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
           45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Moderate drizzle',
           55:'Heavy drizzle',61:'Light rain',63:'Moderate rain',65:'Heavy rain',
@@ -304,6 +305,7 @@ var I18N = {
     lbl_hum:       'Relative Luftfeuchte',
     lbl_st:        'Gefühlte Temperatur',
     ahora:         'Jetzt',
+    hoy:           'Heute',
     st_labels:     ['Gefährlich','Sehr heiß','Heiß','Angenehm','Schön','Kühl','Kalt'],
     clock12:       false,
     locale:        'de-DE',
@@ -312,6 +314,7 @@ var I18N = {
     error_conn:    'Verbindungsfehler — API nicht erreichbar.',
     error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
     alert_txt:     '⚠ Parameter außerhalb des Bereichs',
+    dias_cortos:   ['So','Mo','Di','Mi','Do','Fr','Sa'],
     wmo: {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bewölkt',
           45:'Nebel',48:'Eisnebel',51:'Leichter Nieselregen',53:'Mäßiger Nieselregen',
           55:'Starker Nieselregen',61:'Leichter Regen',63:'Mäßiger Regen',65:'Starker Regen',
@@ -323,7 +326,7 @@ var I18N = {
 
 function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
 
-var lastHoras = [];
+var lastDias7 = [];
 var lastWmoCode = null;
 
 function wmoTxt(code){
@@ -368,20 +371,18 @@ function applyLang(){
     if(fraseEl) fraseEl.textContent = wmoTxt(lastWmoCode);
   }
   // Re-render 7-day forecast with translated day names
-  if(lastHoras.length) renderPrev7(lastHoras);
+  if(lastDias7.length) renderPrev7(lastDias7);
 }
 
 /* Crossfade transition for TV language switch */
 function switchLang(){
   if(!isTvMode) return;
   var fadeEls = document.querySelectorAll('.lang-fade');
-  // fade out
   fadeEls.forEach(function(el){ el.classList.add('hiding'); });
   setTimeout(function(){
     langIdx = (langIdx + 1) % LANGS.length;
     currentLang = LANGS[langIdx];
     applyLang();
-    // fade in
     fadeEls.forEach(function(el){ el.classList.remove('hiding'); });
   }, 500);
 }
@@ -389,7 +390,6 @@ function switchLang(){
 /* ══════════════════════════════════════════════════════════════ */
 
 // Rangos operativos (semáforo) y límites legales Baleares
-// Decreto 53/1995 (CAIB) + RD 742/2013 (estatal)
 var R = {
   ph:   {min:7.1, max:7.8, okMin:7.2, okMax:7.6, legalMin:7.2, legalMax:8.0},
   orp:  {min:600, max:700, okMin:640, okMax:690,  legalMin:250, legalMax:900},
@@ -414,7 +414,6 @@ function setCard(key,raw,fmt){
   v.textContent=fmt; v.style.color=COLOR[s];
   var b=document.getElementById('bar-'+key);
   if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[s];}
-  // Legal limit markers
   var wrap=document.getElementById('bar-wrap-'+key);
   if(wrap&&r.legalMin!=null){
     var pMin=pct(r.legalMin,r), pMax=pct(r.legalMax,r);
@@ -449,13 +448,9 @@ function renderMeteo(m){
   var fraseEl=document.getElementById('meteo-frase');
 
   if(horas.length&&horas[0].wmo){
-    // Store the raw WMO code so applyLang can re-translate on language switch
-    // The wmo object from Node-RED has .icon and .txt; we need the numeric code.
-    // We detect code by matching the Spanish txt against our map.
     var wmoObj = horas[0].wmo;
     var detectedCode = null;
     if(wmoObj.icon) iconEl.textContent = wmoObj.icon;
-    // Try to find the code by matching Spanish description
     var esMap = I18N.es.wmo;
     for(var c in esMap){
       if(esMap[c] === wmoObj.txt){ detectedCode = parseInt(c,10); break; }
@@ -465,7 +460,6 @@ function renderMeteo(m){
       fraseEl.textContent = detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos');
     }
   } else {
-    // Fallback: show frase from Node-RED (Spanish only, can't translate)
     if(fraseEl) fraseEl.textContent = m.frase || 'Sin datos';
     lastWmoCode = null;
   }
@@ -483,32 +477,58 @@ function renderMeteo(m){
   document.getElementById('meteo-tend').innerHTML=tend;
 }
 
-/* ── Previsión 24h ── */
-function renderPrev24(horas){
-  lastHoras = horas; // store for language re-render
-  var el=document.getElementById('prev-24h');
-  if(!horas||!horas.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">'+t('no_prev')+'</div>';
+/* ── Previsión 7 días ── */
+function renderPrev7(dias) {
+  lastDias7 = dias;
+  var el = document.getElementById('prev-24h');
+  if (!dias || !dias.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:.8rem;padding:16px;">' + t('no_prev') + '</div>';
     return;
   }
-  var html='';
-  horas.forEach(function(h,i){
-    var riesgo=(h.lluvia_p||0)>=40;
-    var esAhora=i===0;
-    var icon=(h.wmo&&h.wmo.icon)?h.wmo.icon:'⛅';
-    html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
-    html+='<div class="ph-hora">'+(esAhora?t('ahora'):fmtHoraLang(h.hora))+'</div>';
-    html+='<div class="ph-icon">'+icon+'</div>';
-    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
-    if(riesgo||h.lluvia>0){
-      html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
-      html+=(h.lluvia_p||0)+'%';
-      if(h.lluvia>0)html+=' '+h.lluvia.toFixed(1)+'mm';
-      html+='</div>';
+
+  var L = I18N[currentLang] || I18N.es;
+  var diasCortos = L.dias_cortos || ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+  var html = '<div class="prev7-grid">';
+  dias.forEach(function(d, i) {
+    var esHoy = i === 0;
+    var icon  = (d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅';
+    var riesgo = (d.lluvia_p || 0) >= 40;
+
+    // Nombre del día desde fecha_iso ("2026-05-05") o campo fecha ya formateado
+    var fechaLabel = d.fecha || '—';
+    if (d.fecha_iso) {
+      if (esHoy) {
+        fechaLabel = t('hoy');
+      } else {
+        var dt = new Date(d.fecha_iso + 'T12:00:00');
+        fechaLabel = diasCortos[dt.getDay()] + ' ' +
+                     String(dt.getDate()).padStart(2,'0') + '/' +
+                     String(dt.getMonth() + 1).padStart(2,'0');
+      }
     }
-    html+='</div>';
+
+    html += '<div class="prev7-dia' + (esHoy ? ' hoy' : '') +
+            '" style="animation-delay:' + (i * 0.05) + 's">';
+    html += '<div class="p7-fecha">' + fechaLabel + '</div>';
+    html += '<div class="p7-icon">' + icon + '</div>';
+    html += '<div class="p7-temps">';
+    html += '<span class="p7-tmax">' + (d.tMax != null ? Math.round(d.tMax) + '°' : '—') + '</span>';
+    html += '<span class="p7-tmin">' + (d.tMin != null ? Math.round(d.tMin) + '°' : '—') + '</span>';
+    html += '</div>';
+    if (riesgo || d.lluvia > 0) {
+      html += '<div class="p7-lluvia' + (riesgo ? ' riesgo' : '') + '">' +
+              (d.lluvia_p || 0) + '%';
+      if (d.lluvia > 0) html += ' · ' + d.lluvia.toFixed(1) + 'mm';
+      html += '</div>';
+    }
+    if (d.viento) {
+      html += '<div class="p7-viento">💨 ' + Math.round(d.viento) + ' km/h</div>';
+    }
+    html += '</div>';
   });
-  el.innerHTML=html;
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 /* ── Reloj ── */
@@ -526,14 +546,12 @@ setInterval(tickClock, 1000);
 /* ── Fetch ── */
 var dot=document.getElementById('conn-dot');
 var banner=document.getElementById('error-banner');
-var lastData = null;
 
 async function load(){
   try{
     var res=await fetch(API,{cache:'no-store'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     var d=await res.json();
-    lastData = d;
 
     banner.classList.remove('visible');
     dot.className='conn-dot ok';
@@ -572,18 +590,9 @@ async function load(){
     }
 
     renderMeteo(d.meteo);
-    // 7-day forecast: prefer daily data, fallback to hourly blocks
-    var dias7 = (d.meteo&&d.meteo.prevision7d) || [];
-    if(!dias7.length){
-      // Fallback: build from hourly data if available (1 entry per day from blocks)
-      var rawHoras = (d.meteo&&(d.meteo.horas24||d.meteo.prevision24))||[];
-      if(rawHoras.length) dias7 = [{
-        fecha: 'Hoy', fecha_iso: null,
-        wmo: rawHoras[0]&&rawHoras[0].wmo ? rawHoras[0].wmo : null,
-        tMax: null, tMin: null, lluvia: 0, lluvia_p: rawHoras[0]&&rawHoras[0].lluvia_p||0,
-        viento: rawHoras[0]&&rawHoras[0].viento||0
-      }];
-    }
+
+    // Previsión 7 días
+    var dias7 = (d.meteo && d.meteo.prevision7d) || [];
     renderPrev7(dias7);
 
     alertCheck(d);
@@ -601,13 +610,10 @@ setInterval(load, 15000);
 if(location.search.includes('tv=1')){
   document.body.classList.add('tv');
   isTvMode = true;
-  // Add lang-fade class to the main content block for crossfade
   document.querySelector('main').classList.add('lang-fade');
   document.querySelector('header').classList.add('lang-fade');
-  // Start language rotation every 15s
   setInterval(switchLang, 15000);
 }
-
 </script>
 </body>
 </html>
