@@ -14,8 +14,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
-
-/* ── HEADER ── */
 header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .header-left{display:flex;align-items:center;gap:16px;}
 .logo{width:140px}.logo img{width:100%}
@@ -26,7 +24,6 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-/* ── MAIN ── */
 main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-out;}
 .fade-out { opacity: 0; }
 
@@ -69,14 +66,14 @@ body.tv .card{padding:28px 24px;}
 body.tv .card-value{font-size:4rem;}
 body.tv .bar-wrap{display:none;}
 body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
-body.tv .status-pill{font-size:2.4rem;font-weight:500;}
 
 /* HEADER ESTRECHO TV */
-body.tv header{padding:4px 40px; height: auto; min-height: 55px;} 
-body.tv .logo{width:110px;}
-body.tv .header-title-main{font-size:1.2rem; line-height: 1.1;}
-body.tv .header-title-sub{font-size:0.8rem;}
-body.tv .conn-dot{width:14px;height:14px;}
+body.tv header{padding:0 40px; height: 50px; min-height: 50px;} 
+body.tv .logo{width:80px;}
+body.tv .header-title-main{font-size:1rem; line-height: 1;}
+body.tv .header-title-sub{font-size:0.7rem;}
+body.tv .status-pill{font-size:2rem;font-weight:500;}
+body.tv .conn-dot{width:12px;height:12px;}
 </style>
 </head>
 <body>
@@ -87,7 +84,7 @@ body.tv .conn-dot{width:14px;height:14px;}
   <div class="header-left">
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
     <div>
-      <div class="header-title-main" id="txt-title">Piscina Exterior</div>
+      <div class="header-title-main" id="txt-pool-title">Piscina Exterior</div>
       <div class="header-title-sub">Somni Hotel & Suites</div>
     </div>
   </div>
@@ -110,17 +107,17 @@ body.tv .conn-dot{width:14px;height:14px;}
       <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
     </div>
     <div class="card ok-card" id="card-orp">
-      <div class="card-label" id="txt-lbl-orp">ORP / Redox</div>
+      <div class="card-label" id="txt-label-orp">ORP / Redox</div>
       <div class="card-value-row"><span class="card-value" id="val-orp">—</span><span class="card-unit">mV</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
     </div>
     <div class="card ok-card" id="card-ppm">
-      <div class="card-label" id="txt-lbl-cl">Cloro libre</div>
+      <div class="card-label" id="txt-label-cl">Cloro libre</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">—</span><span class="card-unit">ppm</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
     </div>
     <div class="card ok-card" id="card-temp">
-      <div class="card-label" id="txt-lbl-tempw">Temp agua</div>
+      <div class="card-label" id="txt-label-tempw">Temp agua</div>
       <div class="card-value-row"><span class="card-value" id="val-temp">—</span><span class="card-unit">°C</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
     </div>
@@ -129,18 +126,18 @@ body.tv .conn-dot{width:14px;height:14px;}
   <p class="section-title" id="txt-sec-air">Ambiente</p>
   <div class="grid-main">
     <div class="card">
-      <div class="card-label" id="txt-lbl-tempe">Temp exterior</div>
+      <div class="card-label" id="txt-label-tempe">Temp exterior</div>
       <div class="card-value-row"><span class="card-value" id="val-tamb">—</span><span class="card-unit">°C</span></div>
     </div>
     <div class="card">
-      <div class="card-label" id="txt-lbl-hum">Humedad</div>
+      <div class="card-label" id="txt-label-hum">Humedad</div>
       <div class="card-value-row"><span class="card-value" id="val-hum">—</span><span class="card-unit">%</span></div>
     </div>
   </div>
 
   <p class="section-title" id="txt-sec-meteo">Condición actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="meteo-frase">Cargando…</div>
+    <div class="meteo-frase" id="meteo-frase">Cargando...</div>
     <div class="meteo-sub">
       <span id="meteo-badge-alerta"></span>
       <span id="meteo-tend"></span>
@@ -164,8 +161,9 @@ var translations = [
   {lang:'en-GB', hour12:true, texts:{alert:'Parameters out of range', pool:'Outdoor Pool', error:'⚠️ Connection Error — API', secWater:'Water Parameters', secAir:'Environment', secMeteo:'Current Condition', secPrev:'24-hour Forecast', orp:'ORP / Redox', cl:'Free Chlorine', tempw:'Water Temp', tempe:'Outdoor Temp', hum:'Humidity', now:'Now'}},
   {lang:'de-DE', hour12:false, texts:{alert:'Parameter fuera de rango', pool:'Außenpool', error:'⚠️ Verbindungsfehler — API', secWater:'Wasserparameter', secAir:'Umgebung', secMeteo:'Aktueller Zustand', secPrev:'24-Stunden-Vorhersage', orp:'ORP / Redox', cl:'Freies Chlor', tempw:'Wassertemp.', tempe:'Außentemp.', hum:'Feuchtigkeit', now:'Jetzt'}}
 ];
+
 var curLang = 0;
-var lastD = null;
+var lastData = null;
 
 var R = {
   ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
@@ -190,27 +188,29 @@ function setCard(key,raw,fmt){
   var b=document.getElementById('bar-'+key); if(b){ b.style.width=pct(raw,r)+'%'; b.style.background=COLOR[s]; }
 }
 
-function updateUI(){
+function updateTranslations(){
   var t = translations[curLang].texts;
   document.getElementById('txt-alert').textContent = t.alert;
-  document.getElementById('txt-title').textContent = t.pool;
+  document.getElementById('txt-pool-title').textContent = t.pool;
   document.getElementById('txt-err-msg').textContent = t.error;
   document.getElementById('txt-sec-water').textContent = t.secWater;
   document.getElementById('txt-sec-air').textContent = t.secAir;
   document.getElementById('txt-sec-meteo').textContent = t.secMeteo;
   document.getElementById('txt-sec-prev').textContent = t.secPrev;
-  document.getElementById('txt-lbl-orp').textContent = t.orp;
-  document.getElementById('txt-lbl-cl').textContent = t.cl;
-  document.getElementById('txt-lbl-tempw').textContent = t.tempw;
-  document.getElementById('txt-lbl-tempe').textContent = t.tempe;
-  document.getElementById('txt-lbl-hum').textContent = t.hum;
-  if(lastD) { renderMeteo(lastD.meteo); renderPrev24(lastD.meteo?lastD.meteo.horas24:[]); }
+  document.getElementById('txt-label-orp').textContent = t.orp;
+  document.getElementById('txt-label-cl').textContent = t.cl;
+  document.getElementById('txt-label-tempw').textContent = t.tempw;
+  document.getElementById('txt-label-tempe').textContent = t.tempe;
+  document.getElementById('txt-label-hum').textContent = t.hum;
+  if(lastData) { renderMeteo(lastData.meteo); renderPrev24(lastData.meteo?lastData.meteo.horas24:[]); }
 }
+
+function badgeHTML(text,color){ return '<span class="meteo-badge badge-'+(color||'off')+'">'+text+'</span>'; }
 
 function renderMeteo(m){
   if(!m)return;
   document.getElementById('meteo-frase').textContent=m.frase||'---';
-  document.getElementById('meteo-badge-alerta').innerHTML=(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE')?'<span class="meteo-badge badge-'+(m.alertaColor||'off')+'">'+m.alerta+'</span>':'';
+  document.getElementById('meteo-badge-alerta').innerHTML=(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE')?badgeHTML(m.alerta,m.alertaColor):'';
   document.getElementById('meteo-tend').innerHTML=(m.tendencia&&m.tendencia!=='Estable')?'<span style="font-size:.75rem">'+m.tendencia+'</span>':'';
   document.getElementById('meteo-presion').innerHTML=m.presionQFF?'<span style="font-size:.75rem;color:var(--muted)">'+m.presionQFF.toFixed(0)+' hPa</span>':'';
 }
@@ -238,7 +238,7 @@ async function load(){
   try{
     var res=await fetch(API,{cache:'no-store'});
     if(!res.ok)throw new Error();
-    var d=await res.json(); lastD=d;
+    var d=await res.json(); lastData=d;
     document.getElementById('error-banner').classList.remove('visible');
     document.getElementById('conn-dot').className='conn-dot ok';
     setCard('ph', d.ph, (+(d.ph||0)).toFixed(2));
@@ -260,8 +260,8 @@ load(); setInterval(load,15000);
 if(isTV){
   setInterval(function(){
     var m=document.getElementById('main-content'); m.classList.add('fade-out');
-    setTimeout(function(){ curLang=(curLang+1)%translations.length; updateUI(); m.classList.remove('fade-out'); },500);
-  },10000);
+    setTimeout(function(){ curLang=(curLang+1)%translations.length; updateTranslations(); m.classList.remove('fade-out'); },500);
+  }, 10000);
 }
 </script>
 </body>
