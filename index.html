@@ -42,11 +42,14 @@ main{max-width:960px;margin:auto;padding:20px;}
 .legal-label{font-size:0.58rem;color:var(--muted);margin-top:4px;font-family:var(--mono);display:flex;justify-content:space-between;}
 
 /* ── AMBIENTE + METEO EN FILA ── */
-.ambiente-meteo-row{display:flex;gap:20px;align-items:flex-start;}
-.ambiente-col{flex:0 0 auto;}
-.ambiente-grid{grid-template-columns:repeat(3,minmax(160px,1fr));}
-.meteo-col{flex:1;min-width:0;}
-.meteo-col .meteo-card{height:calc(100% - 38px);}
+.ambiente-meteo-row{display:flex;gap:20px;align-items:stretch;}
+.ambiente-col{flex:0 0 auto;display:flex;flex-direction:column;}
+.ambiente-col .section-title{flex-shrink:0;}
+.ambiente-grid{grid-template-columns:repeat(3,minmax(160px,1fr));flex:1;}
+.ambiente-grid .card{height:100%;}
+.meteo-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+.meteo-col .section-title{flex-shrink:0;}
+.meteo-col .meteo-card{flex:1;display:flex;flex-direction:column;justify-content:center;}
 
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
