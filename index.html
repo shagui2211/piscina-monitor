@@ -35,6 +35,7 @@ main{max-width:960px;margin:auto;padding:20px;}
 .card-value-row{display:flex;align-items:baseline;gap:5px;margin-top:4px;}
 .card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;transition:color .3s;}
 .card-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
+.card-st-label{font-size:0.65rem;color:var(--muted);margin-top:6px;font-family:var(--sans);}
 .bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
 .bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
@@ -158,16 +159,25 @@ body.tv .conn-dot { width: 20px; height: 20px; }
       <div class="card-label">Humedad relativa</div>
       <div class="card-value-row"><span class="card-value" id="val-hum">&#8212;</span><span class="card-unit">%</span></div>
     </div>
+    <div class="card">
+      <div class="card-label">Sensaci&#243;n t&#233;rmica</div>
+      <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span></div>
+      <div class="card-st-label" id="st-label"></div>
+    </div>
   </div>
 
   <!-- METEOROLOGÍA UNIFICADA -->
   <p class="section-title">Condici&#243;n actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
-    <div class="meteo-sub">
-      <span id="meteo-badge-alerta"></span>
-      <span id="meteo-tend"></span>
-      <span id="meteo-presion"></span>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div id="meteo-icon" style="font-size:2.4rem;line-height:1;flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div class="meteo-frase" id="meteo-frase">Cargando&#8230;</div>
+        <div class="meteo-sub">
+          <span id="meteo-badge-alerta"></span>
+          <span id="meteo-tend"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -226,6 +236,14 @@ function renderMeteo(m){
   if(!m)return;
   document.getElementById('meteo-frase').textContent=m.frase||'Sin datos';
 
+  // Icono WMO de la hora actual de la previsión (si disponible)
+  var horas=m.prevision24||m.horas24||[];
+  var iconEl=document.getElementById('meteo-icon');
+  if(iconEl){
+    var icon=horas.length&&horas[0].wmo&&horas[0].wmo.icon?horas[0].wmo.icon:'⛅';
+    iconEl.textContent=icon;
+  }
+
   var badge='';
   if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
     badge=badgeHTML(m.alerta,m.alertaColor);
@@ -237,13 +255,6 @@ function renderMeteo(m){
     tend='<span style="font-size:.75rem">'+m.tendencia+'</span>';
   }
   document.getElementById('meteo-tend').innerHTML=tend;
-
-  var pres='';
-  if(m.presionQFF){
-    pres='<span style="font-size:.75rem;color:var(--muted)">'+
-         m.presionQFF.toFixed(0)+' hPa QFF</span>';
-  }
-  document.getElementById('meteo-presion').innerHTML=pres;
 }
 
 /* ── Previsión 24h ── */
@@ -301,8 +312,40 @@ async function load(){
 
     var tamb=d.temp_ambiente!=null?d.temp_ambiente:null;
     var hum=d.humedad!=null?d.humedad:null;
-    document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'&#8212;';
-    document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'&#8212;';
+    document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'—';
+    document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'—';
+
+    // Sensacion termica (formula Steadman simplificada, valida >27C; bajo esa temp usamos ajuste viento-frio)
+    var stEl=document.getElementById('val-st');
+    var stLbl=document.getElementById('st-label');
+    if(tamb!=null&&hum!=null){
+      var t=+tamb, h=+hum, st;
+      if(t>=27){
+        // Heat index (Rothfusz)
+        st=-8.78469475556+1.61139411*t+2.33854883889*h
+           -0.14611605*t*h-0.012308094*t*t
+           -0.0164248277778*h*h+0.002211732*t*t*h
+           +0.00072546*t*h*h-0.000003582*t*t*h*h;
+        st=Math.round(st*10)/10;
+      } else {
+        // A temperaturas bajas la sensacion viene mas del viento; sin datos de viento usamos temp directa con ajuste humedad leve
+        st=Math.round((t-0.4*(1-h/100)*(t-10))*10)/10;
+      }
+      stEl.textContent=st.toFixed(1);
+      // Etiqueta descriptiva
+      var label='';
+      if(st>=35)label='Peligroso';
+      else if(st>=32)label='Muy caluroso';
+      else if(st>=28)label='Caluroso';
+      else if(st>=24)label='Cómodo';
+      else if(st>=18)label='Agradable';
+      else if(st>=10)label='Fresco';
+      else label='Frío';
+      if(stLbl)stLbl.textContent=label;
+    } else {
+      stEl.textContent='—';
+      if(stLbl)stLbl.textContent='';
+    }
 
     renderMeteo(d.meteo);
     var horas = (d.meteo && (d.meteo.horas24 || d.meteo.prevision24)) || [];
