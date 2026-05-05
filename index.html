@@ -44,6 +44,8 @@ main{max-width:960px;margin:auto;padding:20px;}
 /* ── AMBIENTE + METEO EN FILA ── */
 .clima-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .clima-grid .card{display:flex;flex-direction:column;justify-content:center;}
+.clima-grid .card:has(#st-label){justify-content:space-between;padding-bottom:14px;}
+.clima-grid .card:has(#st-label) .card-st-label{margin-top:auto;}
 .clima-grid .meteo-card{display:flex;align-items:center;}
 
 /* ── PREVISIÓN 7 DÍAS ── */
