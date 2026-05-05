@@ -235,6 +235,12 @@ var I18N = {
     error_conn:    'Error de conexión — No se puede contactar con la API.',
     error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
     alert_txt:     '⚠ Parámetros fuera de rango',
+    wmo: {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',
+          45:'Niebla',48:'Niebla helada',51:'Llovizna leve',53:'Llovizna moderada',
+          55:'Llovizna intensa',61:'Lluvia leve',63:'Lluvia moderada',65:'Lluvia intensa',
+          71:'Nieve leve',73:'Nieve moderada',75:'Nieve intensa',77:'Granizo',
+          80:'Chubascos leves',81:'Chubascos moderados',82:'Chubascos intensos',
+          85:'Chubascos de nieve',95:'Tormenta',96:'Tormenta con granizo',99:'Tormenta severa'},
   },
   en: {
     title:         'Outdoor Pool',
@@ -258,6 +264,12 @@ var I18N = {
     error_conn:    'Connection error — Cannot reach the API.',
     error_check:   'Check that Node-RED and Tailscale Funnel are active.',
     alert_txt:     '⚠ Parameters out of range',
+    wmo: {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
+          45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Moderate drizzle',
+          55:'Heavy drizzle',61:'Light rain',63:'Moderate rain',65:'Heavy rain',
+          71:'Light snow',73:'Moderate snow',75:'Heavy snow',77:'Hail',
+          80:'Light showers',81:'Moderate showers',82:'Heavy showers',
+          85:'Snow showers',95:'Thunderstorm',96:'Thunderstorm with hail',99:'Severe thunderstorm'},
   },
   de: {
     title:         'Außenpool',
@@ -281,10 +293,40 @@ var I18N = {
     error_conn:    'Verbindungsfehler — API nicht erreichbar.',
     error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
     alert_txt:     '⚠ Parameter außerhalb des Bereichs',
+    wmo: {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bewölkt',
+          45:'Nebel',48:'Eisnebel',51:'Leichter Nieselregen',53:'Mäßiger Nieselregen',
+          55:'Starker Nieselregen',61:'Leichter Regen',63:'Mäßiger Regen',65:'Starker Regen',
+          71:'Leichter Schnee',73:'Mäßiger Schnee',75:'Starker Schnee',77:'Hagel',
+          80:'Leichte Schauer',81:'Mäßige Schauer',82:'Starke Schauer',
+          85:'Schneeschauer',95:'Gewitter',96:'Gewitter mit Hagel',99:'Schweres Gewitter'},
   }
 };
 
 function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
+
+var lastHoras = [];
+var lastWmoCode = null;
+
+function wmoTxt(code){
+  var L = I18N[currentLang] || I18N.es;
+  return (L.wmo && L.wmo[code]) || (I18N.es.wmo[code]) || '—';
+}
+
+// Convert "14:00" → "2:00 PM" for 12h mode
+function fmtHora12(horaStr){
+  if(!horaStr || horaStr.length < 5) return horaStr;
+  var parts = horaStr.split(':');
+  var h = parseInt(parts[0], 10);
+  var m = parts[1];
+  var ampm = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12 || 12;
+  return h12 + ':' + m + ' ' + ampm;
+}
+
+function fmtHoraLang(horaStr){
+  var L = I18N[currentLang] || I18N.es;
+  return L.clock12 ? fmtHora12(horaStr) : horaStr;
+}
 
 function applyLang(){
   var L = I18N[currentLang] || I18N.es;
@@ -301,9 +343,13 @@ function applyLang(){
   if(stLbl && stLbl.dataset.stIdx !== undefined){
     stLbl.textContent = L.st_labels[+stLbl.dataset.stIdx] || '';
   }
-  // Re-render prev-24h "Ahora" label
-  var ahora = document.querySelector('.prev-hora.ahora .ph-hora');
-  if(ahora) ahora.textContent = L.ahora;
+  // Re-render condición actual frase with WMO translation
+  if(lastWmoCode !== null){
+    var fraseEl = document.getElementById('meteo-frase');
+    if(fraseEl) fraseEl.textContent = wmoTxt(lastWmoCode);
+  }
+  // Re-render prev-24h with translated hour format and "Ahora/Now/Jetzt"
+  if(lastHoras.length) renderPrev24(lastHoras);
 }
 
 /* Crossfade transition for TV language switch */
@@ -366,13 +412,31 @@ function badgeHTML(text,color){
 
 function renderMeteo(m){
   if(!m)return;
-  document.getElementById('meteo-frase').textContent=m.frase||'Sin datos';
 
   var horas=m.prevision24||m.horas24||[];
   var iconEl=document.getElementById('meteo-icon');
-  if(iconEl){
-    var icon=horas.length&&horas[0].wmo&&horas[0].wmo.icon?horas[0].wmo.icon:'⛅';
-    iconEl.textContent=icon;
+  var fraseEl=document.getElementById('meteo-frase');
+
+  if(horas.length&&horas[0].wmo){
+    // Store the raw WMO code so applyLang can re-translate on language switch
+    // The wmo object from Node-RED has .icon and .txt; we need the numeric code.
+    // We detect code by matching the Spanish txt against our map.
+    var wmoObj = horas[0].wmo;
+    var detectedCode = null;
+    if(wmoObj.icon) iconEl.textContent = wmoObj.icon;
+    // Try to find the code by matching Spanish description
+    var esMap = I18N.es.wmo;
+    for(var c in esMap){
+      if(esMap[c] === wmoObj.txt){ detectedCode = parseInt(c,10); break; }
+    }
+    lastWmoCode = detectedCode;
+    if(fraseEl){
+      fraseEl.textContent = detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos');
+    }
+  } else {
+    // Fallback: show frase from Node-RED (Spanish only, can't translate)
+    if(fraseEl) fraseEl.textContent = m.frase || 'Sin datos';
+    lastWmoCode = null;
   }
 
   var badge='';
@@ -390,6 +454,7 @@ function renderMeteo(m){
 
 /* ── Previsión 24h ── */
 function renderPrev24(horas){
+  lastHoras = horas; // store for language re-render
   var el=document.getElementById('prev-24h');
   if(!horas||!horas.length){
     el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">'+t('no_prev')+'</div>';
@@ -401,7 +466,7 @@ function renderPrev24(horas){
     var esAhora=i===0;
     var icon=(h.wmo&&h.wmo.icon)?h.wmo.icon:'⛅';
     html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
-    html+='<div class="ph-hora">'+(esAhora?t('ahora'):h.hora)+'</div>';
+    html+='<div class="ph-hora">'+(esAhora?t('ahora'):fmtHoraLang(h.hora))+'</div>';
     html+='<div class="ph-icon">'+icon+'</div>';
     html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
     if(riesgo||h.lluvia>0){
