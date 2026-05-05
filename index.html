@@ -153,19 +153,19 @@ body.tv .lang-indicator{
       <div class="card-label" data-i18n="lbl_ph">pH</div>
       <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
       <div class="bar-wrap" id="bar-wrap-ph"><div class="legal-zone" id="legal-ph"></div><div class="bar-fill" id="bar-ph"></div></div>
-      <div class="legal-label"><span>6.5</span><span>Legal: 6.5–8.0 pH</span><span>8.0</span></div>
+
     </div>
     <div class="card" id="card-orp">
       <div class="card-label" data-i18n="lbl_orp">ORP / Redox</div>
       <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
       <div class="bar-wrap" id="bar-wrap-orp"><div class="legal-zone" id="legal-orp"></div><div class="bar-fill" id="bar-orp"></div></div>
-      <div class="legal-label"><span>250</span><span>Legal: 250–900 mV</span><span>900</span></div>
+
     </div>
     <div class="card" id="card-ppm">
       <div class="card-label" data-i18n="lbl_ppm">Cloro libre</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">ppm</span></div>
       <div class="bar-wrap" id="bar-wrap-ppm"><div class="legal-zone" id="legal-ppm"></div><div class="bar-fill" id="bar-ppm"></div></div>
-      <div class="legal-label"><span>0.5</span><span>Legal: 0.5–2.0 mg/l</span><span>2.0</span></div>
+
     </div>
     <div class="card" id="card-temp">
       <div class="card-label" data-i18n="lbl_temp">Temp agua piscina</div>
@@ -391,8 +391,8 @@ function switchLang(){
 
 // Rangos operativos (semáforo) y límites legales Baleares
 var R = {
-  ph:   {min:6.5, max:8.0, okMin:7.2, okMax:7.6, legalMin:6.5, legalMax:8.0},
-  orp:  {min:550, max:800, okMin:640, okMax:690,  legalMin:250, legalMax:900},
+  ph:   {min:7.0, max:7.8, okMin:7.2, okMax:7.6, legalMin:7.0, legalMax:7.8},
+  orp:  {min:630, max:690, okMin:640, okMax:690,  legalMin:630, legalMax:690},
   ppm:  {min:0,   max:3.0, okMin:0.5, okMax:2.0,  legalMin:0.5, legalMax:2.0},
   temp: {min:15,  max:35,  okMin:20,  okMax:32},
 };
