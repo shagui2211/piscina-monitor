@@ -24,8 +24,8 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-main{max-width:960px;margin:auto;padding:20px;transition: opacity 0.5s ease-in-out;}
-.fade-out { opacity: 0; }
+main{max-width:960px;margin:auto;padding:20px;transition:opacity 0.5s ease-in-out;}
+.fade-out{opacity:0;}
 
 .section-title{font-size:0.7rem;color:var(--muted);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em;}
 .grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
@@ -74,15 +74,7 @@ body.tv .card{padding:28px 24px;}
 body.tv .card-value{font-size:4rem;}
 body.tv .card-unit{font-size:1.4rem;}
 body.tv .card-label{font-size:1rem;}
-body.tv .bar-wrap{display:none;}
 body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
-body.tv .meteo-frase{font-size:1.4rem;}
-body.tv .meteo-card{padding:24px 28px;}
-body.tv .prev-hora{width:90px;}
-body.tv .ph-icon{font-size:1.8rem;}
-body.tv .ph-temp{font-size:1.2rem;}
-
-/* Ajuste Header Estrecho en TV */
 body.tv header{padding:8px 40px; min-height: auto;}
 body.tv .logo{width:160px;}
 body.tv .header-title-main{font-size:1.4rem; line-height: 1.1;}
@@ -162,24 +154,15 @@ body.tv .conn-dot{width:14px;height:14px;}
 
   <p class="section-title" id="txt-sec-prev">Previsión próximas 24 h</p>
   <div class="prev-scroll" id="prev-24h">
-    <div style="color:var(--muted);font-size:.8rem;padding:16px;" id="txt-loading-prev">Cargando previsión…</div>
+    <div style="color:var(--muted);font-size:.8rem;padding:16px;">Cargando previsión…</div>
   </div>
 
   <div class="footer">Valentin Hotels &amp; Resorts</div>
 </main>
 
 <script>
+// --- TU LÓGICA ORIGINAL DE API (INTACTA) ---
 var API = 'https://ts.net';
-
-var translations = [
-  { lang: 'es-ES', hour12: false, texts: { alert: 'Parámetros fuera de rango', poolTitle: 'Piscina Exterior', errorBanner: '⚠️ Error de conexión — No se puede contactar con la API.', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas 24 h', labelOrp: 'ORP / Redox', labelPpm: 'Cloro libre', labelTempw: 'Temp agua', labelTempa: 'Temp exterior', labelHum: 'Humedad', loadingPrev: 'Cargando previsión...', now: 'Ahora', noData: 'Sin datos' } },
-  { lang: 'en-GB', hour12: true, texts: { alert: 'Parameters out of range', poolTitle: 'Outdoor Pool', errorBanner: '⚠️ Connection error — Unable to reach API.', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: '24-hour Forecast', labelOrp: 'ORP / Redox', labelPpm: 'Free Chlorine', labelTempw: 'Water Temp', labelTempa: 'Outdoor Temp', labelHum: 'Humidity', loadingPrev: 'Loading forecast...', now: 'Now', noData: 'No data' } },
-  { lang: 'de-DE', hour12: false, texts: { alert: 'Parameter außerhalb des Bereichs', poolTitle: 'Außenpool', errorBanner: '⚠️ Verbindungsfehler — API nicht erreichbar.', secWater: 'Wasserparameter', secAir: 'Umgebung', secMeteo: 'Aktueller Zustand', secPrev: '24-Stunden-Vorhersage', labelOrp: 'ORP / Redox', labelPpm: 'Freies Chlor', labelTempw: 'Wassertemp.', labelTempa: 'Außentemp.', labelHum: 'Feuchtigkeit', loadingPrev: 'Vorhersage wird geladen...', now: 'Jetzt', noData: 'Keine Daten' } }
-];
-
-var currentLangIdx = 0;
-var isTV = location.search.includes('tv=1');
-if(isTV){document.body.classList.add('tv');}
 
 var R = {
   ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
@@ -189,9 +172,15 @@ var R = {
 };
 
 var lastData = null;
+var translations = [
+  { lang: 'es-ES', hour12: false, texts: { alert: 'Parámetros fuera de rango', poolTitle: 'Piscina Exterior', errorBanner: '⚠️ Error de conexión — No se puede contactar con la API.', secWater: 'Parámetros del agua', secAir: 'Ambiente', secMeteo: 'Condición actual', secPrev: 'Previsión próximas 24 h', labelOrp: 'ORP / Redox', labelPpm: 'Cloro libre', labelTempw: 'Temp agua', labelTempa: 'Temp exterior', labelHum: 'Humedad', now: 'Ahora', noData: 'Sin datos' } },
+  { lang: 'en-GB', hour12: true, texts: { alert: 'Parameters out of range', poolTitle: 'Outdoor Pool', errorBanner: '⚠️ Connection error — Unable to reach API.', secWater: 'Water Parameters', secAir: 'Environment', secMeteo: 'Current Condition', secPrev: '24-hour Forecast', labelOrp: 'ORP / Redox', labelPpm: 'Free Chlorine', labelTempw: 'Water Temp', labelTempa: 'Outdoor Temp', labelHum: 'Humidity', now: 'Now', noData: 'No data' } },
+  { lang: 'de-DE', hour12: false, texts: { alert: 'Parameter fuera de rango', poolTitle: 'Außenpool', errorBanner: '⚠️ Verbindungsfehler — Node-RED', secWater: 'Wasserparameter', secAir: 'Umgebung', secMeteo: 'Aktueller Zustand', secPrev: '24-Stunden-Vorhersage', labelOrp: 'ORP / Redox', labelPpm: 'Freies Chlor', labelTempw: 'Wassertemp.', labelTempa: 'Außentemp.', labelHum: 'Feuchtigkeit', now: 'Jetzt', noData: 'Keine Daten' } }
+];
+var currentLangIdx = 0;
+var isTV = location.search.includes('tv=1');
 
 function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
-
 function semaforo(v,r){
   if(v>=r.okMin&&v<=r.okMax)return'ok';
   var m=(r.okMax-r.okMin)*0.5;
@@ -217,11 +206,6 @@ function alertCheck(d){
   document.getElementById('alert').style.display=bad?'block':'none';
 }
 
-function badgeHTML(text,color){
-  var cls='meteo-badge badge-'+(color||'off');
-  return '<span class="'+cls+'">'+text+'</span>';
-}
-
 function updateTexts() {
   var t = translations[currentLangIdx].texts;
   document.getElementById('txt-alert').textContent = t.alert;
@@ -236,53 +220,43 @@ function updateTexts() {
   document.getElementById('txt-label-tempw').textContent = t.labelTempw;
   document.getElementById('txt-label-tempa').textContent = t.labelTempa;
   document.getElementById('txt-label-hum').textContent = t.labelHum;
-  var lp = document.getElementById('txt-loading-prev');
-  if(lp) lp.textContent = t.loadingPrev;
-  
-  if(lastData) {
+  if(lastData){
     renderMeteo(lastData.meteo);
     renderPrev24(lastData.meteo && lastData.meteo.horas24 ? lastData.meteo.horas24 : []);
   }
+}
+
+function badgeHTML(text,color){
+  return '<span class="meteo-badge badge-'+(color||'off')+'">'+text+'</span>';
 }
 
 function renderMeteo(m){
   if(!m)return;
   document.getElementById('meteo-frase').textContent=m.frase||translations[currentLangIdx].texts.noData;
   var badge='';
-  if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
-    badge=badgeHTML(m.alerta,m.alertaColor);
-  }
+  if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){ badge=badgeHTML(m.alerta,m.alertaColor); }
   document.getElementById('meteo-badge-alerta').innerHTML=badge;
   var tend='';
-  if(m.tendencia&&m.tendencia!=='Estable'&&m.tendencia!=='...'){
-    tend='<span style="font-size:.75rem">'+m.tendencia+'</span>';
-  }
+  if(m.tendencia&&m.tendencia!=='Estable'&&m.tendencia!=='...'){ tend='<span style="font-size:.75rem">'+m.tendencia+'</span>'; }
   document.getElementById('meteo-tend').innerHTML=tend;
   var pres='';
-  if(m.presionQFF){
-    pres='<span style="font-size:.75rem;color:var(--muted)">'+ m.presionQFF.toFixed(0)+' hPa QFF</span>';
-  }
+  if(m.presionQFF){ pres='<span style="font-size:.75rem;color:var(--muted)">'+ m.presionQFF.toFixed(0)+' hPa QFF</span>'; }
   document.getElementById('meteo-presion').innerHTML=pres;
 }
 
 function renderPrev24(horas){
   var el=document.getElementById('prev-24h');
   var t = translations[currentLangIdx].texts;
-  if(!horas||!horas.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">'+t.noData+'</div>';
-    return;
-  }
+  if(!horas||!horas.length){ el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">'+t.noData+'</div>'; return; }
   var html='';
   horas.forEach(function(h,i){
-    var riesgo=h.lluvia_p>=40;
-    var esAhora=i===0;
+    var riesgo=h.lluvia_p>=40; var esAhora=i===0;
     html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
     html+='<div class="ph-hora">'+(esAhora? t.now : h.hora)+'</div>';
     html+='<div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div>';
     html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
     if(riesgo||h.lluvia>0){
-      html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
-      html+=(h.lluvia_p||0)+'%';
+      html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">'+(h.lluvia_p||0)+'%';
       if(h.lluvia>0)html+=' '+h.lluvia.toFixed(1)+'mm';
       html+='</div>';
     }
@@ -295,8 +269,7 @@ function tickClock(){
   var config = translations[currentLangIdx];
   document.getElementById('clock').textContent = new Date().toLocaleTimeString(config.lang, { hour12: config.hour12 });
 }
-tickClock();
-setInterval(tickClock,1000);
+tickClock(); setInterval(tickClock,1000);
 
 var dot=document.getElementById('conn-dot');
 var banner=document.getElementById('error-banner');
@@ -307,8 +280,7 @@ async function load(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     var d=await res.json();
     lastData = d;
-    banner.classList.remove('visible');
-    dot.className='conn-dot ok';
+    banner.classList.remove('visible'); dot.className='conn-dot ok';
     setCard('ph',  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
     setCard('orp', d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
     setCard('ppm', d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
@@ -321,16 +293,15 @@ async function load(){
     renderPrev24(d.meteo&&d.meteo.horas24?d.meteo.horas24:[]);
     alertCheck(d);
   }catch(err){
-    dot.className='conn-dot danger';
-    banner.classList.add('visible');
+    dot.className='conn-dot danger'; banner.classList.add('visible');
     console.error('API error:',err);
   }
 }
 
-load();
-setInterval(load,15000);
+load(); setInterval(load,15000);
 
 if(isTV){
+  document.body.classList.add('tv');
   setInterval(function(){
     var main = document.getElementById('main-content');
     main.classList.add('fade-out');
