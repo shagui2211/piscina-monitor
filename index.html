@@ -15,6 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden;}
 
+/* ── HEADER ── */
 header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
 .header-left{display:flex;align-items:center;gap:16px;}
 .logo{width:140px}.logo img{width:100%}
@@ -25,8 +26,9 @@ header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 
-main{max-width:960px;margin:auto;padding:20px;transition:opacity 0.5s ease-in-out;}
-.fade-out{opacity:0;}
+/* ── MAIN ── */
+main{max-width:960px;margin:auto;padding:20px; transition: opacity 0.5s ease-in-out;}
+.fade-out { opacity: 0; }
 
 .section-title{font-size:0.7rem;color:var(--muted);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em;}
 .grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
@@ -43,44 +45,38 @@ main{max-width:960px;margin:auto;padding:20px;transition:opacity 0.5s ease-in-ou
 .bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
 .bar-fill{height:100%;transition:width .8s ease,background .4s;}
 
-.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
+.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;}
 .meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
-.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
-.badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
-.badge-warn   {background:rgba(176,125,42,.1);color:var(--warn);}
-.badge-danger {background:rgba(201,75,75,.1); color:var(--danger);}
+.meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;}
 
-.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;}
+.prev-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
 .prev-scroll::-webkit-scrollbar{height:4px;}
 .prev-hora{flex-shrink:0;width:72px;background:white;border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;}
 .prev-hora.ahora{border-color:#3d7a5a;background:#f0f7f3;}
 .ph-hora{font-family:var(--mono);font-size:0.65rem;color:var(--muted);margin-bottom:4px;}
-.ph-icon{font-size:1.4rem;line-height:1;margin-bottom:2px;}
+.ph-icon{font-size:1.4rem;line-height:1;}
 .ph-temp{font-family:var(--mono);font-size:0.95rem;font-weight:500;}
 
 .error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
 .error-banner.visible{display:block;}
 .alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
-.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
+.footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);padding-bottom:20px;}
 
 /* ── TV MODE ── */
 body.tv main{max-width:100%;padding:40px;}
 body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
 body.tv .card{padding:28px 24px;}
 body.tv .card-value{font-size:4rem;}
-body.tv .card-unit{font-size:1.4rem;}
-body.tv .card-label{font-size:1rem;}
 body.tv .bar-wrap{display:none;}
 body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
+body.tv .status-pill{font-size:2.4rem;font-weight:500;}
 
 /* HEADER ESTRECHO TV */
-body.tv header{padding:0 40px; height: 50px; min-height: 50px;}
-body.tv .logo{width:80px;}
-body.tv .header-title-main{font-size:1rem; line-height: 1;}
-body.tv .header-title-sub{font-size:0.7rem;}
-body.tv .status-pill{font-size:2rem;font-weight:500;}
-body.tv .conn-dot{width:12px;height:12px;}
+body.tv header{padding:4px 40px; height: auto; min-height: 55px;} 
+body.tv .logo{width:110px;}
+body.tv .header-title-main{font-size:1.2rem; line-height: 1.1;}
+body.tv .header-title-sub{font-size:0.8rem;}
+body.tv .conn-dot{width:14px;height:14px;}
 </style>
 </head>
 <body>
@@ -91,39 +87,39 @@ body.tv .conn-dot{width:12px;height:12px;}
   <div class="header-left">
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
     <div>
-      <div class="header-title-main" id="txt-pool-title">Piscina Exterior</div>
+      <div class="header-title-main" id="txt-title">Piscina Exterior</div>
       <div class="header-title-sub">Somni Hotel & Suites</div>
     </div>
   </div>
   <div class="status-pill">
-    <div class="conn-dot" id="conn-dot"></div>
+    <div class="conn-dot ok" id="conn-dot"></div>
     <span id="clock">--:--:--</span>
   </div>
 </header>
 
 <main id="main-content">
   <div class="error-banner" id="error-banner">
-    <span id="txt-error-msg">⚠️ Error de conexión — No se puede contactar con la API.</span>
+    <span id="txt-err-msg">⚠️ Error de conexión — No se puede contactar con la API.</span>
   </div>
 
   <p class="section-title" id="txt-sec-water">Parámetros del agua</p>
   <div class="grid-main">
-    <div class="card" id="card-ph">
+    <div class="card ok-card" id="card-ph">
       <div class="card-label">pH</div>
       <div class="card-value-row"><span class="card-value" id="val-ph">—</span><span class="card-unit">pH</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
     </div>
-    <div class="card" id="card-orp">
+    <div class="card ok-card" id="card-orp">
       <div class="card-label" id="txt-lbl-orp">ORP / Redox</div>
       <div class="card-value-row"><span class="card-value" id="val-orp">—</span><span class="card-unit">mV</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
     </div>
-    <div class="card" id="card-ppm">
+    <div class="card ok-card" id="card-ppm">
       <div class="card-label" id="txt-lbl-cl">Cloro libre</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">—</span><span class="card-unit">ppm</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
     </div>
-    <div class="card" id="card-temp">
+    <div class="card ok-card" id="card-temp">
       <div class="card-label" id="txt-lbl-tempw">Temp agua</div>
       <div class="card-value-row"><span class="card-value" id="val-temp">—</span><span class="card-unit">°C</span></div>
       <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
@@ -144,7 +140,7 @@ body.tv .conn-dot{width:12px;height:12px;}
 
   <p class="section-title" id="txt-sec-meteo">Condición actual</p>
   <div class="meteo-card">
-    <div class="meteo-frase" id="meteo-frase">Cargando...</div>
+    <div class="meteo-frase" id="meteo-frase">Cargando…</div>
     <div class="meteo-sub">
       <span id="meteo-badge-alerta"></span>
       <span id="meteo-tend"></span>
@@ -153,18 +149,23 @@ body.tv .conn-dot{width:12px;height:12px;}
   </div>
 
   <p class="section-title" id="txt-sec-prev">Previsión próximas 24 h</p>
-  <div class="prev-scroll" id="prev-24h">
-    <div style="color:var(--muted);font-size:.8rem;padding:16px;" id="txt-loading">Cargando previsión...</div>
-  </div>
+  <div class="prev-scroll" id="prev-24h"></div>
 
-  <div class="footer">Valentin Hotels & Resorts</div>
+  <div class="footer">VALENTIN HOTELS - Paguera, Mallorca</div>
 </main>
 
 <script>
-// CONFIGURACIÓN ORIGINAL
 var API = 'https://ts.net';
 var isTV = location.search.includes('tv=1');
 if(isTV) document.body.classList.add('tv');
+
+var translations = [
+  {lang:'es-ES', hour12:false, texts:{alert:'Parámetros fuera de rango', pool:'Piscina Exterior', error:'⚠️ Error de conexión — API', secWater:'Parámetros del agua', secAir:'Ambiente', secMeteo:'Condición actual', secPrev:'Previsión próximas 24 h', orp:'ORP / Redox', cl:'Cloro libre', tempw:'Temp agua', tempe:'Temp exterior', hum:'Humedad', now:'Ahora'}},
+  {lang:'en-GB', hour12:true, texts:{alert:'Parameters out of range', pool:'Outdoor Pool', error:'⚠️ Connection Error — API', secWater:'Water Parameters', secAir:'Environment', secMeteo:'Current Condition', secPrev:'24-hour Forecast', orp:'ORP / Redox', cl:'Free Chlorine', tempw:'Water Temp', tempe:'Outdoor Temp', hum:'Humidity', now:'Now'}},
+  {lang:'de-DE', hour12:false, texts:{alert:'Parameter fuera de rango', pool:'Außenpool', error:'⚠️ Verbindungsfehler — API', secWater:'Wasserparameter', secAir:'Umgebung', secMeteo:'Aktueller Zustand', secPrev:'24-Stunden-Vorhersage', orp:'ORP / Redox', cl:'Freies Chlor', tempw:'Wassertemp.', tempe:'Außentemp.', hum:'Feuchtigkeit', now:'Jetzt'}}
+];
+var curLang = 0;
+var lastD = null;
 
 var R = {
   ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
@@ -172,14 +173,6 @@ var R = {
   ppm:  {min:0,   max:3.0, okMin:0.5, okMax:1.5},
   temp: {min:15,  max:35,  okMin:20,  okMax:32},
 };
-
-var translations = [
-  {lang:'es-ES', hour12:false, texts:{alert:'Parámetros fuera de rango', pool:'Piscina Exterior', error:'⚠️ Error de conexión — API', secWater:'Parámetros del agua', secAir:'Ambiente', secMeteo:'Condición actual', secPrev:'Previsión próximas 24 h', orp:'ORP / Redox', cl:'Cloro libre', tempw:'Temp agua', tempe:'Temp exterior', hum:'Humedad', loading:'Cargando previsión...', now:'Ahora', noData:'Sin datos'}},
-  {lang:'en-GB', hour12:true, texts:{alert:'Parameters out of range', pool:'Outdoor Pool', error:'⚠️ Connection Error — API', secWater:'Water Parameters', secAir:'Environment', secMeteo:'Current Condition', secPrev:'24-hour Forecast', orp:'ORP / Redox', cl:'Free Chlorine', tempw:'Water Temp', tempe:'Outdoor Temp', hum:'Humidity', loading:'Loading forecast...', now:'Now', noData:'No data'}},
-  {lang:'de-DE', hour12:false, texts:{alert:'Parameter fuera de rango', pool:'Außenpool', error:'⚠️ Verbindungsfehler — API', secWater:'Wasserparameter', secAir:'Umgebung', secMeteo:'Aktueller Zustand', secPrev:'24-Stunden-Vorhersage', orp:'ORP / Redox', cl:'Freies Chlor', tempw:'Wassertemp.', tempe:'Außentemp.', hum:'Feuchtigkeit', loading:'Vorhersage wird geladen...', now:'Jetzt', noData:'Keine Daten'}}
-];
-var curLang = 0;
-var lastData = null;
 
 function pct(v,r){return Math.max(0,Math.min(100,(v-r.min)/(r.max-r.min)*100));}
 function semaforo(v,r){
@@ -197,11 +190,11 @@ function setCard(key,raw,fmt){
   var b=document.getElementById('bar-'+key); if(b){ b.style.width=pct(raw,r)+'%'; b.style.background=COLOR[s]; }
 }
 
-function updateTranslations(){
+function updateUI(){
   var t = translations[curLang].texts;
   document.getElementById('txt-alert').textContent = t.alert;
-  document.getElementById('txt-pool-title').textContent = t.pool;
-  document.getElementById('txt-error-msg').textContent = t.error;
+  document.getElementById('txt-title').textContent = t.pool;
+  document.getElementById('txt-err-msg').textContent = t.error;
   document.getElementById('txt-sec-water').textContent = t.secWater;
   document.getElementById('txt-sec-air').textContent = t.secAir;
   document.getElementById('txt-sec-meteo').textContent = t.secMeteo;
@@ -211,31 +204,28 @@ function updateTranslations(){
   document.getElementById('txt-lbl-tempw').textContent = t.tempw;
   document.getElementById('txt-lbl-tempe').textContent = t.tempe;
   document.getElementById('txt-lbl-hum').textContent = t.hum;
-  var l=document.getElementById('txt-loading'); if(l) l.textContent=t.loading;
-  if(lastData) { renderMeteo(lastData.meteo); renderPrev24(lastData.meteo?lastData.meteo.horas24:[]); }
+  if(lastD) { renderMeteo(lastD.meteo); renderPrev24(lastD.meteo?lastD.meteo.horas24:[]); }
 }
-
-function badgeHTML(text,color){ return '<span class="meteo-badge badge-'+(color||'off')+'">'+text+'</span>'; }
 
 function renderMeteo(m){
   if(!m)return;
-  document.getElementById('meteo-frase').textContent=m.frase||translations[curLang].texts.noData;
-  document.getElementById('meteo-badge-alerta').innerHTML=(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE')?badgeHTML(m.alerta,m.alertaColor):'';
+  document.getElementById('meteo-frase').textContent=m.frase||'---';
+  document.getElementById('meteo-badge-alerta').innerHTML=(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE')?'<span class="meteo-badge badge-'+(m.alertaColor||'off')+'">'+m.alerta+'</span>':'';
   document.getElementById('meteo-tend').innerHTML=(m.tendencia&&m.tendencia!=='Estable')?'<span style="font-size:.75rem">'+m.tendencia+'</span>':'';
   document.getElementById('meteo-presion').innerHTML=m.presionQFF?'<span style="font-size:.75rem;color:var(--muted)">'+m.presionQFF.toFixed(0)+' hPa</span>':'';
 }
 
 function renderPrev24(horas){
   var el=document.getElementById('prev-24h');
-  if(!horas||!horas.length){ el.innerHTML='<div style="padding:16px;">'+translations[curLang].texts.noData+'</div>'; return; }
-  var hml='';
+  if(!horas||!horas.length) return;
+  var html='';
   horas.forEach(function(h,i){
-    var r=h.lluvia_p>=40; var now=i===0;
-    hml+='<div class="prev-hora'+(now?' ahora':'')+'"><div class="ph-hora">'+(now?translations[curLang].texts.now:h.hora)+'</div><div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div><div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
-    if(r||h.lluvia>0){ hml+='<div style="font-size:0.6rem;color:#4a7db5;">'+(h.lluvia_p||0)+'%</div>'; }
-    hml+='</div>';
+    var risk=h.lluvia_p>=40; var esAhora=i===0;
+    html+='<div class="prev-hora'+(esAhora?' ahora':'')+'"><div class="ph-hora">'+(esAhora?translations[curLang].texts.now:h.hora)+'</div><div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div><div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'—')+'°</div>';
+    if(risk||h.lluvia>0){ html+='<div style="font-size:0.6rem;color:#4a7db5;">'+(h.lluvia_p||0)+'%</div>'; }
+    html+='</div>';
   });
-  el.innerHTML=hml;
+  el.innerHTML=html;
 }
 
 function tick(){
@@ -248,7 +238,7 @@ async function load(){
   try{
     var res=await fetch(API,{cache:'no-store'});
     if(!res.ok)throw new Error();
-    var d=await res.json(); lastData=d;
+    var d=await res.json(); lastD=d;
     document.getElementById('error-banner').classList.remove('visible');
     document.getElementById('conn-dot').className='conn-dot ok';
     setCard('ph', d.ph, (+(d.ph||0)).toFixed(2));
@@ -270,7 +260,7 @@ load(); setInterval(load,15000);
 if(isTV){
   setInterval(function(){
     var m=document.getElementById('main-content'); m.classList.add('fade-out');
-    setTimeout(function(){ curLang=(curLang+1)%translations.length; updateTranslations(); m.classList.remove('fade-out'); },500);
+    setTimeout(function(){ curLang=(curLang+1)%translations.length; updateUI(); m.classList.remove('fade-out'); },500);
   },10000);
 }
 </script>
