@@ -42,14 +42,13 @@ main{max-width:960px;margin:auto;padding:20px;}
 .legal-label{font-size:0.58rem;color:var(--muted);margin-top:4px;font-family:var(--mono);display:flex;justify-content:space-between;}
 
 /* ── AMBIENTE + METEO EN FILA ── */
-.ambiente-meteo-row{display:grid;grid-template-columns:3fr 1.2fr;gap:0 20px;align-items:stretch;}
-.ambiente-col{display:flex;flex-direction:column;}
-.ambiente-col .section-title{flex-shrink:0;}
-.ambiente-grid{grid-template-columns:repeat(3,1fr);flex:1;}
-.ambiente-grid .card{height:100%;}
-.meteo-col{display:flex;flex-direction:column;}
-.meteo-col .section-title{flex-shrink:0;}
-.meteo-col .meteo-card{flex:1;display:flex;align-items:center;}
+.ambiente-meteo-row{display:grid;grid-template-columns:3fr 1.2fr;gap:22px;align-items:stretch;margin-top:0;}
+.ambiente-col{display:flex;flex-direction:column;gap:0;}
+.ambiente-col .section-title{margin-top:22px;}
+.ambiente-grid{grid-template-columns:repeat(3,1fr);align-items:stretch;}
+.ambiente-grid .card{display:flex;flex-direction:column;justify-content:center;}
+.meteo-col{display:flex;flex-direction:column;justify-content:flex-end;padding-top:calc(0.7rem + 10px + 22px);}
+.meteo-col .meteo-card{flex:1;display:flex;align-items:center;min-height:0;}
 
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
@@ -274,6 +273,7 @@ var I18N = {
     lbl_st:        'Sensación térmica',
     ahora:         'Ahora',
     hoy:           'Hoy',
+    actualmente:   'Actualmente',
     st_labels:     ['Peligroso','Muy caluroso','Caluroso','Cómodo','Agradable','Fresco','Frío'],
     clock12:       false,
     locale:        'es-ES',
@@ -306,6 +306,7 @@ var I18N = {
     lbl_st:        'Feels like',
     ahora:         'Now',
     hoy:           'Today',
+    actualmente:   'Currently',
     st_labels:     ['Dangerous','Very hot','Hot','Comfortable','Pleasant','Cool','Cold'],
     clock12:       true,
     locale:        'en-US',
@@ -338,6 +339,7 @@ var I18N = {
     lbl_st:        'Gefühlte Temperatur',
     ahora:         'Jetzt',
     hoy:           'Heute',
+    actualmente:   'Derzeit',
     st_labels:     ['Gefährlich','Sehr heiß','Heiß','Angenehm','Schön','Kühl','Kalt'],
     clock12:       false,
     locale:        'de-DE',
@@ -400,7 +402,7 @@ function applyLang(){
   // Re-render condición actual frase with WMO translation
   if(lastWmoCode !== null){
     var fraseEl = document.getElementById('meteo-frase');
-    if(fraseEl) fraseEl.textContent = wmoTxt(lastWmoCode);
+    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(lastWmoCode);
   }
   // Re-render 7-day forecast with translated day names
   if(lastDias7.length) renderPrev7(lastDias7);
@@ -489,10 +491,10 @@ function renderMeteo(m){
     }
     lastWmoCode = detectedCode;
     if(fraseEl){
-      fraseEl.textContent = detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos');
+      fraseEl.textContent = (t('actualmente') + ' ' + (detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos')));
     }
   } else {
-    if(fraseEl) fraseEl.textContent = m.frase || 'Sin datos';
+    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || 'Sin datos');
     lastWmoCode = null;
   }
 
