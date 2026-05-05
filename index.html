@@ -165,9 +165,7 @@ body.tv .lang-indicator{
       <div class="card-label" data-i18n="lbl_ppm">Cloro libre estimado</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">mg/l</span></div>
       <div class="bar-wrap" id="bar-wrap-ppm"><div class="legal-zone" id="legal-ppm"></div><div class="bar-fill" id="bar-ppm"></div></div>
-      <div style="font-size:0.58rem;color:var(--muted);margin-top:7px;line-height:1.5;font-family:var(--sans);">
-        Estimación por cálculo electroquímico.<br>Lectura real con DPD1 introducida diariamente.
-      </div>
+      <div style="font-size:0.58rem;color:var(--muted);margin-top:7px;line-height:1.5;font-family:var(--sans);" data-i18n="lbl_ppm_nota">Estimación por cálculo electroquímico. Lectura real con DPD1 introducida diariamente.</div>
     </div>
     <div class="card" id="card-temp">
       <div class="card-label" data-i18n="lbl_temp">Temp agua piscina</div>
@@ -239,7 +237,8 @@ var I18N = {
     sec_prevision: 'Previsión 7 días',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
-    lbl_ppm:       'Cloro libre',
+    lbl_ppm:       'Cloro libre estimado',
+    lbl_ppm_nota:  'Estimación por cálculo electroquímico. Lectura real con DPD1 introducida diariamente.',
     lbl_temp:      'Temp agua piscina',
     lbl_tamb:      'Temp exterior',
     lbl_hum:       'Humedad relativa',
@@ -270,7 +269,8 @@ var I18N = {
     sec_prevision: '7-day forecast',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
-    lbl_ppm:       'Free chlorine',
+    lbl_ppm:       'Estimated free chlorine',
+    lbl_ppm_nota:  'Electrochemical estimate. Actual reading taken daily with DPD1 test.',
     lbl_temp:      'Pool water temp',
     lbl_tamb:      'Outdoor temp',
     lbl_hum:       'Relative humidity',
@@ -301,7 +301,8 @@ var I18N = {
     sec_prevision: '7-Tage-Vorschau',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
-    lbl_ppm:       'Freies Chlor',
+    lbl_ppm:       'Geschätztes freies Chlor',
+    lbl_ppm_nota:  'Elektrochemische Schätzung. Tägliche Messung mit DPD1-Test.',
     lbl_temp:      'Wassertemperatur',
     lbl_tamb:      'Außentemperatur',
     lbl_hum:       'Relative Luftfeuchte',
