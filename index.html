@@ -250,17 +250,18 @@ function renderMeteo(m){
 function renderPrev24(horas){
   var el=document.getElementById('prev-24h');
   if(!horas||!horas.length){
-    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsi&#243;n</div>';
+    el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:16px;">Sin datos de previsi\u00f3n</div>';
     return;
   }
   var html='';
   horas.forEach(function(h,i){
-    var riesgo=h.lluvia_p>=40;
+    var riesgo=(h.lluvia_p||0)>=40;
     var esAhora=i===0;
+    var icon=(h.wmo&&h.wmo.icon)?h.wmo.icon:'\u26C5';
     html+='<div class="prev-hora'+(esAhora?' ahora':'')+'">';
     html+='<div class="ph-hora">'+(esAhora?'Ahora':h.hora)+'</div>';
-    html+='<div class="ph-icon">'+(h.wmo?h.wmo.icon:'&#x26C5;')+'</div>';
-    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'&#8212;')+'&#176;</div>';
+    html+='<div class="ph-icon">'+icon+'</div>';
+    html+='<div class="ph-temp">'+(h.temp!=null?h.temp.toFixed(0):'\u2014')+'\u00b0</div>';
     if(riesgo||h.lluvia>0){
       html+='<div class="ph-lluvia'+(riesgo?' riesgo':'')+'">';
       html+=(h.lluvia_p||0)+'%';
@@ -304,7 +305,8 @@ async function load(){
     document.getElementById('val-hum').textContent=hum!=null?(+hum).toFixed(1):'&#8212;';
 
     renderMeteo(d.meteo);
-    renderPrev24(d.meteo&&d.meteo.horas24?d.meteo.horas24:[]);
+    var horas = (d.meteo && (d.meteo.horas24 || d.meteo.prevision24)) || [];
+    renderPrev24(horas);
 
     alertCheck(d);
   }catch(err){
