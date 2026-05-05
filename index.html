@@ -552,11 +552,12 @@ var COLOR={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--danger)'};
 
 function setCard(key,raw,fmt){
   var r=R[key],s=semaforo(raw,r);
-  document.getElementById('card-'+key).className='card '+s+'-card';
+  var display=isTvMode?'ok':s;
+  document.getElementById('card-'+key).className='card '+display+'-card';
   var v=document.getElementById('val-'+key);
-  v.textContent=fmt; v.style.color=COLOR[s];
+  v.textContent=fmt; v.style.color=COLOR[display];
   var b=document.getElementById('bar-'+key);
-  if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[s];}
+  if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[display];}
   var wrap=document.getElementById('bar-wrap-'+key);
   if(wrap&&r.legalMin!=null){
     var pMin=pct(r.legalMin,r), pMax=pct(r.legalMax,r);
@@ -569,6 +570,7 @@ function setCard(key,raw,fmt){
 }
 
 function alertCheck(d){
+  if(isTvMode){document.getElementById('alert').style.display='none';return;}
   var bad=(d.ph!=null&&semaforo(d.ph,R.ph)==='bad')||
           (d.orp!=null&&semaforo(d.orp,R.orp)==='bad')||
           (d.ppm!=null&&semaforo(d.ppm,R.ppm)==='bad');
@@ -741,7 +743,7 @@ async function load(){
     alertCheck(d);
   }catch(err){
     dot.className='conn-dot danger';
-    banner.classList.add('visible');
+    if(!isTvMode) banner.classList.add('visible');
     console.error('API error:',err);
   }
 }
