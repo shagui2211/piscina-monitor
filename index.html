@@ -36,8 +36,24 @@ main{max-width:960px;margin:auto;padding:20px;}
 .card-value{font-family:var(--mono);font-size:2.2rem;line-height:1;transition:color .3s;}
 .card-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
 .card-st-label{font-size:0.65rem;color:var(--muted);margin-top:6px;font-family:var(--sans);}
-.bar-wrap{height:4px;background:var(--border);margin-top:10px;overflow:hidden;border-radius:4px;}
-.bar-fill{height:100%;transition:width .8s ease,background .4s;}
+.bar-wrap{height:6px;background:var(--border);margin-top:10px;overflow:visible;border-radius:4px;position:relative;}
+.bar-fill{height:100%;transition:width .8s ease,background .4s;border-radius:4px;position:relative;z-index:2;}
+.legal-zone{position:absolute;top:0;height:100%;background:rgba(61,122,90,.18);border-radius:4px;z-index:1;transition:left .5s,width .5s;}
+.legal-label{font-size:0.58rem;color:var(--muted);margin-top:4px;font-family:var(--mono);display:flex;justify-content:space-between;}
+
+/* ── PREVISIÓN 7 DÍAS ── */
+.prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
+@media(max-width:600px){.prev7-grid{grid-template-columns:repeat(4,1fr);}}
+.prev7-dia{background:white;border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;opacity:0;transform:translateY(6px);animation:fadeIn .4s ease forwards;}
+.prev7-dia.hoy{border-color:var(--ok);background:#f0f7f3;}
+.p7-fecha{font-size:0.6rem;color:var(--muted);font-family:var(--mono);margin-bottom:4px;text-transform:uppercase;}
+.p7-icon{font-size:1.6rem;line-height:1;margin:4px 0;}
+.p7-temps{display:flex;justify-content:center;align-items:baseline;gap:5px;margin:4px 0;}
+.p7-tmax{font-family:var(--mono);font-size:0.95rem;font-weight:600;color:#c94b4b;}
+.p7-tmin{font-family:var(--mono);font-size:0.78rem;color:#4a7db5;}
+.p7-lluvia{font-size:0.6rem;color:var(--muted);margin-top:3px;}
+.p7-lluvia.riesgo{color:#4a7db5;font-weight:600;}
+.p7-viento{font-size:0.58rem;color:var(--muted);margin-top:2px;}
 
 /* ── METEO UNIFICADO ── */
 .meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
@@ -139,17 +155,20 @@ body.tv .lang-indicator{
     <div class="card" id="card-ph">
       <div class="card-label" data-i18n="lbl_ph">pH</div>
       <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ph"></div></div>
+      <div class="bar-wrap" id="bar-wrap-ph"><div class="legal-zone" id="legal-ph"></div><div class="bar-fill" id="bar-ph"></div></div>
+      <div class="legal-label"><span>7.2</span><span>Legal: 7.2–8.0 pH</span><span>8.0</span></div>
     </div>
     <div class="card" id="card-orp">
       <div class="card-label" data-i18n="lbl_orp">ORP / Redox</div>
       <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-orp"></div></div>
+      <div class="bar-wrap" id="bar-wrap-orp"><div class="legal-zone" id="legal-orp"></div><div class="bar-fill" id="bar-orp"></div></div>
+      <div class="legal-label"><span>250</span><span>Legal: 250–900 mV</span><span>900</span></div>
     </div>
     <div class="card" id="card-ppm">
       <div class="card-label" data-i18n="lbl_ppm">Cloro libre</div>
       <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">ppm</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-ppm"></div></div>
+      <div class="bar-wrap" id="bar-wrap-ppm"><div class="legal-zone" id="legal-ppm"></div><div class="bar-fill" id="bar-ppm"></div></div>
+      <div class="legal-label"><span>0.5</span><span>Legal: 0.5–1.5 ppm</span><span>1.5</span></div>
     </div>
     <div class="card" id="card-temp">
       <div class="card-label" data-i18n="lbl_temp">Temp agua piscina</div>
@@ -218,7 +237,7 @@ var I18N = {
     sec_agua:      'Parámetros del agua',
     sec_ambiente:  'Ambiente',
     sec_condicion: 'Condición actual',
-    sec_prevision: 'Previsión próximas 24 h',
+    sec_prevision: 'Previsión 7 días',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
     lbl_ppm:       'Cloro libre',
@@ -247,7 +266,7 @@ var I18N = {
     sec_agua:      'Water parameters',
     sec_ambiente:  'Environment',
     sec_condicion: 'Current condition',
-    sec_prevision: 'Next 24 h forecast',
+    sec_prevision: '7-day forecast',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
     lbl_ppm:       'Free chlorine',
@@ -276,7 +295,7 @@ var I18N = {
     sec_agua:      'Wasserparameter',
     sec_ambiente:  'Umgebung',
     sec_condicion: 'Aktuelle Bedingung',
-    sec_prevision: 'Vorschau nächste 24 Std.',
+    sec_prevision: '7-Tage-Vorschau',
     lbl_ph:        'pH',
     lbl_orp:       'ORP / Redox',
     lbl_ppm:       'Freies Chlor',
@@ -348,8 +367,8 @@ function applyLang(){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = wmoTxt(lastWmoCode);
   }
-  // Re-render prev-24h with translated hour format and "Ahora/Now/Jetzt"
-  if(lastHoras.length) renderPrev24(lastHoras);
+  // Re-render 7-day forecast with translated day names
+  if(lastHoras.length) renderPrev7(lastHoras);
 }
 
 /* Crossfade transition for TV language switch */
@@ -369,10 +388,12 @@ function switchLang(){
 
 /* ══════════════════════════════════════════════════════════════ */
 
+// Rangos operativos (semáforo) y límites legales Baleares
+// Decreto 53/1995 (CAIB) + RD 742/2013 (estatal)
 var R = {
-  ph:   {min:6.5, max:8.0, okMin:7.0, okMax:7.6},
-  orp:  {min:400, max:900, okMin:650, okMax:750},
-  ppm:  {min:0,   max:3.0, okMin:0.5, okMax:1.5},
+  ph:   {min:6.5, max:9.0, okMin:7.2, okMax:7.6, legalMin:7.2, legalMax:8.0},
+  orp:  {min:200, max:900, okMin:650, okMax:750,  legalMin:250, legalMax:900},
+  ppm:  {min:0,   max:3.0, okMin:0.5, okMax:1.5,  legalMin:0.5, legalMax:1.5},
   temp: {min:15,  max:35,  okMin:20,  okMax:32},
 };
 
@@ -393,6 +414,16 @@ function setCard(key,raw,fmt){
   v.textContent=fmt; v.style.color=COLOR[s];
   var b=document.getElementById('bar-'+key);
   if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[s];}
+  // Legal limit markers
+  var wrap=document.getElementById('bar-wrap-'+key);
+  if(wrap&&r.legalMin!=null){
+    var pMin=pct(r.legalMin,r), pMax=pct(r.legalMax,r);
+    var lm=document.getElementById('legal-'+key);
+    if(lm){
+      lm.style.left=pMin+'%';
+      lm.style.width=(pMax-pMin)+'%';
+    }
+  }
 }
 
 function alertCheck(d){
@@ -541,8 +572,19 @@ async function load(){
     }
 
     renderMeteo(d.meteo);
-    var horas=(d.meteo&&(d.meteo.horas24||d.meteo.prevision24))||[];
-    renderPrev24(horas);
+    // 7-day forecast: prefer daily data, fallback to hourly blocks
+    var dias7 = (d.meteo&&d.meteo.prevision7d) || [];
+    if(!dias7.length){
+      // Fallback: build from hourly data if available (1 entry per day from blocks)
+      var rawHoras = (d.meteo&&(d.meteo.horas24||d.meteo.prevision24))||[];
+      if(rawHoras.length) dias7 = [{
+        fecha: 'Hoy', fecha_iso: null,
+        wmo: rawHoras[0]&&rawHoras[0].wmo ? rawHoras[0].wmo : null,
+        tMax: null, tMin: null, lluvia: 0, lluvia_p: rawHoras[0]&&rawHoras[0].lluvia_p||0,
+        viento: rawHoras[0]&&rawHoras[0].viento||0
+      }];
+    }
+    renderPrev7(dias7);
 
     alertCheck(d);
   }catch(err){
