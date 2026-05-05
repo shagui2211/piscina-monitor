@@ -127,7 +127,7 @@ main{max-width:1400px;margin:auto;padding:24px 32px;}
 /* ── ERROR ── */
 .error-banner{background:#fff5f5;border:1px solid #f5c6c6;border-radius:10px;padding:14px 18px;color:var(--danger);font-size:0.82rem;display:none;margin-bottom:16px;}
 .error-banner.visible{display:block;}
-.alert{position:fixed;top:10px;left:50%;transform:translateX(-50%);background:var(--danger);color:white;padding:10px 18px;border-radius:8px;font-family:var(--mono);font-size:0.8rem;display:none;z-index:999;box-shadow:0 4px 16px rgba(201,75,75,.3);}
+.alert{display:none;width:100%;background:var(--danger);color:white;padding:9px 24px;font-family:var(--mono);font-size:0.8rem;text-align:center;letter-spacing:.03em;box-shadow:0 2px 8px rgba(201,75,75,.2);}
 .footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
 
 /* ── TV MODE (CAMBIOS VISUALES) ── */
@@ -264,8 +264,6 @@ body.tv .lang-indicator{
 </head>
 <body>
 
-<div class="alert" id="alert">&#x26A0; Par&#225;metros fuera de rango</div>
-
 <header>
   <div class="header-left">
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
@@ -279,6 +277,7 @@ body.tv .lang-indicator{
     <span id="clock">--:--:--</span>
   </div>
 </header>
+<div class="alert" id="alert">&#x26A0; Parámetros fuera de rango</div>
 
 <main>
   <div class="error-banner" id="error-banner">
