@@ -14,18 +14,20 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);}
-header{background:white;border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-.header-left{display:flex;align-items:center;gap:16px;}
-.logo{width:140px}.logo img{width:100%}
-.header-title-main{font-size:1rem;font-weight:600;}
-.header-title-sub{font-size:0.7rem;color:var(--muted);}
-.status-pill{font-family:var(--mono);font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:8px;}
+header{background:white;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:nowrap;gap:8px;}
+.header-left{display:flex;align-items:center;gap:10px;min-width:0;flex-shrink:1;}
+.logo{width:72px;flex-shrink:0;}.logo img{width:100%}
+.header-title-main{font-size:0.9rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-title-sub{font-size:0.62rem;color:var(--muted);}
+.status-pill{font-family:var(--mono);font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;flex-shrink:0;white-space:nowrap;}
 .conn-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);transition:background .4s;flex-shrink:0;}
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 main{max-width:960px;margin:auto;padding:20px;}
+@media(max-width:700px){main{padding:12px;}}
 .section-title{font-size:0.7rem;color:var(--muted);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em;}
-.grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.grid-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+@media(max-width:420px){.grid-main{grid-template-columns:repeat(2,1fr);gap:10px;}}
 .card{background:white;border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;padding:16px;opacity:0;transform:translateY(8px);animation:fadeIn .45s ease forwards;transition:border-left-color .3s;}
 .card.ok-card  {border-left-color:var(--ok);}
 .card.warn-card{border-left-color:var(--warn);}
@@ -47,10 +49,14 @@ main{max-width:960px;margin:auto;padding:20px;}
 .clima-grid .card:has(#st-label){justify-content:space-between;padding-bottom:14px;}
 .clima-grid .card:has(#st-label) .card-st-label{margin-top:auto;}
 .clima-grid .meteo-card{display:flex;align-items:center;}
+@media(max-width:700px){
+  .clima-grid{grid-template-columns:repeat(2,1fr);}
+  .clima-grid .meteo-card{grid-column:1/-1;}
+}
 
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
-@media(max-width:600px){.prev7-grid{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:700px){.prev7-grid{grid-template-columns:repeat(4,1fr);gap:8px;}}
 .prev7-dia{background:white;border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;opacity:0;transform:translateY(6px);animation:fadeIn .4s ease forwards;}
 .prev7-dia.hoy{border-color:var(--ok);background:#f0f7f3;}
 .p7-fecha{font-size:0.6rem;color:var(--muted);font-family:var(--mono);margin-bottom:4px;text-transform:uppercase;}
