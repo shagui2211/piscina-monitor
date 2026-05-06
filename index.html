@@ -103,7 +103,7 @@ main{max-width:1400px;margin:auto;padding:24px 32px;}
 .p7-viento{font-size:0.58rem;color:var(--muted);margin-top:2px;}
 
 /* ── METEO UNIFICADO ── */
-.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;opacity:0;animation:fadeIn .5s ease .1s forwards;}
+.meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;animation:fadeIn .5s ease .1s forwards;}
 .meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
 .meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
@@ -141,7 +141,7 @@ body.tv .card-label{font-size:1rem;}
 body.tv .bar-wrap{display:none;}
 body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
 body.tv .meteo-frase{font-size:1.4rem;}
-body.tv .meteo-card{padding:24px 28px;}
+body.tv .meteo-card{padding:24px 28px;min-height:110px;}
 
 /* ── TV HEADER — PREMIUM REDESIGN ── */
 body.tv header {
@@ -513,8 +513,23 @@ function applyLang(){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(lastWmoCode);
   }
-  // Re-render 7-day forecast with translated day names (sin animación al cambiar idioma)
-  if(lastDias7.length) renderPrev7(lastDias7, true);
+  // Actualizar solo los textos de fecha en la previsión, sin regenerar el DOM
+  if(lastDias7.length){
+    var diasCortos2 = L.dias_cortos || ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+    var fechaEls = document.querySelectorAll('#prev-24h .p7-fecha');
+    lastDias7.forEach(function(d, i){
+      if(!fechaEls[i]) return;
+      if(d.fecha_iso){
+        if(i === 0){ fechaEls[i].textContent = L.hoy || 'Hoy'; }
+        else {
+          var dt = new Date(d.fecha_iso + 'T12:00:00');
+          fechaEls[i].textContent = diasCortos2[dt.getDay()] + ' ' +
+            String(dt.getDate()).padStart(2,'0') + '/' +
+            String(dt.getMonth()+1).padStart(2,'0');
+        }
+      }
+    });
+  }
 }
 
 /* Cambio instantáneo de idioma en modo TV */
