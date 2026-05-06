@@ -253,8 +253,8 @@ body.tv #card-ppm [style*="font-size:0.58rem"]{font-size:0.85rem !important;}
 body.tv .card-st-label{font-size:0.9rem;}
 
 /* ── TV LANGUAGE TRANSITION ── */
-.lang-fade{transition:opacity .5s ease;}
-.lang-fade.hiding{opacity:0;}
+/* Sin transición: cambio instantáneo para evitar saltos visuales */
+.lang-fade{}
 body.tv .lang-indicator{
   position:fixed;bottom:18px;right:24px;
   font-family:var(--mono);font-size:0.75rem;color:var(--muted);
@@ -516,17 +516,12 @@ function applyLang(){
   if(lastDias7.length) renderPrev7(lastDias7);
 }
 
-/* Crossfade transition for TV language switch */
+/* Cambio instantáneo de idioma en modo TV */
 function switchLang(){
   if(!isTvMode) return;
-  var fadeEls = document.querySelectorAll('.lang-fade');
-  fadeEls.forEach(function(el){ el.classList.add('hiding'); });
-  setTimeout(function(){
-    langIdx = (langIdx + 1) % LANGS.length;
-    currentLang = LANGS[langIdx];
-    applyLang();
-    fadeEls.forEach(function(el){ el.classList.remove('hiding'); });
-  }, 500);
+  langIdx = (langIdx + 1) % LANGS.length;
+  currentLang = LANGS[langIdx];
+  applyLang();
 }
 
 /* ══════════════════════════════════════════════════════════════ */
@@ -754,8 +749,6 @@ setInterval(load, 15000);
 if(location.search.includes('tv=1')){
   document.body.classList.add('tv');
   isTvMode = true;
-  document.querySelector('main').classList.add('lang-fade');
-  document.querySelector('header').classList.add('lang-fade');
   setInterval(switchLang, 15000);
 }
 </script>
