@@ -512,8 +512,8 @@ function applyLang(){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(lastWmoCode);
   }
-  // Re-render 7-day forecast with translated day names
-  if(lastDias7.length) renderPrev7(lastDias7);
+  // Re-render 7-day forecast with translated day names (sin animación al cambiar idioma)
+  if(lastDias7.length) renderPrev7(lastDias7, true);
 }
 
 /* Cambio instantáneo de idioma en modo TV */
@@ -617,7 +617,7 @@ function renderMeteo(m){
 }
 
 /* ── Previsión 7 días ── */
-function renderPrev7(dias) {
+function renderPrev7(dias, noAnim) {
   lastDias7 = dias;
   var el = document.getElementById('prev-24h');
   if (!dias || !dias.length) {
@@ -648,7 +648,7 @@ function renderPrev7(dias) {
     }
 
     html += '<div class="prev7-dia' + (esHoy ? ' hoy' : '') +
-            '" style="animation-delay:' + (i * 0.05) + 's">';
+            '" style="' + (noAnim ? 'animation:none;opacity:1;transform:none;' : 'animation-delay:' + (i * 0.05) + 's') + '">';
     html += '<div class="p7-fecha">' + fechaLabel + '</div>';
     html += '<div class="p7-icon">' + icon + '</div>';
     html += '<div class="p7-temps">';
