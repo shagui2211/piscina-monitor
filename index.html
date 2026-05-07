@@ -297,20 +297,74 @@ body.tv .lang-indicator{
 #weather-bg{
   position:fixed;top:0;left:0;width:100%;height:100%;
   pointer-events:none;z-index:0;
-  background:#eaeeed; /* color base = original del diseño */
+  background:#eaeeed;
   transition:background 3s ease;
 }
 #weather-canvas{
   position:absolute;top:0;left:0;width:100%;height:100%;
   pointer-events:none;
 }
-body > *:not(#weather-bg){ position:relative; z-index:1; }
+body > *:not(#weather-bg):not(#fog-overlay){ position:relative; z-index:1; }
 header{ position:relative; z-index:2; }
 
-/* Fondo base según tipo de clima — todos cerca del verde original */
+/* ── OVERLAY DE NIEBLA (encima de todo el contenido) ── */
+#fog-overlay{
+  display:none;
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:10;
+  overflow:hidden;
+}
+body.wbg-fog #fog-overlay{ display:block; }
+
+#fog-overlay::before,
+#fog-overlay::after{
+  content:'';
+  position:absolute;
+  left:-30%;width:160%;
+  border-radius:50%;
+}
+#fog-overlay::before{
+  top:5%;height:28%;
+  background:rgba(238,244,241,0.72);
+  filter:blur(28px);
+  animation:fogDrift1 18s ease-in-out infinite alternate;
+}
+#fog-overlay::after{
+  top:38%;height:32%;
+  background:rgba(234,241,239,0.65);
+  filter:blur(35px);
+  animation:fogDrift2 22s ease-in-out infinite alternate;
+}
+.fog-band{
+  position:absolute;left:-30%;width:160%;
+  border-radius:50%;
+  background:rgba(240,246,243,0.58);
+  filter:blur(30px);
+  animation:fogDrift3 26s ease-in-out infinite alternate;
+}
+.fog-band:nth-child(1){ top:65%;height:25%; animation-duration:20s; background:rgba(236,243,240,0.60); }
+.fog-band:nth-child(2){ top:80%;height:30%; animation-duration:28s; animation-direction:alternate-reverse; }
+
+@keyframes fogDrift1{
+  0%  { transform:translateX(0)   scaleY(1); }
+  50% { transform:translateX(8%)  scaleY(1.15); }
+  100%{ transform:translateX(-6%) scaleY(0.9); }
+}
+@keyframes fogDrift2{
+  0%  { transform:translateX(-5%) scaleY(1); }
+  50% { transform:translateX(10%) scaleY(1.2); }
+  100%{ transform:translateX(3%)  scaleY(0.85); }
+}
+@keyframes fogDrift3{
+  0%  { transform:translateX(4%)  scaleY(1); }
+  50% { transform:translateX(-8%) scaleY(1.1); }
+  100%{ transform:translateX(6%)  scaleY(0.95); }
+}
+
+/* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(180deg,#edf6f2 0%,#eaeeed 100%); }
-body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#e4eceb 0%,#eaeeed 100%); }
-body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e6edeb 0%,#eaeeed 100%); }
+body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#dde8e6 0%,#e6eceb 100%); }
+body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#dae4e6 0%,#e4eced 100%); }
@@ -322,6 +376,8 @@ body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8ee
 
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg"><canvas id="weather-canvas"></canvas></div>
+<!-- OVERLAY NIEBLA (encima del contenido) -->
+<div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div></div>
 
 <header>
   <div class="header-left">
@@ -982,10 +1038,10 @@ if(location.search.includes('tv=1')){
     for(var i = 0; i < 5; i++){
       clouds.push({
         x: Math.random() * canvas.width,
-        y: 40 + Math.random() * (canvas.height * 0.5),
-        scale: 0.7 + Math.random() * 0.9,
+        y: 60 + Math.random() * (canvas.height * 0.55),
+        scale: 1.2 + Math.random() * 1.4,
         speed: 0.18 + Math.random() * 0.22,
-        alpha: 0.55 + Math.random() * 0.30,
+        alpha: 0.70 + Math.random() * 0.22,
       });
     }
     return clouds;
@@ -993,16 +1049,15 @@ if(location.search.includes('tv=1')){
 
   function drawCloudShape(x, y, scale, alpha){
     ctx.save();
-    ctx.fillStyle = 'rgba(210,220,216,' + alpha + ')';
-    ctx.shadowColor = 'rgba(160,180,175,' + (alpha * 0.5) + ')';
-    ctx.shadowBlur = 18 * scale;
+    ctx.fillStyle = 'rgba(205,218,213,' + alpha + ')';
+    ctx.shadowColor = 'rgba(150,172,168,' + (alpha * 0.6) + ')';
+    ctx.shadowBlur = 22 * scale;
     ctx.beginPath();
-    /* Cuerpo principal */
-    ctx.arc(x,            y,      55*scale, 0, Math.PI*2);
-    ctx.arc(x + 55*scale, y,      45*scale, 0, Math.PI*2);
-    ctx.arc(x - 45*scale, y + 8*scale, 38*scale, 0, Math.PI*2);
-    ctx.arc(x + 25*scale, y - 38*scale, 42*scale, 0, Math.PI*2);
-    ctx.arc(x - 15*scale, y - 28*scale, 34*scale, 0, Math.PI*2);
+    ctx.arc(x,            y,          60*scale, 0, Math.PI*2);
+    ctx.arc(x + 62*scale, y,          50*scale, 0, Math.PI*2);
+    ctx.arc(x - 50*scale, y + 10*scale, 42*scale, 0, Math.PI*2);
+    ctx.arc(x + 28*scale, y - 44*scale, 48*scale, 0, Math.PI*2);
+    ctx.arc(x - 18*scale, y - 32*scale, 38*scale, 0, Math.PI*2);
     ctx.fill();
     ctx.restore();
   }
