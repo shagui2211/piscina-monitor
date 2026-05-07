@@ -976,45 +976,54 @@ if(location.search.includes('tv=1')){
     return p;
   }
 
-  /* NUBES: grupos de blobs que forman nubes reconocibles */
+  /* NUBES: formas de nube reales dibujadas con arcos, desplazándose */
   function mkClouds(){
-    var p = [];
-    /* 6 nubes, cada una con 4-6 blobs agrupados */
-    for(var c = 0; c < 6; c++){
-      var cx = Math.random() * canvas.width;
-      var cy = 60 + Math.random() * canvas.height * 0.45;
-      var speed = 0.15 + Math.random() * 0.20;
-      var baseAlpha = 0.38 + Math.random() * 0.22;
-      var nBlobs = 4 + Math.floor(Math.random()*3);
-      for(var b = 0; b < nBlobs; b++){
-        p.push({
-          cx: cx, /* referencia del grupo */
-          offX: (Math.random()-0.5) * 160,
-          offY: (Math.random()-0.5) * 55,
-          r: 55 + Math.random() * 80,
-          speed: speed,
-          alpha: baseAlpha * (0.7 + Math.random()*0.3),
-          group: c,
-        });
-      }
-    }
-    return p;
-  }
-
-  /* NIEBLA: bandas horizontales blancuznas que se deslizan */
-  function mkFog(){
-    var p = [];
-    for(var i = 0; i < 8; i++){
-      p.push({
-        type: 'band',
-        y: (i / 8) * canvas.height + Math.random() * 40,
-        h: 120 + Math.random() * 180,
-        speed: (0.08 + Math.random()*0.12) * (Math.random()>0.5?1:-1),
-        alpha: 0.38 + Math.random() * 0.28,
+    var clouds = [];
+    for(var i = 0; i < 5; i++){
+      clouds.push({
         x: Math.random() * canvas.width,
+        y: 40 + Math.random() * (canvas.height * 0.5),
+        scale: 0.7 + Math.random() * 0.9,
+        speed: 0.18 + Math.random() * 0.22,
+        alpha: 0.55 + Math.random() * 0.30,
       });
     }
+    return clouds;
+  }
+
+  function drawCloudShape(x, y, scale, alpha){
+    ctx.save();
+    ctx.fillStyle = 'rgba(210,220,216,' + alpha + ')';
+    ctx.shadowColor = 'rgba(160,180,175,' + (alpha * 0.5) + ')';
+    ctx.shadowBlur = 18 * scale;
+    ctx.beginPath();
+    /* Cuerpo principal */
+    ctx.arc(x,            y,      55*scale, 0, Math.PI*2);
+    ctx.arc(x + 55*scale, y,      45*scale, 0, Math.PI*2);
+    ctx.arc(x - 45*scale, y + 8*scale, 38*scale, 0, Math.PI*2);
+    ctx.arc(x + 25*scale, y - 38*scale, 42*scale, 0, Math.PI*2);
+    ctx.arc(x - 15*scale, y - 28*scale, 34*scale, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* NIEBLA: capas horizontales densas y blancuznas */
+  function mkFog(){
+    var p = [];
+    /* Velo base */
     p.push({ type:'base' });
+    /* Franjas horizontales gruesas a distintas alturas */
+    var numBands = 6;
+    for(var i = 0; i < numBands; i++){
+      p.push({
+        type: 'band',
+        y: (i / numBands) * canvas.height * 1.1 - 30,
+        h: 160 + Math.random() * 200,
+        x: Math.random() * canvas.width,
+        speed: (0.15 + Math.random()*0.20) * (Math.random()>0.5?1:-1),
+        alpha: 0.55 + Math.random() * 0.30,
+      });
+    }
     return p;
   }
 
@@ -1066,16 +1075,8 @@ if(location.search.includes('tv=1')){
     if(mode==='drizzle') particles=mkDrizzle();
     if(mode==='snow')    particles=mkSnow();
     if(mode==='hail')    particles=mkHail();
+    if(mode==='clouds')  particles=mkClouds();
     if(mode==='fog')     particles=mkFog();
-    if(mode==='clouds'){
-      particles=mkClouds();
-      /* Asignar baseY a cada blob desde su grupo inicial */
-      var groups={};
-      particles.forEach(function(p){
-        if(!groups[p.group]) groups[p.group]={ y: 60+Math.random()*canvas.height*0.45 };
-        p.baseY = groups[p.group].y;
-      });
-    }
   }
 
   /* ── Draw ── */
@@ -1134,46 +1135,34 @@ if(location.search.includes('tv=1')){
   }
 
   function drawCloud(p){
-    var x = p.cx + p.offX;
-    var y = p.cy !== undefined ? p.cy + p.offY : p.offY; /* compatibilidad */
-    /* Usamos p.cy si existe, si no recalculamos desde el grupo */
-    var grad=ctx.createRadialGradient(x, p.baseY+p.offY, 0, x, p.baseY+p.offY, p.r);
-    grad.addColorStop(0,'rgba(200,210,205,'+p.alpha+')');
-    grad.addColorStop(0.5,'rgba(185,198,193,'+(p.alpha*0.7)+')');
-    grad.addColorStop(1,'rgba(185,198,193,0)');
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(x, p.baseY+p.offY, p.r, 0, Math.PI*2);
-    ctx.fillStyle=grad;
-    ctx.fill();
-    ctx.restore();
-    p.cx += p.speed;
-    if(p.cx - 200 > canvas.width) p.cx = -200;
+    drawCloudShape(p.x, p.y, p.scale, p.alpha);
+    p.x += p.speed;
+    if(p.x - 200 * p.scale > canvas.width) p.x = -200 * p.scale;
   }
 
   function drawFogBand(p){
     if(p.type === 'base'){
-      /* Velo blanco global bien visible */
+      /* Velo blanco denso sobre toda la pantalla */
       ctx.save();
-      ctx.fillStyle = 'rgba(240,244,242,0.38)';
+      ctx.fillStyle = 'rgba(238,243,241,0.52)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       return;
     }
-    /* Banda horizontal que se desplaza */
     p.x += p.speed;
-    if(p.x > canvas.width*0.5) p.x = -canvas.width*0.5;
-    if(p.x < -canvas.width*0.5) p.x = canvas.width*0.5;
+    if(p.x >  canvas.width * 0.6) p.x = -canvas.width * 0.6;
+    if(p.x < -canvas.width * 0.6) p.x =  canvas.width * 0.6;
 
+    var mid = p.y + p.h * 0.5;
     var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
-    grad.addColorStop(0,   'rgba(245,248,246,0)');
-    grad.addColorStop(0.3, 'rgba(245,248,246,'+p.alpha+')');
-    grad.addColorStop(0.7, 'rgba(245,248,246,'+p.alpha+')');
-    grad.addColorStop(1,   'rgba(245,248,246,0)');
+    grad.addColorStop(0,    'rgba(242,246,244,0)');
+    grad.addColorStop(0.25, 'rgba(242,246,244,' + p.alpha + ')');
+    grad.addColorStop(0.75, 'rgba(242,246,244,' + p.alpha + ')');
+    grad.addColorStop(1,    'rgba(242,246,244,0)');
     ctx.save();
     ctx.fillStyle = grad;
-    ctx.fillRect(p.x,                p.y, canvas.width * 1.6, p.h);
-    ctx.fillRect(p.x - canvas.width, p.y, canvas.width * 1.6, p.h);
+    ctx.fillRect(p.x,                p.y, canvas.width * 1.8, p.h);
+    ctx.fillRect(p.x - canvas.width * 1.8, p.y, canvas.width * 1.8, p.h);
     ctx.restore();
   }
 
