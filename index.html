@@ -1004,18 +1004,16 @@ if(location.search.includes('tv=1')){
   /* NIEBLA: bandas horizontales blancuznas que se deslizan */
   function mkFog(){
     var p = [];
-    /* 8 velos horizontales a distintas alturas */
     for(var i = 0; i < 8; i++){
       p.push({
         type: 'band',
         y: (i / 8) * canvas.height + Math.random() * 40,
-        h: 80 + Math.random() * 140,
+        h: 120 + Math.random() * 180,
         speed: (0.08 + Math.random()*0.12) * (Math.random()>0.5?1:-1),
-        alpha: 0.18 + Math.random() * 0.18,
-        x: Math.random() * canvas.width, /* offset horizontal */
+        alpha: 0.38 + Math.random() * 0.28,
+        x: Math.random() * canvas.width,
       });
     }
-    /* Velo base suave sobre toda la pantalla */
     p.push({ type:'base' });
     return p;
   }
@@ -1155,29 +1153,27 @@ if(location.search.includes('tv=1')){
 
   function drawFogBand(p){
     if(p.type === 'base'){
-      /* Velo blanco suave global */
-      var bg = ctx.createLinearGradient(0,0,0,canvas.height);
-      bg.addColorStop(0,'rgba(230,235,232,0.10)');
-      bg.addColorStop(0.4,'rgba(230,235,232,0.14)');
-      bg.addColorStop(1,'rgba(230,235,232,0.06)');
-      ctx.save(); ctx.fillStyle=bg; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.restore();
+      /* Velo blanco global bien visible */
+      ctx.save();
+      ctx.fillStyle = 'rgba(240,244,242,0.38)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
       return;
     }
-    /* Banda horizontal con gradiente suave en Y */
+    /* Banda horizontal que se desplaza */
     p.x += p.speed;
-    if(p.x > canvas.width*0.3) p.x = -canvas.width*0.3;
-    if(p.x < -canvas.width*0.3) p.x = canvas.width*0.3;
+    if(p.x > canvas.width*0.5) p.x = -canvas.width*0.5;
+    if(p.x < -canvas.width*0.5) p.x = canvas.width*0.5;
 
     var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
-    grad.addColorStop(0,   'rgba(235,240,237,0)');
-    grad.addColorStop(0.3, 'rgba(235,240,237,'+p.alpha+')');
-    grad.addColorStop(0.7, 'rgba(235,240,237,'+p.alpha+')');
-    grad.addColorStop(1,   'rgba(235,240,237,0)');
+    grad.addColorStop(0,   'rgba(245,248,246,0)');
+    grad.addColorStop(0.3, 'rgba(245,248,246,'+p.alpha+')');
+    grad.addColorStop(0.7, 'rgba(245,248,246,'+p.alpha+')');
+    grad.addColorStop(1,   'rgba(245,248,246,0)');
     ctx.save();
     ctx.fillStyle = grad;
-    /* Dibuja la banda desplazada y también la copia para cubrir toda la anchura */
-    ctx.fillRect(p.x, p.y, canvas.width * 1.5, p.h);
-    ctx.fillRect(p.x - canvas.width, p.y, canvas.width * 1.5, p.h);
+    ctx.fillRect(p.x,                p.y, canvas.width * 1.6, p.h);
+    ctx.fillRect(p.x - canvas.width, p.y, canvas.width * 1.6, p.h);
     ctx.restore();
   }
 
