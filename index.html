@@ -13,7 +13,7 @@
   --mono:'DM Mono',monospace;--sans:'Outfit',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);}
+body{background:transparent;color:var(--text);font-family:var(--sans);}
 header{
   background:linear-gradient(135deg,#ffffff 0%,#f4f8f6 60%,#e8f0ec 100%);
   border-bottom:none;
@@ -297,6 +297,7 @@ body.tv .lang-indicator{
 #weather-bg{
   position:fixed;top:0;left:0;width:100%;height:100%;
   pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,#e8f4f0 0%,#eaeeed 100%);
   transition:background 3s ease;
 }
 #weather-canvas{
