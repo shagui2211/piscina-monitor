@@ -1197,5 +1197,65 @@ if(location.search.includes('tv=1')){
   loop();
 })();
 </script>
+
+<!-- PANEL DE PRUEBA DE CLIMA (pulsa D para mostrar/ocultar) -->
+<style>
+#debug-weather{
+  display:none;
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);
+  border:1px solid #dfe5e2;border-radius:14px;
+  padding:10px 16px;z-index:9999;
+  display:none;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.10);
+}
+#debug-weather span{
+  font-family:'DM Mono',monospace;font-size:0.68rem;color:#6b7c7a;
+  letter-spacing:.05em;margin-right:4px;white-space:nowrap;
+}
+#debug-weather button{
+  font-family:'DM Mono',monospace;font-size:0.72rem;
+  padding:5px 11px;border-radius:8px;border:1px solid #dfe5e2;
+  background:#f4f8f6;color:#1f2a2a;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+#debug-weather button:hover{ background:#e8f0ec;border-color:#3d7a5a; }
+#debug-weather button.active{ background:#3d7a5a;color:#fff;border-color:#3d7a5a; }
+</style>
+
+<div id="debug-weather">
+  <span>☁ CLIMA</span>
+  <button onclick="testWeather(0)"  data-mode="clear">☀ Despejado</button>
+  <button onclick="testWeather(3)"  data-mode="clouds">⛅ Nublado</button>
+  <button onclick="testWeather(45)" data-mode="fog">🌫 Niebla</button>
+  <button onclick="testWeather(51)" data-mode="drizzle">🌦 Llovizna</button>
+  <button onclick="testWeather(61)" data-mode="rain">🌧 Lluvia</button>
+  <button onclick="testWeather(95)" data-mode="storm">⛈ Tormenta</button>
+  <button onclick="testWeather(71)" data-mode="snow">❄ Nieve</button>
+  <button onclick="testWeather(77)" data-mode="hail">🌨 Granizo</button>
+</div>
+
+<script>
+(function(){
+  var panel = document.getElementById('debug-weather');
+  var visible = false;
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'd' || e.key === 'D'){
+      visible = !visible;
+      panel.style.display = visible ? 'flex' : 'none';
+    }
+  });
+
+  window.testWeather = function(wmo){
+    if(window.setWeatherBackground) window.setWeatherBackground(wmo);
+    panel.querySelectorAll('button').forEach(function(btn){ btn.classList.remove('active'); });
+    var modeMap = {0:'clear',3:'clouds',45:'fog',51:'drizzle',61:'rain',95:'storm',71:'snow',77:'hail'};
+    panel.querySelectorAll('button').forEach(function(btn){
+      if(btn.getAttribute('data-mode') === modeMap[wmo]) btn.classList.add('active');
+    });
+  };
+})();
+</script>
 </body>
 </html>
