@@ -1136,8 +1136,8 @@ if(location.search.includes('tv=1')){
 
   /* ── Draw ── */
 
-  function drawClearRay(p){
-    p.phase += p.speed;
+  function drawClearRay(p, dt){
+    p.phase += p.speed * dt;
     var alpha = p.maxAlpha * (0.5 + 0.5*Math.sin(p.phase));
     /* Origen: esquina superior derecha */
     var ox = canvas.width * 0.88, oy = -60;
@@ -1178,37 +1178,35 @@ if(location.search.includes('tv=1')){
     ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,38,0,Math.PI*2); ctx.fillStyle=disc; ctx.fill(); ctx.restore();
   }
 
-  function drawRainDrop(p){
+  function drawRainDrop(p, dt){
     ctx.save();
     ctx.strokeStyle='rgba(74,140,170,'+p.alpha+')';
     ctx.lineWidth=p.width;
     var dx=Math.sin(p.angle)*p.len, dy=Math.cos(p.angle)*p.len;
     ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+dx,p.y+dy); ctx.stroke();
     ctx.restore();
-    p.x+=Math.sin(p.angle)*p.speed*0.3; p.y+=p.speed;
+    p.x+=Math.sin(p.angle)*p.speed*0.3*dt; p.y+=p.speed*dt;
     if(p.y>canvas.height+p.len){ p.y=-p.len; p.x=Math.random()*canvas.width; }
   }
 
-  function drawCloud(p){
+  function drawCloud(p, dt){
     drawCloudShape(p.x, p.y, p.scale, p.alpha);
-    p.x += p.speed;
+    p.x += p.speed * dt;
     if(p.x - 200 * p.scale > canvas.width) p.x = -200 * p.scale;
   }
 
-  function drawFogBand(p){
+  function drawFogBand(p, dt){
     if(p.type === 'base'){
-      /* Velo blanco denso sobre toda la pantalla */
       ctx.save();
       ctx.fillStyle = 'rgba(238,243,241,0.52)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       return;
     }
-    p.x += p.speed;
+    p.x += p.speed * dt;
     if(p.x >  canvas.width * 0.6) p.x = -canvas.width * 0.6;
     if(p.x < -canvas.width * 0.6) p.x =  canvas.width * 0.6;
 
-    var mid = p.y + p.h * 0.5;
     var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
     grad.addColorStop(0,    'rgba(242,246,244,0)');
     grad.addColorStop(0.25, 'rgba(242,246,244,' + p.alpha + ')');
@@ -1216,55 +1214,60 @@ if(location.search.includes('tv=1')){
     grad.addColorStop(1,    'rgba(242,246,244,0)');
     ctx.save();
     ctx.fillStyle = grad;
-    ctx.fillRect(p.x,                p.y, canvas.width * 1.8, p.h);
+    ctx.fillRect(p.x,                     p.y, canvas.width * 1.8, p.h);
     ctx.fillRect(p.x - canvas.width * 1.8, p.y, canvas.width * 1.8, p.h);
     ctx.restore();
   }
 
-  function drawSnowFlake(p){
+  function drawSnowFlake(p, dt){
     ctx.save(); ctx.fillStyle='rgba(210,235,245,'+p.alpha+')';
     ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
-    p.phase+=0.02; p.x+=Math.sin(p.phase)*0.6+p.drift; p.y+=p.speed;
+    p.phase+=0.02*dt; p.x+=Math.sin(p.phase)*0.6*dt+p.drift*dt; p.y+=p.speed*dt;
     if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
   }
 
-  function drawHailStone(p){
+  function drawHailStone(p, dt){
     ctx.save(); ctx.fillStyle='rgba(160,185,195,'+p.alpha+')';
     ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
-    p.y+=p.speed; if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
+    p.y+=p.speed*dt; if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
   }
 
-  function drawBolt(b){
+  function drawBolt(b, dt){
     ctx.save();
     ctx.strokeStyle='rgba(140,200,170,'+(b.life*0.8)+')';
     ctx.lineWidth=1.8; ctx.shadowColor='rgba(100,180,140,'+b.life+')'; ctx.shadowBlur=10;
     ctx.beginPath(); ctx.moveTo(b.pts[0].x,b.pts[0].y);
     for(var i=1;i<b.pts.length;i++) ctx.lineTo(b.pts[i].x,b.pts[i].y);
     ctx.stroke(); ctx.restore();
-    b.life-=b.decay;
+    b.life -= b.decay * dt;
   }
 
-  /* ── Loop ── */
-  function loop(){
+  /* ── Loop con delta time (independiente del framerate) ── */
+  var lastTime = null;
+  function loop(timestamp){
+    if(!lastTime) lastTime = timestamp;
+    var dt = Math.min((timestamp - lastTime) / 16.667, 3); /* normalizado a 60fps, capped a 3x */
+    lastTime = timestamp;
+
     ctx.clearRect(0,0,canvas.width,canvas.height);
     var m=currentMode||'clear';
 
     if(m==='clear'){
-      particles.forEach(function(p){ if(p.type==='ray') drawClearRay(p); else if(p.type==='sun') drawSun(); });
+      particles.forEach(function(p){ if(p.type==='ray') drawClearRay(p,dt); else if(p.type==='sun') drawSun(); });
     } else if(m==='rain'||m==='drizzle'){
-      particles.forEach(function(p){ drawRainDrop(p); });
+      particles.forEach(function(p){ drawRainDrop(p,dt); });
     } else if(m==='storm'){
-      particles.forEach(function(p){ drawRainDrop(p); });
-      boltTimer++; if(boltTimer>70+Math.random()*100){ boltTimer=0; mkBolt(); }
-      bolts=bolts.filter(function(b){ drawBolt(b); return b.life>0; });
+      particles.forEach(function(p){ drawRainDrop(p,dt); });
+      boltTimer+=dt; if(boltTimer>70+Math.random()*100){ boltTimer=0; mkBolt(); }
+      bolts=bolts.filter(function(b){ drawBolt(b,dt); return b.life>0; });
     } else if(m==='snow'){
-      particles.forEach(function(p){ drawSnowFlake(p); });
+      particles.forEach(function(p){ drawSnowFlake(p,dt); });
     } else if(m==='hail'){
-      particles.forEach(function(p){ drawHailStone(p); });
+      particles.forEach(function(p){ drawHailStone(p,dt); });
     } else if(m==='clouds'){
-      particles.forEach(function(p){ drawCloud(p); });
+      particles.forEach(function(p){ drawCloud(p,dt); });
     } else if(m==='fog'){
-      particles.forEach(function(p){ drawFogBand(p); });
+      particles.forEach(function(p){ drawFogBand(p,dt); });
     }
 
     animFrame=requestAnimationFrame(loop);
@@ -1275,15 +1278,16 @@ if(location.search.includes('tv=1')){
     var mode=wmoToMode(wmoCode);
     if(mode===currentMode) return;
     currentMode=mode;
+    lastTime=null; /* reset para evitar spike de dt en el cambio */
     document.body.className=document.body.className.replace(/\bwbg-\w+/g,'').trim();
     var bgMap={clear:'clear',clouds:'clouds',fog:'fog',drizzle:'drizzle',rain:'rain',storm:'storm',snow:'snow',hail:'hail'};
     document.body.classList.add('wbg-'+(bgMap[mode]||'clear'));
     initParticles(mode);
-    if(!animFrame) loop();
+    if(!animFrame) animFrame=requestAnimationFrame(loop);
   };
 
   initParticles('clear');
-  loop();
+  animFrame=requestAnimationFrame(loop);
 })();
 </script>
 
