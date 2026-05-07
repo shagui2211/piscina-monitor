@@ -63,31 +63,6 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 @media(max-width:900px){.grid-main{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}}
 @media(max-width:420px){.grid-main{grid-template-columns:repeat(2,1fr);gap:10px;}}
 
-/* ── ESCRITORIO — escala general ── */
-@media(min-width:901px){
-  .section-title{font-size:0.85rem;margin:28px 0 14px;}
-  .grid-main{gap:20px;}
-  .clima-grid{gap:20px;}
-  .card{padding:24px 22px;border-radius:14px;}
-  .card-label{font-size:0.85rem;}
-  .card-value{font-size:3rem;}
-  .card-unit{font-size:1.1rem;}
-  .card-st-label{font-size:0.8rem;margin-top:8px;}
-  .bar-wrap{height:7px;margin-top:14px;}
-  #card-ppm [data-i18n="lbl_ppm_nota"]{font-size:0.72rem !important;margin-top:10px;}
-  .meteo-card{padding:24px 26px;}
-  .meteo-frase{font-size:1.2rem;}
-  .meteo-sub{font-size:0.85rem;}
-  #meteo-icon{font-size:3.8rem !important;}
-  .prev7-grid{gap:14px;}
-  .prev7-dia{padding:14px 10px;border-radius:14px;}
-  .p7-fecha{font-size:0.72rem;}
-  .p7-icon{font-size:2rem;margin:6px 0;}
-  .p7-tmax{font-size:1.1rem;}
-  .p7-tmin{font-size:0.9rem;}
-  .p7-lluvia{font-size:0.72rem;margin-top:5px;}
-  .p7-viento{font-size:0.7rem;margin-top:3px;}
-}
 .card{background:white;border:1px solid var(--border);border-left:3px solid transparent;border-radius:12px;padding:16px;animation:fadeIn .45s ease forwards;transition:border-left-color .3s;}
 .card.ok-card  {border-left-color:var(--ok);}
 .card.warn-card{border-left-color:var(--warn);}
@@ -157,6 +132,33 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 .error-banner.visible{display:block;}
 .alert{display:none;width:100%;background:var(--danger);color:white;padding:9px 24px;font-family:var(--mono);font-size:0.8rem;text-align:center;letter-spacing:.03em;box-shadow:0 2px 8px rgba(201,75,75,.2);}
 .footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
+
+/* ── ESCRITORIO — escala general ── */
+@media(min-width:901px){
+  .section-title{font-size:0.9rem;margin:30px 0 16px;}
+  .grid-main{gap:22px;}
+  .clima-grid{gap:22px;}
+  .card{padding:28px 26px;border-radius:16px;}
+  .card-label{font-size:0.9rem;}
+  .card-value{font-size:3.4rem;}
+  .card-unit{font-size:1.2rem;}
+  .card-st-label{font-size:0.82rem;margin-top:10px;}
+  .bar-wrap{height:8px;margin-top:16px;}
+  .legal-label{font-size:0.65rem;}
+  #card-ppm [data-i18n="lbl_ppm_nota"]{font-size:0.75rem !important;margin-top:12px;}
+  .meteo-card{padding:28px 30px;}
+  .meteo-frase{font-size:1.3rem;}
+  .meteo-sub{font-size:0.88rem;}
+  #meteo-icon{font-size:4rem !important;}
+  .prev7-grid{gap:14px;}
+  .prev7-dia{padding:16px 10px;border-radius:14px;}
+  .p7-fecha{font-size:0.72rem;}
+  .p7-icon{font-size:2.2rem;margin:8px 0;}
+  .p7-tmax{font-size:1.15rem;}
+  .p7-tmin{font-size:0.95rem;}
+  .p7-lluvia{font-size:0.72rem;margin-top:6px;}
+  .p7-viento{font-size:0.7rem;margin-top:4px;}
+}
 
 /* ── TV MODE (CAMBIOS VISUALES) ── */
 body.tv main{max-width:100%;padding:40px;}
