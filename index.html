@@ -362,7 +362,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 }
 
 /* Fondo base según tipo de clima */
-body.wbg-clear   #weather-bg{ background:linear-gradient(180deg,#eceeed 0%,#eaeeed 100%); }
+body.wbg-clear   #weather-bg{ background:linear-gradient(160deg,#ddeee8 0%,#e6f0ea 40%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
 body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
@@ -1187,9 +1187,9 @@ if(location.search.includes('tv=1')){
     var ex = ox + Math.cos(p.angle) * p.len;
     var ey = oy + Math.sin(p.angle) * p.len;
     var grad = ctx.createLinearGradient(ox, oy, ex, ey);
-    grad.addColorStop(0,   'rgba(200,210,205,'+alpha+')');
-    grad.addColorStop(0.2, 'rgba(185,200,195,'+(alpha*0.6)+')');
-    grad.addColorStop(1,   'rgba(170,190,185,0)');
+    grad.addColorStop(0,   'rgba(210,235,220,'+(alpha * 2.2)+')');
+    grad.addColorStop(0.2, 'rgba(195,220,208,'+(alpha * 1.4)+')');
+    grad.addColorStop(1,   'rgba(175,205,192,0)');
     ctx.save();
     var perp = p.angle + Math.PI/2;
     var hw = p.width / 2;
@@ -1205,18 +1205,18 @@ if(location.search.includes('tv=1')){
 
   function drawSun(){
     var ox = canvas.width * 0.08, oy = canvas.height * 0.06;
-    var corona = ctx.createRadialGradient(ox, oy, 0, ox, oy, 240);
-    corona.addColorStop(0,   'rgba(190,205,200,0.35)');
-    corona.addColorStop(0.3, 'rgba(175,195,188,0.15)');
-    corona.addColorStop(0.7, 'rgba(160,185,178,0.05)');
-    corona.addColorStop(1,   'rgba(150,180,172,0)');
-    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,240,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
-    var core = ctx.createRadialGradient(ox,oy,0,ox,oy,50);
-    core.addColorStop(0,   'rgba(215,225,220,0.80)');
-    core.addColorStop(0.4, 'rgba(195,210,205,0.50)');
-    core.addColorStop(0.8, 'rgba(175,195,190,0.18)');
-    core.addColorStop(1,   'rgba(160,185,180,0)');
-    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,50,0,Math.PI*2); ctx.fillStyle=core; ctx.fill(); ctx.restore();
+    var corona = ctx.createRadialGradient(ox, oy, 0, ox, oy, 300);
+    corona.addColorStop(0,   'rgba(200,230,215,0.72)');
+    corona.addColorStop(0.3, 'rgba(180,215,200,0.40)');
+    corona.addColorStop(0.7, 'rgba(165,200,185,0.15)');
+    corona.addColorStop(1,   'rgba(150,185,175,0)');
+    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,300,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
+    var core = ctx.createRadialGradient(ox,oy,0,ox,oy,65);
+    core.addColorStop(0,   'rgba(230,245,238,0.97)');
+    core.addColorStop(0.4, 'rgba(210,232,222,0.75)');
+    core.addColorStop(0.8, 'rgba(185,215,205,0.30)');
+    core.addColorStop(1,   'rgba(168,200,190,0)');
+    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,65,0,Math.PI*2); ctx.fillStyle=core; ctx.fill(); ctx.restore();
   }
 
   function drawFlare(p, dt){
@@ -1224,10 +1224,10 @@ if(location.search.includes('tv=1')){
     var ox = canvas.width * 0.08, oy = canvas.height * 0.06;
     var cx = canvas.width * 0.5,  cy = canvas.height * 0.5;
     var flares = [
-      { t:0.35, r:22, a:0.25 },
-      { t:0.55, r:14, a:0.18 },
-      { t:0.72, r:30, a:0.14 },
-      { t:0.88, r:10, a:0.20 },
+      { t:0.35, r:28, a:0.50 },
+      { t:0.55, r:18, a:0.38 },
+      { t:0.72, r:36, a:0.30 },
+      { t:0.88, r:13, a:0.42 },
     ];
     flares.forEach(function(f){
       var pulse = f.a * (0.6 + 0.4 * Math.sin(p.t * 3 + f.t * 10));
