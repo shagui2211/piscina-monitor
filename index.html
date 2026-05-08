@@ -1249,28 +1249,28 @@ if(location.search.includes('tv=1')){
 
     p.phase += p.phaseSpeed * dt;
     p.x += p.speedX * dt;
-    p.y += p.speedY * dt + Math.sin(p.phase) * 0.15;
+    p.y += p.speedY * dt + Math.sin(p.phase) * 0.18;
 
     /* Wrap horizontal */
     if(p.speedX > 0 && p.x - p.w > canvas.width)  p.x = -p.w;
     if(p.speedX < 0 && p.x + p.w < 0)              p.x = canvas.width + p.w;
     /* Wrap vertical suave */
-    if(p.y - p.h > canvas.height) p.y = -p.h;
-    if(p.y + p.h < 0)             p.y = canvas.height + p.h;
+    if(p.y - p.h * 2 > canvas.height) p.y = -p.h;
+    if(p.y + p.h * 2 < 0)             p.y = canvas.height + p.h;
 
-    /* Alpha pulsa suavemente */
-    var a = p.alpha * (0.75 + 0.25 * Math.sin(p.phase * 0.7));
+    var a = p.alpha * (0.8 + 0.2 * Math.sin(p.phase * 0.7));
+    var rx = p.w * 0.5;
+    var ry = p.h * 0.5;
 
-    var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.w * 0.5);
-    grad.addColorStop(0,   'rgba(255,255,253,' + a + ')');
-    grad.addColorStop(0.4, 'rgba(240,246,243,' + (a * 0.7) + ')');
-    grad.addColorStop(0.8, 'rgba(225,235,231,' + (a * 0.25) + ')');
-    grad.addColorStop(1,   'rgba(210,225,220,0)');
+    var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rx);
+    grad.addColorStop(0,   'rgba(255,255,255,' + a + ')');
+    grad.addColorStop(0.45,'rgba(245,250,248,' + (a * 0.65) + ')');
+    grad.addColorStop(0.85,'rgba(232,240,237,' + (a * 0.2) + ')');
+    grad.addColorStop(1,   'rgba(220,232,228,0)');
 
     ctx.save();
-    ctx.scale(1, p.h / p.w);   /* aplanar en Y para forma elíptica */
     ctx.beginPath();
-    ctx.arc(p.x, p.y * (p.w / p.h), p.w * 0.5, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2);
     ctx.fillStyle = grad;
     ctx.fill();
     ctx.restore();
