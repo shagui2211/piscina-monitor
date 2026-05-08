@@ -801,13 +801,6 @@ function renderMeteo(m){
     var wmoObj = horas[0].wmo;
     var detectedCode = null;
     if(wmoObj.icon) iconEl.textContent = wmoObj.icon;
-    var esMap = I18N.es.wmo;
-    for(var c in esMap){
-      if(esMap[c] === wmoObj.txt){ detectedCode = parseInt(c,10); break; }
-    }
-    lastWmoCode = detectedCode;
-    /* Usar icono local si el del API no renderiza bien */
-    if(detectedCode !== null) iconEl.textContent = wmoIcon(detectedCode);
     if(fraseEl){
       fraseEl.textContent = (t('actualmente') + ' ' + (detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos')));
     }
@@ -846,19 +839,8 @@ function renderPrev7(dias, noAnim) {
   var html = '<div class="prev7-grid">';
   dias.forEach(function(d, i) {
     var esHoy = i === 0;
-    /* Buscar el código WMO por texto en todos los idiomas disponibles */
-    var wmoCode7 = null;
-    if(d.wmo && d.wmo.txt){
-      var txt7 = d.wmo.txt;
-      outer: for(var lang in I18N){
-        var map7 = I18N[lang].wmo;
-        if(!map7) continue;
-        for(var c in map7){
-          if(map7[c] === txt7){ wmoCode7 = parseInt(c,10); break outer; }
-        }
-      }
-    }
-    var icon = wmoCode7 !== null ? wmoIcon(wmoCode7) : ((d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅');
+    /* Usar el icon del API directamente — es fiable según los datos reales */
+    var icon = (d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅';
     var riesgo = (d.lluvia_p || 0) >= 40;
 
     // Nombre del día desde fecha_iso ("2026-05-05") o campo fecha ya formateado
