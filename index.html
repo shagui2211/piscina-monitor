@@ -307,30 +307,43 @@ body.tv .lang-indicator{
 body > *:not(#weather-bg):not(#fog-overlay){ position:relative; z-index:1; }
 header{ position:relative; z-index:2; }
 
-/* ── OVERLAY DE NIEBLA (encima de todo el contenido) ── */
+/* ── OVERLAY DE NIEBLA CSS puro ── */
 #fog-overlay{
   display:none;
   position:fixed;top:0;left:0;width:100%;height:100%;
-  pointer-events:none;z-index:0;
+  pointer-events:none;z-index:1;
   overflow:hidden;
 }
-body.wbg-fog #fog-overlay{ display:none; }
+body.wbg-fog #fog-overlay{ display:block; }
 
 @keyframes fogDrift1{
-  0%  { transform:translateX(0)   scaleY(1); }
-  50% { transform:translateX(8%)  scaleY(1.15); }
-  100%{ transform:translateX(-6%) scaleY(0.9); }
+  0%  { transform:translateY(0); }
+  50% { transform:translateY(-40px); }
+  100%{ transform:translateY(0); }
 }
 @keyframes fogDrift2{
-  0%  { transform:translateX(-5%) scaleY(1); }
-  50% { transform:translateX(10%) scaleY(1.2); }
-  100%{ transform:translateX(3%)  scaleY(0.85); }
+  0%  { transform:translateY(0); }
+  50% { transform:translateY(50px); }
+  100%{ transform:translateY(0); }
 }
 @keyframes fogDrift3{
-  0%  { transform:translateX(4%)  scaleY(1); }
-  50% { transform:translateX(-8%) scaleY(1.1); }
-  100%{ transform:translateX(6%)  scaleY(0.95); }
+  0%  { transform:translateY(0); }
+  50% { transform:translateY(-30px); }
+  100%{ transform:translateY(0); }
 }
+@keyframes fogDrift4{
+  0%  { transform:translateY(0); }
+  50% { transform:translateY(45px); }
+  100%{ transform:translateY(0); }
+}
+.fog-band{
+  position:absolute;left:0;width:100%;
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.82) 50%, rgba(255,255,255,0) 100%);
+}
+.fog-band:nth-child(1){ top:5%;  height:28%; animation:fogDrift1 18s ease-in-out infinite; }
+.fog-band:nth-child(2){ top:30%; height:25%; animation:fogDrift2 22s ease-in-out infinite; }
+.fog-band:nth-child(3){ top:55%; height:30%; animation:fogDrift3 16s ease-in-out infinite; }
+.fog-band:nth-child(4){ top:72%; height:26%; animation:fogDrift4 20s ease-in-out infinite; }
 
 /* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#e4efea 0%,#eaeeeb 45%,#eaeeed 100%); }
@@ -348,7 +361,7 @@ body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8ee
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg"><canvas id="weather-canvas"></canvas></div>
 <!-- OVERLAY NIEBLA (encima del contenido) -->
-<div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div></div>
+<div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
 
 <header>
   <div class="header-left">
