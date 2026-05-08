@@ -1073,19 +1073,18 @@ if(location.search.includes('tv=1')){
   /* NIEBLA: volutas elípticas orgánicas que se deslizan lentamente */
   function mkFog(){
     var p = [];
-    var numWisps = 14;
+    var numWisps = 18;
     for(var i = 0; i < numWisps; i++){
       p.push({
-        type: 'wisp',
-        x:    Math.random() * canvas.width * 1.4 - canvas.width * 0.2,
+        x:    Math.random() * canvas.width * 1.6 - canvas.width * 0.3,
         y:    Math.random() * canvas.height,
-        w:    500 + Math.random() * 600,   /* muy anchas */
-        h:    100 + Math.random() * 140,   /* altura visible */
-        speedX: (0.20 + Math.random() * 0.25) * (Math.random() > 0.5 ? 1 : -1),
-        speedY: (Math.random() - 0.5) * 0.06,
-        alpha:  0.52 + Math.random() * 0.28,
+        rw:   canvas.width  * (0.5 + Math.random() * 0.6),  /* radio horizontal: muy ancho */
+        rh:   canvas.height * (0.18 + Math.random() * 0.22), /* radio vertical: banda plana */
+        speedX: (0.15 + Math.random() * 0.20) * (Math.random() > 0.5 ? 1 : -1),
+        speedY: (Math.random() - 0.5) * 0.04,
+        alpha:  0.30 + Math.random() * 0.22,
         phase:  Math.random() * Math.PI * 2,
-        phaseSpeed: 0.002 + Math.random() * 0.003,
+        phaseSpeed: 0.0015 + Math.random() * 0.002,
       });
     }
     return p;
@@ -1248,26 +1247,29 @@ if(location.search.includes('tv=1')){
   }
 
   function drawFogBand(p, dt){
-    if(p.type !== 'wisp') return;
-
     p.phase += p.phaseSpeed * dt;
     p.x += p.speedX * dt;
-    p.y += p.speedY * dt + Math.sin(p.phase) * 0.2;
+    p.y += p.speedY * dt + Math.sin(p.phase) * 0.3;
 
-    if(p.speedX > 0 && p.x - p.w > canvas.width)  p.x = -p.w;
-    if(p.speedX < 0 && p.x + p.w < 0)              p.x = canvas.width + p.w;
-    if(p.y - p.h > canvas.height) p.y = -p.h;
-    if(p.y + p.h < 0)             p.y = canvas.height + p.h;
+    if(p.speedX > 0 && p.x - p.rw > canvas.width)  p.x = -p.rw;
+    if(p.speedX < 0 && p.x + p.rw < 0)              p.x = canvas.width + p.rw;
+    if(p.y - p.rh > canvas.height) p.y = -p.rh;
+    if(p.y + p.rh < 0)             p.y = canvas.height + p.rh;
 
-    var a = p.alpha * (0.8 + 0.2 * Math.sin(p.phase * 0.7));
+    var a = p.alpha * (0.75 + 0.25 * Math.sin(p.phase * 0.5));
 
     ctx.save();
-    /* Blur suave para efecto niebla — usa shadowBlur como alternativa a filter */
-    ctx.shadowColor = 'rgba(255,255,255,' + a + ')';
-    ctx.shadowBlur  = p.h * 1.2;
+    /* Gradiente eliptico muy suave sin bordes visibles */
+    ctx.scale(1, p.rh / p.rw);
+    var ys = p.y * (p.rw / p.rh);
+    var g = ctx.createRadialGradient(p.x, ys, 0, p.x, ys, p.rw);
+    g.addColorStop(0,    'rgba(225,232,230,' + a + ')');
+    g.addColorStop(0.35, 'rgba(218,227,224,' + (a * 0.75) + ')');
+    g.addColorStop(0.65, 'rgba(210,220,218,' + (a * 0.40) + ')');
+    g.addColorStop(1,    'rgba(200,215,212,0)');
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y, p.w * 0.42, p.h * 0.42, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,' + (a * 0.55) + ')';
+    ctx.arc(p.x, ys, p.rw, 0, Math.PI * 2);
+    ctx.fillStyle = g;
     ctx.fill();
     ctx.restore();
   }
