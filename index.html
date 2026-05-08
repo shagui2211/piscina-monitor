@@ -1104,16 +1104,17 @@ if(location.search.includes('tv=1')){
     var p = [];
     /* Velo base */
     p.push({ type:'base' });
-    /* Franjas horizontales gruesas a distintas alturas */
-    var numBands = 6;
+    /* Franjas horizontales gruesas a distintas alturas — más bandas, más variedad */
+    var numBands = 12;
     for(var i = 0; i < numBands; i++){
       p.push({
         type: 'band',
-        y: (i / numBands) * canvas.height * 1.1 - 30,
-        h: 160 + Math.random() * 200,
+        y: (i / numBands) * canvas.height * 1.2 - 60,
+        h: 120 + Math.random() * 280,
         x: Math.random() * canvas.width,
-        speed: (0.15 + Math.random()*0.20) * (Math.random()>0.5?1:-1),
-        alpha: 0.55 + Math.random() * 0.30,
+        speed: (0.4 + Math.random()*0.5) * (Math.random()>0.5?1:-1),
+        alpha: 0.38 + Math.random() * 0.30,
+        dark: Math.random() > 0.5,   /* alterna tonos claro/oscuro */
       });
     }
     return p;
@@ -1275,7 +1276,7 @@ if(location.search.includes('tv=1')){
   function drawFogBand(p, dt){
     if(p.type === 'base'){
       ctx.save();
-      ctx.fillStyle = 'rgba(200,216,212,0.45)';
+      ctx.fillStyle = 'rgba(185,205,200,0.30)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       return;
@@ -1284,11 +1285,13 @@ if(location.search.includes('tv=1')){
     if(p.x >  canvas.width * 0.6) p.x = -canvas.width * 0.6;
     if(p.x < -canvas.width * 0.6) p.x =  canvas.width * 0.6;
 
+    /* Dos tonos: claro (casi blanco) y oscuro (gris-verde) para dar profundidad */
+    var r = p.dark ? '175,198,192' : '225,238,234';
     var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
-    grad.addColorStop(0,    'rgba(205,220,216,0)');
-    grad.addColorStop(0.25, 'rgba(205,220,216,' + p.alpha + ')');
-    grad.addColorStop(0.75, 'rgba(205,220,216,' + p.alpha + ')');
-    grad.addColorStop(1,    'rgba(205,220,216,0)');
+    grad.addColorStop(0,    'rgba('+r+',0)');
+    grad.addColorStop(0.25, 'rgba('+r+',' + p.alpha + ')');
+    grad.addColorStop(0.75, 'rgba('+r+',' + p.alpha + ')');
+    grad.addColorStop(1,    'rgba('+r+',0)');
     ctx.save();
     ctx.fillStyle = grad;
     ctx.fillRect(p.x,                     p.y, canvas.width * 1.8, p.h);
