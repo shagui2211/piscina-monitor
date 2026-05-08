@@ -1396,18 +1396,17 @@ if(location.search.includes('tv=1')){
   animFrame=requestAnimationFrame(loop);
 })();
 
-/* ── SPLASH SOBRE TARJETAS ── */
+/* ── EFECTOS SOBRE TARJETAS ── */
 (function(){
   var sc = document.getElementById('splash-canvas');
   var sx = sc.getContext('2d');
-  var splashes = [];
-  var splashActive = false;
+  var particles = [];
+  var currentMode = null;
 
   function resizeSplash(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
   window.addEventListener('resize', resizeSplash);
   resizeSplash();
 
-  /* Obtiene los rectángulos de todas las tarjetas visibles */
   function getCardRects(){
     var cards = document.querySelectorAll('.card, .prev7-dia, .meteo-card');
     var rects = [];
@@ -1418,98 +1417,163 @@ if(location.search.includes('tv=1')){
     return rects;
   }
 
-  /* Crea una salpicadura en el borde de una tarjeta */
-  function mkSplash(rects){
+  /* ── LLUVIA: salpicadura realista ── */
+  function mkRainSplash(rects){
     if(!rects.length) return;
     var card = rects[Math.floor(Math.random()*rects.length)];
-    /* Punto aleatorio en el borde superior o laterales de la tarjeta */
-    var side = Math.random();
-    var x, y;
-    if(side < 0.65){
-      /* borde superior */
-      x = card.left + Math.random() * card.width;
-      y = card.top + Math.random() * 6;
-    } else if(side < 0.82){
-      /* borde izquierdo */
-      x = card.left + Math.random() * 4;
-      y = card.top + Math.random() * card.height;
-    } else {
-      /* borde derecho */
-      x = card.right - Math.random() * 4;
-      y = card.top + Math.random() * card.height;
-    }
-    var numDrops = 3 + Math.floor(Math.random()*4);
-    var drops = [];
-    for(var i=0; i<numDrops; i++){
-      var angle = -Math.PI + Math.random()*Math.PI; /* semicírculo hacia arriba */
-      var speed = 1.2 + Math.random()*2.5;
-      drops.push({
-        x: x, y: y,
-        vx: Math.cos(angle)*speed,
-        vy: Math.sin(angle)*speed - 1.5,
-        r: 1.2 + Math.random()*1.8,
-        life: 1.0,
-        decay: 0.045 + Math.random()*0.035,
+    var x = card.left + Math.random()*card.width;
+    var y = card.top + Math.random()*4;
+    /* Anillo fino que se expande */
+    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:4+Math.random()*3, life:1.0, decay:0.06, color:'74,140,170' });
+    /* 2-3 micro-gotas que salen hacia los lados rasando la superficie */
+    var n = 2 + Math.floor(Math.random()*2);
+    for(var i=0;i<n;i++){
+      var dir = (Math.random()>0.5 ? 1 : -1);
+      particles.push({
+        type:'bead', x:x, y:y,
+        vx: dir*(0.8+Math.random()*1.6),
+        vy: -(0.4+Math.random()*0.8),
+        r: 0.8+Math.random()*0.8,
+        life:1.0, decay:0.06+Math.random()*0.03,
+        color:'74,140,170',
       });
     }
-    /* Anillo de impacto */
-    splashes.push({ type:'ring', x:x, y:y, r:0, maxR:5+Math.random()*5, life:1.0, decay:0.07 });
-    splashes.push({ type:'drops', drops:drops });
   }
 
-  function drawSplash(){
-    sx.clearRect(0,0,sc.width,sc.height);
-    if(!splashActive){ requestAnimationFrame(drawSplash); return; }
+  /* ── NIEVE: copo que se posa y se funde ── */
+  function mkSnowSettle(rects){
+    if(!rects.length) return;
+    var card = rects[Math.floor(Math.random()*rects.length)];
+    var x = card.left + Math.random()*card.width;
+    var y = card.top + 1 + Math.random()*3;
+    /* Acumulación: estrellita de 6 brazos que aparece y se disuelve */
+    particles.push({ type:'flake', x:x, y:y, r:2.5+Math.random()*2, life:1.0, decay:0.018+Math.random()*0.01 });
+  }
 
-    splashes = splashes.filter(function(s){
-      if(s.type==='ring'){
-        s.r += 0.8; s.life -= s.decay;
-        if(s.life <= 0) return false;
-        sx.save();
-        sx.strokeStyle = 'rgba(74,140,170,'+( s.life*0.6 )+')';
-        sx.lineWidth = 0.8;
-        sx.beginPath(); sx.arc(s.x, s.y, s.r, 0, Math.PI*2); sx.stroke();
-        sx.restore();
-        return true;
-      } else {
-        /* drops */
-        var alive = false;
-        s.drops.forEach(function(d){
-          d.x += d.vx; d.y += d.vy; d.vy += 0.18; /* gravedad */
-          d.life -= d.decay;
-          if(d.life > 0){
-            alive = true;
-            sx.save();
-            sx.fillStyle = 'rgba(74,140,170,'+(d.life*0.75)+')';
-            sx.beginPath(); sx.arc(d.x, d.y, d.r*d.life, 0, Math.PI*2); sx.fill();
-            sx.restore();
-          }
-        });
-        return alive;
-      }
+  /* ── GRANIZO: impacto seco con rebote ── */
+  function mkHailImpact(rects){
+    if(!rects.length) return;
+    var card = rects[Math.floor(Math.random()*rects.length)];
+    var x = card.left + Math.random()*card.width;
+    var y = card.top + Math.random()*5;
+    /* La bolita rebota una vez hacia arriba */
+    particles.push({
+      type:'hailbounce', x:x, y:y,
+      vy:-(2.5+Math.random()*2), vx:(Math.random()-0.5)*1.5,
+      r:2+Math.random()*1.5,
+      life:1.0, decay:0.04,
     });
+    /* Pequeños fragmentos que salen disparados */
+    var n = 2+Math.floor(Math.random()*3);
+    for(var i=0;i<n;i++){
+      var a = -Math.PI+Math.random()*Math.PI;
+      particles.push({
+        type:'chip', x:x, y:y,
+        vx:Math.cos(a)*(1.5+Math.random()*2),
+        vy:Math.sin(a)*(1.5+Math.random()*2)-1,
+        r:0.7+Math.random()*0.8,
+        life:1.0, decay:0.07+Math.random()*0.04,
+      });
+    }
+  }
 
-    /* Generar nuevas salpicaduras periódicamente */
-    if(Math.random() < 0.12){
-      mkSplash(getCardRects());
+  function drawFlakeShape(x, y, r, alpha){
+    sx.save();
+    sx.strokeStyle = 'rgba(210,235,245,'+alpha+')';
+    sx.lineWidth = 0.9;
+    for(var i=0;i<6;i++){
+      var a = (i/6)*Math.PI*2;
+      sx.beginPath();
+      sx.moveTo(x, y);
+      sx.lineTo(x+Math.cos(a)*r, y+Math.sin(a)*r);
+      /* pequeñas ramas */
+      var mx=x+Math.cos(a)*r*0.55, my=y+Math.sin(a)*r*0.55;
+      var pa=a+Math.PI/2;
+      sx.moveTo(mx,my); sx.lineTo(mx+Math.cos(pa)*r*0.3, my+Math.sin(pa)*r*0.3);
+      sx.moveTo(mx,my); sx.lineTo(mx-Math.cos(pa)*r*0.3, my-Math.sin(pa)*r*0.3);
+      sx.stroke();
+    }
+    sx.restore();
+  }
+
+  var lastSpawn = 0;
+  function loop(ts){
+    sx.clearRect(0,0,sc.width,sc.height);
+
+    /* Spawn */
+    if(currentMode && ts - lastSpawn > getSpawnInterval()){
+      lastSpawn = ts;
+      var rects = getCardRects();
+      if(currentMode==='rain'||currentMode==='drizzle'||currentMode==='storm') mkRainSplash(rects);
+      else if(currentMode==='snow') mkSnowSettle(rects);
+      else if(currentMode==='hail') mkHailImpact(rects);
     }
 
-    requestAnimationFrame(drawSplash);
+    /* Draw & update */
+    particles = particles.filter(function(p){
+      p.life -= p.decay;
+      if(p.life<=0) return false;
+
+      if(p.type==='ring'){
+        p.r += (p.maxR-p.r)*0.18;
+        sx.save();
+        sx.strokeStyle='rgba('+p.color+','+( p.life*0.55 )+')';
+        sx.lineWidth=0.7;
+        sx.beginPath(); sx.ellipse(p.x,p.y,p.r,p.r*0.35,0,0,Math.PI*2); sx.stroke();
+        sx.restore();
+      } else if(p.type==='bead'){
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.12;
+        sx.save();
+        sx.fillStyle='rgba('+p.color+','+( p.life*0.7 )+')';
+        sx.beginPath(); sx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); sx.fill();
+        sx.restore();
+      } else if(p.type==='flake'){
+        drawFlakeShape(p.x,p.y,p.r, p.life*0.85);
+      } else if(p.type==='hailbounce'){
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.25;
+        sx.save();
+        sx.fillStyle='rgba(180,200,210,'+( p.life*0.9 )+')';
+        sx.strokeStyle='rgba(140,165,178,'+( p.life*0.6 )+')';
+        sx.lineWidth=0.6;
+        sx.beginPath(); sx.arc(p.x,p.y,p.r,0,Math.PI*2); sx.fill(); sx.stroke();
+        sx.restore();
+      } else if(p.type==='chip'){
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.18;
+        sx.save();
+        sx.fillStyle='rgba(190,210,218,'+( p.life*0.75 )+')';
+        sx.beginPath(); sx.arc(p.x,p.y,p.r,0,Math.PI*2); sx.fill();
+        sx.restore();
+      }
+      return true;
+    });
+
+    requestAnimationFrame(loop);
   }
 
-  /* Activar/desactivar según el modo */
+  function getSpawnInterval(){
+    if(currentMode==='storm')   return 60;
+    if(currentMode==='rain')    return 100;
+    if(currentMode==='drizzle') return 220;
+    if(currentMode==='hail')    return 130;
+    if(currentMode==='snow')    return 300;
+    return 9999;
+  }
+
   var _origSet = window.setWeatherBackground;
   window.setWeatherBackground = function(wmoCode){
     _origSet(wmoCode);
-    var mode = (wmoCode===0||wmoCode===1) ? 'clear'
-      : (wmoCode>=95) ? 'storm'
-      : (wmoCode>=61&&wmoCode<=82) ? 'rain'
-      : (wmoCode>=51&&wmoCode<=55) ? 'drizzle'
-      : 'other';
-    splashActive = (mode==='rain'||mode==='storm'||mode==='drizzle');
+    var c=null;
+    if(wmoCode===0||wmoCode===1) c=null;
+    else if(wmoCode>=95) c='storm';
+    else if((wmoCode>=61&&wmoCode<=82)) c='rain';
+    else if(wmoCode>=51&&wmoCode<=55) c='drizzle';
+    else if(wmoCode===77) c='hail';
+    else if(wmoCode>=71&&wmoCode<=75) c='snow';
+    currentMode=c;
+    particles=[];
   };
 
-  requestAnimationFrame(drawSplash);
+  requestAnimationFrame(loop);
 })();
 </script>
 
