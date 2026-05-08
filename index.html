@@ -769,6 +769,21 @@ function alertCheck(d){
   alertEl.style.display=bad?'block':'none';
 }
 
+/* ── Mapa local de iconos WMO (fallback si el API no los trae o no renderizan) ── */
+var WMO_ICON = {
+  0:'☀️', 1:'🌤️', 2:'⛅', 3:'☁️',
+  45:'🌫️', 48:'🌫️',
+  51:'🌦️', 53:'🌦️', 55:'🌧️',
+  61:'🌧️', 63:'🌧️', 65:'🌧️',
+  71:'❄️', 73:'❄️', 75:'❄️', 77:'🌨️',
+  80:'🌦️', 81:'🌧️', 82:'⛈️',
+  85:'🌨️', 86:'🌨️',
+  95:'⛈️', 96:'⛈️', 99:'⛈️'
+};
+function wmoIcon(code){
+  return WMO_ICON[code] || '⛅';
+}
+
 /* ── Meteorología ── */
 function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
@@ -791,6 +806,8 @@ function renderMeteo(m){
       if(esMap[c] === wmoObj.txt){ detectedCode = parseInt(c,10); break; }
     }
     lastWmoCode = detectedCode;
+    /* Usar icono local si el del API no renderiza bien */
+    if(detectedCode !== null) iconEl.textContent = wmoIcon(detectedCode);
     if(fraseEl){
       fraseEl.textContent = (t('actualmente') + ' ' + (detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos')));
     }
@@ -829,7 +846,8 @@ function renderPrev7(dias, noAnim) {
   var html = '<div class="prev7-grid">';
   dias.forEach(function(d, i) {
     var esHoy = i === 0;
-    var icon  = (d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅';
+    var wmoCode7 = (d.wmo && d.wmo.code != null) ? d.wmo.code : null;
+    var icon  = wmoCode7 !== null ? wmoIcon(wmoCode7) : ((d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅');
     var riesgo = (d.lluvia_p || 0) >= 40;
 
     // Nombre del día desde fecha_iso ("2026-05-05") o campo fecha ya formateado
