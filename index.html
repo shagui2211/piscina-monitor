@@ -363,7 +363,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 
 /* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(180deg,#eceeed 0%,#eaeeed 100%); }
-body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#dde8e6 0%,#e6eceb 100%); }
+body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
 body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
@@ -1036,7 +1036,6 @@ if(location.search.includes('tv=1')){
     return p;
   }
 
-  /* NUBES: formas de nube reales dibujadas con arcos, desplazándose */
   function mkClouds(){
     var clouds = [];
     for(var i = 0; i < 5; i++){
@@ -1045,7 +1044,7 @@ if(location.search.includes('tv=1')){
         y: 60 + Math.random() * (canvas.height * 0.55),
         scale: 1.2 + Math.random() * 1.4,
         speed: 0.18 + Math.random() * 0.22,
-        alpha: 0.70 + Math.random() * 0.22,
+        alpha: 0.18 + Math.random() * 0.12,
       });
     }
     return clouds;
@@ -1053,9 +1052,9 @@ if(location.search.includes('tv=1')){
 
   function drawCloudShape(x, y, scale, alpha){
     ctx.save();
-    ctx.fillStyle = 'rgba(205,218,213,' + alpha + ')';
-    ctx.shadowColor = 'rgba(150,172,168,' + (alpha * 0.6) + ')';
-    ctx.shadowBlur = 22 * scale;
+    ctx.fillStyle = 'rgba(190,200,196,' + alpha + ')';
+    ctx.shadowColor = 'rgba(175,188,184,' + (alpha * 0.4) + ')';
+    ctx.shadowBlur = 18 * scale;
     ctx.beginPath();
     ctx.arc(x,            y,          60*scale, 0, Math.PI*2);
     ctx.arc(x + 62*scale, y,          50*scale, 0, Math.PI*2);
