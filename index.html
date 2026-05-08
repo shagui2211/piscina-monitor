@@ -780,8 +780,16 @@ var WMO_ICON = {
   85:'🌨️', 86:'🌨️',
   95:'⛈️', 96:'⛈️', 99:'⛈️'
 };
+/* Mapa de sustitución para emojis problemáticos en Safari */
+var ICON_FIX = {'🌫️':'🌁','🌤️':'⛅','⛈️':'🌩️'};
 function wmoIcon(code){
-  return WMO_ICON[code] || '⛅';
+  var ic = WMO_ICON[code] || '⛅';
+  return ICON_FIX[ic] || ic;
+}
+/* Sanitizar iconos que llegan del API */
+function sanitizeIcon(icon){
+  if(!icon) return '⛅';
+  return ICON_FIX[icon] || icon;
 }
 
 /* ── Meteorología ── */
@@ -800,7 +808,7 @@ function renderMeteo(m){
   if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
     var detectedCode = null;
-    if(wmoObj.icon) iconEl.textContent = wmoObj.icon;
+    if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
     if(fraseEl){
       fraseEl.textContent = (t('actualmente') + ' ' + (detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos')));
     }
@@ -840,7 +848,7 @@ function renderPrev7(dias, noAnim) {
   dias.forEach(function(d, i) {
     var esHoy = i === 0;
     /* Usar el icon del API directamente — es fiable según los datos reales */
-    var icon = (d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅';
+    var icon = sanitizeIcon(d.wmo && d.wmo.icon);
     var riesgo = (d.lluvia_p || 0) >= 40;
 
     // Nombre del día desde fecha_iso ("2026-05-05") o campo fecha ya formateado
