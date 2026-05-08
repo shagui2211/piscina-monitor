@@ -1073,19 +1073,19 @@ if(location.search.includes('tv=1')){
   /* NIEBLA: volutas elípticas orgánicas que se deslizan lentamente */
   function mkFog(){
     var p = [];
-    var numWisps = 18;
+    var numWisps = 14;
     for(var i = 0; i < numWisps; i++){
       p.push({
         type: 'wisp',
         x:    Math.random() * canvas.width * 1.4 - canvas.width * 0.2,
         y:    Math.random() * canvas.height,
-        w:    220 + Math.random() * 320,   /* anchura elipse */
-        h:    55  + Math.random() * 90,    /* altura elipse */
-        speedX: (0.25 + Math.random() * 0.35) * (Math.random() > 0.5 ? 1 : -1),
-        speedY: (Math.random() - 0.5) * 0.08,
-        alpha:  0.18 + Math.random() * 0.22,
+        w:    500 + Math.random() * 600,   /* muy anchas */
+        h:    100 + Math.random() * 140,   /* altura visible */
+        speedX: (0.20 + Math.random() * 0.25) * (Math.random() > 0.5 ? 1 : -1),
+        speedY: (Math.random() - 0.5) * 0.06,
+        alpha:  0.52 + Math.random() * 0.28,
         phase:  Math.random() * Math.PI * 2,
-        phaseSpeed: 0.003 + Math.random() * 0.004,
+        phaseSpeed: 0.002 + Math.random() * 0.003,
       });
     }
     return p;
@@ -1262,9 +1262,10 @@ if(location.search.includes('tv=1')){
     var a = p.alpha * (0.75 + 0.25 * Math.sin(p.phase * 0.7));
 
     var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.w * 0.5);
-    grad.addColorStop(0,   'rgba(218,232,228,' + a + ')');
-    grad.addColorStop(0.5, 'rgba(210,226,221,' + (a * 0.55) + ')');
-    grad.addColorStop(1,   'rgba(200,218,214,0)');
+    grad.addColorStop(0,   'rgba(255,255,253,' + a + ')');
+    grad.addColorStop(0.4, 'rgba(240,246,243,' + (a * 0.7) + ')');
+    grad.addColorStop(0.8, 'rgba(225,235,231,' + (a * 0.25) + ')');
+    grad.addColorStop(1,   'rgba(210,225,220,0)');
 
     ctx.save();
     ctx.scale(1, p.h / p.w);   /* aplanar en Y para forma elíptica */
