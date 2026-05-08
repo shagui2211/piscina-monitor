@@ -324,26 +324,26 @@ body.wbg-fog #fog-overlay{ display:block; }
   border-radius:50%;
 }
 #fog-overlay::before{
-  top:5%;height:28%;
-  background:rgba(238,244,241,0.72);
-  filter:blur(28px);
+  top:0%;height:35%;
+  background:rgba(210,222,218,0.82);
+  filter:blur(38px);
   animation:fogDrift1 18s ease-in-out infinite alternate;
 }
 #fog-overlay::after{
-  top:38%;height:32%;
-  background:rgba(234,241,239,0.65);
-  filter:blur(35px);
+  top:32%;height:38%;
+  background:rgba(205,218,214,0.75);
+  filter:blur(45px);
   animation:fogDrift2 22s ease-in-out infinite alternate;
 }
 .fog-band{
   position:absolute;left:-30%;width:160%;
   border-radius:50%;
-  background:rgba(240,246,243,0.58);
-  filter:blur(30px);
+  background:rgba(208,220,216,0.70);
+  filter:blur(36px);
   animation:fogDrift3 26s ease-in-out infinite alternate;
 }
-.fog-band:nth-child(1){ top:65%;height:25%; animation-duration:20s; background:rgba(236,243,240,0.60); }
-.fog-band:nth-child(2){ top:80%;height:30%; animation-duration:28s; animation-direction:alternate-reverse; }
+.fog-band:nth-child(1){ top:62%;height:30%; animation-duration:20s; background:rgba(204,217,213,0.72); }
+.fog-band:nth-child(2){ top:78%;height:35%; animation-duration:28s; animation-direction:alternate-reverse; background:rgba(200,214,210,0.68); }
 
 @keyframes fogDrift1{
   0%  { transform:translateX(0)   scaleY(1); }
@@ -364,7 +364,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 /* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#d8ece4 0%,#e2eeea 45%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
-body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
+body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#d4e0dc 0%,#dde8e5 50%,#e4edea 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#2a3e36 0%,#3a5048 50%,#2a3e36 100%); }
@@ -1275,7 +1275,7 @@ if(location.search.includes('tv=1')){
   function drawFogBand(p, dt){
     if(p.type === 'base'){
       ctx.save();
-      ctx.fillStyle = 'rgba(238,243,241,0.52)';
+      ctx.fillStyle = 'rgba(200,216,212,0.45)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       return;
@@ -1285,10 +1285,10 @@ if(location.search.includes('tv=1')){
     if(p.x < -canvas.width * 0.6) p.x =  canvas.width * 0.6;
 
     var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
-    grad.addColorStop(0,    'rgba(242,246,244,0)');
-    grad.addColorStop(0.25, 'rgba(242,246,244,' + p.alpha + ')');
-    grad.addColorStop(0.75, 'rgba(242,246,244,' + p.alpha + ')');
-    grad.addColorStop(1,    'rgba(242,246,244,0)');
+    grad.addColorStop(0,    'rgba(205,220,216,0)');
+    grad.addColorStop(0.25, 'rgba(205,220,216,' + p.alpha + ')');
+    grad.addColorStop(0.75, 'rgba(205,220,216,' + p.alpha + ')');
+    grad.addColorStop(1,    'rgba(205,220,216,0)');
     ctx.save();
     ctx.fillStyle = grad;
     ctx.fillRect(p.x,                     p.y, canvas.width * 1.8, p.h);
