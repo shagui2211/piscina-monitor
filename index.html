@@ -335,7 +335,7 @@ body.wbg-fog #fog-overlay{ display:none; }
 /* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#e4efea 0%,#eaeeeb 45%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
-body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
+body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#d8e0de 0%,#dde4e2 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#c8d8d2 0%,#d4deda 50%,#ccd6d2 100%); }
@@ -1073,18 +1073,18 @@ if(location.search.includes('tv=1')){
   /* NIEBLA: volutas elípticas orgánicas que se deslizan lentamente */
   function mkFog(){
     var p = [];
-    var numWisps = 12;
+    var numWisps = 10;
     for(var i = 0; i < numWisps; i++){
       p.push({
         x:    0,
         y:    Math.random() * canvas.height,
         hw:   canvas.width,
-        hh:   canvas.height * (0.10 + Math.random() * 0.18),
+        hh:   canvas.height * (0.15 + Math.random() * 0.20),
         speedX: 0,
-        speedY: (Math.random() - 0.5) * 0.05,
-        alpha:  0.55 + Math.random() * 0.30,
+        speedY: (i % 2 === 0 ? 1 : -1) * (0.08 + Math.random() * 0.10),
+        alpha:  0.70 + Math.random() * 0.20,
         phase:  Math.random() * Math.PI * 2,
-        phaseSpeed: 0.0010 + Math.random() * 0.0015,
+        phaseSpeed: 0.0008 + Math.random() * 0.0012,
       });
     }
     return p;
@@ -1363,9 +1363,9 @@ if(location.search.includes('tv=1')){
     } else if(m==='clouds'){
       particles.forEach(function(p){ drawCloud(p,dt); });
     } else if(m==='fog'){
-      /* Velo base muy sutil para confirmar que el canvas pinta */
+      /* Velo base */
       ctx.save();
-      ctx.fillStyle = 'rgba(200,215,210,0.12)';
+      ctx.fillStyle = 'rgba(240,245,244,0.18)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
       particles.forEach(function(p){ drawFogBand(p,dt); });
