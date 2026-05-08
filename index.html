@@ -362,12 +362,12 @@ body.wbg-fog #fog-overlay{ display:block; }
 }
 
 /* Fondo base según tipo de clima */
-body.wbg-clear   #weather-bg{ background:linear-gradient(135deg,#d4ede3 0%,#c2e4d8 40%,#daf0e8 100%); }
+body.wbg-clear   #weather-bg{ background:linear-gradient(180deg,#eaf5f0 0%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#dde8e6 0%,#e6eceb 100%); }
 body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
-body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#1e2e28 0%,#2a3d34 50%,#1a2820 100%); }
+body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#2a3e36 0%,#3a5048 50%,#2a3e36 100%); }
 body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#e8eff5 0%,#eaeeed 100%); }
 body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8eeed 100%); }
 </style>
@@ -991,7 +991,7 @@ if(location.search.includes('tv=1')){
         angle: angle,
         phase: Math.random() * Math.PI * 2,
         speed: 0.006 + Math.random() * 0.005,
-        baseAlpha: 0.55 + Math.random() * 0.30,
+        baseAlpha: 0.30 + Math.random() * 0.25,
         len: (canvas.width * 0.5) + Math.random() * canvas.width * 0.5,
         width: Math.random() > 0.5 ? 2 + Math.random()*3 : 8 + Math.random()*18,
       });
@@ -1169,9 +1169,9 @@ if(location.search.includes('tv=1')){
     var ex = ox + Math.cos(p.angle) * p.len;
     var ey = oy + Math.sin(p.angle) * p.len;
     var grad = ctx.createLinearGradient(ox, oy, ex, ey);
-    grad.addColorStop(0,   'rgba(220,255,235,'+alpha+')');
-    grad.addColorStop(0.15,'rgba(200,240,210,'+(alpha*0.7)+')');
-    grad.addColorStop(1,   'rgba(160,220,190,0)');
+    grad.addColorStop(0,   'rgba(160,210,180,'+alpha+')');
+    grad.addColorStop(0.2, 'rgba(130,195,165,'+(alpha*0.75)+')');
+    grad.addColorStop(1,   'rgba(100,175,145,0)');
     ctx.save();
     var perp = p.angle + Math.PI/2;
     var hw = p.width / 2;
@@ -1187,20 +1187,18 @@ if(location.search.includes('tv=1')){
 
   function drawSun(){
     var ox = canvas.width * 0.08, oy = canvas.height * 0.06;
-    /* Corona exterior grande — tonos verde-blanco */
-    var corona = ctx.createRadialGradient(ox, oy, 0, ox, oy, 220);
-    corona.addColorStop(0,   'rgba(220,255,230,0.55)');
-    corona.addColorStop(0.2, 'rgba(180,240,200,0.30)');
-    corona.addColorStop(0.5, 'rgba(160,220,190,0.12)');
-    corona.addColorStop(1,   'rgba(140,210,180,0)');
-    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,220,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
-    /* Núcleo blanco-verdoso brillante */
-    var core = ctx.createRadialGradient(ox,oy,0,ox,oy,55);
-    core.addColorStop(0,   'rgba(240,255,245,0.98)');
-    core.addColorStop(0.3, 'rgba(200,245,220,0.85)');
-    core.addColorStop(0.7, 'rgba(160,225,195,0.40)');
-    core.addColorStop(1,   'rgba(140,210,185,0)');
-    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,55,0,Math.PI*2); ctx.fillStyle=core; ctx.fill(); ctx.restore();
+    var corona = ctx.createRadialGradient(ox, oy, 0, ox, oy, 240);
+    corona.addColorStop(0,   'rgba(100,170,130,0.50)');
+    corona.addColorStop(0.25,'rgba(80,155,115,0.28)');
+    corona.addColorStop(0.6, 'rgba(60,140,100,0.10)');
+    corona.addColorStop(1,   'rgba(50,130,90,0)');
+    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,240,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
+    var core = ctx.createRadialGradient(ox,oy,0,ox,oy,60);
+    core.addColorStop(0,   'rgba(190,230,210,0.95)');
+    core.addColorStop(0.35,'rgba(140,205,175,0.82)');
+    core.addColorStop(0.7, 'rgba(90,170,140,0.38)');
+    core.addColorStop(1,   'rgba(70,150,120,0)');
+    ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,60,0,Math.PI*2); ctx.fillStyle=core; ctx.fill(); ctx.restore();
   }
 
   function drawFlare(p, dt){
