@@ -1258,20 +1258,15 @@ if(location.search.includes('tv=1')){
 
     var a = p.alpha * (0.8 + 0.2 * Math.sin(p.phase * 0.7));
 
-    /* Dibuja la elipse con 3 capas concéntricas para simular blur suave */
-    var layers = [
-      { rx: p.w * 0.18, ry: p.h * 0.18, a: a },
-      { rx: p.w * 0.38, ry: p.h * 0.38, a: a * 0.5 },
-      { rx: p.w * 0.5,  ry: p.h * 0.5,  a: a * 0.18 },
-    ];
-    layers.forEach(function(l){
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(p.x, p.y, l.rx, l.ry, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,' + l.a + ')';
-      ctx.fill();
-      ctx.restore();
-    });
+    ctx.save();
+    /* Blur suave para efecto niebla — usa shadowBlur como alternativa a filter */
+    ctx.shadowColor = 'rgba(255,255,255,' + a + ')';
+    ctx.shadowBlur  = p.h * 1.2;
+    ctx.beginPath();
+    ctx.ellipse(p.x, p.y, p.w * 0.42, p.h * 0.42, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,' + (a * 0.55) + ')';
+    ctx.fill();
+    ctx.restore();
   }
 
   function drawSnowFlake(p, dt){
