@@ -801,36 +801,36 @@ function badgeHTML(text,color){
 function renderMeteo(m){
   if(!m)return;
 
-  /* ── DEBUG: muestra estructura real del API en pantalla (quitar tras confirmar) ── */
+  /* Eliminar panel de debug si existe */
   var dbg = document.getElementById('meteo-debug');
-  if(!dbg){ dbg=document.createElement('pre'); dbg.id='meteo-debug';
-    dbg.style.cssText='position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(0,0,0,0.82);color:#7fffb0;font-size:11px;padding:10px 14px;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-all;';
-    document.body.appendChild(dbg); }
-  var horas0 = (m.prevision24||m.horas24||[])[0] || null;
-  dbg.textContent = 'meteo keys: ' + Object.keys(m).join(', ') + '\n'
-    + 'horas[0]: ' + JSON.stringify(horas0, null, 2).slice(0,600)
-    + '\nm.frase: ' + m.frase
-    + '\nm.wmo: ' + JSON.stringify(m.wmo)
-    + '\nm.wmo_code: ' + m.wmo_code
-    + '\nm.code: ' + m.code;
+  if(dbg) dbg.remove();
 
   var horas=m.prevision24||m.horas24||[];
   var iconEl=document.getElementById('meteo-icon');
   var fraseEl=document.getElementById('meteo-frase');
 
+  /* Mapa icono → código WMO representativo */
+  var ICON_TO_WMO = {
+    '☀️':0, '🌤️':1, '⛅':2, '☁️':3,
+    '🌫️':45, '🌥️':2,
+    '🌦️':61, '🌧️':63, '⛈️':95, '🌩️':95,
+    '❄️':71, '🌨️':77,
+  };
+
   if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
-    var detectedCode = (wmoObj.code !== undefined && wmoObj.code !== null)
-      ? Number(wmoObj.code)
-      : (wmoObj.wmo !== undefined ? Number(wmoObj.wmo) : null);
+    /* Derivar código desde el icono */
+    var rawIcon = wmoObj.icon || '';
+    var detectedCode = ICON_TO_WMO[rawIcon];
+    if(detectedCode === undefined) detectedCode = null;
+
     if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
     if(fraseEl){
-      fraseEl.textContent = (t('actualmente') + ' ' + (wmoObj.txt || m.frase || 'Sin datos'));
+      fraseEl.textContent = t('actualmente') + ' ' + (wmoObj.txt || m.frase || 'Sin datos');
     }
     if(window.setWeatherBackground) window.setWeatherBackground(detectedCode);
   } else {
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || 'Sin datos');
-    lastWmoCode = null;
     if(window.setWeatherBackground) window.setWeatherBackground(null);
   }
 
