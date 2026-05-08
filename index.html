@@ -781,7 +781,7 @@ var WMO_ICON = {
   95:'⛈️', 96:'⛈️', 99:'⛈️'
 };
 /* Mapa de sustitución para emojis problemáticos en Safari */
-var ICON_FIX = {'🌫️':'🌁','🌤️':'⛅','⛈️':'🌩️'};
+var ICON_FIX = {'🌫️':'🌥️','🌤️':'⛅','⛈️':'🌩️'};
 function wmoIcon(code){
   var ic = WMO_ICON[code] || '⛅';
   return ICON_FIX[ic] || ic;
