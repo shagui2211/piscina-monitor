@@ -801,12 +801,14 @@ function renderMeteo(m){
     if(detectedCode === undefined) detectedCode = null;
 
     if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
+    /* Guardar código WMO para que applyLang pueda re-traducir al cambiar idioma */
+    if(detectedCode !== null) lastWmoCode = detectedCode;
     if(fraseEl){
-      fraseEl.textContent = t('actualmente') + ' ' + (wmoObj.txt || m.frase || 'Sin datos');
+      fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
     }
     if(window.setWeatherBackground) window.setWeatherBackground(detectedCode);
   } else {
-    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || 'Sin datos');
+    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || t('loading'));
     if(window.setWeatherBackground) window.setWeatherBackground(null);
   }
 
