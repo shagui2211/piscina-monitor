@@ -1499,6 +1499,7 @@ if(location.search.includes('tv=1')){
   var lastSpawn = 0;
   function loop(ts){
     sx.clearRect(0,0,sc.width,sc.height);
+    syncMode();
 
     /* Spawn */
     if(currentMode && ts - lastSpawn > getSpawnInterval()){
@@ -1559,19 +1560,20 @@ if(location.search.includes('tv=1')){
     return 9999;
   }
 
-  var _origSet = window.setWeatherBackground;
-  window.setWeatherBackground = function(wmoCode){
-    _origSet(wmoCode);
-    var c=null;
-    if(wmoCode===0||wmoCode===1) c=null;
-    else if(wmoCode>=95) c='storm';
-    else if((wmoCode>=61&&wmoCode<=82)) c='rain';
-    else if(wmoCode>=51&&wmoCode<=55) c='drizzle';
-    else if(wmoCode===77) c='hail';
-    else if(wmoCode>=71&&wmoCode<=75) c='snow';
-    currentMode=c;
-    particles=[];
-  };
+  /* Detectar modo observando la clase del body — sin interceptar setWeatherBackground */
+  var _lastBodyClass = '';
+  function syncMode(){
+    var cls = document.body.className;
+    if(cls === _lastBodyClass) return;
+    _lastBodyClass = cls;
+    var m = null;
+    if(cls.indexOf('wbg-storm')   >= 0) m = 'storm';
+    else if(cls.indexOf('wbg-rain')    >= 0) m = 'rain';
+    else if(cls.indexOf('wbg-drizzle') >= 0) m = 'drizzle';
+    else if(cls.indexOf('wbg-snow')    >= 0) m = 'snow';
+    else if(cls.indexOf('wbg-hail')    >= 0) m = 'hail';
+    if(m !== currentMode){ currentMode = m; particles = []; }
+  }
 
   requestAnimationFrame(loop);
 })();
