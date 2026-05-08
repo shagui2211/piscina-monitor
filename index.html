@@ -362,7 +362,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 }
 
 /* Fondo base según tipo de clima */
-body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#c8e8d8 0%,#d8ede4 35%,#e4eeea 70%,#eaeeed 100%); }
+body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#d8ece4 0%,#e2eeea 45%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
 body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
@@ -807,10 +807,12 @@ function renderMeteo(m){
 
   if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
-    var detectedCode = null;
+    var detectedCode = (wmoObj.code !== undefined && wmoObj.code !== null)
+      ? Number(wmoObj.code)
+      : (wmoObj.wmo !== undefined ? Number(wmoObj.wmo) : null);
     if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
     if(fraseEl){
-      fraseEl.textContent = (t('actualmente') + ' ' + (detectedCode !== null ? wmoTxt(detectedCode) : (wmoObj.txt || m.frase || 'Sin datos')));
+      fraseEl.textContent = (t('actualmente') + ' ' + (wmoObj.txt || m.frase || 'Sin datos'));
     }
     if(window.setWeatherBackground) window.setWeatherBackground(detectedCode);
   } else {
