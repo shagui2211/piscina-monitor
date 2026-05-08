@@ -362,7 +362,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 }
 
 /* Fondo base según tipo de clima */
-body.wbg-clear   #weather-bg{ background:linear-gradient(160deg,#ddeee8 0%,#e6f0ea 40%,#eaeeed 100%); }
+body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#c8e8d8 0%,#d8ede4 35%,#e4eeea 70%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
 body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#e8eeec 0%,#eaeeed 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
@@ -1002,7 +1002,7 @@ if(location.search.includes('tv=1')){
   function mkClear(){
     var p = [];
     /* Rayos nítidos que irradian desde el sol */
-    var numRays = 14;
+    var numRays = 20;
     for(var i = 0; i < numRays; i++){
       var angle = (i / numRays) * Math.PI * 2;
       p.push({
@@ -1010,9 +1010,9 @@ if(location.search.includes('tv=1')){
         angle: angle,
         phase: Math.random() * Math.PI * 2,
         speed: 0.006 + Math.random() * 0.005,
-        baseAlpha: 0.08 + Math.random() * 0.08,
-        len: (canvas.width * 0.5) + Math.random() * canvas.width * 0.5,
-        width: Math.random() > 0.5 ? 2 + Math.random()*3 : 8 + Math.random()*18,
+        baseAlpha: 0.32 + Math.random() * 0.28,
+        len: (canvas.width * 0.55) + Math.random() * canvas.width * 0.5,
+        width: Math.random() > 0.5 ? 6 + Math.random()*8 : 22 + Math.random()*40,
       });
     }
     p.push({ type:'sun' });
