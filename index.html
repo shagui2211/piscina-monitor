@@ -1249,31 +1249,29 @@ if(location.search.includes('tv=1')){
 
     p.phase += p.phaseSpeed * dt;
     p.x += p.speedX * dt;
-    p.y += p.speedY * dt + Math.sin(p.phase) * 0.18;
+    p.y += p.speedY * dt + Math.sin(p.phase) * 0.2;
 
-    /* Wrap horizontal */
     if(p.speedX > 0 && p.x - p.w > canvas.width)  p.x = -p.w;
     if(p.speedX < 0 && p.x + p.w < 0)              p.x = canvas.width + p.w;
-    /* Wrap vertical suave */
-    if(p.y - p.h * 2 > canvas.height) p.y = -p.h;
-    if(p.y + p.h * 2 < 0)             p.y = canvas.height + p.h;
+    if(p.y - p.h > canvas.height) p.y = -p.h;
+    if(p.y + p.h < 0)             p.y = canvas.height + p.h;
 
     var a = p.alpha * (0.8 + 0.2 * Math.sin(p.phase * 0.7));
-    var rx = p.w * 0.5;
-    var ry = p.h * 0.5;
 
-    var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, rx);
-    grad.addColorStop(0,   'rgba(255,255,255,' + a + ')');
-    grad.addColorStop(0.45,'rgba(245,250,248,' + (a * 0.65) + ')');
-    grad.addColorStop(0.85,'rgba(232,240,237,' + (a * 0.2) + ')');
-    grad.addColorStop(1,   'rgba(220,232,228,0)');
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(p.x, p.y, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.restore();
+    /* Dibuja la elipse con 3 capas concéntricas para simular blur suave */
+    var layers = [
+      { rx: p.w * 0.18, ry: p.h * 0.18, a: a },
+      { rx: p.w * 0.38, ry: p.h * 0.38, a: a * 0.5 },
+      { rx: p.w * 0.5,  ry: p.h * 0.5,  a: a * 0.18 },
+    ];
+    layers.forEach(function(l){
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, l.rx, l.ry, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + l.a + ')';
+      ctx.fill();
+      ctx.restore();
+    });
   }
 
   function drawSnowFlake(p, dt){
@@ -1366,6 +1364,11 @@ if(location.search.includes('tv=1')){
     } else if(m==='clouds'){
       particles.forEach(function(p){ drawCloud(p,dt); });
     } else if(m==='fog'){
+      /* Velo base muy sutil para confirmar que el canvas pinta */
+      ctx.save();
+      ctx.fillStyle = 'rgba(200,215,210,0.12)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
       particles.forEach(function(p){ drawFogBand(p,dt); });
     }
 
