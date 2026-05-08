@@ -351,6 +351,7 @@ body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8ee
 
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg"><canvas id="weather-canvas"></canvas></div>
+<canvas id="splash-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
 <!-- OVERLAY NIEBLA (encima del contenido) -->
 <div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
 
@@ -1393,6 +1394,122 @@ if(location.search.includes('tv=1')){
 
   initParticles('clear');
   animFrame=requestAnimationFrame(loop);
+})();
+
+/* ── SPLASH SOBRE TARJETAS ── */
+(function(){
+  var sc = document.getElementById('splash-canvas');
+  var sx = sc.getContext('2d');
+  var splashes = [];
+  var splashActive = false;
+
+  function resizeSplash(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
+  window.addEventListener('resize', resizeSplash);
+  resizeSplash();
+
+  /* Obtiene los rectángulos de todas las tarjetas visibles */
+  function getCardRects(){
+    var cards = document.querySelectorAll('.card, .prev7-dia, .meteo-card');
+    var rects = [];
+    cards.forEach(function(c){
+      var r = c.getBoundingClientRect();
+      if(r.width > 0) rects.push(r);
+    });
+    return rects;
+  }
+
+  /* Crea una salpicadura en el borde de una tarjeta */
+  function mkSplash(rects){
+    if(!rects.length) return;
+    var card = rects[Math.floor(Math.random()*rects.length)];
+    /* Punto aleatorio en el borde superior o laterales de la tarjeta */
+    var side = Math.random();
+    var x, y;
+    if(side < 0.65){
+      /* borde superior */
+      x = card.left + Math.random() * card.width;
+      y = card.top + Math.random() * 6;
+    } else if(side < 0.82){
+      /* borde izquierdo */
+      x = card.left + Math.random() * 4;
+      y = card.top + Math.random() * card.height;
+    } else {
+      /* borde derecho */
+      x = card.right - Math.random() * 4;
+      y = card.top + Math.random() * card.height;
+    }
+    var numDrops = 3 + Math.floor(Math.random()*4);
+    var drops = [];
+    for(var i=0; i<numDrops; i++){
+      var angle = -Math.PI + Math.random()*Math.PI; /* semicírculo hacia arriba */
+      var speed = 1.2 + Math.random()*2.5;
+      drops.push({
+        x: x, y: y,
+        vx: Math.cos(angle)*speed,
+        vy: Math.sin(angle)*speed - 1.5,
+        r: 1.2 + Math.random()*1.8,
+        life: 1.0,
+        decay: 0.045 + Math.random()*0.035,
+      });
+    }
+    /* Anillo de impacto */
+    splashes.push({ type:'ring', x:x, y:y, r:0, maxR:5+Math.random()*5, life:1.0, decay:0.07 });
+    splashes.push({ type:'drops', drops:drops });
+  }
+
+  function drawSplash(){
+    sx.clearRect(0,0,sc.width,sc.height);
+    if(!splashActive){ requestAnimationFrame(drawSplash); return; }
+
+    splashes = splashes.filter(function(s){
+      if(s.type==='ring'){
+        s.r += 0.8; s.life -= s.decay;
+        if(s.life <= 0) return false;
+        sx.save();
+        sx.strokeStyle = 'rgba(74,140,170,'+( s.life*0.6 )+')';
+        sx.lineWidth = 0.8;
+        sx.beginPath(); sx.arc(s.x, s.y, s.r, 0, Math.PI*2); sx.stroke();
+        sx.restore();
+        return true;
+      } else {
+        /* drops */
+        var alive = false;
+        s.drops.forEach(function(d){
+          d.x += d.vx; d.y += d.vy; d.vy += 0.18; /* gravedad */
+          d.life -= d.decay;
+          if(d.life > 0){
+            alive = true;
+            sx.save();
+            sx.fillStyle = 'rgba(74,140,170,'+(d.life*0.75)+')';
+            sx.beginPath(); sx.arc(d.x, d.y, d.r*d.life, 0, Math.PI*2); sx.fill();
+            sx.restore();
+          }
+        });
+        return alive;
+      }
+    });
+
+    /* Generar nuevas salpicaduras periódicamente */
+    if(Math.random() < 0.12){
+      mkSplash(getCardRects());
+    }
+
+    requestAnimationFrame(drawSplash);
+  }
+
+  /* Activar/desactivar según el modo */
+  var _origSet = window.setWeatherBackground;
+  window.setWeatherBackground = function(wmoCode){
+    _origSet(wmoCode);
+    var mode = (wmoCode===0||wmoCode===1) ? 'clear'
+      : (wmoCode>=95) ? 'storm'
+      : (wmoCode>=61&&wmoCode<=82) ? 'rain'
+      : (wmoCode>=51&&wmoCode<=55) ? 'drizzle'
+      : 'other';
+    splashActive = (mode==='rain'||mode==='storm'||mode==='drizzle');
+  };
+
+  requestAnimationFrame(drawSplash);
 })();
 </script>
 
