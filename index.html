@@ -314,36 +314,7 @@ header{ position:relative; z-index:2; }
   pointer-events:none;z-index:0;
   overflow:hidden;
 }
-body.wbg-fog #fog-overlay{ display:block; }
-
-#fog-overlay::before,
-#fog-overlay::after{
-  content:'';
-  position:absolute;
-  left:-30%;width:160%;
-  border-radius:50%;
-}
-#fog-overlay::before{
-  top:0%;height:35%;
-  background:rgba(210,222,218,0.55);
-  filter:blur(38px);
-  animation:fogDrift1 18s ease-in-out infinite alternate;
-}
-#fog-overlay::after{
-  top:32%;height:38%;
-  background:rgba(205,218,214,0.48);
-  filter:blur(45px);
-  animation:fogDrift2 22s ease-in-out infinite alternate;
-}
-.fog-band{
-  position:absolute;left:-30%;width:160%;
-  border-radius:50%;
-  background:rgba(208,220,216,0.45);
-  filter:blur(36px);
-  animation:fogDrift3 26s ease-in-out infinite alternate;
-}
-.fog-band:nth-child(1){ top:62%;height:30%; animation-duration:20s; background:rgba(204,217,213,0.48); }
-.fog-band:nth-child(2){ top:78%;height:35%; animation-duration:28s; animation-direction:alternate-reverse; background:rgba(200,214,210,0.44); }
+body.wbg-fog #fog-overlay{ display:none; }
 
 @keyframes fogDrift1{
   0%  { transform:translateX(0)   scaleY(1); }
@@ -364,7 +335,7 @@ body.wbg-fog #fog-overlay{ display:block; }
 /* Fondo base según tipo de clima */
 body.wbg-clear   #weather-bg{ background:linear-gradient(150deg,#d8ece4 0%,#e2eeea 45%,#eaeeed 100%); }
 body.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
-body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#d4e0dc 0%,#dde8e5 50%,#e4edea 100%); }
+body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#eaeeed 0%,#e8eceb 100%); }
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#2a3e36 0%,#3a5048 50%,#2a3e36 100%); }
@@ -1099,22 +1070,22 @@ if(location.search.includes('tv=1')){
     ctx.restore();
   }
 
-  /* NIEBLA: capas horizontales densas y blancuznas */
+  /* NIEBLA: volutas elípticas orgánicas que se deslizan lentamente */
   function mkFog(){
     var p = [];
-    /* Velo base */
-    p.push({ type:'base' });
-    /* Franjas horizontales gruesas a distintas alturas — más bandas, más variedad */
-    var numBands = 12;
-    for(var i = 0; i < numBands; i++){
+    var numWisps = 18;
+    for(var i = 0; i < numWisps; i++){
       p.push({
-        type: 'band',
-        y: (i / numBands) * canvas.height * 1.2 - 60,
-        h: 120 + Math.random() * 280,
-        x: Math.random() * canvas.width,
-        speed: (0.4 + Math.random()*0.5) * (Math.random()>0.5?1:-1),
-        alpha: 0.38 + Math.random() * 0.30,
-        dark: Math.random() > 0.5,   /* alterna tonos claro/oscuro */
+        type: 'wisp',
+        x:    Math.random() * canvas.width * 1.4 - canvas.width * 0.2,
+        y:    Math.random() * canvas.height,
+        w:    220 + Math.random() * 320,   /* anchura elipse */
+        h:    55  + Math.random() * 90,    /* altura elipse */
+        speedX: (0.25 + Math.random() * 0.35) * (Math.random() > 0.5 ? 1 : -1),
+        speedY: (Math.random() - 0.5) * 0.08,
+        alpha:  0.18 + Math.random() * 0.22,
+        phase:  Math.random() * Math.PI * 2,
+        phaseSpeed: 0.003 + Math.random() * 0.004,
       });
     }
     return p;
@@ -1274,28 +1245,33 @@ if(location.search.includes('tv=1')){
   }
 
   function drawFogBand(p, dt){
-    if(p.type === 'base'){
-      ctx.save();
-      ctx.fillStyle = 'rgba(185,205,200,0.30)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-      return;
-    }
-    p.x += p.speed * dt;
-    if(p.x >  canvas.width * 0.6) p.x = -canvas.width * 0.6;
-    if(p.x < -canvas.width * 0.6) p.x =  canvas.width * 0.6;
+    if(p.type !== 'wisp') return;
 
-    /* Dos tonos: claro (casi blanco) y oscuro (gris-verde) para dar profundidad */
-    var r = p.dark ? '175,198,192' : '225,238,234';
-    var grad = ctx.createLinearGradient(0, p.y, 0, p.y + p.h);
-    grad.addColorStop(0,    'rgba('+r+',0)');
-    grad.addColorStop(0.25, 'rgba('+r+',' + p.alpha + ')');
-    grad.addColorStop(0.75, 'rgba('+r+',' + p.alpha + ')');
-    grad.addColorStop(1,    'rgba('+r+',0)');
+    p.phase += p.phaseSpeed * dt;
+    p.x += p.speedX * dt;
+    p.y += p.speedY * dt + Math.sin(p.phase) * 0.15;
+
+    /* Wrap horizontal */
+    if(p.speedX > 0 && p.x - p.w > canvas.width)  p.x = -p.w;
+    if(p.speedX < 0 && p.x + p.w < 0)              p.x = canvas.width + p.w;
+    /* Wrap vertical suave */
+    if(p.y - p.h > canvas.height) p.y = -p.h;
+    if(p.y + p.h < 0)             p.y = canvas.height + p.h;
+
+    /* Alpha pulsa suavemente */
+    var a = p.alpha * (0.75 + 0.25 * Math.sin(p.phase * 0.7));
+
+    var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.w * 0.5);
+    grad.addColorStop(0,   'rgba(218,232,228,' + a + ')');
+    grad.addColorStop(0.5, 'rgba(210,226,221,' + (a * 0.55) + ')');
+    grad.addColorStop(1,   'rgba(200,218,214,0)');
+
     ctx.save();
+    ctx.scale(1, p.h / p.w);   /* aplanar en Y para forma elíptica */
+    ctx.beginPath();
+    ctx.arc(p.x, p.y * (p.w / p.h), p.w * 0.5, 0, Math.PI * 2);
     ctx.fillStyle = grad;
-    ctx.fillRect(p.x,                     p.y, canvas.width * 1.8, p.h);
-    ctx.fillRect(p.x - canvas.width * 1.8, p.y, canvas.width * 1.8, p.h);
+    ctx.fill();
     ctx.restore();
   }
 
