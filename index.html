@@ -846,8 +846,19 @@ function renderPrev7(dias, noAnim) {
   var html = '<div class="prev7-grid">';
   dias.forEach(function(d, i) {
     var esHoy = i === 0;
-    var wmoCode7 = (d.wmo && d.wmo.code != null) ? d.wmo.code : null;
-    var icon  = wmoCode7 !== null ? wmoIcon(wmoCode7) : ((d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅');
+    /* Buscar el código WMO por texto en todos los idiomas disponibles */
+    var wmoCode7 = null;
+    if(d.wmo && d.wmo.txt){
+      var txt7 = d.wmo.txt;
+      outer: for(var lang in I18N){
+        var map7 = I18N[lang].wmo;
+        if(!map7) continue;
+        for(var c in map7){
+          if(map7[c] === txt7){ wmoCode7 = parseInt(c,10); break outer; }
+        }
+      }
+    }
+    var icon = wmoCode7 !== null ? wmoIcon(wmoCode7) : ((d.wmo && d.wmo.icon) ? d.wmo.icon : '⛅');
     var riesgo = (d.lluvia_p || 0) >= 40;
 
     // Nombre del día desde fecha_iso ("2026-05-05") o campo fecha ya formateado
