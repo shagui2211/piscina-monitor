@@ -311,7 +311,7 @@ header{ position:relative; z-index:2; }
 #fog-overlay{
   display:none;
   position:fixed;top:0;left:0;width:100%;height:100%;
-  pointer-events:none;z-index:10;
+  pointer-events:none;z-index:0;
   overflow:hidden;
 }
 body.wbg-fog #fog-overlay{ display:block; }
@@ -325,25 +325,25 @@ body.wbg-fog #fog-overlay{ display:block; }
 }
 #fog-overlay::before{
   top:0%;height:35%;
-  background:rgba(210,222,218,0.82);
+  background:rgba(210,222,218,0.55);
   filter:blur(38px);
   animation:fogDrift1 18s ease-in-out infinite alternate;
 }
 #fog-overlay::after{
   top:32%;height:38%;
-  background:rgba(205,218,214,0.75);
+  background:rgba(205,218,214,0.48);
   filter:blur(45px);
   animation:fogDrift2 22s ease-in-out infinite alternate;
 }
 .fog-band{
   position:absolute;left:-30%;width:160%;
   border-radius:50%;
-  background:rgba(208,220,216,0.70);
+  background:rgba(208,220,216,0.45);
   filter:blur(36px);
   animation:fogDrift3 26s ease-in-out infinite alternate;
 }
-.fog-band:nth-child(1){ top:62%;height:30%; animation-duration:20s; background:rgba(204,217,213,0.72); }
-.fog-band:nth-child(2){ top:78%;height:35%; animation-duration:28s; animation-direction:alternate-reverse; background:rgba(200,214,210,0.68); }
+.fog-band:nth-child(1){ top:62%;height:30%; animation-duration:20s; background:rgba(204,217,213,0.48); }
+.fog-band:nth-child(2){ top:78%;height:35%; animation-duration:28s; animation-direction:alternate-reverse; background:rgba(200,214,210,0.44); }
 
 @keyframes fogDrift1{
   0%  { transform:translateX(0)   scaleY(1); }
