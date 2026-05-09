@@ -320,7 +320,7 @@ body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#d8e0de 0%,#dde4
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#c8d8d2 0%,#d4deda 50%,#ccd6d2 100%); }
-body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#e4eeed 0%,#e8efec 50%,#eaeeeb 100%); }
+body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#d8e8f4 0%,#e2ecf2 50%,#e8eff5 100%); }
 body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#ccdae0 0%,#d8e4e8 50%,#e0eaec 100%); }
 
 /* ── VARIABLES NOCHE ── */
@@ -1116,8 +1116,8 @@ if(location.search.includes('tv=1')){
         len: heavy ? 18+Math.random()*20 : 12+Math.random()*14,
         speed: heavy ? 14+Math.random()*8 : 9+Math.random()*5,
         angle: 0.18 + Math.random()*0.08,
-        alpha: heavy ? 0.55+Math.random()*0.35 : 0.55+Math.random()*0.30,
-        width: heavy ? 1.6+Math.random()*0.9 : 1.2+Math.random()*0.7,
+        alpha: heavy ? 0.75+Math.random()*0.20 : 0.70+Math.random()*0.25,
+        width: heavy ? 1.8+Math.random()*1.0 : 1.4+Math.random()*0.8,
       });
     }
     return p;
@@ -1131,8 +1131,8 @@ if(location.search.includes('tv=1')){
         len: 8+Math.random()*9,
         speed: 4+Math.random()*3,
         angle: 0.08 + Math.random()*0.06,
-        alpha: 0.55+Math.random()*0.30,
-        width: 1.0+Math.random()*0.5,
+        alpha: 0.65+Math.random()*0.25,
+        width: 1.2+Math.random()*0.6,
       });
     }
     return p;
@@ -1205,7 +1205,7 @@ if(location.search.includes('tv=1')){
         y: Math.random()*canvas.height,
         r: 2.5+Math.random()*3.5,
         speed: 8+Math.random()*7,
-        alpha: 0.45+Math.random()*0.35,
+        alpha: 0.70+Math.random()*0.25,
       });
     }
     return p;
