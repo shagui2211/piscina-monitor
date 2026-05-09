@@ -1352,10 +1352,26 @@ if(location.search.includes('tv=1')){
     ctx.restore();
   }
   function drawSnowFlake(p, dt){
-    ctx.save(); ctx.fillStyle='rgba(185,215,240,'+Math.min(p.alpha*1.4,1.0)+')';
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
     p.phase+=0.02*dt; p.x+=Math.sin(p.phase)*0.6*dt+p.drift*dt; p.y+=p.speed*dt;
     if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
+    var a = p.alpha * Math.min(1, p.r/3);
+    ctx.save();
+    ctx.strokeStyle='rgba(185,215,240,'+Math.min(a*1.3,1.0)+')';
+    ctx.lineWidth = 0.8 + p.r*0.12;
+    for(var i=0;i<6;i++){
+      var ang = p.phase*0.3 + (i/6)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x+Math.cos(ang)*p.r, p.y+Math.sin(ang)*p.r);
+      var mx=p.x+Math.cos(ang)*p.r*0.5, my=p.y+Math.sin(ang)*p.r*0.5;
+      var pa=ang+Math.PI/2;
+      ctx.moveTo(mx,my); ctx.lineTo(mx+Math.cos(pa)*p.r*0.32, my+Math.sin(pa)*p.r*0.32);
+      ctx.moveTo(mx,my); ctx.lineTo(mx-Math.cos(pa)*p.r*0.32, my-Math.sin(pa)*p.r*0.32);
+      ctx.stroke();
+    }
+    ctx.fillStyle='rgba(210,235,250,'+Math.min(a*0.9,1.0)+')';
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r*0.18,0,Math.PI*2); ctx.fill();
+    ctx.restore();
   }
   function drawHailStone(p, dt){
     ctx.save(); ctx.fillStyle='rgba(110,148,165,'+Math.min(p.alpha*1.5,1.0)+')';
@@ -1497,27 +1513,87 @@ if(location.search.includes('tv=1')){
       });
     }
   }
+  /* ── ACUMULACIÓN DE NIEVE EN TARJETAS ── */
+  var snowAccum = {}; /* cardKey -> array of {x, h, maxH} pile segments */
+
+  function cardKey(r){ return Math.round(r.left)+'_'+Math.round(r.top); }
+
   function mkSnowSettle(rects){
     if(!rects.length) return;
-    /* Spawn several flakes falling across random cards */
-    var count = 2 + Math.floor(Math.random()*2);
+    /* Spawn 1-2 falling flakes per tick */
+    var count = 1 + Math.floor(Math.random()*2);
     for(var j=0; j<count; j++){
       var card = rects[Math.floor(Math.random()*rects.length)];
-      var x = card.left + 8 + Math.random()*(card.width-16);
-      var y = card.top - 4;
+      var x = card.left + 6 + Math.random()*(card.width-12);
       particles.push({
         type:'snowfall',
-        x:x, y:y,
-        vx:(Math.random()-0.5)*0.6,
-        vy: 0.7+Math.random()*0.9,
-        r: 3+Math.random()*3.5,
+        x:x, y:card.top - 6,
+        vx:(Math.random()-0.5)*0.5,
+        vy: 0.9+Math.random()*1.1,
+        r: 2.8+Math.random()*3,
         spin: Math.random()*Math.PI*2,
-        spinSpeed: (Math.random()-0.5)*0.04,
+        spinSpeed:(Math.random()-0.5)*0.05,
         life:1.0,
-        decay: 0.006+Math.random()*0.005,
-        cardBottom: card.bottom,
+        decay:0.007+Math.random()*0.005,
+        card: card,
       });
     }
+  }
+
+  function getAccumHeight(key, x){
+    if(!snowAccum[key]) return 0;
+    var seg = snowAccum[key];
+    /* find nearest segment */
+    var best=0, bestD=9999;
+    for(var i=0;i<seg.length;i++){
+      var d=Math.abs(seg[i].x-x);
+      if(d<bestD){ bestD=d; best=seg[i].h; }
+    }
+    return bestD < 18 ? best : 0;
+  }
+
+  function addAccum(key, x, cardWidth){
+    if(!snowAccum[key]) snowAccum[key]=[];
+    var seg = snowAccum[key];
+    /* find or create segment near x */
+    var found=false;
+    for(var i=0;i<seg.length;i++){
+      if(Math.abs(seg[i].x-x)<14){
+        seg[i].h = Math.min(seg[i].h + 0.55, seg[i].maxH);
+        found=true; break;
+      }
+    }
+    if(!found) seg.push({ x:x, h:0.55, maxH: 3+Math.random()*5 });
+    /* slowly melt old segments */
+    for(var k=seg.length-1;k>=0;k--){
+      seg[k].h -= 0.0008;
+      if(seg[k].h<=0) seg.splice(k,1);
+    }
+  }
+
+  function drawAccumulation(rects){
+    rects.forEach(function(card){
+      var key = cardKey(card);
+      if(!snowAccum[key]||!snowAccum[key].length) return;
+      var seg = snowAccum[key];
+      sx.save();
+      /* draw each pile as a small rounded mound */
+      seg.forEach(function(s){
+        if(s.h<=0) return;
+        var cx = s.x, cy = card.top + 1;
+        var w = 10+s.h*2, h = s.h;
+        var alpha = Math.min(s.h/3, 0.85);
+        var g = sx.createRadialGradient(cx, cy, 0, cx, cy, w*0.6);
+        g.addColorStop(0,   'rgba(225,240,252,'+alpha+')');
+        g.addColorStop(0.6, 'rgba(200,225,245,'+(alpha*0.6)+')');
+        g.addColorStop(1,   'rgba(180,210,235,0)');
+        sx.fillStyle = g;
+        sx.beginPath();
+        sx.ellipse(cx, cy, w*0.5, h*0.55+0.5, 0, Math.PI, Math.PI*2);
+        sx.fill();
+      });
+      sx.restore();
+    });
   }
   function mkHailImpact(rects){
     if(!rects.length) return;
@@ -1591,11 +1667,17 @@ if(location.search.includes('tv=1')){
       } else if(p.type==='snowfall'){
         p.x += p.vx; p.y += p.vy;
         p.spin += p.spinSpeed;
-        /* fade out when reaching card bottom */
-        var alpha = p.life * (p.cardBottom ? Math.max(0, Math.min(1,(p.cardBottom-p.y)/30)) : 1);
+        /* check if landed on card top */
+        var landed = p.card && p.y >= p.card.top - 1;
+        if(landed){
+          var key = cardKey(p.card);
+          addAccum(key, p.x, p.card.width);
+          return false; /* remove flake, it's now part of the pile */
+        }
+        var alpha = p.life;
         sx.save();
-        sx.strokeStyle = 'rgba(140,185,210,'+( alpha*0.95 )+')';
-        sx.lineWidth = 1.3;
+        sx.strokeStyle = 'rgba(140,185,215,'+( alpha*0.92 )+')';
+        sx.lineWidth = 1.2;
         for(var i=0;i<6;i++){
           var a = p.spin + (i/6)*Math.PI*2;
           sx.beginPath();
@@ -1607,8 +1689,7 @@ if(location.search.includes('tv=1')){
           sx.moveTo(mx,my); sx.lineTo(mx-Math.cos(pa)*p.r*0.38, my-Math.sin(pa)*p.r*0.38);
           sx.stroke();
         }
-        /* small dot center */
-        sx.fillStyle='rgba(180,215,235,'+(alpha*0.8)+')';
+        sx.fillStyle='rgba(200,228,248,'+(alpha*0.75)+')';
         sx.beginPath(); sx.arc(p.x,p.y,p.r*0.22,0,Math.PI*2); sx.fill();
         sx.restore();
       } else if(p.type==='hailbounce'){
@@ -1628,6 +1709,8 @@ if(location.search.includes('tv=1')){
       }
       return true;
     });
+    /* draw snow accumulation on top of everything */
+    if(currentMode==='snow') drawAccumulation(getCardRects());
     requestAnimationFrame(loop);
   }
   function getSpawnInterval(){
@@ -1649,7 +1732,7 @@ if(location.search.includes('tv=1')){
     else if(cls.indexOf('wbg-drizzle') >= 0) m = 'drizzle';
     else if(cls.indexOf('wbg-snow')    >= 0) m = 'snow';
     else if(cls.indexOf('wbg-hail')    >= 0) m = 'hail';
-    if(m !== currentMode){ currentMode = m; particles = []; }
+    if(m !== currentMode){ currentMode = m; particles = []; snowAccum = {}; }
   }
   requestAnimationFrame(loop);
 })();
