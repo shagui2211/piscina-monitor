@@ -405,14 +405,14 @@ body.tod-night.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#18222
 body.tod-night.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#1e2535 0%,#2a3348 100%) !important; }
 body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1c2830 0%,#222e38 50%,#1e2c34 100%) !important; }
 
-/* ── FONDOS AMANECER — horizonte cálido que sube desde abajo ── */
-body.tod-dawn              #weather-bg{ background:linear-gradient(to top,#e8c98a 0%,#d4b87a 8%,#c8d4b8 28%,#bcd4c8 52%,#ccddd4 75%,#ddeae4 100%) !important; }
-body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(to top,#ddb870 0%,#ccc090 12%,#b8c8b8 35%,#c0cec4 60%,#ccdad2 80%,#d8e4de 100%) !important; }
-body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(to top,#c8a870 0%,#b8b898 15%,#a8c0b8 40%,#b4c8c0 65%,#c4d4ce 85%,#d0dee8 100%) !important; }
-body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(to top,#ceb078 0%,#bebb98 14%,#aec4ba 38%,#b8ccc4 62%,#c8d8d0 82%,#d4e2e8 100%) !important; }
-body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(to top,#b09060 0%,#a8a888 18%,#98b8b0 42%,#a4beb6 66%,#b4ccc4 84%,#c4d8d0 100%) !important; }
-body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(to top,#d4b87a 0%,#c8c090 14%,#bcccc4 38%,#c4d2cc 62%,#d0dcd8 82%,#dae6e2 100%) !important; }
-body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(to top,#d0b880 0%,#c8c4a0 14%,#b8ccd8 40%,#c4d4e0 65%,#ccdce8 83%,#d8e8f0 100%) !important; }
+/* ── FONDOS AMANECER ── */
+body.tod-dawn              #weather-bg{ background:linear-gradient(150deg,#c8ddd4 0%,#d5e6dc 35%,#e4eeea 70%,#eef2ee 100%) !important; }
+body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#ccd8d2 0%,#d8e4de 60%,#e4eee8 100%) !important; }
+body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(180deg,#bcd0ca 0%,#ccddd8 60%,#dce8e4 100%) !important; }
+body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(180deg,#c4d8d2 0%,#d4e4de 60%,#e2eeea 100%) !important; }
+body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(180deg,#aac4bc 0%,#bcd4cc 50%,#cce0d8 100%) !important; }
+body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(180deg,#c8d8d4 0%,#d4e2de 50%,#deeae6 100%) !important; }
+body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(180deg,#ccdce8 0%,#d8e8f0 50%,#e4f0f4 100%) !important; }
 
 /* ── OVERLAY AMANECER — resplandor dorado suave desde el horizonte ── */
 #dawn-glow{
@@ -426,7 +426,7 @@ body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(to top,#d0b88
     rgba(200,185,120,0.07) 70%,
     rgba(200,185,120,0) 100%);
 }
-body.tod-dawn #dawn-glow{ display:block; }
+body.tod-dawn #dawn-glow{ display:none !important; }
 </style>
 </head>
 <body>
@@ -1462,6 +1462,7 @@ if(location.search.includes('tv=1')){
     var dt = Math.min((timestamp - lastTime) / 16.667, 3);
     lastTime = timestamp;
     ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
     var m=currentMode||'clear';
     if(m==='clear'){
       var phase = getDayPhase();
@@ -1516,6 +1517,7 @@ if(location.search.includes('tv=1')){
       ctx.restore();
       particles.forEach(function(p){ drawFogBand(p,dt); });
     }
+    ctx.restore();
     animFrame=requestAnimationFrame(loop);
   }
   window.setWeatherBackground=function(wmoCode){
@@ -1700,6 +1702,7 @@ if(location.search.includes('tv=1')){
   var lastSpawn = 0;
   function loop(ts){
     sx.clearRect(0,0,sc.width,sc.height);
+    sx.save();
     syncMode();
     if(currentMode && ts - lastSpawn > getSpawnInterval()){
       lastSpawn = ts;
@@ -1781,6 +1784,7 @@ if(location.search.includes('tv=1')){
     if(_snowRects) sx.restore();
     /* draw snow accumulation on top of everything */
     if(currentMode==='snow') drawAccumulation(getCardRects());
+    sx.restore(); /* always restore outer save */
     requestAnimationFrame(loop);
   }
   function getSpawnInterval(){
