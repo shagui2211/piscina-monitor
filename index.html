@@ -1153,8 +1153,8 @@ if(location.search.includes('tv=1')){
         len: heavy ? 18+Math.random()*20 : 12+Math.random()*14,
         speed: heavy ? 14+Math.random()*8 : 9+Math.random()*5,
         angle: 0.18 + Math.random()*0.08,
-        alpha: heavy ? 0.45+Math.random()*0.3 : 0.35+Math.random()*0.25,
-        width: heavy ? 1.4+Math.random()*0.8 : 0.9+Math.random()*0.5,
+        alpha: heavy ? 0.55+Math.random()*0.35 : 0.55+Math.random()*0.30,
+        width: heavy ? 1.6+Math.random()*0.9 : 1.2+Math.random()*0.7,
       });
     }
     return p;
@@ -1163,15 +1163,15 @@ if(location.search.includes('tv=1')){
   /* LLOVIZNA */
   function mkDrizzle(){
     var p = [];
-    for(var i = 0; i < 90; i++){
+    for(var i = 0; i < 130; i++){
       p.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        len: 6+Math.random()*7,
-        speed: 3+Math.random()*2,
-        angle: 0.1,
-        alpha: 0.30+Math.random()*0.20,
-        width: 0.7,
+        len: 8+Math.random()*9,
+        speed: 4+Math.random()*3,
+        angle: 0.08 + Math.random()*0.06,
+        alpha: 0.55+Math.random()*0.30,
+        width: 1.0+Math.random()*0.5,
       });
     }
     return p;
@@ -1418,7 +1418,7 @@ if(location.search.includes('tv=1')){
 
   function drawRainDrop(p, dt){
     ctx.save();
-    ctx.strokeStyle='rgba(74,140,170,'+p.alpha+')';
+    ctx.strokeStyle='rgba(55,120,160,'+p.alpha+')';
     ctx.lineWidth=p.width;
     var dx=Math.sin(p.angle)*p.len, dy=Math.cos(p.angle)*p.len;
     ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+dx,p.y+dy); ctx.stroke();
