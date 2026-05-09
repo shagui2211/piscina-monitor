@@ -829,33 +829,37 @@ function renderMeteo(m){
     '🌦️':61, '🌧️':63, '⛈️':95, '🌩️':95,
     '❄️':71, '🌨️':77,
   };
+  // Mapas BME280 -> WMO y emoji para icono/fondo/texto
+  var BME_WMO_MAP  = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
+  var BME_ICON_MAP = {'clear':'☀️','clouds':'⛅','fog':'🌫️','drizzle':'🌦️','rain':'🌧️','storm':'⛈️','snow':'❄️','hail':'🌨️'};
+
   if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
     var rawIcon = wmoObj.icon || '';
     var detectedCode = ICON_TO_WMO[rawIcon];
     if(detectedCode === undefined) detectedCode = null;
-    if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
-    if(detectedCode !== null) lastWmoCode = detectedCode;
-    if(fraseEl){
-      fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
-    }
-    // Usar condición actual del BME280 (wmo_actual) para el fondo,
-    // ignorando el pronóstico de Open-Meteo que puede indicar lluvia futura
-    if(window.setWeatherBackground && !window._debugWeatherLocked){
-      if(m.wmo_actual){
-        var bmeWmoMap = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
-        var bmeCode = bmeWmoMap[m.wmo_actual];
-        window.setWeatherBackground(bmeCode !== undefined ? bmeCode : detectedCode);
-      } else {
-        window.setWeatherBackground(detectedCode);
-      }
+
+    if(m.wmo_actual){
+      // BME280 disponible: usar su condicion real para icono, texto y fondo
+      var bmeCode = BME_WMO_MAP[m.wmo_actual];
+      var bmeIcon = BME_ICON_MAP[m.wmo_actual] || wmoObj.icon;
+      var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
+      iconEl.textContent = sanitizeIcon(bmeIcon);
+      lastWmoCode = finalCode;
+      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(finalCode !== null ? finalCode : 0);
+      if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
+    } else {
+      // Sin BME280: usar Open-Meteo como antes
+      if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
+      if(detectedCode !== null) lastWmoCode = detectedCode;
+      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
+      if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
     }
   } else {
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || t('loading'));
     if(window.setWeatherBackground && !window._debugWeatherLocked){
       if(m.wmo_actual){
-        var bmeWmoMap2 = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
-        var bmeCode2 = bmeWmoMap2[m.wmo_actual];
+        var bmeCode2 = BME_WMO_MAP[m.wmo_actual];
         window.setWeatherBackground(bmeCode2 !== undefined ? bmeCode2 : null);
       } else {
         window.setWeatherBackground(null);
