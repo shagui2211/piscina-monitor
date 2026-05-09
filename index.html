@@ -1402,6 +1402,12 @@ if(location.search.includes('tv=1')){
   function drawSnowFlake(p, dt){
     p.phase+=0.02*dt; p.x+=Math.sin(p.phase)*0.6*dt+p.drift*dt; p.y+=p.speed*dt;
     if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
+    /* skip drawing if flake is over a card */
+    var rects = getCardRects();
+    for(var ci=0;ci<rects.length;ci++){
+      var cr=rects[ci];
+      if(p.x>=cr.left&&p.x<=cr.right&&p.y>=cr.top&&p.y<=cr.bottom) return;
+    }
     var a = p.alpha * Math.min(1, p.r/3);
     ctx.save();
     ctx.strokeStyle='rgba(185,215,240,'+Math.min(a*1.3,1.0)+')';
