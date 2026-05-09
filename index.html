@@ -407,27 +407,28 @@ body.tod-night.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#1a253
 body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1c2830 0%,#222e38 50%,#1e2c34 100%) !important; }
 
 /* ── FONDOS AMANECER ── */
-body.tod-dawn              #weather-bg{ background:linear-gradient(150deg,#c8ddd4 0%,#d5e6dc 35%,#e4eeea 70%,#eef2ee 100%) !important; }
-body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#ccd8d2 0%,#d8e4de 60%,#e4eee8 100%) !important; }
-body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(180deg,#bcd0ca 0%,#ccddd8 60%,#dce8e4 100%) !important; }
-body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(180deg,#c4d8d2 0%,#d4e4de 60%,#e2eeea 100%) !important; }
-body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(150deg,#c8ddd4 0%,#d5e6dc 35%,#e4eeea 70%,#eef2ee 100%) !important; }
-body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(180deg,#c8d8d4 0%,#d4e2de 50%,#deeae6 100%) !important; }
-body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(150deg,#c8ddd4 0%,#d5e6dc 35%,#e4eeea 70%,#eef2ee 100%) !important; }
+body.tod-dawn              #weather-bg{ background:linear-gradient(180deg,#dce8e2 0%,#e4ede8 40%,#ede8e0 72%,#f0e2d0 100%) !important; }
+body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#d8e4de 0%,#e0ebe5 45%,#eae6de 72%,#ede0ce 100%) !important; }
+body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(180deg,#d0deda 0%,#dce8e2 45%,#e6e2da 72%,#e8daca 100%) !important; }
+body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(180deg,#d4e2dc 0%,#deeae4 45%,#e8e4dc 72%,#eadece 100%) !important; }
+body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(180deg,#d0deda 0%,#dce8e2 45%,#e6e2da 72%,#e8daca 100%) !important; }
+body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(180deg,#d4e0dc 0%,#deeae4 45%,#e8e6de 72%,#eae0d0 100%) !important; }
+body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(180deg,#d8e4e0 0%,#e2ecе6 45%,#eae8e0 72%,#ece2d2 100%) !important; }
 
-/* ── OVERLAY AMANECER — resplandor dorado suave desde el horizonte ── */
+/* ── OVERLAY AMANECER — resplandor cálido suave desde el horizonte ── */
 #dawn-glow{
   display:none;
   position:fixed;bottom:0;left:0;right:0;
-  height:50%;
+  height:55%;
   pointer-events:none;z-index:1;
   background:linear-gradient(to top,
-    rgba(220,165,60,0.30) 0%,
-    rgba(210,175,90,0.18) 35%,
-    rgba(200,185,120,0.07) 70%,
-    rgba(200,185,120,0) 100%);
+    rgba(210,148,80,0.28)  0%,
+    rgba(218,165,100,0.18) 25%,
+    rgba(222,178,118,0.10) 50%,
+    rgba(220,185,130,0.04) 75%,
+    rgba(220,185,130,0)    100%);
 }
-body.tod-dawn #dawn-glow{ display:none !important; }
+body.tod-dawn #dawn-glow{ display:block !important; }
 </style>
 </head>
 <body>
@@ -1388,16 +1389,20 @@ if(location.search.includes('tv=1')){
   function drawClearRay(p, dt){
     p.phase += p.speed * dt;
     var alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(p.phase));
-    var ox = canvas.width * 0.08, oy = canvas.height * 0.06;
+    var phase = getDayPhase();
+    var warm = (phase==='dawn');
+    /* origen del rayo: sol de día arriba-izquierda, amanecer en el horizonte */
+    var ox = canvas.width  * (warm ? 0.12 : 0.08);
+    var oy = canvas.height * (warm ? 0.78 : 0.06);
     var ex = ox + Math.cos(p.angle) * p.len;
     var ey = oy + Math.sin(p.angle) * p.len;
     var grad = ctx.createLinearGradient(ox, oy, ex, ey);
-    if(p.warm){
-      /* Amanecer — rayos verde-gris suaves y luminosos, coherentes con la paleta */
-      grad.addColorStop(0,   'rgba(155,198,175,'+(alpha*1.8)+')');
-      grad.addColorStop(0.25,'rgba(135,182,158,'+(alpha*1.0)+')');
-      grad.addColorStop(0.7, 'rgba(115,165,142,'+(alpha*0.4)+')');
-      grad.addColorStop(1,   'rgba(95,148,126,0)');
+    if(warm){
+      /* Amanecer — rayos ámbar-melocotón suaves desde el horizonte */
+      grad.addColorStop(0,   'rgba(225,168,95,'+(alpha*1.6)+')');
+      grad.addColorStop(0.20,'rgba(215,155,82,'+(alpha*0.9)+')');
+      grad.addColorStop(0.55,'rgba(200,140,70,'+(alpha*0.35)+')');
+      grad.addColorStop(1,   'rgba(185,125,58,0)');
     } else {
       grad.addColorStop(0,   'rgba(180,220,200,'+(alpha * 1.0)+')');
       grad.addColorStop(0.2, 'rgba(160,205,183,'+(alpha * 0.65)+')');
@@ -1419,17 +1424,18 @@ if(location.search.includes('tv=1')){
   function drawSun(){
     var phase = getDayPhase();
     var warm = (phase==='dawn');
-    var ox = canvas.width  * (warm ? 0.06 : 0.08);
-    var oy = canvas.height * (warm ? 0.20 : 0.06);
-    var coronaR = warm ? 260 : 360;
-    var coreR   = warm ? 50  : 80;
+    var ox = canvas.width  * (warm ? 0.12 : 0.08);
+    var oy = canvas.height * (warm ? 0.78 : 0.06);  /* amanecer: cerca del horizonte */
+    var coronaR = warm ? 320 : 360;
+    var coreR   = warm ? 55  : 80;
     var corona = ctx.createRadialGradient(ox,oy,0,ox,oy,coronaR);
     if(warm){
-      /* Corona de amanecer — verde-gris luminoso sin tonos dorados */
-      corona.addColorStop(0,   'rgba(170,210,192,0.62)');
-      corona.addColorStop(0.3, 'rgba(148,194,174,0.30)');
-      corona.addColorStop(0.7, 'rgba(128,176,156,0.10)');
-      corona.addColorStop(1,   'rgba(108,158,138,0)');
+      /* Corona de amanecer — ámbar-melocotón muy suave, coherente con la paleta */
+      corona.addColorStop(0,   'rgba(228,175,110,0.55)');
+      corona.addColorStop(0.2, 'rgba(222,165,100,0.32)');
+      corona.addColorStop(0.5, 'rgba(210,158,95,0.14)');
+      corona.addColorStop(0.75,'rgba(200,150,90,0.05)');
+      corona.addColorStop(1,   'rgba(190,142,85,0)');
     } else {
       corona.addColorStop(0,   'rgba(180,225,208,0.45)');
       corona.addColorStop(0.25,'rgba(160,210,193,0.28)');
@@ -1440,10 +1446,11 @@ if(location.search.includes('tv=1')){
     ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,coronaR,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
     var core = ctx.createRadialGradient(ox,oy,0,ox,oy,coreR);
     if(warm){
-      /* Núcleo de amanecer — blanco verdoso muy luminoso */
-      core.addColorStop(0,   'rgba(230,248,240,0.96)');
-      core.addColorStop(0.4, 'rgba(205,235,220,0.74)');
-      core.addColorStop(1,   'rgba(178,218,200,0)');
+      /* Núcleo de amanecer — blanco cálido con borde ámbar */
+      core.addColorStop(0,   'rgba(255,248,235,0.98)');
+      core.addColorStop(0.35,'rgba(248,225,185,0.82)');
+      core.addColorStop(0.7, 'rgba(235,195,140,0.40)');
+      core.addColorStop(1,   'rgba(218,168,105,0)');
     } else {
       core.addColorStop(0,   'rgba(225,248,238,1.0)');
       core.addColorStop(0.35,'rgba(200,235,220,0.95)');
@@ -1454,7 +1461,10 @@ if(location.search.includes('tv=1')){
   }
   function drawFlare(p, dt){
     p.t += 0.008 * dt;
-    var ox = canvas.width * 0.08, oy = canvas.height * 0.06;
+    var phase = getDayPhase();
+    var warm = (phase==='dawn');
+    var ox = canvas.width  * (warm ? 0.12 : 0.08);
+    var oy = canvas.height * (warm ? 0.78 : 0.06);
     var cx = canvas.width * 0.5,  cy = canvas.height * 0.5;
     var flares = [
       { t:0.30, r:40, a:0.75 },
@@ -1467,9 +1477,15 @@ if(location.search.includes('tv=1')){
       var fx = ox + (cx - ox) * f.t;
       var fy = oy + (cy - oy) * f.t;
       var g = ctx.createRadialGradient(fx,fy,0,fx,fy,f.r);
-      g.addColorStop(0,   'rgba(155,225,198,'+pulse+')');
-      g.addColorStop(0.5, 'rgba(135,210,182,'+(pulse*0.5)+')');
-      g.addColorStop(1,   'rgba(115,195,168,0)');
+      if(warm){
+        g.addColorStop(0,   'rgba(225,175,100,'+pulse+')');
+        g.addColorStop(0.5, 'rgba(210,155,80,'+(pulse*0.5)+')');
+        g.addColorStop(1,   'rgba(195,135,60,0)');
+      } else {
+        g.addColorStop(0,   'rgba(155,225,198,'+pulse+')');
+        g.addColorStop(0.5, 'rgba(135,210,182,'+(pulse*0.5)+')');
+        g.addColorStop(1,   'rgba(115,195,168,0)');
+      }
       ctx.save(); ctx.beginPath(); ctx.arc(fx,fy,f.r,0,Math.PI*2); ctx.fillStyle=g; ctx.fill(); ctx.restore();
     });
   }
