@@ -1075,6 +1075,17 @@ if(location.search.includes('tv=1')){
     return 'clouds';
   }
   /* ── Generadores ── */
+  function mkClearCloud(yFrac, scale, speed, alpha){
+    return {
+      type: 'clearcloud',
+      x: Math.random() * canvas.width,
+      y: canvas.height * yFrac + (Math.random()-0.5) * 20,
+      scale: scale + Math.random()*0.2,
+      speed: speed + Math.random()*0.05,
+      alpha: alpha,
+      puffs: mkCloudPuffs(),
+    };
+  }
   function mkClear(){
     var phase = getDayPhase();
     var p = [];
@@ -1104,6 +1115,10 @@ if(location.search.includes('tv=1')){
         });
       }
       p.push({ type:'flare', t:0 });
+      /* Unas pocas nubes blancas decorativas flotando suavemente */
+      p.push(mkClearCloud(0.10, 1.1, 0.18, 0.52));
+      p.push(mkClearCloud(0.25, 0.8, 0.24, 0.40));
+      p.push(mkClearCloud(0.14, 0.6, 0.30, 0.30));
     }
     return p;
   }
@@ -1139,13 +1154,14 @@ if(location.search.includes('tv=1')){
   }
   function mkClouds(){
     var clouds = [];
-    /* 3 large clouds + 2 smaller background ones */
+    /* Nubes más ligeras y blancas — menos opacidad, más variedad de tamaños */
     var configs = [
-      { yFrac:0.08, scale:1.8, speed:0.12, alpha:0.82 },
-      { yFrac:0.22, scale:1.3, speed:0.20, alpha:0.68 },
-      { yFrac:0.38, scale:1.6, speed:0.15, alpha:0.74 },
-      { yFrac:0.12, scale:0.9, speed:0.28, alpha:0.45 },
-      { yFrac:0.30, scale:1.0, speed:0.22, alpha:0.50 },
+      { yFrac:0.04, scale:2.0, speed:0.10, alpha:0.58 },
+      { yFrac:0.18, scale:1.5, speed:0.18, alpha:0.48 },
+      { yFrac:0.32, scale:1.8, speed:0.13, alpha:0.52 },
+      { yFrac:0.08, scale:1.0, speed:0.25, alpha:0.32 },
+      { yFrac:0.26, scale:1.1, speed:0.20, alpha:0.35 },
+      { yFrac:0.42, scale:0.85,speed:0.30, alpha:0.28 },
     ];
     configs.forEach(function(c){
       clouds.push({
@@ -1154,7 +1170,6 @@ if(location.search.includes('tv=1')){
         scale: c.scale + Math.random()*0.3,
         speed: c.speed + Math.random()*0.08,
         alpha: c.alpha,
-        /* each cloud has its own random puff offsets for variety */
         puffs: mkCloudPuffs(),
       });
     });
@@ -1185,15 +1200,30 @@ if(location.search.includes('tv=1')){
       ctx.arc(x + p.dx*scale, y + p.dy*scale, p.r*scale, 0, Math.PI*2);
     });
     ctx.closePath();
-    /* Fill with a vertical gradient: bright top, slightly darker base */
+    /* Fill with a vertical gradient: bright white top, soft grey-blue base */
     var top    = y - 80*scale;
     var bottom = y + 60*scale;
     var grad = ctx.createLinearGradient(0, top, 0, bottom);
-    grad.addColorStop(0,   'rgba(230,236,232,'+(alpha*0.95)+')');
-    grad.addColorStop(0.4, 'rgba(210,220,215,'+(alpha*0.88)+')');
-    grad.addColorStop(1,   'rgba(185,198,192,'+(alpha*0.70)+')');
+    grad.addColorStop(0,   'rgba(255,255,255,'+(alpha*0.98)+')');
+    grad.addColorStop(0.35,'rgba(250,252,255,'+(alpha*0.93)+')');
+    grad.addColorStop(0.7, 'rgba(235,242,250,'+(alpha*0.80)+')');
+    grad.addColorStop(1,   'rgba(218,230,244,'+(alpha*0.55)+')');
     ctx.fillStyle = grad;
     ctx.fill();
+    /* Soft highlight on top of each puff for fluffy 3D look */
+    puffs.forEach(function(p){
+      var cx2 = x + p.dx*scale;
+      var cy2 = y + p.dy*scale;
+      var r2  = p.r*scale;
+      var hg = ctx.createRadialGradient(cx2-r2*0.25, cy2-r2*0.30, r2*0.05, cx2, cy2, r2);
+      hg.addColorStop(0, 'rgba(255,255,255,'+(alpha*0.55)+')');
+      hg.addColorStop(0.5,'rgba(255,255,255,'+(alpha*0.18)+')');
+      hg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = hg;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r2, 0, Math.PI*2);
+      ctx.fill();
+    });
     /* Soft shadow underneath each puff for depth */
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
@@ -1202,8 +1232,8 @@ if(location.search.includes('tv=1')){
       var cy2 = y + p.dy*scale;
       var r2  = p.r*scale;
       var sg = ctx.createRadialGradient(cx2, cy2+r2*0.3, r2*0.1, cx2, cy2, r2);
-      sg.addColorStop(0, 'rgba(160,175,168,'+(alpha*0.22)+')');
-      sg.addColorStop(1, 'rgba(160,175,168,0)');
+      sg.addColorStop(0, 'rgba(180,198,215,'+(alpha*0.18)+')');
+      sg.addColorStop(1, 'rgba(180,198,215,0)');
       ctx.fillStyle = sg;
       ctx.beginPath();
       ctx.arc(cx2, cy2, r2, 0, Math.PI*2);
@@ -1522,8 +1552,9 @@ if(location.search.includes('tv=1')){
       } else {
         drawSun();
         particles.forEach(function(p){
-          if(p.type==='ray')   drawClearRay(p,dt);
-          if(p.type==='flare') drawFlare(p,dt);
+          if(p.type==='ray')        drawClearRay(p,dt);
+          if(p.type==='flare')      drawFlare(p,dt);
+          if(p.type==='clearcloud') drawCloud(p,dt);
         });
       }
     } else if(m==='rain'||m==='drizzle'){
