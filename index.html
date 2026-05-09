@@ -1154,14 +1154,13 @@ if(location.search.includes('tv=1')){
   }
   function mkClouds(){
     var clouds = [];
-    /* Nubes más ligeras y blancas — menos opacidad, más variedad de tamaños */
     var configs = [
-      { yFrac:0.04, scale:2.0, speed:0.10, alpha:0.58 },
-      { yFrac:0.18, scale:1.5, speed:0.18, alpha:0.48 },
-      { yFrac:0.32, scale:1.8, speed:0.13, alpha:0.52 },
-      { yFrac:0.08, scale:1.0, speed:0.25, alpha:0.32 },
-      { yFrac:0.26, scale:1.1, speed:0.20, alpha:0.35 },
-      { yFrac:0.42, scale:0.85,speed:0.30, alpha:0.28 },
+      { yFrac:0.04, scale:2.0, speed:0.10, alpha:0.82 },
+      { yFrac:0.18, scale:1.5, speed:0.18, alpha:0.72 },
+      { yFrac:0.32, scale:1.8, speed:0.13, alpha:0.76 },
+      { yFrac:0.08, scale:1.0, speed:0.25, alpha:0.55 },
+      { yFrac:0.26, scale:1.1, speed:0.20, alpha:0.58 },
+      { yFrac:0.42, scale:0.85,speed:0.30, alpha:0.50 },
     ];
     configs.forEach(function(c){
       clouds.push({
@@ -1247,8 +1246,8 @@ if(location.search.includes('tv=1')){
         cx - r*0.18, cy - r*0.22, r*0.02,   /* foco ligeramente arriba-izquierda */
         cx,          cy,          r
       );
-      var aCore  = alpha * (0.72 + t*0.22);
-      var aMid   = alpha * (0.38 + t*0.15);
+      var aCore  = alpha * (0.92 + t*0.08);
+      var aMid   = alpha * (0.55 + t*0.15);
       grad.addColorStop(0,    'rgba('+rC+','+gC+','+bC+','+aCore+')');
       grad.addColorStop(0.45, 'rgba('+rC+','+gC+','+bC+','+aMid+')');
       grad.addColorStop(0.78, 'rgba('+rC+','+gC+','+bC+','+(alpha*0.08)+')');
