@@ -547,6 +547,7 @@ var I18N = {
     error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
     alert_txt:     '⚠ Parámetros fuera de rango',
     dias_cortos:   ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+    tendencia: {'Bajando fuerte':'Bajando fuerte','Bajando':'Bajando','Bajando leve':'Bajando leve','Estable':'Estable','Subiendo leve':'Subiendo leve','Subiendo':'Subiendo','Subiendo fuerte':'Subiendo fuerte'},
     wmo: {0:'Despejado',1:'Mayormente despejado',2:'Parcialmente nublado',3:'Nublado',
           45:'Niebla',48:'Niebla helada',51:'Llovizna leve',53:'Llovizna moderada',
           55:'Llovizna intensa',61:'Lluvia leve',63:'Lluvia moderada',65:'Lluvia intensa',
@@ -580,6 +581,7 @@ var I18N = {
     error_check:   'Check that Node-RED and Tailscale Funnel are active.',
     alert_txt:     '⚠ Parameters out of range',
     dias_cortos:   ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    tendencia: {'Bajando fuerte':'Falling fast','Bajando':'Falling','Bajando leve':'Falling slowly','Estable':'Stable','Subiendo leve':'Rising slowly','Subiendo':'Rising','Subiendo fuerte':'Rising fast'},
     wmo: {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
           45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Moderate drizzle',
           55:'Heavy drizzle',61:'Light rain',63:'Moderate rain',65:'Heavy rain',
@@ -613,6 +615,7 @@ var I18N = {
     error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
     alert_txt:     '⚠ Parameter außerhalb des Bereichs',
     dias_cortos:   ['So','Mo','Di','Mi','Do','Fr','Sa'],
+    tendencia: {'Bajando fuerte':'Fällt stark','Bajando':'Fallend','Bajando leve':'Fällt leicht','Estable':'Stabil','Subiendo leve':'Steigt leicht','Subiendo':'Steigend','Subiendo fuerte':'Steigt stark'},
     wmo: {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bewölkt',
           45:'Nebel',48:'Eisnebel',51:'Leichter Nieselregen',53:'Mäßiger Nieselregen',
           55:'Starker Nieselregen',61:'Leichter Regen',63:'Mäßiger Regen',65:'Starker Regen',
@@ -646,6 +649,7 @@ var I18N = {
     error_check:   'Vérifiez que Node-RED et Tailscale Funnel sont actifs.',
     alert_txt:     '⚠ Paramètres hors plage',
     dias_cortos:   ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+    tendencia: {'Bajando fuerte':'En forte baisse','Bajando':'En baisse','Bajando leve':'En légère baisse','Estable':'Stable','Subiendo leve':'En légère hausse','Subiendo':'En hausse','Subiendo fuerte':'En forte hausse'},
     wmo: {0:'Ciel dégagé',1:'Principalement dégagé',2:'Partiellement nuageux',3:'Nuageux',
           45:'Brouillard',48:'Brouillard givrant',51:'Bruine légère',53:'Bruine modérée',
           55:'Bruine forte',61:'Pluie légère',63:'Pluie modérée',65:'Pluie forte',
@@ -679,6 +683,7 @@ var I18N = {
     error_check:   'Verifica che Node-RED e Tailscale Funnel siano attivi.',
     alert_txt:     '⚠ Parametri fuori intervallo',
     dias_cortos:   ['Dom','Lun','Mar','Mer','Gio','Ven','Sab'],
+    tendencia: {'Bajando fuerte':'In forte calo','Bajando':'In calo','Bajando leve':'In lieve calo','Estable':'Stabile','Subiendo leve':'In lieve aumento','Subiendo':'In aumento','Subiendo fuerte':'In forte aumento'},
     wmo: {0:'Cielo sereno',1:'Prevalentemente sereno',2:'Parzialmente nuvoloso',3:'Nuvoloso',
           45:'Nebbia',48:'Nebbia gelata',51:'Pioggerella leggera',53:'Pioggerella moderata',
           55:'Pioggerella intensa',61:'Pioggia leggera',63:'Pioggia moderata',65:'Pioggia intensa',
@@ -845,7 +850,9 @@ function renderMeteo(m){
   document.getElementById('meteo-badge-alerta').innerHTML=badge;
   var tend='';
   if(m.tendencia&&m.tendencia!=='Estable'&&m.tendencia!=='...'){
-    tend='<span style="font-size:.75rem">'+m.tendencia+'</span>';
+    var L = I18N[currentLang] || I18N.es;
+    var tendTxt = (L.tendencia && L.tendencia[m.tendencia]) || m.tendencia;
+    tend='<span style="font-size:.75rem">'+tendTxt+'</span>';
   }
   document.getElementById('meteo-tend').innerHTML=tend;
 }
