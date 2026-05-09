@@ -1581,7 +1581,10 @@ if(location.search.includes('tv=1')){
         var w = 14+s.h*3, h = s.h;
         var alpha = Math.min(s.h/4, 0.92);
         sx.save();
-        /* outer glow */
+        /* strict clip: only inside the card, only at the top strip */
+        sx.beginPath();
+        sx.rect(card.left, card.top - 2, card.width, 16);
+        sx.clip();
         var g = sx.createRadialGradient(cx, cy, 0, cx, cy, w*0.7);
         g.addColorStop(0,   'rgba(230,245,255,'+alpha+')');
         g.addColorStop(0.5, 'rgba(205,230,250,'+(alpha*0.65)+')');
@@ -1590,7 +1593,6 @@ if(location.search.includes('tv=1')){
         sx.beginPath();
         sx.ellipse(cx, cy, w*0.55, Math.max(h*0.7, 1.5), 0, Math.PI, Math.PI*2);
         sx.fill();
-        /* bright core */
         sx.fillStyle='rgba(245,252,255,'+(alpha*0.8)+')';
         sx.beginPath();
         sx.ellipse(cx, cy, w*0.25, Math.max(h*0.35, 1), 0, Math.PI, Math.PI*2);
@@ -1676,10 +1678,17 @@ if(location.search.includes('tv=1')){
         if(landed){
           var key = cardKey(p.card);
           addAccum(key, p.x, p.card.width);
-          return false; /* remove flake, it's now part of the pile */
+          return false;
         }
+        /* only draw while inside the card's horizontal bounds */
+        var inCard = p.card && p.x >= p.card.left && p.x <= p.card.right && p.y <= p.card.top;
+        if(!inCard){ return true; /* keep moving but don't draw outside */ }
         var alpha = p.life;
         sx.save();
+        /* clip to card column so flakes don't appear outside */
+        sx.beginPath();
+        sx.rect(p.card.left, 0, p.card.width, p.card.top + 2);
+        sx.clip();
         sx.strokeStyle = 'rgba(140,185,215,'+( alpha*0.92 )+')';
         sx.lineWidth = 1.2;
         for(var i=0;i<6;i++){
