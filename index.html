@@ -346,6 +346,82 @@ body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#c8d8d2 0%,#d4de
 body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#e8eff5 0%,#eaeeed 100%); }
 body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8eeed 100%); }
 
+/* Variables de tema nocturno/crepuscular */
+body.tod-night{
+  --bg:#1e2a3a; --border:#2e3e52; --text:#d8e8f0; --muted:#7a9ab0;
+  --soft:#1a2535; --ok:#4aaa7a; --warn:#c8960a; --danger:#c85a5a;
+}
+body.tod-dawn, body.tod-dusk{
+  --bg:#2e2018; --border:#4a3828; --text:#f0e0c8; --muted:#a08060;
+  --soft:#281808; --ok:#5aaa6a; --warn:#d0940a; --danger:#c86060;
+}
+
+/* Tarjetas en modo noche */
+body.tod-night .card,
+body.tod-night .meteo-card,
+body.tod-night .prev7-dia,
+body.tod-night .prev-hora{
+  background:rgba(22,34,50,0.82);
+  border-color:#2e3e52;
+  color:var(--text);
+  backdrop-filter:blur(4px);
+}
+body.tod-night .prev7-dia.hoy{
+  background:rgba(30,50,70,0.90);
+  border-color:#4a7a6a;
+}
+body.tod-night header{
+  background:rgba(18,26,38,0.90);
+  border-color:#2a3a4e;
+}
+body.tod-night .lang-bar,
+body.tod-night .clima-bar{
+  background:rgba(18,26,38,0.92);
+  border-color:#2a3a4e;
+}
+body.tod-night .bar-wrap{
+  background:#2a3a4e;
+}
+body.tod-night .section-title{
+  color:#8aaac0;
+}
+
+/* Tarjetas en amanecer/atardecer */
+body.tod-dawn .card,
+body.tod-dusk .card,
+body.tod-dawn .meteo-card,
+body.tod-dusk .meteo-card,
+body.tod-dawn .prev7-dia,
+body.tod-dusk .prev7-dia,
+body.tod-dawn .prev-hora,
+body.tod-dusk .prev-hora{
+  background:rgba(38,24,14,0.75);
+  border-color:#5a3a28;
+  color:var(--text);
+  backdrop-filter:blur(4px);
+}
+body.tod-dawn .prev7-dia.hoy,
+body.tod-dusk .prev7-dia.hoy{
+  background:rgba(55,35,18,0.88);
+  border-color:#7a5a3a;
+}
+body.tod-dawn header,
+body.tod-dusk header{
+  background:rgba(30,18,10,0.88);
+  border-color:#4a3020;
+}
+body.tod-dawn .lang-bar,
+body.tod-dusk .lang-bar,
+body.tod-dawn .clima-bar,
+body.tod-dusk .clima-bar{
+  background:rgba(30,18,10,0.92);
+  border-color:#4a3020;
+}
+body.tod-dawn .section-title,
+body.tod-dusk .section-title{
+  color:#c09070;
+}
+
 /* Noche / amanecer / atardecer */
 body.tod-night  #weather-bg{ background:linear-gradient(180deg,#1a2535 0%,#243045 50%,#1e2a3a 100%) !important; }
 body.tod-dawn   #weather-bg{ background:linear-gradient(150deg,#2e3a50 0%,#c47a3a 40%,#e8a060 70%,#eae0d0 100%) !important; }
