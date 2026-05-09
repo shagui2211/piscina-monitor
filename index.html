@@ -964,7 +964,7 @@ if(location.search.includes('tv=1')){
     var decl = 23.45 * Math.sin(B) * Math.PI/180;
     var ha = Math.acos(-Math.tan(lat)*Math.tan(decl)) * 180/Math.PI;
     var tz = -now.getTimezoneOffset()/60;
-    var noon = 12 - 2.65/15 - eot/60 + tz - 1;
+    var noon = 12 - 2.65/15 - eot/60 + tz;
     return { rise: noon - ha/15, set: noon + ha/15 };
   }
   function getDayPhase(){
