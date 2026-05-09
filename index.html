@@ -1035,14 +1035,14 @@ if(location.search.includes('tv=1')){
       });
       p.push({ type:'moon', x: canvas.width*0.88, y: canvas.height*0.10 });
     } else {
-      var numRays = (phase==='dawn') ? 10 : 20;
+      var numRays = (phase==='dawn') ? 10 : 14;
       var warm = (phase==='dawn');
       for(var i=0;i<numRays;i++){
         var angle = (i/numRays)*Math.PI*2;
         p.push({ type:'ray', angle:angle,
           phase:Math.random()*Math.PI*2,
           speed: warm ? 0.004+Math.random()*0.004 : 0.006+Math.random()*0.005,
-          baseAlpha: warm ? 0.30+Math.random()*0.20 : 0.55+Math.random()*0.35,
+          baseAlpha: warm ? 0.30+Math.random()*0.20 : 0.20+Math.random()*0.15,
           len:(canvas.width*(warm?0.5:0.55))+Math.random()*canvas.width*0.4,
           width: warm ? 28+Math.random()*55 : (Math.random()>0.5 ? 6+Math.random()*8 : 22+Math.random()*40),
           warm: warm,
@@ -1233,9 +1233,9 @@ if(location.search.includes('tv=1')){
       grad.addColorStop(0.7, 'rgba(115,165,142,'+(alpha*0.4)+')');
       grad.addColorStop(1,   'rgba(95,148,126,0)');
     } else {
-      grad.addColorStop(0,   'rgba(180,220,200,'+(alpha * 3.5)+')');
-      grad.addColorStop(0.2, 'rgba(160,205,183,'+(alpha * 2.2)+')');
-      grad.addColorStop(0.6, 'rgba(140,190,168,'+(alpha * 0.9)+')');
+      grad.addColorStop(0,   'rgba(180,220,200,'+(alpha * 1.0)+')');
+      grad.addColorStop(0.2, 'rgba(160,205,183,'+(alpha * 0.65)+')');
+      grad.addColorStop(0.6, 'rgba(140,190,168,'+(alpha * 0.25)+')');
       grad.addColorStop(1,   'rgba(120,175,155,0)');
     }
     ctx.save();
@@ -1265,10 +1265,10 @@ if(location.search.includes('tv=1')){
       corona.addColorStop(0.7, 'rgba(128,176,156,0.10)');
       corona.addColorStop(1,   'rgba(108,158,138,0)');
     } else {
-      corona.addColorStop(0,   'rgba(180,225,208,0.95)');
-      corona.addColorStop(0.25,'rgba(160,210,193,0.68)');
-      corona.addColorStop(0.55,'rgba(142,195,178,0.35)');
-      corona.addColorStop(0.8, 'rgba(128,182,165,0.12)');
+      corona.addColorStop(0,   'rgba(180,225,208,0.45)');
+      corona.addColorStop(0.25,'rgba(160,210,193,0.28)');
+      corona.addColorStop(0.55,'rgba(142,195,178,0.12)');
+      corona.addColorStop(0.8, 'rgba(128,182,165,0.04)');
       corona.addColorStop(1,   'rgba(115,168,152,0)');
     }
     ctx.save(); ctx.beginPath(); ctx.arc(ox,oy,coronaR,0,Math.PI*2); ctx.fillStyle=corona; ctx.fill(); ctx.restore();
