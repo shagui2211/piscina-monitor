@@ -1708,6 +1708,14 @@ if(location.search.includes('tv=1')){
       else if(currentMode==='snow') mkSnowSettle(rects);
       else if(currentMode==='hail') mkHailImpact(rects);
     }
+    var _snowRects = currentMode==='snow' ? getCardRects() : null;
+    if(_snowRects){
+      sx.save();
+      sx.beginPath();
+      sx.rect(0, 0, sc.width, sc.height);
+      _snowRects.forEach(function(r){ sx.rect(r.left, r.top, r.width, r.height); });
+      sx.clip('evenodd');
+    }
     particles = particles.filter(function(p){
       p.life -= p.decay;
       if(p.life<=0) return false;
@@ -1729,22 +1737,14 @@ if(location.search.includes('tv=1')){
       } else if(p.type==='snowfall'){
         p.x += p.vx; p.y += p.vy;
         p.spin += p.spinSpeed;
-        /* check if landed on card top */
         var landed = p.card && p.y >= p.card.top - 1;
         if(landed){
           var key = cardKey(p.card);
           addAccum(key, p.x, p.card.width);
           return false;
         }
-        /* only draw while inside the card's horizontal bounds */
-        var inCard = p.card && p.x >= p.card.left && p.x <= p.card.right && p.y <= p.card.top;
-        if(!inCard){ return true; /* keep moving but don't draw outside */ }
         var alpha = p.life;
         sx.save();
-        /* clip to card column so flakes don't appear outside */
-        sx.beginPath();
-        sx.rect(p.card.left, 0, p.card.width, p.card.top + 2);
-        sx.clip();
         sx.strokeStyle = 'rgba(140,185,215,'+( alpha*0.92 )+')';
         sx.lineWidth = 1.2;
         for(var i=0;i<6;i++){
@@ -1778,6 +1778,7 @@ if(location.search.includes('tv=1')){
       }
       return true;
     });
+    if(_snowRects) sx.restore();
     /* draw snow accumulation on top of everything */
     if(currentMode==='snow') drawAccumulation(getCardRects());
     requestAnimationFrame(loop);
