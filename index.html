@@ -320,7 +320,7 @@ body.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#d8e0de 0%,#dde4
 body.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#e2ecec 0%,#eaeeed 100%); }
 body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8eeed 100%); }
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#c8d8d2 0%,#d4deda 50%,#ccd6d2 100%); }
-body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#d8e8f4 0%,#e2ecf2 50%,#e8eff5 100%); }
+body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#e4eeed 0%,#e8efec 50%,#eaeeeb 100%); }
 body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#ccdae0 0%,#d8e4e8 50%,#e0eaec 100%); }
 
 /* ── VARIABLES NOCHE ── */
@@ -1402,12 +1402,6 @@ if(location.search.includes('tv=1')){
   function drawSnowFlake(p, dt){
     p.phase+=0.02*dt; p.x+=Math.sin(p.phase)*0.6*dt+p.drift*dt; p.y+=p.speed*dt;
     if(p.y>canvas.height+p.r){ p.y=-p.r; p.x=Math.random()*canvas.width; }
-    /* skip drawing if flake is over a card */
-    var rects = getCardRects();
-    for(var ci=0;ci<rects.length;ci++){
-      var cr=rects[ci];
-      if(p.x>=cr.left&&p.x<=cr.right&&p.y>=cr.top&&p.y<=cr.bottom) return;
-    }
     var a = p.alpha * Math.min(1, p.r/3);
     ctx.save();
     ctx.strokeStyle='rgba(185,215,240,'+Math.min(a*1.3,1.0)+')';
@@ -1502,7 +1496,15 @@ if(location.search.includes('tv=1')){
         flashAlpha = Math.max(0, flashAlpha - 0.022*dt);
       }
     } else if(m==='snow'){
+      /* clip out card areas so background flakes don't show through */
+      var _cr = getCardRects();
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, canvas.width, canvas.height);
+      _cr.forEach(function(r){ ctx.rect(r.left, r.top, r.width, r.height); });
+      ctx.clip('evenodd');
       particles.forEach(function(p){ drawSnowFlake(p,dt); });
+      ctx.restore();
     } else if(m==='hail'){
       particles.forEach(function(p){ drawHailStone(p,dt); });
     } else if(m==='clouds'){
