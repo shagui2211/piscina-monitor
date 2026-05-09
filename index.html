@@ -329,10 +329,10 @@ body.tod-night{
   --soft:#1a2535; --ok:#4aaa7a; --warn:#c8960a; --danger:#c85a5a;
 }
 
-/* ── VARIABLES AMANECER — verde-gris cálido luminoso ── */
+/* ── VARIABLES AMANECER — verde-gris con toque cálido dorado ── */
 body.tod-dawn{
-  --bg:#e8eeea; --border:#cddad4; --text:#1f2e28; --muted:#6a8c7e;
-  --soft:#dce8e2; --ok:#3d7a5a; --warn:#b07d2a; --danger:#c94b4b;
+  --bg:#e6ede8; --border:#c8d8cc; --text:#1f2e28; --muted:#6a8c7a;
+  --soft:#dae6de; --ok:#3d7a5a; --warn:#a87020; --danger:#c94b4b;
 }
 
 /* ── TARJETAS NOCHE ── */
@@ -365,34 +365,35 @@ body.tod-night .section-title{
   color:#8aaac0;
 }
 
-/* ── TARJETAS AMANECER — verde-gris claro cálido ── */
+/* ── TARJETAS AMANECER — fondo ligeramente cálido, borde dorado-verde ── */
 body.tod-dawn .card,
 body.tod-dawn .meteo-card,
 body.tod-dawn .prev7-dia,
 body.tod-dawn .prev-hora{
-  background:rgba(232,242,236,0.84);
-  border-color:#c5d8cc;
+  background:rgba(236,242,232,0.82);
+  border-color:#c0d4bc;
   color:var(--text);
   backdrop-filter:blur(4px);
+  box-shadow:0 2px 12px rgba(180,140,50,0.08);
 }
 body.tod-dawn .prev7-dia.hoy{
-  background:rgba(218,236,226,0.92);
-  border-color:#7aaa8a;
+  background:rgba(225,238,220,0.92);
+  border-color:#80aa78;
 }
 body.tod-dawn header{
-  background:rgba(224,238,230,0.94);
-  border-color:#b8d0c4;
+  background:rgba(228,240,228,0.94);
+  border-color:#b0cc9e;
 }
 body.tod-dawn .lang-bar,
 body.tod-dawn .clima-bar{
-  background:rgba(224,238,230,0.96);
-  border-color:#b8d0c4;
+  background:rgba(228,240,228,0.96);
+  border-color:#b0cc9e;
 }
 body.tod-dawn .bar-wrap{
-  background:#ccddd6;
+  background:#c8d8be;
 }
 body.tod-dawn .section-title{
-  color:#4a8068;
+  color:#4a7855;
 }
 
 /* ── FONDOS NOCHE ── */
@@ -404,19 +405,35 @@ body.tod-night.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#18222
 body.tod-night.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#1e2535 0%,#2a3348 100%) !important; }
 body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1c2830 0%,#222e38 50%,#1e2c34 100%) !important; }
 
-/* ── FONDOS AMANECER — verde-gris luminoso, sin marrones ── */
-body.tod-dawn              #weather-bg{ background:linear-gradient(150deg,#c8ddd4 0%,#d5e6dc 35%,#e4eeea 70%,#eef2ee 100%) !important; }
-body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#ccd8d2 0%,#d8e4de 60%,#e4eee8 100%) !important; }
-body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(180deg,#bcd0ca 0%,#ccddd8 60%,#dce8e4 100%) !important; }
-body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(180deg,#c4d8d2 0%,#d4e4de 60%,#e2eeea 100%) !important; }
-body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(180deg,#aac4bc 0%,#bcd4cc 50%,#cce0d8 100%) !important; }
-body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(180deg,#c8d8d4 0%,#d4e2de 50%,#deeae6 100%) !important; }
-body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(180deg,#ccdce8 0%,#d8e8f0 50%,#e4f0f4 100%) !important; }
+/* ── FONDOS AMANECER — horizonte cálido que sube desde abajo ── */
+body.tod-dawn              #weather-bg{ background:linear-gradient(to top,#e8c98a 0%,#d4b87a 8%,#c8d4b8 28%,#bcd4c8 52%,#ccddd4 75%,#ddeae4 100%) !important; }
+body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(to top,#ddb870 0%,#ccc090 12%,#b8c8b8 35%,#c0cec4 60%,#ccdad2 80%,#d8e4de 100%) !important; }
+body.tod-dawn.wbg-rain     #weather-bg{ background:linear-gradient(to top,#c8a870 0%,#b8b898 15%,#a8c0b8 40%,#b4c8c0 65%,#c4d4ce 85%,#d0dee8 100%) !important; }
+body.tod-dawn.wbg-drizzle  #weather-bg{ background:linear-gradient(to top,#ceb078 0%,#bebb98 14%,#aec4ba 38%,#b8ccc4 62%,#c8d8d0 82%,#d4e2e8 100%) !important; }
+body.tod-dawn.wbg-storm    #weather-bg{ background:linear-gradient(to top,#b09060 0%,#a8a888 18%,#98b8b0 42%,#a4beb6 66%,#b4ccc4 84%,#c4d8d0 100%) !important; }
+body.tod-dawn.wbg-fog      #weather-bg{ background:linear-gradient(to top,#d4b87a 0%,#c8c090 14%,#bcccc4 38%,#c4d2cc 62%,#d0dcd8 82%,#dae6e2 100%) !important; }
+body.tod-dawn.wbg-snow     #weather-bg{ background:linear-gradient(to top,#d0b880 0%,#c8c4a0 14%,#b8ccd8 40%,#c4d4e0 65%,#ccdce8 83%,#d8e8f0 100%) !important; }
+
+/* ── OVERLAY AMANECER — resplandor dorado suave desde el horizonte ── */
+#dawn-glow{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  height:50%;
+  pointer-events:none;z-index:1;
+  background:linear-gradient(to top,
+    rgba(220,165,60,0.30) 0%,
+    rgba(210,175,90,0.18) 35%,
+    rgba(200,185,120,0.07) 70%,
+    rgba(200,185,120,0) 100%);
+}
+body.tod-dawn #dawn-glow{ display:block; }
 </style>
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg"><canvas id="weather-canvas"></canvas></div>
+<!-- OVERLAY AMANECER -->
+<div id="dawn-glow"></div>
 <canvas id="splash-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
 <!-- OVERLAY NIEBLA -->
 <div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
