@@ -1483,16 +1483,16 @@ if(location.search.includes('tv=1')){
     var card = rects[Math.floor(Math.random()*rects.length)];
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*4;
-    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:4+Math.random()*3, life:1.0, decay:0.06, color:'74,140,170' });
-    var n = 2 + Math.floor(Math.random()*2);
+    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:7+Math.random()*5, life:1.0, decay:0.045, color:'74,140,170' });
+    var n = 3 + Math.floor(Math.random()*3);
     for(var i=0;i<n;i++){
       var dir = (Math.random()>0.5 ? 1 : -1);
       particles.push({
         type:'bead', x:x, y:y,
-        vx: dir*(0.8+Math.random()*1.6),
-        vy: -(0.4+Math.random()*0.8),
-        r: 0.8+Math.random()*0.8,
-        life:1.0, decay:0.06+Math.random()*0.03,
+        vx: dir*(1.2+Math.random()*2.5),
+        vy: -(0.8+Math.random()*1.4),
+        r: 1.2+Math.random()*1.2,
+        life:1.0, decay:0.05+Math.random()*0.03,
         color:'74,140,170',
       });
     }
@@ -1502,7 +1502,7 @@ if(location.search.includes('tv=1')){
     var card = rects[Math.floor(Math.random()*rects.length)];
     var x = card.left + Math.random()*card.width;
     var y = card.top + 1 + Math.random()*3;
-    particles.push({ type:'flake', x:x, y:y, r:2.5+Math.random()*2, life:1.0, decay:0.018+Math.random()*0.01 });
+    particles.push({ type:'flake', x:x, y:y, r:3.5+Math.random()*3, life:1.0, decay:0.013+Math.random()*0.008 });
   }
   function mkHailImpact(rects){
     if(!rects.length) return;
@@ -1511,19 +1511,19 @@ if(location.search.includes('tv=1')){
     var y = card.top + Math.random()*5;
     particles.push({
       type:'hailbounce', x:x, y:y,
-      vy:-(2.5+Math.random()*2), vx:(Math.random()-0.5)*1.5,
-      r:2+Math.random()*1.5,
-      life:1.0, decay:0.04,
+      vy:-(3.5+Math.random()*3), vx:(Math.random()-0.5)*2.5,
+      r:3+Math.random()*2,
+      life:1.0, decay:0.032,
     });
-    var n = 2+Math.floor(Math.random()*3);
+    var n = 3+Math.floor(Math.random()*4);
     for(var i=0;i<n;i++){
       var a = -Math.PI+Math.random()*Math.PI;
       particles.push({
         type:'chip', x:x, y:y,
-        vx:Math.cos(a)*(1.5+Math.random()*2),
-        vy:Math.sin(a)*(1.5+Math.random()*2)-1,
-        r:0.7+Math.random()*0.8,
-        life:1.0, decay:0.07+Math.random()*0.04,
+        vx:Math.cos(a)*(2+Math.random()*3),
+        vy:Math.sin(a)*(2+Math.random()*3)-1.5,
+        r:1.0+Math.random()*1.2,
+        life:1.0, decay:0.055+Math.random()*0.035,
       });
     }
   }
@@ -1561,18 +1561,18 @@ if(location.search.includes('tv=1')){
       if(p.type==='ring'){
         p.r += (p.maxR-p.r)*0.18;
         sx.save();
-        sx.strokeStyle='rgba('+p.color+','+( p.life*0.55 )+')';
-        sx.lineWidth=0.7;
+        sx.strokeStyle='rgba('+p.color+','+( p.life*0.75 )+')';
+        sx.lineWidth=1.0;
         sx.beginPath(); sx.ellipse(p.x,p.y,p.r,p.r*0.35,0,0,Math.PI*2); sx.stroke();
         sx.restore();
       } else if(p.type==='bead'){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.12;
         sx.save();
-        sx.fillStyle='rgba('+p.color+','+( p.life*0.7 )+')';
+        sx.fillStyle='rgba('+p.color+','+( p.life*0.88 )+')';
         sx.beginPath(); sx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); sx.fill();
         sx.restore();
       } else if(p.type==='flake'){
-        drawFlakeShape(p.x,p.y,p.r, p.life*0.85);
+        drawFlakeShape(p.x,p.y,p.r, p.life*1.0);
       } else if(p.type==='hailbounce'){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.25;
         sx.save();
@@ -1593,11 +1593,11 @@ if(location.search.includes('tv=1')){
     requestAnimationFrame(loop);
   }
   function getSpawnInterval(){
-    if(currentMode==='storm')   return 60;
-    if(currentMode==='rain')    return 100;
-    if(currentMode==='drizzle') return 220;
-    if(currentMode==='hail')    return 130;
-    if(currentMode==='snow')    return 300;
+    if(currentMode==='storm')   return 28;
+    if(currentMode==='rain')    return 45;
+    if(currentMode==='drizzle') return 100;
+    if(currentMode==='hail')    return 55;
+    if(currentMode==='snow')    return 140;
     return 9999;
   }
   var _lastBodyClass = '';
