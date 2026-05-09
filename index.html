@@ -345,6 +345,19 @@ body.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#dfe9eb 0%,#e8ee
 body.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#c8d8d2 0%,#d4deda 50%,#ccd6d2 100%); }
 body.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#e8eff5 0%,#eaeeed 100%); }
 body.wbg-hail    #weather-bg{ background:linear-gradient(180deg,#e0e9ec 0%,#e8eeed 100%); }
+
+/* Noche / amanecer / atardecer */
+body.tod-night  #weather-bg{ background:linear-gradient(180deg,#1a2535 0%,#243045 50%,#1e2a3a 100%) !important; }
+body.tod-dawn   #weather-bg{ background:linear-gradient(150deg,#2e3a50 0%,#c47a3a 40%,#e8a060 70%,#eae0d0 100%) !important; }
+body.tod-dusk   #weather-bg{ background:linear-gradient(150deg,#e89050 0%,#c06838 40%,#5a3060 70%,#1e2035 100%) !important; }
+body.tod-night.wbg-clouds  #weather-bg{ background:linear-gradient(180deg,#1a2030 0%,#222838 100%) !important; }
+body.tod-dawn.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#2a3040 0%,#6a5040 60%,#c07050 100%) !important; }
+body.tod-dusk.wbg-clouds   #weather-bg{ background:linear-gradient(180deg,#7a4838 0%,#4a3050 60%,#1e2030 100%) !important; }
+body.tod-night.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#151e2a 0%,#1c2535 100%) !important; }
+body.tod-night.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#101520 0%,#1a2030 50%,#101520 100%) !important; }
+body.tod-night.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#18222e 0%,#1e2838 100%) !important; }
+body.tod-night.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#1e2535 0%,#2a3348 100%) !important; }
+body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1e2830 0%,#252f38 100%) !important; }
 </style>
 </head>
 <body>
@@ -975,6 +988,39 @@ if(location.search.includes('tv=1')){
   window.addEventListener('resize', resize);
   resize();
 
+  /* ── Fase del día (Mallorca ~39.6°N) ── */
+  function getSunTimes(){
+    var now = new Date();
+    var dayOfYear = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+    var B = (360/365) * (dayOfYear - 81) * Math.PI/180;
+    var eot = 9.87*Math.sin(2*B) - 7.53*Math.cos(B) - 1.5*Math.sin(B);
+    var lat = 39.6 * Math.PI/180;
+    var decl = 23.45 * Math.sin(B) * Math.PI/180;
+    var ha = Math.acos(-Math.tan(lat)*Math.tan(decl)) * 180/Math.PI;
+    var tz = -now.getTimezoneOffset()/60;
+    var noon = 12 - 2.65/15 - eot/60 + tz - 1; /* UTC offset */
+    return { rise: noon - ha/15, set: noon + ha/15 };
+  }
+  function getDayPhase(){
+    var h = new Date().getHours() + new Date().getMinutes()/60;
+    var s = getSunTimes();
+    if(h >= s.rise-0.5 && h < s.rise) return 'dawn';
+    if(h >= s.rise && h < s.set)      return 'day';
+    if(h >= s.set && h < s.set+0.5)   return 'dusk';
+    return 'night';
+  }
+  var _lastPhase = null;
+  function applyDayPhase(){
+    var phase = getDayPhase();
+    if(phase === _lastPhase) return;
+    _lastPhase = phase;
+    document.body.classList.remove('tod-day','tod-dawn','tod-dusk','tod-night');
+    document.body.classList.add('tod-'+phase);
+    if(currentMode) initParticles(currentMode);
+  }
+  setInterval(applyDayPhase, 60000);
+  applyDayPhase();
+
   /* WMO → modo */
   function wmoToMode(code){
     if(code===null||code===undefined) return 'clear';
@@ -991,30 +1037,39 @@ if(location.search.includes('tv=1')){
 
   /* ── Generadores ── */
 
-  /* SOL: lens flare desde esquina superior izquierda */
+  /* SOL / LUNA / ESTRELLAS según fase del día */
   function mkClear(){
+    var phase = getDayPhase();
     var p = [];
-    /* Rayos nítidos que irradian desde el sol */
-    var numRays = 20;
-    for(var i = 0; i < numRays; i++){
-      var angle = (i / numRays) * Math.PI * 2;
-      p.push({
-        type: 'ray',
-        angle: angle,
-        phase: Math.random() * Math.PI * 2,
-        speed: 0.006 + Math.random() * 0.005,
-        baseAlpha: 0.55 + Math.random() * 0.35,
-        len: (canvas.width * 0.55) + Math.random() * canvas.width * 0.5,
-        width: Math.random() > 0.5 ? 6 + Math.random()*8 : 22 + Math.random()*40,
+    if(phase === 'night'){
+      for(var i=0;i<120;i++) p.push({
+        type:'star',
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height*0.88,
+        r: 0.5+Math.random()*1.5,
+        phase: Math.random()*Math.PI*2,
+        speed: 0.005+Math.random()*0.01,
+        baseAlpha: 0.5+Math.random()*0.5,
       });
+      p.push({ type:'moon', x: canvas.width*0.88, y: canvas.height*0.10 });
+    } else {
+      var numRays = (phase==='dawn'||phase==='dusk') ? 10 : 20;
+      var warm = (phase==='dawn'||phase==='dusk');
+      for(var i=0;i<numRays;i++){
+        var angle = (i/numRays)*Math.PI*2;
+        p.push({ type:'ray', angle:angle,
+          phase:Math.random()*Math.PI*2,
+          speed: warm ? 0.004+Math.random()*0.004 : 0.006+Math.random()*0.005,
+          baseAlpha: warm ? 0.35+Math.random()*0.25 : 0.55+Math.random()*0.35,
+          len:(canvas.width*(warm?0.5:0.55))+Math.random()*canvas.width*0.4,
+          width: warm ? 30+Math.random()*60 : (Math.random()>0.5 ? 6+Math.random()*8 : 22+Math.random()*40),
+          warm: warm,
+        });
+      }
+      p.push({ type:'flare', t:0 });
     }
-    p.push({ type:'sun' });
-    /* Lens flares secundarios */
-    p.push({ type:'flare', t:0 });
     return p;
   }
-
-  /* LLUVIA: gotas diagonales claras */
   function mkRain(heavy){
     var p = [], n = heavy ? 180 : 110;
     for(var i = 0; i < n; i++){
@@ -1173,6 +1228,32 @@ if(location.search.includes('tv=1')){
 
   /* ── Draw ── */
 
+  function drawStar(p, dt){
+    p.phase += p.speed * dt;
+    var a = p.baseAlpha * (0.5 + 0.5*Math.sin(p.phase));
+    ctx.save();
+    ctx.fillStyle = 'rgba(240,245,255,'+a+')';
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  function drawMoon(p){
+    var x=p.x, y=p.y, r=38;
+    ctx.save();
+    var glow = ctx.createRadialGradient(x,y,0,x,y,r*3.5);
+    glow.addColorStop(0,'rgba(200,215,240,0.22)');
+    glow.addColorStop(1,'rgba(200,215,240,0)');
+    ctx.beginPath(); ctx.arc(x,y,r*3.5,0,Math.PI*2); ctx.fillStyle=glow; ctx.fill();
+    var disc = ctx.createRadialGradient(x-r*0.2,y-r*0.2,r*0.1,x,y,r);
+    disc.addColorStop(0,'rgba(240,245,255,0.97)');
+    disc.addColorStop(0.6,'rgba(210,222,245,0.92)');
+    disc.addColorStop(1,'rgba(180,200,235,0.80)');
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fillStyle=disc; ctx.fill();
+    ctx.beginPath(); ctx.arc(x+r*0.38,y,r*0.92,0,Math.PI*2);
+    ctx.fillStyle='rgba(28,38,58,0.52)'; ctx.fill();
+    ctx.restore();
+  }
+
   function drawClearRay(p, dt){
     p.phase += p.speed * dt;
     var alpha = p.baseAlpha * (0.7 + 0.3 * Math.sin(p.phase));
@@ -1180,10 +1261,17 @@ if(location.search.includes('tv=1')){
     var ex = ox + Math.cos(p.angle) * p.len;
     var ey = oy + Math.sin(p.angle) * p.len;
     var grad = ctx.createLinearGradient(ox, oy, ex, ey);
-    grad.addColorStop(0,   'rgba(180,220,200,'+(alpha * 3.5)+')');
-    grad.addColorStop(0.2, 'rgba(160,205,183,'+(alpha * 2.2)+')');
-    grad.addColorStop(0.6, 'rgba(140,190,168,'+(alpha * 0.9)+')');
-    grad.addColorStop(1,   'rgba(120,175,155,0)');
+    if(p.warm){
+      grad.addColorStop(0,   'rgba(240,130,50,'+(alpha*2.8)+')');
+      grad.addColorStop(0.25,'rgba(220,100,35,'+(alpha*1.6)+')');
+      grad.addColorStop(0.7, 'rgba(200,70,25,'+(alpha*0.5)+')');
+      grad.addColorStop(1,   'rgba(180,50,15,0)');
+    } else {
+      grad.addColorStop(0,   'rgba(180,220,200,'+(alpha * 3.5)+')');
+      grad.addColorStop(0.2, 'rgba(160,205,183,'+(alpha * 2.2)+')');
+      grad.addColorStop(0.6, 'rgba(140,190,168,'+(alpha * 0.9)+')');
+      grad.addColorStop(1,   'rgba(120,175,155,0)');
+    }
     ctx.save();
     var perp = p.angle + Math.PI/2;
     var hw = p.width / 2;
@@ -1338,11 +1426,19 @@ if(location.search.includes('tv=1')){
     var m=currentMode||'clear';
 
     if(m==='clear'){
-      particles.forEach(function(p){
-        if(p.type==='ray') drawClearRay(p,dt);
-        else if(p.type==='sun') drawSun();
-        else if(p.type==='flare') drawFlare(p,dt);
-      });
+      var phase = getDayPhase();
+      if(phase==='night'){
+        particles.forEach(function(p){
+          if(p.type==='star') drawStar(p,dt);
+          if(p.type==='moon') drawMoon(p);
+        });
+      } else {
+        drawSun();
+        particles.forEach(function(p){
+          if(p.type==='ray')   drawClearRay(p,dt);
+          if(p.type==='flare') drawFlare(p,dt);
+        });
+      }
     } else if(m==='rain'||m==='drizzle'){
       particles.forEach(function(p){ drawRainDrop(p,dt); });
     } else if(m==='storm'){
