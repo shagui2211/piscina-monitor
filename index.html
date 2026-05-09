@@ -1078,7 +1078,8 @@ if(location.search.includes('tv=1')){
     return { rise: noon - ha/15, set: noon + ha/15 };
   }
   function getDayPhase(){
-    var h = new Date().getHours() + new Date().getMinutes()/60;
+    var debugH = (typeof window._debugHour !== 'undefined') ? window._debugHour : -1;
+    var h = (debugH >= 0) ? debugH : (new Date().getHours() + new Date().getMinutes()/60);
     var s = getSunTimes();
     if(h >= s.rise-0.5 && h < s.rise) return 'dawn';
     if(h >= s.rise && h < s.set)      return 'day';
@@ -1094,6 +1095,11 @@ if(location.search.includes('tv=1')){
     document.body.classList.add('tod-'+phase);
     if(currentMode) initParticles(currentMode);
   }
+  /* Exponer para que el panel debug pueda forzar re-evaluación */
+  window._forceApplyDayPhase = function(){
+    _lastPhase = null; /* reset para forzar cambio aunque la fase sea la misma */
+    applyDayPhase();
+  };
   setInterval(applyDayPhase, 60000);
   applyDayPhase();
 
@@ -1788,6 +1794,13 @@ if(location.search.includes('tv=1')){
   <button onclick="testWeather(95)" data-mode="storm">⛈ Tormenta</button>
   <button onclick="testWeather(71)" data-mode="snow">❄ Nieve</button>
   <button onclick="testWeather(77)" data-mode="hail">🌨 Granizo</button>
+  <span style="margin-left:8px">🕐 HORA</span>
+  <button onclick="testHour(3)"  data-hour="3">🌙 3h</button>
+  <button onclick="testHour(7)"  data-hour="7">🌅 7h</button>
+  <button onclick="testHour(13)" data-hour="13">☀️ 13h</button>
+  <button onclick="testHour(20)" data-hour="20">🌆 20h</button>
+  <button onclick="testHour(22)" data-hour="22">🌃 22h</button>
+  <button onclick="testHour(-1)" data-hour="-1">↺ Real</button>
 </div>
 
 <script>
@@ -1804,11 +1817,23 @@ if(location.search.includes('tv=1')){
 
   window.testWeather = function(wmo){
     if(window.setWeatherBackground) window.setWeatherBackground(wmo);
-    panel.querySelectorAll('button').forEach(function(btn){ btn.classList.remove('active'); });
+    panel.querySelectorAll('button[data-mode]').forEach(function(btn){ btn.classList.remove('active'); });
     var modeMap = {0:'clear',3:'clouds',45:'fog',51:'drizzle',61:'rain',95:'storm',71:'snow',77:'hail'};
-    panel.querySelectorAll('button').forEach(function(btn){
+    panel.querySelectorAll('button[data-mode]').forEach(function(btn){
       if(btn.getAttribute('data-mode') === modeMap[wmo]) btn.classList.add('active');
     });
+  };
+
+  /* Override de hora para debug */
+  window._debugHour = -1;
+  window.testHour = function(h){
+    window._debugHour = h;
+    panel.querySelectorAll('button[data-hour]').forEach(function(btn){ btn.classList.remove('active'); });
+    panel.querySelectorAll('button[data-hour]').forEach(function(btn){
+      if(parseInt(btn.getAttribute('data-hour')) === h) btn.classList.add('active');
+    });
+    /* Forzar re-evaluación de la fase */
+    if(window._forceApplyDayPhase) window._forceApplyDayPhase();
   };
 })();
 </script>
