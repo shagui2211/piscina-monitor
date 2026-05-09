@@ -324,12 +324,22 @@ body.wbg-fog #fog-overlay{ display:block; }
 .fog-band{
   position:absolute;
   left:-10%;width:120%;
+  /* Color de día: blanco suave */
   background:linear-gradient(180deg,
     rgba(255,255,255,0)    0%,
     rgba(255,255,255,0.28) 40%,
     rgba(255,255,255,0.38) 50%,
     rgba(255,255,255,0.28) 60%,
     rgba(255,255,255,0)    100%);
+}
+body.tod-night .fog-band{
+  /* Color de noche: gris azulado muy sutil */
+  background:linear-gradient(180deg,
+    rgba(80,105,130,0)    0%,
+    rgba(80,105,130,0.18) 40%,
+    rgba(80,105,130,0.26) 50%,
+    rgba(80,105,130,0.18) 60%,
+    rgba(80,105,130,0)    100%);
 }
 .fog-band:nth-child(1){ top:0%;   height:30%; animation:fogFloat1 17s ease-in-out infinite; }
 .fog-band:nth-child(2){ top:25%;  height:28%; animation:fogFloat2 21s ease-in-out infinite 3s; }
@@ -416,7 +426,7 @@ body.tod-night.wbg-rain    #weather-bg{ background:linear-gradient(180deg,#151e2
 body.tod-night.wbg-storm   #weather-bg{ background:linear-gradient(180deg,#101520 0%,#1a2030 50%,#101520 100%) !important; }
 body.tod-night.wbg-drizzle #weather-bg{ background:linear-gradient(180deg,#18222e 0%,#1e2838 100%) !important; }
 body.tod-night.wbg-snow    #weather-bg{ background:linear-gradient(180deg,#1e2535 0%,#2a3348 100%) !important; }
-body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1e2830 0%,#252f38 100%) !important; }
+body.tod-night.wbg-fog     #weather-bg{ background:linear-gradient(180deg,#1c2830 0%,#222e38 50%,#1e2c34 100%) !important; }
 </style>
 </head>
 <body>
