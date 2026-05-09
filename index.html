@@ -839,10 +839,28 @@ function renderMeteo(m){
     if(fraseEl){
       fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
     }
-    if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
+    // Usar condición actual del BME280 (wmo_actual) para el fondo,
+    // ignorando el pronóstico de Open-Meteo que puede indicar lluvia futura
+    if(window.setWeatherBackground && !window._debugWeatherLocked){
+      if(m.wmo_actual){
+        var bmeWmoMap = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
+        var bmeCode = bmeWmoMap[m.wmo_actual];
+        window.setWeatherBackground(bmeCode !== undefined ? bmeCode : detectedCode);
+      } else {
+        window.setWeatherBackground(detectedCode);
+      }
+    }
   } else {
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || t('loading'));
-    if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(null);
+    if(window.setWeatherBackground && !window._debugWeatherLocked){
+      if(m.wmo_actual){
+        var bmeWmoMap2 = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
+        var bmeCode2 = bmeWmoMap2[m.wmo_actual];
+        window.setWeatherBackground(bmeCode2 !== undefined ? bmeCode2 : null);
+      } else {
+        window.setWeatherBackground(null);
+      }
+    }
   }
   var badge='';
   if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
