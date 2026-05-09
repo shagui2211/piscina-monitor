@@ -1176,70 +1176,102 @@ if(location.search.includes('tv=1')){
     return clouds;
   }
   function mkCloudPuffs(){
-    /* Generate a set of overlapping circles that form a natural cloud shape */
+    /*
+     * Estructura en dos capas:
+     * - cuerpo principal: puffs grandes alineados horizontalmente
+     * - cúpulas superiores: puffs más pequeños en la cresta para dar volumen cumulonimbus
+     * Cada puff guarda también su altura relativa (0=base, 1=cima) para colorear.
+     */
     var puffs = [];
-    var n = 6 + Math.floor(Math.random()*4);
-    for(var i=0;i<n;i++){
+    /* Base larga y plana */
+    var bodyCount = 5 + Math.floor(Math.random()*3);
+    var spread = 130 + Math.random()*60;
+    for(var i=0;i<bodyCount;i++){
+      var t = (i/(bodyCount-1))-0.5;           /* -0.5 … 0.5 */
       puffs.push({
-        dx: (Math.random()-0.5)*110,
-        dy: (Math.random()-0.5)*35 + 10,
-        r:  28 + Math.random()*38,
+        dx:  t * spread * 2,
+        dy:  18 + Math.abs(t)*18,              /* base ligeramente arqueada */
+        r:   42 + Math.random()*30,
+        top: 0.0 + Math.random()*0.2,          /* altura relativa baja */
       });
     }
-    /* always add a large central puff */
-    puffs.push({ dx:0, dy:0, r:55+Math.random()*20 });
+    /* Cúpulas que sobresalen por encima */
+    var domeCount = 4 + Math.floor(Math.random()*3);
+    for(var j=0;j<domeCount;j++){
+      var dt = (j/(domeCount-1))-0.5;
+      puffs.push({
+        dx:  dt * spread * 1.4 + (Math.random()-0.5)*40,
+        dy:  -20 - Math.random()*35,           /* por encima del centro */
+        r:   30 + Math.random()*28,
+        top: 0.55 + Math.random()*0.45,        /* altura relativa alta */
+      });
+    }
+    /* Puff central grande de anclaje */
+    puffs.push({ dx:0, dy:0, r:68+Math.random()*22, top:0.35 });
     return puffs;
   }
+
   function drawCloudShape(x, y, scale, alpha, puffs){
     if(!puffs) return;
     ctx.save();
-    /* Build clip path from all puffs */
+
+    /*
+     * Técnica: gradientes radiales acumulados sin clip.
+     * Cada puff es un gradiente radial semitransparente que se mezcla
+     * con los anteriores mediante globalCompositeOperation 'source-over'.
+     * Esto crea bordes suaves y volumen volumétrico real en vez de
+     * un recorte duro.
+     *
+     * Color basado en la altura del puff:
+     *   cima  → blanco puro
+     *   medio → blanco ligeramente azulado
+     *   base  → gris perla azulado suave (sombra propia)
+     */
+    puffs.forEach(function(p){
+      var cx  = x + p.dx * scale;
+      var cy  = y + p.dy * scale;
+      var r   = p.r  * scale;
+      var t   = p.top; /* 0=base 1=cima */
+
+      /* Color de la cima y la base de este puff */
+      var rTop = 255,         gTop = 255,         bTop = 255;
+      var rBot = 205+t*25,    gBot = 215+t*20,    bBot = 235+t*10;
+
+      /* Interpolamos entre base y cima según t */
+      var rC = Math.round(rBot + (rTop-rBot)*t);
+      var gC = Math.round(gBot + (gTop-gBot)*t);
+      var bC = Math.round(bBot + (bTop-bBot)*t);
+
+      /* Gradiente radial desde el centro brillante hasta el borde transparente */
+      var grad = ctx.createRadialGradient(
+        cx - r*0.18, cy - r*0.22, r*0.02,   /* foco ligeramente arriba-izquierda */
+        cx,          cy,          r
+      );
+      var aCore  = alpha * (0.72 + t*0.22);
+      var aMid   = alpha * (0.38 + t*0.15);
+      grad.addColorStop(0,    'rgba('+rC+','+gC+','+bC+','+aCore+')');
+      grad.addColorStop(0.45, 'rgba('+rC+','+gC+','+bC+','+aMid+')');
+      grad.addColorStop(0.78, 'rgba('+rC+','+gC+','+bC+','+(alpha*0.08)+')');
+      grad.addColorStop(1,    'rgba('+rC+','+gC+','+bC+',0)');
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 1.05, 0, Math.PI*2);
+      ctx.fill();
+    });
+
+    /* Sombra propia: franja oscura suave en el vientre de la nube */
+    var bellyY  = y + 28 * scale;
+    var bellyR  = 160 * scale;
+    var shadow  = ctx.createRadialGradient(x, bellyY, 0, x, bellyY, bellyR);
+    shadow.addColorStop(0,   'rgba(140,160,190,'+(alpha*0.22)+')');
+    shadow.addColorStop(0.5, 'rgba(140,160,190,'+(alpha*0.10)+')');
+    shadow.addColorStop(1,   'rgba(140,160,190,0)');
+    ctx.fillStyle = shadow;
     ctx.beginPath();
-    puffs.forEach(function(p){
-      ctx.moveTo(x + p.dx*scale + p.r*scale, y + p.dy*scale);
-      ctx.arc(x + p.dx*scale, y + p.dy*scale, p.r*scale, 0, Math.PI*2);
-    });
-    ctx.closePath();
-    /* Fill with a vertical gradient: bright white top, soft grey-blue base */
-    var top    = y - 80*scale;
-    var bottom = y + 60*scale;
-    var grad = ctx.createLinearGradient(0, top, 0, bottom);
-    grad.addColorStop(0,   'rgba(255,255,255,'+(alpha*0.98)+')');
-    grad.addColorStop(0.35,'rgba(250,252,255,'+(alpha*0.93)+')');
-    grad.addColorStop(0.7, 'rgba(235,242,250,'+(alpha*0.80)+')');
-    grad.addColorStop(1,   'rgba(218,230,244,'+(alpha*0.55)+')');
-    ctx.fillStyle = grad;
+    ctx.ellipse(x, bellyY, bellyR, bellyR*0.38, 0, 0, Math.PI*2);
     ctx.fill();
-    /* Soft highlight on top of each puff for fluffy 3D look */
-    puffs.forEach(function(p){
-      var cx2 = x + p.dx*scale;
-      var cy2 = y + p.dy*scale;
-      var r2  = p.r*scale;
-      var hg = ctx.createRadialGradient(cx2-r2*0.25, cy2-r2*0.30, r2*0.05, cx2, cy2, r2);
-      hg.addColorStop(0, 'rgba(255,255,255,'+(alpha*0.55)+')');
-      hg.addColorStop(0.5,'rgba(255,255,255,'+(alpha*0.18)+')');
-      hg.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = hg;
-      ctx.beginPath();
-      ctx.arc(cx2, cy2, r2, 0, Math.PI*2);
-      ctx.fill();
-    });
-    /* Soft shadow underneath each puff for depth */
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    puffs.forEach(function(p){
-      var cx2 = x + p.dx*scale;
-      var cy2 = y + p.dy*scale;
-      var r2  = p.r*scale;
-      var sg = ctx.createRadialGradient(cx2, cy2+r2*0.3, r2*0.1, cx2, cy2, r2);
-      sg.addColorStop(0, 'rgba(180,198,215,'+(alpha*0.18)+')');
-      sg.addColorStop(1, 'rgba(180,198,215,0)');
-      ctx.fillStyle = sg;
-      ctx.beginPath();
-      ctx.arc(cx2, cy2, r2, 0, Math.PI*2);
-      ctx.fill();
-    });
-    ctx.restore();
+
     ctx.restore();
   }
   function mkFog(){
