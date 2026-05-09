@@ -1418,10 +1418,10 @@ if(location.search.includes('tv=1')){
     } else if(m==='storm'){
       particles.forEach(function(p){ drawRainDrop(p,dt); });
       boltTimer+=dt;
-      if(boltTimer > 180+Math.random()*220){
+      if(boltTimer > 500+Math.random()*600){
         boltTimer=0;
         mkBolt();
-        if(Math.random()>0.75) setTimeout(mkBolt, 200+Math.random()*300);
+        if(Math.random()>0.85) setTimeout(mkBolt, 400+Math.random()*500);
       }
       bolts=bolts.filter(function(b){ drawBolt(b,dt); return b.life>0; });
       if(flashAlpha>0){
