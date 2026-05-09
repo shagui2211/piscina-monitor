@@ -838,10 +838,10 @@ function renderMeteo(m){
     if(fraseEl){
       fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
     }
-    if(window.setWeatherBackground) window.setWeatherBackground(detectedCode);
+    if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
   } else {
     if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || t('loading'));
-    if(window.setWeatherBackground) window.setWeatherBackground(null);
+    if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(null);
   }
   var badge='';
   if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
@@ -1792,9 +1792,11 @@ if(location.search.includes('tv=1')){
     if(e.key === 'd' || e.key === 'D'){
       visible = !visible;
       panel.style.display = visible ? 'flex' : 'none';
+      if(!visible) window._debugWeatherLocked = false;
     }
   });
   window.testWeather = function(wmo){
+    window._debugWeatherLocked = (wmo !== null && wmo !== undefined);
     if(window.setWeatherBackground) window.setWeatherBackground(wmo);
     panel.querySelectorAll('button[data-mode]').forEach(function(btn){ btn.classList.remove('active'); });
     var modeMap = {0:'clear',3:'clouds',45:'fog',51:'drizzle',61:'rain',95:'storm',71:'snow',77:'hail'};
