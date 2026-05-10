@@ -1099,6 +1099,7 @@ if(location.search.includes('tv=1')){
   }
   /* ── Generadores ── */
   function mkClearCloud(yFrac, scale, speed, alpha){
+    var puffs = mkCloudPuffs();
     return {
       type: 'clearcloud',
       x: Math.random() * canvas.width,
@@ -1106,7 +1107,8 @@ if(location.search.includes('tv=1')){
       scale: scale + Math.random()*0.2,
       speed: speed + Math.random()*0.05,
       alpha: alpha,
-      puffs: mkCloudPuffs(),
+      puffs: puffs,
+      baked: bakeCloud(puffs, scale + Math.random()*0.2, alpha),
     };
   }
   function mkClear(){
@@ -1189,25 +1191,22 @@ if(location.search.includes('tv=1')){
       { yFrac:0.35, scale:1.4, speed:0.20, alpha:0.60 },
     ];
     configs.forEach(function(c){
-      /* Distribuir a lo largo de todo el ancho incluyendo el centro */
+      var scale = c.scale + Math.random()*0.5;
+      var alpha = c.alpha;
+      var puffs = mkCloudPuffs();
       clouds.push({
         x: (Math.random() * 1.4 - 0.2) * canvas.width,
         y: canvas.height * c.yFrac + (Math.random()-0.5) * 20,
-        scale: c.scale + Math.random()*0.5,
+        scale: scale,
         speed: c.speed + Math.random()*0.05,
-        alpha: c.alpha,
-        puffs: mkCloudPuffs(),
+        alpha: alpha,
+        puffs: puffs,
+        baked: bakeCloud(puffs, scale, alpha),
       });
     });
     return clouds;
   }
   function mkCloudPuffs(){
-    /*
-     * Estratocúmulos realistas: nubes bajas, anchas, planas y grises.
-     * - Cuerpo muy extendido horizontalmente (tipo manta)
-     * - Pocas cúpulas y bajas — sin aspecto de cumulonimbus
-     * - Escala grande para cubrir bien el cielo
-     */
     var puffs = [];
     var bodyCount = 7 + Math.floor(Math.random()*4);
     var spread = 180 + Math.random()*80;
@@ -1216,7 +1215,7 @@ if(location.search.includes('tv=1')){
       puffs.push({
         dx:  t * spread * 2.2,
         dy:  12 + Math.abs(t)*10 + Math.random()*8,
-        r:   75 + Math.random()*55,   /* puffs más grandes = más solapamiento */
+        r:   75 + Math.random()*55,
         top: 0.0 + Math.random()*0.15,
       });
     }
@@ -1226,49 +1225,58 @@ if(location.search.includes('tv=1')){
       puffs.push({
         dx:  dt2 * spread * 1.0 + (Math.random()-0.5)*30,
         dy:  -8 - Math.random()*18,
-        r:   60 + Math.random()*35,   /* cúpulas también más grandes */
+        r:   60 + Math.random()*35,
         top: 0.25 + Math.random()*0.25,
       });
     }
-    puffs.push({ dx:0, dy:5, r:120+Math.random()*40, top:0.10 }); /* puff central enorme */
+    puffs.push({ dx:0, dy:5, r:120+Math.random()*40, top:0.10 });
     return puffs;
   }
 
-  function drawCloudShape(x, y, scale, alpha, puffs){
-    if(!puffs) return;
-    /*
-     * Técnica: offscreen canvas con filter blur.
-     * Dibujamos elipses sólidas en un canvas temporal, aplicamos blur CSS,
-     * y volcamos el resultado. Esto garantiza bordes 100% suaves sin
-     * artefactos de círculos ni bandas de gradiente.
-     */
-    var oc = document.createElement('canvas');
-    oc.width  = canvas.width;
-    oc.height = canvas.height;
-    var octx = oc.getContext('2d');
+  /* Precalcula la nube en un canvas offscreen (solo una vez por nube) */
+  function bakeCloud(puffs, scale, alpha){
+    var pad  = Math.round(70 * scale);
+    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    puffs.forEach(function(p){
+      var rw = p.r * scale * 1.6;
+      var rh = p.r * scale * 0.7;
+      minX = Math.min(minX, p.dx*scale - rw);
+      maxX = Math.max(maxX, p.dx*scale + rw);
+      minY = Math.min(minY, p.dy*scale - rh);
+      maxY = Math.max(maxY, p.dy*scale + rh);
+    });
+    var w  = Math.ceil(maxX - minX) + pad*2;
+    var h  = Math.ceil(maxY - minY) + pad*2;
+    var ox = -minX + pad;
+    var oy = -minY + pad;
 
-    var blurPx = Math.round(38 * scale);
-    octx.filter = 'blur(' + blurPx + 'px)';
+    var oc   = document.createElement('canvas');
+    oc.width  = w;
+    oc.height = h;
+    var octx = oc.getContext('2d');
+    octx.filter = 'blur(' + Math.round(30 * scale) + 'px)';
 
     puffs.forEach(function(p){
-      var cx = x + p.dx * scale;
-      var cy = y + p.dy * scale;
+      var cx = ox + p.dx * scale;
+      var cy = oy + p.dy * scale;
       var rw = p.r * scale * 1.6;
       var rh = p.r * scale * 0.7;
       var t  = p.top;
       var rC = Math.round(148 + t*65);
       var gC = Math.round(158 + t*60);
       var bC = Math.round(170 + t*52);
-      var a  = alpha * (0.55 + t*0.15);
-      octx.fillStyle = 'rgba('+rC+','+gC+','+bC+','+a+')';
+      octx.fillStyle = 'rgba('+rC+','+gC+','+bC+','+(alpha*(0.60+t*0.15))+')';
       octx.beginPath();
       octx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI*2);
       octx.fill();
     });
 
-    ctx.save();
-    ctx.drawImage(oc, 0, 0);
-    ctx.restore();
+    return { img: oc, ox: ox, oy: oy };
+  }
+
+  function drawCloudShape(x, y, scale, alpha, puffs, baked){
+    if(!baked) return;
+    ctx.drawImage(baked.img, Math.round(x - baked.ox), Math.round(y - baked.oy));
   }
   function mkFog(){
     var p = [];
@@ -1494,7 +1502,7 @@ if(location.search.includes('tv=1')){
     if(p.y>canvas.height+p.len){ p.y=-p.len; p.x=Math.random()*canvas.width; }
   }
   function drawCloud(p, dt){
-    drawCloudShape(p.x, p.y, p.scale, p.alpha, p.puffs);
+    drawCloudShape(p.x, p.y, p.scale, p.alpha, p.puffs, p.baked);
     p.x += p.speed * dt;
     if(p.x - 200 * p.scale > canvas.width) p.x = -200 * p.scale;
   }
