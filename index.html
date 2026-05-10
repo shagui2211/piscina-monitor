@@ -768,15 +768,16 @@ function semaforo(v,r){
 var COLOR={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--danger)'};
 /* Valores "tranquilizadores" que se muestran en TV si el real está fuera de rango */
 var TV_SAFE = {
-  ph:  { min:7.21, max:7.53, display:'7.35', fmt: function(){ return '7.35'; } },
-  orp: { min:635,  max:676,  display:'655',  fmt: function(){ return '655';  } },
-  ppm: { min:0.51, max:1.97, display:'1.02', fmt: function(){ return '1.02'; } },
+  ph:  { min:7.21, max:7.53, fmtMin:'7.21', fmtMax:'7.53' },
+  orp: { min:635,  max:676,  fmtMin:'635',  fmtMax:'676'  },
+  ppm: { min:0.51, max:1.97, fmtMin:'0.51', fmtMax:'1.97' },
 };
 function tvSafeValue(key, raw){
   if(!isTvMode) return null;
   var s = TV_SAFE[key];
   if(!s) return null;
-  if(raw < s.min || raw > s.max) return s.display;
+  if(raw < s.min) return s.fmtMin;
+  if(raw > s.max) return s.fmtMax;
   return null;
 }
 function setCard(key,raw,fmt){
