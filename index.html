@@ -1115,15 +1115,16 @@ if(location.search.includes('tv=1')){
   /* ── Generadores ── */
   function mkClearCloud(yFrac, scale, speed, alpha){
     var puffs = mkCloudPuffs();
+    var sc = scale + Math.random()*0.2;
     return {
       type: 'clearcloud',
       x: Math.random() * canvas.width,
       y: canvas.height * yFrac + (Math.random()-0.5) * 20,
-      scale: scale + Math.random()*0.2,
+      scale: sc,
       speed: speed + Math.random()*0.05,
       alpha: alpha,
       puffs: puffs,
-      baked: bakeCloud(puffs, scale + Math.random()*0.2, alpha),
+      baked: bakeCloud(puffs, sc, alpha, 'white'),
     };
   }
   function mkClear(){
@@ -1216,7 +1217,7 @@ if(location.search.includes('tv=1')){
         speed: c.speed + Math.random()*0.05,
         alpha: alpha,
         puffs: puffs,
-        baked: bakeCloud(puffs, scale, alpha),
+        baked: bakeCloud(puffs, scale, alpha, 'grey'),
       });
     });
     return clouds;
@@ -1249,7 +1250,8 @@ if(location.search.includes('tv=1')){
   }
 
   /* Precalcula la nube en un canvas offscreen (solo una vez por nube) */
-  function bakeCloud(puffs, scale, alpha){
+  function bakeCloud(puffs, scale, alpha, palette){
+    /* palette: 'grey' (nublado) | 'white' (despejado, default) */
     var pad  = Math.round(70 * scale);
     var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     puffs.forEach(function(p){
@@ -1277,9 +1279,17 @@ if(location.search.includes('tv=1')){
       var rw = p.r * scale * 1.6;
       var rh = p.r * scale * 0.7;
       var t  = p.top;
-      var rC = Math.round(148 + t*65);
-      var gC = Math.round(158 + t*60);
-      var bC = Math.round(170 + t*52);
+      var rC, gC, bC;
+      if(palette === 'grey'){
+        rC = Math.round(148 + t*65);
+        gC = Math.round(158 + t*60);
+        bC = Math.round(170 + t*52);
+      } else {
+        /* blanco brillante con sombra azul muy suave en la base */
+        rC = Math.round(220 + t*35);
+        gC = Math.round(228 + t*27);
+        bC = Math.round(235 + t*20);
+      }
       octx.fillStyle = 'rgba('+rC+','+gC+','+bC+','+(alpha*(0.60+t*0.15))+')';
       octx.beginPath();
       octx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI*2);
