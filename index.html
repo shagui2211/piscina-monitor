@@ -1178,19 +1178,23 @@ if(location.search.includes('tv=1')){
   function mkClouds(){
     var clouds = [];
     var configs = [
-      { yFrac:0.04, scale:2.0, speed:0.10, alpha:0.82 },
-      { yFrac:0.18, scale:1.5, speed:0.18, alpha:0.72 },
-      { yFrac:0.32, scale:1.8, speed:0.13, alpha:0.76 },
-      { yFrac:0.08, scale:1.0, speed:0.25, alpha:0.55 },
-      { yFrac:0.26, scale:1.1, speed:0.20, alpha:0.58 },
-      { yFrac:0.42, scale:0.85,speed:0.30, alpha:0.50 },
+      { yFrac:0.02, scale:3.2, speed:0.07, alpha:0.80 },
+      { yFrac:0.10, scale:2.8, speed:0.11, alpha:0.78 },
+      { yFrac:0.20, scale:3.0, speed:0.09, alpha:0.82 },
+      { yFrac:0.05, scale:2.0, speed:0.16, alpha:0.72 },
+      { yFrac:0.15, scale:2.4, speed:0.12, alpha:0.76 },
+      { yFrac:0.25, scale:1.8, speed:0.19, alpha:0.68 },
+      { yFrac:0.30, scale:2.2, speed:0.10, alpha:0.74 },
+      { yFrac:0.08, scale:1.6, speed:0.24, alpha:0.65 },
+      { yFrac:0.35, scale:1.4, speed:0.20, alpha:0.60 },
     ];
     configs.forEach(function(c){
+      /* Distribuir a lo largo de todo el ancho incluyendo el centro */
       clouds.push({
-        x: Math.random() * canvas.width,
-        y: canvas.height * c.yFrac + (Math.random()-0.5) * 30,
-        scale: c.scale + Math.random()*0.3,
-        speed: c.speed + Math.random()*0.08,
+        x: (Math.random() * 1.4 - 0.2) * canvas.width,
+        y: canvas.height * c.yFrac + (Math.random()-0.5) * 20,
+        scale: c.scale + Math.random()*0.5,
+        speed: c.speed + Math.random()*0.05,
         alpha: c.alpha,
         puffs: mkCloudPuffs(),
       });
@@ -1199,102 +1203,71 @@ if(location.search.includes('tv=1')){
   }
   function mkCloudPuffs(){
     /*
-     * Estructura en dos capas:
-     * - cuerpo principal: puffs grandes alineados horizontalmente
-     * - cúpulas superiores: puffs más pequeños en la cresta para dar volumen cumulonimbus
-     * Cada puff guarda también su altura relativa (0=base, 1=cima) para colorear.
+     * Estratocúmulos realistas: nubes bajas, anchas, planas y grises.
+     * - Cuerpo muy extendido horizontalmente (tipo manta)
+     * - Pocas cúpulas y bajas — sin aspecto de cumulonimbus
+     * - Escala grande para cubrir bien el cielo
      */
     var puffs = [];
-    /* Base larga y plana */
-    var bodyCount = 5 + Math.floor(Math.random()*3);
-    var spread = 130 + Math.random()*60;
+    var bodyCount = 7 + Math.floor(Math.random()*4);
+    var spread = 180 + Math.random()*80;
     for(var i=0;i<bodyCount;i++){
-      var t = (i/(bodyCount-1))-0.5;           /* -0.5 … 0.5 */
+      var t = (i/(bodyCount-1))-0.5;
       puffs.push({
-        dx:  t * spread * 2,
-        dy:  18 + Math.abs(t)*18,              /* base ligeramente arqueada */
-        r:   42 + Math.random()*30,
-        top: 0.0 + Math.random()*0.2,          /* altura relativa baja */
+        dx:  t * spread * 2.2,
+        dy:  12 + Math.abs(t)*10 + Math.random()*8,
+        r:   75 + Math.random()*55,   /* puffs más grandes = más solapamiento */
+        top: 0.0 + Math.random()*0.15,
       });
     }
-    /* Cúpulas que sobresalen por encima */
-    var domeCount = 4 + Math.floor(Math.random()*3);
+    var domeCount = 2 + Math.floor(Math.random()*2);
     for(var j=0;j<domeCount;j++){
-      var dt = (j/(domeCount-1))-0.5;
+      var dt2 = (j/(domeCount-1))-0.5;
       puffs.push({
-        dx:  dt * spread * 1.4 + (Math.random()-0.5)*40,
-        dy:  -20 - Math.random()*35,           /* por encima del centro */
-        r:   30 + Math.random()*28,
-        top: 0.55 + Math.random()*0.45,        /* altura relativa alta */
+        dx:  dt2 * spread * 1.0 + (Math.random()-0.5)*30,
+        dy:  -8 - Math.random()*18,
+        r:   60 + Math.random()*35,   /* cúpulas también más grandes */
+        top: 0.25 + Math.random()*0.25,
       });
     }
-    /* Puff central grande de anclaje */
-    puffs.push({ dx:0, dy:0, r:68+Math.random()*22, top:0.35 });
+    puffs.push({ dx:0, dy:5, r:120+Math.random()*40, top:0.10 }); /* puff central enorme */
     return puffs;
   }
 
   function drawCloudShape(x, y, scale, alpha, puffs){
     if(!puffs) return;
-    ctx.save();
-
     /*
-     * Técnica: gradientes radiales acumulados sin clip.
-     * Cada puff es un gradiente radial semitransparente que se mezcla
-     * con los anteriores mediante globalCompositeOperation 'source-over'.
-     * Esto crea bordes suaves y volumen volumétrico real en vez de
-     * un recorte duro.
-     *
-     * Color basado en la altura del puff:
-     *   cima  → blanco puro
-     *   medio → blanco ligeramente azulado
-     *   base  → gris perla azulado suave (sombra propia)
+     * Técnica: offscreen canvas con filter blur.
+     * Dibujamos elipses sólidas en un canvas temporal, aplicamos blur CSS,
+     * y volcamos el resultado. Esto garantiza bordes 100% suaves sin
+     * artefactos de círculos ni bandas de gradiente.
      */
+    var oc = document.createElement('canvas');
+    oc.width  = canvas.width;
+    oc.height = canvas.height;
+    var octx = oc.getContext('2d');
+
+    var blurPx = Math.round(38 * scale);
+    octx.filter = 'blur(' + blurPx + 'px)';
+
     puffs.forEach(function(p){
-      var cx  = x + p.dx * scale;
-      var cy  = y + p.dy * scale;
-      var r   = p.r  * scale;
-      var t   = p.top; /* 0=base 1=cima */
-
-      /* Color de la cima y la base de este puff */
-      var rTop = 255,         gTop = 255,         bTop = 255;
-      var rBot = 205+t*25,    gBot = 215+t*20,    bBot = 235+t*10;
-
-      /* Interpolamos entre base y cima según t */
-      var rC = Math.round(rBot + (rTop-rBot)*t);
-      var gC = Math.round(gBot + (gTop-gBot)*t);
-      var bC = Math.round(bBot + (bTop-bBot)*t);
-
-      /* Gradiente radial desde el centro brillante hasta el borde transparente */
-      var grad = ctx.createRadialGradient(
-        cx - r*0.18, cy - r*0.22, r*0.02,   /* foco ligeramente arriba-izquierda */
-        cx,          cy,          r
-      );
-      var aCore  = alpha * (0.92 + t*0.08);
-      var aMid   = alpha * (0.55 + t*0.15);
-      grad.addColorStop(0,    'rgba('+rC+','+gC+','+bC+','+aCore+')');
-      grad.addColorStop(0.35, 'rgba('+rC+','+gC+','+bC+','+aMid+')');
-      grad.addColorStop(0.62, 'rgba('+rC+','+gC+','+bC+','+(alpha*0.12)+')');
-      grad.addColorStop(0.82, 'rgba('+rC+','+gC+','+bC+','+(alpha*0.03)+')');
-      grad.addColorStop(1,    'rgba('+rC+','+gC+','+bC+',0)');
-
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r * 1.35, 0, Math.PI*2);
-      ctx.fill();
+      var cx = x + p.dx * scale;
+      var cy = y + p.dy * scale;
+      var rw = p.r * scale * 1.6;
+      var rh = p.r * scale * 0.7;
+      var t  = p.top;
+      var rC = Math.round(148 + t*65);
+      var gC = Math.round(158 + t*60);
+      var bC = Math.round(170 + t*52);
+      var a  = alpha * (0.55 + t*0.15);
+      octx.fillStyle = 'rgba('+rC+','+gC+','+bC+','+a+')';
+      octx.beginPath();
+      octx.ellipse(cx, cy, rw, rh, 0, 0, Math.PI*2);
+      octx.fill();
     });
 
-    /* Sombra propia: franja oscura suave en el vientre de la nube */
-    var bellyY  = y + 28 * scale;
-    var bellyR  = 160 * scale;
-    var shadow  = ctx.createRadialGradient(x, bellyY, 0, x, bellyY, bellyR);
-    shadow.addColorStop(0,   'rgba(140,160,190,'+(alpha*0.22)+')');
-    shadow.addColorStop(0.5, 'rgba(140,160,190,'+(alpha*0.10)+')');
-    shadow.addColorStop(1,   'rgba(140,160,190,0)');
-    ctx.fillStyle = shadow;
-    ctx.beginPath();
-    ctx.ellipse(x, bellyY, bellyR, bellyR*0.38, 0, 0, Math.PI*2);
-    ctx.fill();
-
+    ctx.save();
+    ctx.drawImage(oc, 0, 0);
     ctx.restore();
   }
   function mkFog(){
@@ -1650,6 +1623,15 @@ if(location.search.includes('tv=1')){
     } else if(m==='hail'){
       particles.forEach(function(p){ drawHailStone(p,dt); });
     } else if(m==='clouds'){
+      /* Capa base de cielo cubierto: neblina gris difusa uniforme */
+      ctx.save();
+      var hazeGrad = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.55);
+      hazeGrad.addColorStop(0,    'rgba(180,188,192,0.38)');
+      hazeGrad.addColorStop(0.5,  'rgba(190,196,200,0.18)');
+      hazeGrad.addColorStop(1,    'rgba(190,196,200,0)');
+      ctx.fillStyle = hazeGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height * 0.55);
+      ctx.restore();
       particles.forEach(function(p){ drawCloud(p,dt); });
     } else if(m==='fog'){
       ctx.save();
