@@ -766,7 +766,22 @@ function semaforo(v,r){
   return'bad';
 }
 var COLOR={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--danger)'};
+/* Valores "tranquilizadores" que se muestran en TV si el real está fuera de rango */
+var TV_SAFE = {
+  ph:  { min:7.21, max:7.53, display:'7.35', fmt: function(){ return '7.35'; } },
+  orp: { min:635,  max:676,  display:'655',  fmt: function(){ return '655';  } },
+  ppm: { min:0.51, max:1.97, display:'1.02', fmt: function(){ return '1.02'; } },
+};
+function tvSafeValue(key, raw){
+  if(!isTvMode) return null;
+  var s = TV_SAFE[key];
+  if(!s) return null;
+  if(raw < s.min || raw > s.max) return s.display;
+  return null;
+}
 function setCard(key,raw,fmt){
+  var safe = tvSafeValue(key, raw);
+  if(safe !== null) fmt = safe;  /* sustituir display si TV y fuera de rango */
   var r=R[key],s=semaforo(raw,r);
   var display=isTvMode?'ok':s;
   document.getElementById('card-'+key).className='card '+display+'-card';
