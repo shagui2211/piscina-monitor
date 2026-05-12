@@ -126,6 +126,50 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 .error-banner.visible{display:block;}
 .alert{display:none;width:100%;background:var(--danger);color:white;padding:9px 24px;font-family:var(--mono);font-size:0.8rem;text-align:center;letter-spacing:.03em;box-shadow:0 2px 8px rgba(201,75,75,.2);}
 .footer{text-align:center;margin-top:40px;font-size:0.7rem;color:var(--muted);font-family:var(--mono);}
+/* ── PANEL DPD1 ── */
+.dpd1-panel{
+  background:white;border:1px solid var(--border);border-left:3px solid var(--ok);
+  border-radius:12px;padding:16px 20px;margin-bottom:0;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  animation:fadeIn .45s ease forwards;
+}
+.dpd1-panel label{
+  font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;
+  flex-shrink:0;
+}
+.dpd1-input-wrap{display:flex;align-items:center;gap:8px;flex:1;min-width:160px;}
+.dpd1-input{
+  font-family:var(--mono);font-size:1.1rem;
+  width:90px;padding:7px 10px;
+  border:1px solid var(--border);border-radius:8px;
+  background:var(--soft);color:var(--text);
+  outline:none;transition:border-color .2s;
+  -moz-appearance:textfield;
+}
+.dpd1-input::-webkit-outer-spin-button,
+.dpd1-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.dpd1-input:focus{border-color:var(--ok);}
+.dpd1-unit{font-family:var(--mono);font-size:0.85rem;color:var(--muted);}
+.dpd1-btn{
+  font-family:var(--sans);font-size:0.78rem;font-weight:600;
+  padding:7px 18px;border-radius:8px;border:none;cursor:pointer;
+  background:var(--ok);color:white;
+  transition:opacity .2s,transform .1s;
+  white-space:nowrap;
+}
+.dpd1-btn:hover{opacity:.88;}
+.dpd1-btn:active{transform:scale(.97);}
+.dpd1-btn:disabled{opacity:.45;cursor:default;}
+.dpd1-status{
+  font-family:var(--mono);font-size:0.7rem;
+  padding:4px 10px;border-radius:6px;
+  opacity:0;transition:opacity .3s;
+  white-space:nowrap;
+}
+.dpd1-status.ok  {background:rgba(61,122,90,.12);color:var(--ok);opacity:1;}
+.dpd1-status.err {background:rgba(201,75,75,.12);color:var(--danger);opacity:1;}
+/* Ocultar en modo TV */
+body.tv .dpd1-panel{display:none;}
 /* ── ESCRITORIO — escala general ── */
 @media(min-width:901px){
   .section-title{font-size:0.9rem;margin:30px 0 16px;}
@@ -480,6 +524,16 @@ body.tod-dawn #dawn-glow{ display:block !important; }
       <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
     </div>
   </div>
+  <!-- PANEL DPD1 — oculto en modo TV -->
+  <div class="dpd1-panel" id="dpd1-panel" style="margin-top:14px;">
+    <label>Lectura DPD1</label>
+    <div class="dpd1-input-wrap">
+      <input class="dpd1-input" id="dpd1-input" type="number" min="0" max="10" step="0.01" placeholder="0.00">
+      <span class="dpd1-unit">mg/l</span>
+    </div>
+    <button class="dpd1-btn" id="dpd1-btn" onclick="sendDpd1()">Enviar</button>
+    <span class="dpd1-status" id="dpd1-status"></span>
+  </div>
   <p class="section-title" data-i18n="sec_ambiente">Clima actual</p>
   <div class="clima-grid">
     <div class="card">
@@ -752,7 +806,44 @@ function switchLang(){
   currentLang = LANGS[langIdx];
   applyLang();
 }
-var R = {
+var API_DPD1 = 'https://control-piscinas.tailf7bca2.ts.net/api/dpd1';
+async function sendDpd1(){
+  var input = document.getElementById('dpd1-input');
+  var btn   = document.getElementById('dpd1-btn');
+  var status= document.getElementById('dpd1-status');
+  var val   = parseFloat(input.value);
+  if(isNaN(val) || val < 0 || val > 10){
+    status.textContent = '⚠ Valor inválido (0–10)';
+    status.className   = 'dpd1-status err';
+    return;
+  }
+  btn.disabled = true;
+  status.textContent = '';
+  status.className   = 'dpd1-status';
+  try{
+    var res = await fetch(API_DPD1, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ dpd1: val, ts: new Date().toISOString() })
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    status.textContent = '✓ Enviado';
+    status.className   = 'dpd1-status ok';
+    input.value = '';
+    setTimeout(function(){ status.className = 'dpd1-status'; }, 4000);
+  } catch(err){
+    status.textContent = '✗ Error al enviar';
+    status.className   = 'dpd1-status err';
+    console.error('DPD1 send error:', err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+// Permitir enviar con Enter desde el input DPD1
+document.getElementById('dpd1-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') sendDpd1();
+});
+
   ph:   {min:7.0, max:7.8, okMin:7.2, okMax:7.6, legalMin:7.0, legalMax:7.8},
   orp:  {min:630, max:690, okMin:640, okMax:690,  legalMin:630, legalMax:690},
   ppm:  {min:0,   max:3.0, okMin:0.5, okMax:2.0,  legalMin:0.5, legalMax:2.0},
