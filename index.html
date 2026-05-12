@@ -816,7 +816,7 @@ function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
 var lastDias7 = [];
 var lastWmoCode = null;
 function wmoTxt(code){
-  var L = I18N[currentLang] || I18N.es;
+var L = I18N[currentLang] || I18N.es;
   return (L.wmo && L.wmo[code]) || (I18N.es.wmo[code]) || '—';
 }
 function fmtHora12(horaStr){
@@ -829,11 +829,11 @@ function fmtHora12(horaStr){
   return h12 + ':' + m + ' ' + ampm;
 }
 function fmtHoraLang(horaStr){
-  var L = I18N[currentLang] || I18N.es;
+var L = I18N[currentLang] || I18N.es;
   return L.clock12 ? fmtHora12(horaStr) : horaStr;
 }
 function applyLang(){
-  var L = I18N[currentLang] || I18N.es;
+var L = I18N[currentLang] || I18N.es;
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var key = el.getAttribute('data-i18n');
     if(L[key] !== undefined) el.textContent = L[key];
@@ -1218,7 +1218,7 @@ if(!res.ok)throw new Error(‘HTTP ‘+res.status);
 var d=await res.json();
 banner.classList.remove(‘visible’);
 dot.className=‘conn-dot ok’;
-setCard(‘ph’,  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
+setCard(‘ph’, d.ph !=null?d.ph :0,(+(d.ph ||0)).toFixed(2));
 setCard(‘orp’, d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
 setCard(‘ppm’, d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
 setCard(‘temp’,d.temp_agua!=null?d.temp_agua :0,(+(d.temp_agua||0)).toFixed(1));
@@ -2136,3 +2136,4 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+
