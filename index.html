@@ -843,7 +843,7 @@ async function sendDpd1(){
 document.getElementById('dpd1-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter') sendDpd1();
 });
-
+var R = {
   ph:   {min:7.0, max:7.8, okMin:7.2, okMax:7.6, legalMin:7.0, legalMax:7.8},
   orp:  {min:630, max:690, okMin:640, okMax:690,  legalMin:630, legalMax:690},
   ppm:  {min:0,   max:3.0, okMin:0.5, okMax:2.0,  legalMin:0.5, legalMax:2.0},
