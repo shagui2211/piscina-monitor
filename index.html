@@ -102,7 +102,7 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 .p7-viento{font-size:0.58rem;color:var(--muted);margin-top:2px;}
 /* ── METEO UNIFICADO ── */
 .meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;animation:fadeIn .5s ease .1s forwards;}
-.meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
+.meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;text-wrap:balance;letter-spacing:-0.01em;}
 .meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
 .badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
@@ -843,6 +843,106 @@ function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
   return '<span class="'+cls+'">'+text+'</span>';
 }
+
+function generarFraseMeteo(data){
+  var code    = data.code ?? 0;
+  var temp    = data.temp ?? null;
+  var hum     = data.hum ?? null;
+  var viento  = data.viento ?? 0;
+  var lluvia  = data.lluvia ?? 0;
+  var tendencia = data.tendencia || '';
+  var hora = new Date().getHours();
+
+  var partes = [];
+
+  if(code === 0){
+    partes.push(hora >= 21 || hora <= 6
+      ? 'Noche despejada'
+      : 'Cielo completamente despejado');
+  }
+  else if(code === 1){
+    partes.push('Mayormente despejado');
+  }
+  else if(code === 2){
+    partes.push('Intervalos nubosos');
+  }
+  else if(code === 3){
+    partes.push('Cielo cubierto');
+  }
+  else if(code === 45 || code === 48){
+    partes.push('Bancos de niebla');
+  }
+  else if([51,53,55].includes(code)){
+    partes.push('Llovizna débil');
+  }
+  else if([61,63,65].includes(code)){
+    partes.push(lluvia > 4
+      ? 'Lluvia moderada'
+      : 'Lluvia ligera');
+  }
+  else if([80,81,82].includes(code)){
+    partes.push('Chubascos dispersos');
+  }
+  else if([95,96,99].includes(code)){
+    partes.push('Tormenta en la zona');
+  }
+  else if([71,73,75,77,85,86].includes(code)){
+    partes.push('Precipitación invernal');
+  }
+  else{
+    partes.push(wmoTxt(code));
+  }
+
+  if(hum != null){
+    if(hum >= 85){
+      partes.push('ambiente muy húmedo');
+    }
+    else if(hum >= 70){
+      partes.push('humedad elevada');
+    }
+    else if(hum <= 35){
+      partes.push('ambiente seco');
+    }
+  }
+
+  if(viento >= 40){
+    partes.push('viento fuerte');
+  }
+  else if(viento >= 25){
+    partes.push('viento moderado');
+  }
+  else if(viento >= 12){
+    partes.push('brisa ligera');
+  }
+
+  if(temp != null){
+    if(temp >= 32){
+      partes.push('sensación calurosa');
+    }
+    else if(temp >= 27){
+      partes.push('temperatura agradable');
+    }
+    else if(temp <= 10){
+      partes.push('ambiente fresco');
+    }
+  }
+
+  if(tendencia === 'Subiendo fuerte'){
+    partes.push('mejoría rápida');
+  }
+  else if(tendencia === 'Subiendo'){
+    partes.push('tendencia estable');
+  }
+  else if(tendencia === 'Bajando'){
+    partes.push('empeorando');
+  }
+  else if(tendencia === 'Bajando fuerte'){
+    partes.push('cambio de tiempo probable');
+  }
+
+  return partes.join(' · ');
+}
+
 function renderMeteo(m){
   if(!m)return;
   var dbg = document.getElementById('meteo-debug');
@@ -873,13 +973,29 @@ function renderMeteo(m){
       var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
       iconEl.textContent = sanitizeIcon(bmeIcon);
       lastWmoCode = finalCode;
-      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(finalCode !== null ? finalCode : 0);
+      var frase = generarFraseMeteo({
+        code: finalCode,
+        temp: m.temp ?? m.temp_actual ?? null,
+        hum: m.humedad ?? null,
+        viento: m.viento ?? 0,
+        lluvia: m.lluvia ?? 0,
+        tendencia: m.tendencia || ''
+      });
+      if(fraseEl) fraseEl.textContent = frase;
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
     } else {
       // Sin BME280: usar Open-Meteo como antes
       if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
       if(detectedCode !== null) lastWmoCode = detectedCode;
-      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
+      var frase2 = generarFraseMeteo({
+        code: detectedCode,
+        temp: m.temp ?? m.temp_actual ?? null,
+        hum: m.humedad ?? null,
+        viento: m.viento ?? 0,
+        lluvia: m.lluvia ?? 0,
+        tendencia: m.tendencia || ''
+      });
+      if(fraseEl) fraseEl.textContent = frase2;
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
     }
   } else {
@@ -1062,7 +1178,7 @@ async function load(){
   }
 }
 load();
-setInterval(load, 15000);
+setInterval(load, 60000);
 if(location.search.includes('tv=1')){
   document.body.classList.add('tv');
   isTvMode = true;
