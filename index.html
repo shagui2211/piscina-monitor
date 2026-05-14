@@ -853,41 +853,176 @@ function generarFraseMeteo(data){
   var tendencia = data.tendencia || '';
   var hora = new Date().getHours();
 
+  var frases = {
+    es:{
+      clearDay:'Cielo completamente despejado',
+      clearNight:'Noche despejada',
+      mostly:'Mayormente despejado',
+      partly:'Intervalos nubosos',
+      cloudy:'Cielo cubierto',
+      fog:'Bancos de niebla',
+      drizzle:'Llovizna débil',
+      rainLight:'Lluvia ligera',
+      rainModerate:'Lluvia moderada',
+      showers:'Chubascos dispersos',
+      storm:'Tormenta en la zona',
+      snow:'Precipitación invernal',
+      veryHumid:'ambiente muy húmedo',
+      humid:'humedad elevada',
+      dry:'ambiente seco',
+      windStrong:'viento fuerte',
+      windMedium:'viento moderado',
+      windLight:'brisa ligera',
+      hot:'sensación calurosa',
+      pleasant:'temperatura agradable',
+      cool:'ambiente fresco',
+      improveFast:'mejoría rápida',
+      stable:'tendencia estable',
+      worsening:'empeorando',
+      unstable:'cambio de tiempo probable'
+    },
+    en:{
+      clearDay:'Clear skies',
+      clearNight:'Clear night',
+      mostly:'Mostly clear',
+      partly:'Partly cloudy',
+      cloudy:'Overcast skies',
+      fog:'Fog banks nearby',
+      drizzle:'Light drizzle',
+      rainLight:'Light rain',
+      rainModerate:'Moderate rain',
+      showers:'Scattered showers',
+      storm:'Thunderstorms nearby',
+      snow:'Wintry precipitation',
+      veryHumid:'very humid conditions',
+      humid:'high humidity',
+      dry:'dry atmosphere',
+      windStrong:'strong winds',
+      windMedium:'moderate winds',
+      windLight:'light breeze',
+      hot:'hot conditions',
+      pleasant:'pleasant temperatures',
+      cool:'cool atmosphere',
+      improveFast:'rapid improvement',
+      stable:'stable trend',
+      worsening:'weather worsening',
+      unstable:'unstable weather likely'
+    },
+    de:{
+      clearDay:'Klarer Himmel',
+      clearNight:'Klare Nacht',
+      mostly:'Überwiegend klar',
+      partly:'Teilweise bewölkt',
+      cloudy:'Bedeckter Himmel',
+      fog:'Nebelfelder',
+      drizzle:'Leichter Nieselregen',
+      rainLight:'Leichter Regen',
+      rainModerate:'Mäßiger Regen',
+      showers:'Verstreute Schauer',
+      storm:'Gewitter in der Nähe',
+      snow:'Winterlicher Niederschlag',
+      veryHumid:'sehr feuchte Luft',
+      humid:'hohe Luftfeuchtigkeit',
+      dry:'trockene Luft',
+      windStrong:'starker Wind',
+      windMedium:'mäßiger Wind',
+      windLight:'leichte Brise',
+      hot:'heißes Wetter',
+      pleasant:'angenehme Temperaturen',
+      cool:'frische Luft',
+      improveFast:'rasche Besserung',
+      stable:'stabiles Wetter',
+      worsening:'Wetter verschlechtert sich',
+      unstable:'Wetterumschwung möglich'
+    },
+    fr:{
+      clearDay:'Ciel parfaitement dégagé',
+      clearNight:'Nuit dégagée',
+      mostly:'Principalement dégagé',
+      partly:'Éclaircies nuageuses',
+      cloudy:'Ciel couvert',
+      fog:'Bancs de brouillard',
+      drizzle:'Bruine légère',
+      rainLight:'Pluie légère',
+      rainModerate:'Pluie modérée',
+      showers:'Averses dispersées',
+      storm:'Orages à proximité',
+      snow:'Précipitations hivernales',
+      veryHumid:'atmosphère très humide',
+      humid:'humidité élevée',
+      dry:'air sec',
+      windStrong:'vent fort',
+      windMedium:'vent modéré',
+      windLight:'légère brise',
+      hot:'sensation de chaleur',
+      pleasant:'température agréable',
+      cool:'atmosphère fraîche',
+      improveFast:'amélioration rapide',
+      stable:'tendance stable',
+      worsening:'dégradation météo',
+      unstable:'changement de temps probable'
+    },
+    it:{
+      clearDay:'Cielo completamente sereno',
+      clearNight:'Notte serena',
+      mostly:'Prevalentemente sereno',
+      partly:'Parzialmente nuvoloso',
+      cloudy:'Cielo coperto',
+      fog:'Banchi di nebbia',
+      drizzle:'Pioviggine leggera',
+      rainLight:'Pioggia leggera',
+      rainModerate:'Pioggia moderata',
+      showers:'Rovesci sparsi',
+      storm:'Temporali in zona',
+      snow:'Precipitazioni invernali',
+      veryHumid:'ambiente molto umido',
+      humid:'umidità elevata',
+      dry:'atmosfera secca',
+      windStrong:'vento forte',
+      windMedium:'vento moderato',
+      windLight:'brezza leggera',
+      hot:'sensazione di caldo',
+      pleasant:'temperatura piacevole',
+      cool:'ambiente fresco',
+      improveFast:'rapido miglioramento',
+      stable:'tendenza stabile',
+      worsening:'peggioramento',
+      unstable:'cambio del tempo probabile'
+    }
+  };
+
+  var L = frases[currentLang] || frases.es;
   var partes = [];
 
   if(code === 0){
-    partes.push(hora >= 21 || hora <= 6
-      ? 'Noche despejada'
-      : 'Cielo completamente despejado');
+    partes.push(hora >= 21 || hora <= 6 ? L.clearNight : L.clearDay);
   }
   else if(code === 1){
-    partes.push('Mayormente despejado');
+    partes.push(L.mostly);
   }
   else if(code === 2){
-    partes.push('Intervalos nubosos');
+    partes.push(L.partly);
   }
   else if(code === 3){
-    partes.push('Cielo cubierto');
+    partes.push(L.cloudy);
   }
   else if(code === 45 || code === 48){
-    partes.push('Bancos de niebla');
+    partes.push(L.fog);
   }
   else if([51,53,55].includes(code)){
-    partes.push('Llovizna débil');
+    partes.push(L.drizzle);
   }
   else if([61,63,65].includes(code)){
-    partes.push(lluvia > 4
-      ? 'Lluvia moderada'
-      : 'Lluvia ligera');
+    partes.push(lluvia > 4 ? L.rainModerate : L.rainLight);
   }
   else if([80,81,82].includes(code)){
-    partes.push('Chubascos dispersos');
+    partes.push(L.showers);
   }
   else if([95,96,99].includes(code)){
-    partes.push('Tormenta en la zona');
+    partes.push(L.storm);
   }
   else if([71,73,75,77,85,86].includes(code)){
-    partes.push('Precipitación invernal');
+    partes.push(L.snow);
   }
   else{
     partes.push(wmoTxt(code));
@@ -895,49 +1030,49 @@ function generarFraseMeteo(data){
 
   if(hum != null){
     if(hum >= 85){
-      partes.push('ambiente muy húmedo');
+      partes.push(L.veryHumid);
     }
     else if(hum >= 70){
-      partes.push('humedad elevada');
+      partes.push(L.humid);
     }
     else if(hum <= 35){
-      partes.push('ambiente seco');
+      partes.push(L.dry);
     }
   }
 
   if(viento >= 40){
-    partes.push('viento fuerte');
+    partes.push(L.windStrong);
   }
   else if(viento >= 25){
-    partes.push('viento moderado');
+    partes.push(L.windMedium);
   }
   else if(viento >= 12){
-    partes.push('brisa ligera');
+    partes.push(L.windLight);
   }
 
   if(temp != null){
     if(temp >= 32){
-      partes.push('sensación calurosa');
+      partes.push(L.hot);
     }
     else if(temp >= 27){
-      partes.push('temperatura agradable');
+      partes.push(L.pleasant);
     }
     else if(temp <= 10){
-      partes.push('ambiente fresco');
+      partes.push(L.cool);
     }
   }
 
   if(tendencia === 'Subiendo fuerte'){
-    partes.push('mejoría rápida');
+    partes.push(L.improveFast);
   }
   else if(tendencia === 'Subiendo'){
-    partes.push('tendencia estable');
+    partes.push(L.stable);
   }
   else if(tendencia === 'Bajando'){
-    partes.push('empeorando');
+    partes.push(L.worsening);
   }
   else if(tendencia === 'Bajando fuerte'){
-    partes.push('cambio de tiempo probable');
+    partes.push(L.unstable);
   }
 
   return partes.join(' · ');
