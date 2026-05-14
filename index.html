@@ -102,7 +102,7 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 .p7-viento{font-size:0.58rem;color:var(--muted);margin-top:2px;}
 /* ── METEO UNIFICADO ── */
 .meteo-card{background:white;border:1px solid var(--border);border-radius:12px;padding:18px 20px;animation:fadeIn .5s ease .1s forwards;}
-.meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;text-wrap:balance;letter-spacing:-0.01em;}
+.meteo-frase{font-size:1.05rem;font-weight:600;line-height:1.4;margin-bottom:6px;}
 .meteo-sub{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .meteo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;letter-spacing:.04em;}
 .badge-ok     {background:rgba(61,122,90,.1); color:var(--ok);}
@@ -843,241 +843,6 @@ function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
   return '<span class="'+cls+'">'+text+'</span>';
 }
-
-function generarFraseMeteo(data){
-  var code    = data.code ?? 0;
-  var temp    = data.temp ?? null;
-  var hum     = data.hum ?? null;
-  var viento  = data.viento ?? 0;
-  var lluvia  = data.lluvia ?? 0;
-  var tendencia = data.tendencia || '';
-  var hora = new Date().getHours();
-
-  var frases = {
-    es:{
-      clearDay:'Cielo completamente despejado',
-      clearNight:'Noche despejada',
-      mostly:'Mayormente despejado',
-      partly:'Intervalos nubosos',
-      cloudy:'Cielo cubierto',
-      fog:'Bancos de niebla',
-      drizzle:'Llovizna débil',
-      rainLight:'Lluvia ligera',
-      rainModerate:'Lluvia moderada',
-      showers:'Chubascos dispersos',
-      storm:'Tormenta en la zona',
-      snow:'Precipitación invernal',
-      veryHumid:'ambiente muy húmedo',
-      humid:'humedad elevada',
-      dry:'ambiente seco',
-      windStrong:'viento fuerte',
-      windMedium:'viento moderado',
-      windLight:'brisa ligera',
-      hot:'sensación calurosa',
-      pleasant:'temperatura agradable',
-      cool:'ambiente fresco',
-      improveFast:'mejoría rápida',
-      stable:'tendencia estable',
-      worsening:'empeorando',
-      unstable:'cambio de tiempo probable'
-    },
-    en:{
-      clearDay:'Clear skies',
-      clearNight:'Clear night',
-      mostly:'Mostly clear',
-      partly:'Partly cloudy',
-      cloudy:'Overcast skies',
-      fog:'Fog banks nearby',
-      drizzle:'Light drizzle',
-      rainLight:'Light rain',
-      rainModerate:'Moderate rain',
-      showers:'Scattered showers',
-      storm:'Thunderstorms nearby',
-      snow:'Wintry precipitation',
-      veryHumid:'very humid conditions',
-      humid:'high humidity',
-      dry:'dry atmosphere',
-      windStrong:'strong winds',
-      windMedium:'moderate winds',
-      windLight:'light breeze',
-      hot:'hot conditions',
-      pleasant:'pleasant temperatures',
-      cool:'cool atmosphere',
-      improveFast:'rapid improvement',
-      stable:'stable trend',
-      worsening:'weather worsening',
-      unstable:'unstable weather likely'
-    },
-    de:{
-      clearDay:'Klarer Himmel',
-      clearNight:'Klare Nacht',
-      mostly:'Überwiegend klar',
-      partly:'Teilweise bewölkt',
-      cloudy:'Bedeckter Himmel',
-      fog:'Nebelfelder',
-      drizzle:'Leichter Nieselregen',
-      rainLight:'Leichter Regen',
-      rainModerate:'Mäßiger Regen',
-      showers:'Verstreute Schauer',
-      storm:'Gewitter in der Nähe',
-      snow:'Winterlicher Niederschlag',
-      veryHumid:'sehr feuchte Luft',
-      humid:'hohe Luftfeuchtigkeit',
-      dry:'trockene Luft',
-      windStrong:'starker Wind',
-      windMedium:'mäßiger Wind',
-      windLight:'leichte Brise',
-      hot:'heißes Wetter',
-      pleasant:'angenehme Temperaturen',
-      cool:'frische Luft',
-      improveFast:'rasche Besserung',
-      stable:'stabiles Wetter',
-      worsening:'Wetter verschlechtert sich',
-      unstable:'Wetterumschwung möglich'
-    },
-    fr:{
-      clearDay:'Ciel parfaitement dégagé',
-      clearNight:'Nuit dégagée',
-      mostly:'Principalement dégagé',
-      partly:'Éclaircies nuageuses',
-      cloudy:'Ciel couvert',
-      fog:'Bancs de brouillard',
-      drizzle:'Bruine légère',
-      rainLight:'Pluie légère',
-      rainModerate:'Pluie modérée',
-      showers:'Averses dispersées',
-      storm:'Orages à proximité',
-      snow:'Précipitations hivernales',
-      veryHumid:'atmosphère très humide',
-      humid:'humidité élevée',
-      dry:'air sec',
-      windStrong:'vent fort',
-      windMedium:'vent modéré',
-      windLight:'légère brise',
-      hot:'sensation de chaleur',
-      pleasant:'température agréable',
-      cool:'atmosphère fraîche',
-      improveFast:'amélioration rapide',
-      stable:'tendance stable',
-      worsening:'dégradation météo',
-      unstable:'changement de temps probable'
-    },
-    it:{
-      clearDay:'Cielo completamente sereno',
-      clearNight:'Notte serena',
-      mostly:'Prevalentemente sereno',
-      partly:'Parzialmente nuvoloso',
-      cloudy:'Cielo coperto',
-      fog:'Banchi di nebbia',
-      drizzle:'Pioviggine leggera',
-      rainLight:'Pioggia leggera',
-      rainModerate:'Pioggia moderata',
-      showers:'Rovesci sparsi',
-      storm:'Temporali in zona',
-      snow:'Precipitazioni invernali',
-      veryHumid:'ambiente molto umido',
-      humid:'umidità elevata',
-      dry:'atmosfera secca',
-      windStrong:'vento forte',
-      windMedium:'vento moderato',
-      windLight:'brezza leggera',
-      hot:'sensazione di caldo',
-      pleasant:'temperatura piacevole',
-      cool:'ambiente fresco',
-      improveFast:'rapido miglioramento',
-      stable:'tendenza stabile',
-      worsening:'peggioramento',
-      unstable:'cambio del tempo probabile'
-    }
-  };
-
-  var L = frases[currentLang] || frases.es;
-  var partes = [];
-
-  if(code === 0){
-    partes.push(hora >= 21 || hora <= 6 ? L.clearNight : L.clearDay);
-  }
-  else if(code === 1){
-    partes.push(L.mostly);
-  }
-  else if(code === 2){
-    partes.push(L.partly);
-  }
-  else if(code === 3){
-    partes.push(L.cloudy);
-  }
-  else if(code === 45 || code === 48){
-    partes.push(L.fog);
-  }
-  else if([51,53,55].includes(code)){
-    partes.push(L.drizzle);
-  }
-  else if([61,63,65].includes(code)){
-    partes.push(lluvia > 4 ? L.rainModerate : L.rainLight);
-  }
-  else if([80,81,82].includes(code)){
-    partes.push(L.showers);
-  }
-  else if([95,96,99].includes(code)){
-    partes.push(L.storm);
-  }
-  else if([71,73,75,77,85,86].includes(code)){
-    partes.push(L.snow);
-  }
-  else{
-    partes.push(wmoTxt(code));
-  }
-
-  if(hum != null){
-    if(hum >= 85){
-      partes.push(L.veryHumid);
-    }
-    else if(hum >= 70){
-      partes.push(L.humid);
-    }
-    else if(hum <= 35){
-      partes.push(L.dry);
-    }
-  }
-
-  if(viento >= 40){
-    partes.push(L.windStrong);
-  }
-  else if(viento >= 25){
-    partes.push(L.windMedium);
-  }
-  else if(viento >= 12){
-    partes.push(L.windLight);
-  }
-
-  if(temp != null){
-    if(temp >= 32){
-      partes.push(L.hot);
-    }
-    else if(temp >= 27){
-      partes.push(L.pleasant);
-    }
-    else if(temp <= 10){
-      partes.push(L.cool);
-    }
-  }
-
-  if(tendencia === 'Subiendo fuerte'){
-    partes.push(L.improveFast);
-  }
-  else if(tendencia === 'Subiendo'){
-    partes.push(L.stable);
-  }
-  else if(tendencia === 'Bajando'){
-    partes.push(L.worsening);
-  }
-  else if(tendencia === 'Bajando fuerte'){
-    partes.push(L.unstable);
-  }
-
-  return partes.join(' · ');
-}
-
 function renderMeteo(m){
   if(!m)return;
   var dbg = document.getElementById('meteo-debug');
@@ -1108,29 +873,13 @@ function renderMeteo(m){
       var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
       iconEl.textContent = sanitizeIcon(bmeIcon);
       lastWmoCode = finalCode;
-      var frase = generarFraseMeteo({
-        code: finalCode,
-        temp: m.temp ?? m.temp_actual ?? null,
-        hum: m.humedad ?? null,
-        viento: m.viento ?? 0,
-        lluvia: m.lluvia ?? 0,
-        tendencia: m.tendencia || ''
-      });
-      if(fraseEl) fraseEl.textContent = frase;
+      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(finalCode !== null ? finalCode : 0);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
     } else {
       // Sin BME280: usar Open-Meteo como antes
       if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
       if(detectedCode !== null) lastWmoCode = detectedCode;
-      var frase2 = generarFraseMeteo({
-        code: detectedCode,
-        temp: m.temp ?? m.temp_actual ?? null,
-        hum: m.humedad ?? null,
-        viento: m.viento ?? 0,
-        lluvia: m.lluvia ?? 0,
-        tendencia: m.tendencia || ''
-      });
-      if(fraseEl) fraseEl.textContent = frase2;
+      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
     }
   } else {
@@ -1313,7 +1062,7 @@ async function load(){
   }
 }
 load();
-setInterval(load, 60000);
+setInterval(load, 15000);
 if(location.search.includes('tv=1')){
   document.body.classList.add('tv');
   isTvMode = true;
