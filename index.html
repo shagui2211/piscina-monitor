@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Panel de monitorización en tiempo real — parámetros del agua y clima de la piscina exterior"/>
 <title>Piscina Exterior</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
@@ -50,14 +51,6 @@ header::after{
 .conn-dot.ok    {background:var(--ok);   box-shadow:0 0 5px var(--ok);}
 .conn-dot.danger{background:var(--danger);box-shadow:0 0 5px var(--danger);}
 main{max-width:1400px;margin:auto;padding:32px 48px;}
-@media(max-width:700px){main{padding:12px;}}
-@media(max-width:700px){
-  header{min-height:54px;padding:10px 12px;box-shadow:0 1px 8px rgba(61,122,90,.06),0 1px 0 var(--border);}
-  .logo{width:72px;}
-  .header-title-main{font-size:0.9rem;}
-  .status-pill{font-size:0.75rem;padding:5px 10px 5px 8px;gap:7px;border-radius:9px;}
-  .conn-dot{width:7px;height:7px;}
-}
 .section-title{font-size:0.7rem;color:var(--muted);margin:22px 0 10px;text-transform:uppercase;letter-spacing:.08em;}
 .grid-main{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 @media(max-width:900px){.grid-main{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}}
@@ -82,13 +75,20 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 .clima-grid .card:has(#st-label){justify-content:space-between;padding-bottom:14px;}
 .clima-grid .card:has(#st-label) .card-st-label{margin-top:auto;}
 .clima-grid .meteo-card{display:flex;align-items:center;}
-@media(max-width:700px){
-  .clima-grid{grid-template-columns:repeat(2,1fr);}
-  .clima-grid .meteo-card{grid-column:1/-1;}
-}
 /* ── PREVISIÓN 7 DÍAS ── */
 .prev7-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
-@media(max-width:700px){.prev7-grid{grid-template-columns:repeat(4,1fr);gap:8px;}}
+/* ── RESPONSIVE ≤700px — bloque único ── */
+@media(max-width:700px){
+  main{padding:12px;}
+  header{min-height:54px;padding:10px 12px;box-shadow:0 1px 8px rgba(61,122,90,.06),0 1px 0 var(--border);}
+  .logo{width:72px;}
+  .header-title-main{font-size:0.9rem;}
+  .status-pill{font-size:0.75rem;padding:5px 10px 5px 8px;gap:7px;border-radius:9px;}
+  .conn-dot{width:7px;height:7px;}
+  .clima-grid{grid-template-columns:repeat(2,1fr);}
+  .clima-grid .meteo-card{grid-column:1/-1;}
+  .prev7-grid{grid-template-columns:repeat(4,1fr);gap:8px;}
+}
 .prev7-dia{background:white;border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;animation:fadeIn .4s ease forwards;}
 .prev7-dia.no-anim{animation:none;}
 .prev7-dia.hoy{border-color:var(--ok);background:#f0f7f3;}
@@ -428,16 +428,27 @@ body.tod-dawn #dawn-glow{ display:block !important; }
     rgba(205,165,110,0.02) 75%,
     rgba(205,165,110,0)    100%);
 }
+/* ── ACCESIBILIDAD: sin animaciones ── */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  #weather-canvas,#splash-canvas{display:none !important;}
+  #fog-overlay{display:none !important;}
+  #dawn-glow{display:none !important;}
+}
 </style>
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
-<div id="weather-bg"><canvas id="weather-canvas"></canvas></div>
+<div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas></div>
 <!-- OVERLAY AMANECER -->
-<div id="dawn-glow"></div>
-<canvas id="splash-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
+<div id="dawn-glow" aria-hidden="true"></div>
+<canvas id="splash-canvas" aria-hidden="true" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;"></canvas>
 <!-- OVERLAY NIEBLA -->
-<div id="fog-overlay"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
+<div id="fog-overlay" aria-hidden="true"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
 <header>
   <div class="header-left">
     <div class="logo"><img src="assets/logo.png" alt="Valentin Hotels"></div>
@@ -446,7 +457,7 @@ body.tod-dawn #dawn-glow{ display:block !important; }
     </div>
   </div>
   <div class="status-pill">
-    <div class="conn-dot" id="conn-dot"></div>
+    <div class="conn-dot" id="conn-dot" role="status" aria-label="Conectando…"></div>
     <span id="clock">--:--:--</span>
   </div>
 </header>
@@ -1009,6 +1020,7 @@ async function load(){
     var d=await res.json();
     banner.classList.remove('visible');
     dot.className='conn-dot ok';
+    dot.setAttribute('aria-label','Conectado');
     setCard('ph',  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
     setCard('orp', d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
     setCard('ppm', d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
@@ -1044,6 +1056,7 @@ async function load(){
     alertCheck(d);
   }catch(err){
     dot.className='conn-dot danger';
+    dot.setAttribute('aria-label','Sin conexión');
     if(!isTvMode) banner.classList.add('visible');
     console.error('API error:',err);
   }
@@ -1063,6 +1076,8 @@ if(location.search.includes('tv=1')){
   var ctx    = canvas.getContext('2d');
   var particles = [], bolts = [], boltTimer = 0;
   var animFrame = null, currentMode = null;
+  /* Respetar preferencia de movimiento reducido */
+  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   window.addEventListener('resize', resize);
   resize();
@@ -1685,10 +1700,10 @@ if(location.search.includes('tv=1')){
     var bgMap={clear:'clear',clouds:'clouds',fog:'fog',drizzle:'drizzle',rain:'rain',storm:'storm',snow:'snow',hail:'hail'};
     document.body.classList.add('wbg-'+(bgMap[mode]||'clear'));
     initParticles(mode);
-    if(!animFrame) animFrame=requestAnimationFrame(loop);
+    if(!animFrame && !prefersReducedMotion) animFrame=requestAnimationFrame(loop);
   };
   initParticles('clear');
-  animFrame=requestAnimationFrame(loop);
+  if(!prefersReducedMotion) animFrame=requestAnimationFrame(loop);
 })();
 /* ── EFECTOS SOBRE TARJETAS ── */
 (function(){
@@ -1696,6 +1711,7 @@ if(location.search.includes('tv=1')){
   var sx = sc.getContext('2d');
   var particles = [];
   var currentMode = null;
+  var _prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function resizeSplash(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
   window.addEventListener('resize', resizeSplash);
   resizeSplash();
@@ -1845,10 +1861,10 @@ if(location.search.includes('tv=1')){
     currentMode = m;
     if(m !== _lastWeatherMode){ particles = []; _lastWeatherMode = m; }
   }
-  requestAnimationFrame(loop);
+  if(!_prefersReducedMotion) requestAnimationFrame(loop);
 })();
 </script>
-<!-- PANEL DE PRUEBA DE CLIMA (pulsa D para mostrar/ocultar) -->
+<!-- PANEL DE PRUEBA DE CLIMA (URL ?debug=1 o tecla D) -->
 <style>
 #debug-weather{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
@@ -1892,6 +1908,9 @@ if(location.search.includes('tv=1')){
 (function(){
   var panel = document.getElementById('debug-weather');
   var visible = false;
+  /* Solo disponible si la URL contiene ?debug=1 */
+  var debugEnabled = location.search.includes('debug=1');
+  if(!debugEnabled){ panel.remove(); return; }
   document.addEventListener('keydown', function(e){
     if(e.key === 'd' || e.key === 'D'){
       visible = !visible;
