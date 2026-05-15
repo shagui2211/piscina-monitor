@@ -430,11 +430,13 @@ body.tod-dawn #dawn-glow{ display:block !important; }
 }
 /* ── ACCESIBILIDAD: sin animaciones ── */
 @media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation-duration:.01ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.01ms !important;
+  /* Cancelar fadeIn en tarjetas y dejarlas visibles directamente */
+  .card,.prev7-dia,.meteo-card,.prev-hora{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
   }
+  /* Ocultar los canvas decorativos de efectos meteorológicos */
   #weather-canvas,#splash-canvas{display:none !important;}
   #fog-overlay{display:none !important;}
   #dawn-glow{display:none !important;}
@@ -705,8 +707,215 @@ var I18N = {
   }
 };
 function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
-var lastDias7 = [];
-var lastWmoCode = null;
+var lastDias7    = [];
+var lastWmoCode  = null;
+var lastMeteoObj = null;
+var lastTamb     = null;
+var lastHum      = null;
+
+/* ══════════════════════════════════════════════════════════════
+   GENERADOR DE FRASES CLIMA CONTEXTUAL — multilingüe
+   ══════════════════════════════════════════════════════════════ */
+var FC = {
+  es:{
+    cond:{
+      clear_night:'Noche despejada',clear_dawn:'Amanecer despejado',
+      clear_day:'Cielo despejado',clear_dusk:'Atardecer despejado',
+      few_night:'Noche con alguna nube',few_day:'Pocas nubes',
+      partial_night:'Noche parcialmente nublada',partial_day:'Intervalos nubosos',
+      overcast:'Cielo cubierto',
+      fog_dawn:'Amanecer con niebla',fog_night:'Niebla nocturna',fog:'Niebla',
+      drizzle:'Llovizna débil',rain_light:'Lluvia ligera',rain:'Lluvia en curso',
+      storm:'Tormenta activa',snow:'Nevada en curso',hail:'Granizo',
+    },
+    amb:{
+      muggy:'ambiente bochornoso',humid:'ambiente húmedo',dew:'rocío matutino',
+      dry_hot:'caluroso y seco',dry:'aire seco',fresh:'frescor agradable',
+    },
+    wind:{strong:'viento fuerte',moderate:'brisa moderada',light:'brisa ligera'},
+    outlook:{
+      rain_soon:'Lluvia probable en la próxima hora',
+      rain_likely:'Posibilidad de lluvia más tarde',
+      improving:'Mejoría progresiva',worsening:'Tiempo empeorando',
+    },
+    con:' con ',' y ':' y ',
+  },
+  en:{
+    cond:{
+      clear_night:'Clear night',clear_dawn:'Clear dawn',
+      clear_day:'Clear sky',clear_dusk:'Clear sunset',
+      few_night:'Mostly clear night',few_day:'Few clouds',
+      partial_night:'Partly cloudy night',partial_day:'Partly cloudy',
+      overcast:'Overcast sky',
+      fog_dawn:'Foggy dawn',fog_night:'Foggy night',fog:'Foggy',
+      drizzle:'Light drizzle',rain_light:'Light rain',rain:'Rain',
+      storm:'Active storm',snow:'Snowfall',hail:'Hail',
+    },
+    amb:{
+      muggy:'muggy air',humid:'humid air',dew:'morning dew',
+      dry_hot:'warm and dry',dry:'dry air',fresh:'pleasant freshness',
+    },
+    wind:{strong:'strong wind',moderate:'moderate breeze',light:'light breeze'},
+    outlook:{
+      rain_soon:'Rain likely within the hour',rain_likely:'Rain possible later',
+      improving:'Improving gradually',worsening:'Conditions worsening',
+    },
+    con:' with ',' y ':' and ',
+  },
+  de:{
+    cond:{
+      clear_night:'Klare Nacht',clear_dawn:'Klarer Morgen',
+      clear_day:'Klarer Himmel',clear_dusk:'Klarer Abend',
+      few_night:'Meist klare Nacht',few_day:'Wenige Wolken',
+      partial_night:'Teils bewölkte Nacht',partial_day:'Wechselnd bewölkt',
+      overcast:'Bedeckter Himmel',
+      fog_dawn:'Nebliger Morgen',fog_night:'Neblige Nacht',fog:'Nebel',
+      drizzle:'Leichter Nieselregen',rain_light:'Leichter Regen',rain:'Regen',
+      storm:'Aktives Gewitter',snow:'Schneefall',hail:'Hagel',
+    },
+    amb:{
+      muggy:'schwüle Luft',humid:'feuchte Luft',dew:'Morgentau',
+      dry_hot:'warm und trocken',dry:'trockene Luft',fresh:'angenehme Frische',
+    },
+    wind:{strong:'starker Wind',moderate:'mäßige Brise',light:'leichte Brise'},
+    outlook:{
+      rain_soon:'Regen bald wahrscheinlich',rain_likely:'Regen möglich',
+      improving:'Besserung in Sicht',worsening:'Verschlechterung',
+    },
+    con:' mit ',' y ':' und ',
+  },
+  fr:{
+    cond:{
+      clear_night:'Nuit dégagée',clear_dawn:'Aube dégagée',
+      clear_day:'Ciel dégagé',clear_dusk:'Coucher de soleil dégagé',
+      few_night:'Nuit quasi dégagée',few_day:'Quelques nuages',
+      partial_night:'Nuit partiellement nuageuse',partial_day:'Ciel variable',
+      overcast:'Ciel couvert',
+      fog_dawn:'Aube brumeuse',fog_night:'Brouillard nocturne',fog:'Brouillard',
+      drizzle:'Bruine légère',rain_light:'Pluie légère',rain:'Pluie en cours',
+      storm:'Orage actif',snow:'Chutes de neige',hail:'Grêle',
+    },
+    amb:{
+      muggy:'ambiance étouffante',humid:'air humide',dew:'rosée matinale',
+      dry_hot:'chaud et sec',dry:'air sec',fresh:'fraîcheur agréable',
+    },
+    wind:{strong:'vent fort',moderate:'brise modérée',light:'brise légère'},
+    outlook:{
+      rain_soon:"Pluie probable dans l'heure",rain_likely:'Pluie possible plus tard',
+      improving:'Amélioration progressive',worsening:'Dégradation en cours',
+    },
+    con:' avec ',' y ':' et ',
+  },
+  it:{
+    cond:{
+      clear_night:'Notte serena',clear_dawn:'Alba serena',
+      clear_day:'Cielo sereno',clear_dusk:'Tramonto sereno',
+      few_night:'Notte quasi serena',few_day:'Poche nuvole',
+      partial_night:'Notte parzialmente nuvolosa',partial_day:'Parzialmente nuvoloso',
+      overcast:'Cielo coperto',
+      fog_dawn:'Alba nebbiosa',fog_night:'Nebbia notturna',fog:'Nebbia',
+      drizzle:'Pioggerellina debole',rain_light:'Pioggia leggera',rain:'Pioggia in corso',
+      storm:'Temporale attivo',snow:'Nevicata in corso',hail:'Grandine',
+    },
+    amb:{
+      muggy:'aria afosa',humid:'aria umida',dew:'rugiada mattutina',
+      dry_hot:'caldo e secco',dry:'aria secca',fresh:'piacevole freschezza',
+    },
+    wind:{strong:'vento forte',moderate:'brezza moderata',light:'brezza leggera'},
+    outlook:{
+      rain_soon:'Pioggia probabile a breve',rain_likely:'Pioggia possibile più tardi',
+      improving:'Miglioramento progressivo',worsening:'Peggioramento in corso',
+    },
+    con:' con ',' y ':' e ',
+  },
+};
+
+function generarFraseClima(m, tamb, hum){
+  if(!m) return '';
+  var f = FC[currentLang] || FC.es;
+  var prev = m.prevision24 || [];
+  var h0   = prev[0] || {};
+  var viento = h0.viento || 0;
+
+  /* lluvia próximas horas */
+  var lp1 = 0, lp3 = 0, cnt = 0;
+  for(var i = 0; i < Math.min(4, prev.length); i++){
+    var lp = prev[i].lluvia_p || 0;
+    if(i < 2) lp1 = Math.max(lp1, lp);
+    lp3 += lp; cnt++;
+  }
+  lp3 = cnt > 0 ? lp3 / cnt : 0;
+
+  var wmoA    = m.wmo_actual || 'clouds';
+  var tendDph = m.tendDph   || 0;
+  var isPrecip = /^(rain|storm|snow|hail|drizzle)$/.test(wmoA);
+
+  /* hora → contexto temporal */
+  var hr  = new Date().getHours();
+  var tCtx = hr < 6 || hr >= 22 ? 'night' : hr < 9 ? 'dawn' : hr >= 19 ? 'dusk' : 'day';
+
+  var ambHum  = hum  != null ? hum  : (h0.hum  || 50);
+  var ambTemp = tamb != null ? tamb : (h0.temp || 20);
+
+  /* ── 1. Condición principal ──────────────────────────── */
+  var condKey;
+  if(wmoA === 'fog'){
+    condKey = tCtx === 'dawn' ? 'fog_dawn' : tCtx === 'night' ? 'fog_night' : 'fog';
+  } else if(wmoA === 'storm'){ condKey = 'storm';
+  } else if(wmoA === 'snow'){  condKey = 'snow';
+  } else if(wmoA === 'hail'){  condKey = 'hail';
+  } else if(wmoA === 'rain'){
+    condKey = (h0.lluvia || 0) > 0.5 ? 'rain' : 'rain_light';
+  } else if(wmoA === 'drizzle'){ condKey = 'drizzle';
+  } else if(wmoA === 'clear'){
+    condKey = 'clear_' + tCtx;
+  } else {
+    /* nubes: determinar densidad por icono WMO */
+    var ic0 = (h0.wmo && h0.wmo.icon) || '⛅';
+    if(ic0 === '🌤️')      condKey = 'few_'     + (tCtx === 'night' ? 'night' : 'day');
+    else if(ic0 === '⛅')  condKey = 'partial_' + (tCtx === 'night' ? 'night' : 'day');
+    else                   condKey = 'overcast';
+  }
+  var condTxt = f.cond[condKey] || f.cond.overcast;
+
+  /* ── 2. Ambiente (solo si no llueve) ─────────────────── */
+  var ambKey = null;
+  if(!isPrecip){
+    if(ambHum > 82 && ambTemp > 27)      ambKey = 'muggy';
+    else if(ambHum > 72 && tCtx==='dawn') ambKey = 'dew';
+    else if(ambHum > 72)                  ambKey = 'humid';
+    else if(ambHum < 33 && ambTemp > 24)  ambKey = 'dry_hot';
+    else if(ambHum < 33)                  ambKey = 'dry';
+    else if(ambTemp < 14 && wmoA==='clear') ambKey = 'fresh';
+  }
+
+  /* ── 3. Viento ───────────────────────────────────────── */
+  var windKey = null;
+  if(viento > 40)       windKey = 'strong';
+  else if(viento > 25)  windKey = 'moderate';
+  else if(viento > 12 && wmoA === 'clear') windKey = 'light';
+
+  /* ── 4. Perspectiva próximas horas ───────────────────── */
+  var outlookKey = null;
+  if(!isPrecip){
+    if(lp1 >= 65)        outlookKey = 'rain_soon';
+    else if(lp3 >= 45)   outlookKey = 'rain_likely';
+    else if(tendDph >= 1.5) outlookKey = 'improving';
+    else if(tendDph <= -1.5) outlookKey = 'worsening';
+  }
+
+  /* ── Construcción ────────────────────────────────────── */
+  var mods = [];
+  if(ambKey  && f.amb[ambKey])  mods.push(f.amb[ambKey]);
+  if(windKey && f.wind[windKey]) mods.push(f.wind[windKey]);
+
+  var parte1 = condTxt;
+  if(mods.length > 0) parte1 += f.con + mods.join(f[' y ']);
+
+  return outlookKey && f.outlook[outlookKey]
+    ? parte1 + '. ' + f.outlook[outlookKey]
+    : parte1;
+}
 function wmoTxt(code){
   var L = I18N[currentLang] || I18N.es;
   return (L.wmo && L.wmo[code]) || (I18N.es.wmo[code]) || '—';
@@ -736,9 +945,9 @@ function applyLang(){
   if(stLbl && stLbl.dataset.stIdx !== undefined){
     stLbl.textContent = L.st_labels[+stLbl.dataset.stIdx] || '';
   }
-  if(lastWmoCode !== null){
+  if(lastMeteoObj !== null){
     var fraseEl = document.getElementById('meteo-frase');
-    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(lastWmoCode);
+    if(fraseEl) fraseEl.textContent = generarFraseClima(lastMeteoObj, lastTamb, lastHum);
   }
   if(lastDias7.length){
     var diasCortos2 = L.dias_cortos || ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -845,6 +1054,7 @@ function badgeHTML(text,color){
 }
 function renderMeteo(m){
   if(!m)return;
+  lastMeteoObj = m;
   var dbg = document.getElementById('meteo-debug');
   if(dbg) dbg.remove();
   var horas=m.prevision24||m.horas24||[];
@@ -873,17 +1083,17 @@ function renderMeteo(m){
       var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
       iconEl.textContent = sanitizeIcon(bmeIcon);
       lastWmoCode = finalCode;
-      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(finalCode !== null ? finalCode : 0);
+      if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
     } else {
       // Sin BME280: usar Open-Meteo como antes
       if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
       if(detectedCode !== null) lastWmoCode = detectedCode;
-      if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + wmoTxt(detectedCode !== null ? detectedCode : 0);
+      if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
     }
   } else {
-    if(fraseEl) fraseEl.textContent = t('actualmente') + ' ' + (m.frase || t('loading'));
+    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
     if(window.setWeatherBackground && !window._debugWeatherLocked){
       if(m.wmo_actual){
         var bmeCode2 = BME_WMO_MAP[m.wmo_actual];
@@ -1021,6 +1231,8 @@ async function load(){
     banner.classList.remove('visible');
     dot.className='conn-dot ok';
     dot.setAttribute('aria-label','Conectado');
+    lastTamb = d.temp_ambiente != null ? +d.temp_ambiente : null;
+    lastHum  = d.humedad       != null ? +d.humedad       : null;
     setCard('ph',  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
     setCard('orp', d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
     setCard('ppm', d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
