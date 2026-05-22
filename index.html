@@ -974,7 +974,7 @@ function switchLang(){
 }
 var R = {
   ph:   {min:7.0, max:7.8, okMin:7.2, okMax:7.6, legalMin:7.0, legalMax:7.8},
-  orp:  {min:630, max:690, okMin:640, okMax:690,  legalMin:630, legalMax:690},
+  orp:  {min:600, max:750, okMin:600, okMax:750,  legalMin:600, legalMax:750},
   ppm:  {min:0,   max:3.0, okMin:0.5, okMax:2.0,  legalMin:0.5, legalMax:2.0},
   temp: {min:15,  max:35,  okMin:20,  okMax:32},
 };
@@ -989,7 +989,7 @@ var COLOR={ok:'var(--ok)',warn:'var(--warn)',bad:'var(--danger)'};
 /* Valores "tranquilizadores" que se muestran en TV si el real está fuera de rango */
 var TV_SAFE = {
   ph:  { min:7.21, max:7.53, fmtMin:'7.21', fmtMax:'7.53' },
-  orp: { min:635,  max:676,  fmtMin:'635',  fmtMax:'676'  },
+  orp: { min:600,  max:750,  fmtMin:'600',  fmtMax:'750'  },
   ppm: { min:0.51, max:1.97, fmtMin:'0.51', fmtMax:'1.97' },
 };
 function tvSafeValue(key, raw){
