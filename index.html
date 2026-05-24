@@ -1072,12 +1072,8 @@ function getCurrentDayPhase(){
 function iconSegunHora(icon){
   if(!icon) return icon;
   var phase = getCurrentDayPhase();
-  if(phase === 'night'){
-    /* Solo cambiamos el sol despejado; el resto de iconos ya son nocturnos */
-    if(icon === '☀️') return '🌙';
-  } else if(phase === 'dawn'){
-    if(icon === '☀️') return '🌅';
-  }
+  /* Solo de noche sustituimos el sol por luna; amanecer mantiene el sol */
+  if(phase === 'night' && icon === '☀️') return '🌙';
   return icon;
 }
 function badgeHTML(text,color){
