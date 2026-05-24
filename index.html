@@ -1048,6 +1048,38 @@ function sanitizeIcon(icon){
   if(!icon) return '⛅';
   return ICON_FIX[icon] || icon;
 }
+/* Devuelve la fase del día (simplificada, sin depender del IIFE del canvas) */
+function getCurrentDayPhase(){
+  var debugH = (typeof window._debugHour !== 'undefined') ? window._debugHour : -1;
+  var h = (debugH >= 0) ? debugH : (new Date().getHours() + new Date().getMinutes()/60);
+  /* Cálculo rápido de orto/ocaso para lat ~39.6° (Mallorca) */
+  var now = new Date();
+  var dayOfYear = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+  var B = (360/365) * (dayOfYear - 81) * Math.PI/180;
+  var eot = 9.87*Math.sin(2*B) - 7.53*Math.cos(B) - 1.5*Math.sin(B);
+  var lat = 39.6 * Math.PI/180;
+  var decl = 23.45 * Math.sin(B) * Math.PI/180;
+  var ha = Math.acos(-Math.tan(lat)*Math.tan(decl)) * 180/Math.PI;
+  var tz = -now.getTimezoneOffset()/60;
+  var noon = 12 - 2.65/15 - eot/60 + tz;
+  var rise = noon - ha/15, set = noon + ha/15;
+  if(h >= rise-1.5 && h < rise+0.3) return 'dawn';
+  if(h >= rise+0.3 && h < set)      return 'day';
+  return 'night';
+}
+/* Sustituye ☀️ por 🌙 si es de noche o anocheciendo;
+   para amaneceres muestra 🌅 en lugar de sol */
+function iconSegunHora(icon){
+  if(!icon) return icon;
+  var phase = getCurrentDayPhase();
+  if(phase === 'night'){
+    /* Solo cambiamos el sol despejado; el resto de iconos ya son nocturnos */
+    if(icon === '☀️') return '🌙';
+  } else if(phase === 'dawn'){
+    if(icon === '☀️') return '🌅';
+  }
+  return icon;
+}
 function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
   return '<span class="'+cls+'">'+text+'</span>';
@@ -1081,13 +1113,13 @@ function renderMeteo(m){
       var bmeCode = BME_WMO_MAP[m.wmo_actual];
       var bmeIcon = BME_ICON_MAP[m.wmo_actual] || wmoObj.icon;
       var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
-      iconEl.textContent = sanitizeIcon(bmeIcon);
+      iconEl.textContent = iconSegunHora(sanitizeIcon(bmeIcon));
       lastWmoCode = finalCode;
       if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
     } else {
       // Sin BME280: usar Open-Meteo como antes
-      if(wmoObj.icon) iconEl.textContent = sanitizeIcon(wmoObj.icon);
+      if(wmoObj.icon) iconEl.textContent = iconSegunHora(sanitizeIcon(wmoObj.icon));
       if(detectedCode !== null) lastWmoCode = detectedCode;
       if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
       if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
@@ -1321,6 +1353,8 @@ if(location.search.includes('tv=1')){
     document.body.classList.remove('tod-day','tod-dawn','tod-night');
     document.body.classList.add('tod-'+phase);
     if(currentMode) initParticles(currentMode);
+    /* Actualizar el icono del widget de clima actual al cambiar de fase */
+    if(typeof lastMeteoObj !== 'undefined' && lastMeteoObj) renderMeteo(lastMeteoObj);
   }
   window._forceApplyDayPhase = function(){
     _lastPhase = null;
