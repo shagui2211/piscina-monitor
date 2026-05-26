@@ -265,6 +265,14 @@ body.tv .lang-indicator{
   font-family:var(--mono);font-size:0.75rem;color:var(--muted);
   letter-spacing:.1em;text-transform:uppercase;opacity:.5;
 }
+/* ── INDICADOR DE RESOLUCIÓN (solo TV mode) ── */
+.res-indicator{display:none;}
+body.tv .res-indicator{
+  display:block;
+  position:fixed;bottom:18px;left:24px;
+  font-family:var(--mono);font-size:0.75rem;color:var(--muted);
+  letter-spacing:.1em;text-transform:uppercase;opacity:.5;
+}
 /* ══════════════════════════════════════════════════════════════
    TV MODE — 4K / QHD+  (≥ 2560 px)
    Escala ~1.7× respecto al TV mode estándar (1080p).
@@ -330,6 +338,12 @@ body.tv .lang-indicator{
   /* ── Indicador de idioma ── */
   body.tv .lang-indicator{
     bottom:32px;right:44px;
+    font-size:1.3rem;
+    letter-spacing:.14em;
+  }
+  /* ── Indicador de resolución ── */
+  body.tv .res-indicator{
+    bottom:32px;left:44px;
     font-size:1.3rem;
     letter-spacing:.14em;
   }
@@ -596,6 +610,7 @@ body.tod-dawn #dawn-glow{ display:block !important; }
   </div>
   <div class="footer">Valentin Hotels &amp; Resorts</div>
   <div class="lang-indicator" id="lang-indicator"></div>
+  <div class="res-indicator" id="res-indicator"></div>
 </main>
 <script>
 var API = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
@@ -1404,6 +1419,27 @@ var LANG_ALIAS = {
       applyLang();
     }
   }
+})();
+/* ── Indicador de resolución en TV mode ── */
+(function(){
+  var el = document.getElementById('res-indicator');
+  if(!el) return;
+  function tier(w){
+    if(w >= 3840) return '4K';
+    if(w >= 2560) return 'QHD';
+    if(w >= 1920) return 'FHD';
+    if(w >= 1280) return 'HD';
+    return 'SD';
+  }
+  function update(){
+    var sw = screen.width, sh = screen.height;
+    var ww = window.innerWidth, wh = window.innerHeight;
+    el.textContent = sw + '×' + sh + ' • ' + tier(sw)
+      + (window.devicePixelRatio !== 1 ? ' • ×' + window.devicePixelRatio : '')
+      + ' • viewport ' + ww + '×' + wh;
+  }
+  update();
+  window.addEventListener('resize', update);
 })();
 /* ══════════════════════════════════════════════════════════════
    FONDO METEOROLÓGICO DINÁMICO
