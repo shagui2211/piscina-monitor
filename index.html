@@ -1303,11 +1303,39 @@ async function load(){
 }
 load();
 setInterval(load, 15000);
-if(location.search.includes('tv=1')){
-  document.body.classList.add('tv');
-  isTvMode = true;
-  setInterval(switchLang, 10000);
-}
+/* ── Mapa de alias de idioma en la URL ── */
+var LANG_ALIAS = {
+  esp:'es', es:'es',
+  eng:'en', en:'en',
+  deu:'de', de:'de',
+  fra:'fr', fr:'fr',
+  ita:'it', it:'it',
+};
+(function initMode(){
+  var params = new URLSearchParams(location.search);
+
+  /* Modo TV clásico con rotación de idiomas */
+  if(params.has('tv') && params.get('tv') === '1'){
+    document.body.classList.add('tv');
+    isTvMode = true;
+    setInterval(switchLang, 10000);
+    return;
+  }
+
+  /* Modo TV con idioma fijo: ?lang=esp | eng | deu | fra | ita */
+  var langParam = params.get('lang');
+  if(langParam){
+    var resolvedLang = LANG_ALIAS[langParam.toLowerCase()];
+    if(resolvedLang && I18N[resolvedLang]){
+      currentLang = resolvedLang;
+      document.documentElement.lang = resolvedLang;
+      document.body.classList.add('tv');
+      isTvMode = true;
+      /* Sin rotador — idioma fijo */
+      applyLang();
+    }
+  }
+})();
 /* ══════════════════════════════════════════════════════════════
    FONDO METEOROLÓGICO DINÁMICO
    ══════════════════════════════════════════════════════════════ */
