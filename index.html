@@ -269,9 +269,9 @@ body.tv .lang-indicator{
 .res-indicator{display:none;}
 body.tv .res-indicator{
   display:block;
-  position:fixed;bottom:18px;left:24px;
-  font-family:var(--mono);font-size:0.75rem;color:var(--muted);
-  letter-spacing:.1em;text-transform:uppercase;opacity:.5;
+  position:fixed;bottom:14px;left:20px;
+  font-family:var(--mono);font-size:0.6rem;color:var(--muted);
+  letter-spacing:.06em;opacity:.25;
 }
 /* ══════════════════════════════════════════════════════════════
    TV MODE — 4K / QHD+  (≥ 2560 px)
@@ -1434,9 +1434,7 @@ var LANG_ALIAS = {
   function update(){
     var sw = screen.width, sh = screen.height;
     var ww = window.innerWidth, wh = window.innerHeight;
-    el.textContent = sw + '×' + sh + ' • ' + tier(sw)
-      + (window.devicePixelRatio !== 1 ? ' • ×' + window.devicePixelRatio : '')
-      + ' • viewport ' + ww + '×' + wh;
+    el.textContent = sw + '×' + sh;
   }
   update();
   window.addEventListener('resize', update);
