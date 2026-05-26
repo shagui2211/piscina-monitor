@@ -265,6 +265,75 @@ body.tv .lang-indicator{
   font-family:var(--mono);font-size:0.75rem;color:var(--muted);
   letter-spacing:.1em;text-transform:uppercase;opacity:.5;
 }
+/* ══════════════════════════════════════════════════════════════
+   TV MODE — 4K / QHD+  (≥ 2560 px)
+   Escala ~1.7× respecto al TV mode estándar (1080p).
+   Aplica a ?tv=1 y a todos los ?lang=xxx
+   ══════════════════════════════════════════════════════════════ */
+@media(min-width:2560px){
+  /* ── Header ── */
+  body.tv header{
+    height:200px;
+    min-height:200px;
+    padding:0 100px;
+    box-shadow:0 4px 40px rgba(61,122,90,.12),0 2px 0 var(--border);
+  }
+  body.tv header::after{ height:5px; }
+  body.tv .logo{ width:220px; }
+  body.tv .header-title-main{ font-size:4.4rem; }
+  body.tv .header-title-sub{  font-size:1.6rem; letter-spacing:0.22em; }
+  body.tv .status-pill{
+    gap:24px;
+    padding:18px 40px 18px 28px;
+    border-radius:26px;
+  }
+  body.tv .conn-dot{ width:22px; height:22px; }
+  body.tv .status-pill #clock{
+    font-size:4.4rem;
+    letter-spacing:0.05em;
+  }
+
+  /* ── Layout principal ── */
+  body.tv main{ padding:70px 80px; }
+  body.tv .section-title{ font-size:1.7rem; margin:46px 0 22px; letter-spacing:.10em; }
+  body.tv .grid-main{ gap:50px; }
+  body.tv .clima-grid{ gap:50px; }
+
+  /* ── Tarjetas de datos ── */
+  body.tv .card{ padding:50px 44px; border-radius:26px; border-left-width:5px; }
+  body.tv .card-label{  font-size:1.7rem; letter-spacing:.08em; }
+  body.tv .card-value{  font-size:7rem; }
+  body.tv .card-unit{   font-size:2.4rem; }
+  body.tv .card-st-label{ font-size:1.5rem; margin-top:16px; }
+
+  /* ── Tarjeta meteorológica ── */
+  body.tv .meteo-card{ padding:44px 52px; min-height:200px; border-radius:26px; }
+  body.tv .meteo-frase{ font-size:2.4rem; line-height:1.3; margin-bottom:14px; }
+  body.tv .meteo-sub{ font-size:1.3rem; gap:18px; }
+  body.tv .meteo-badge{ font-size:1.1rem; padding:6px 18px; border-radius:30px; }
+  body.tv #meteo-icon{ font-size:8rem !important; }
+
+  /* ── Previsión 7 días ── */
+  body.tv .prev7-grid{ gap:28px; }
+  body.tv .prev7-dia{
+    padding:32px 22px;
+    border-radius:26px;
+  }
+  body.tv .p7-fecha{   font-size:1.6rem; margin-bottom:10px; }
+  body.tv .p7-icon{    font-size:5.5rem; margin:14px 0; }
+  body.tv .p7-temps{   gap:14px; margin:10px 0; }
+  body.tv .p7-tmax{    font-size:2.8rem; }
+  body.tv .p7-tmin{    font-size:2.2rem; }
+  body.tv .p7-lluvia{  font-size:1.6rem; margin-top:10px; }
+  body.tv .p7-viento{  font-size:1.5rem; margin-top:8px; }
+
+  /* ── Indicador de idioma ── */
+  body.tv .lang-indicator{
+    bottom:32px;right:44px;
+    font-size:1.3rem;
+    letter-spacing:.14em;
+  }
+}
 /* ── FONDO METEOROLÓGICO ── */
 #weather-bg{
   position:fixed;top:0;left:0;width:100%;height:100%;
