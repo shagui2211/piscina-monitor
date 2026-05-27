@@ -280,11 +280,20 @@ body.tv .card-st-label{font-size:0.9rem;}
     overflow:hidden;
   }
   body.tv header{
+    display:grid;
+    grid-template-columns:140px 1fr 140px;
+    align-items:center;
     height:60px;
     min-height:60px;
     flex-shrink:0;
-    padding:0 20px;
+    padding:0 14px;
   }
+  body.tv .header-left > div:last-child{
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+  }
+
   body.tv .logo{ width:70px; }
   body.tv .header-title-main{ font-size:1.1rem; }
   body.tv .header-title-sub{ font-size:0.55rem; }
@@ -358,9 +367,12 @@ body.tv .res-indicator{
 @media(min-width:2560px){
   /* ── Header ── */
   body.tv header{
+    display:grid;
+    grid-template-columns:320px 1fr 320px;
+    align-items:center;
     height:150px;
     min-height:150px;
-    padding:0 80px;
+    padding:0 50px;
     box-shadow:0 4px 40px rgba(61,122,90,.12),0 2px 0 var(--border);
   }
   body.tv header::after{ height:4px; }
