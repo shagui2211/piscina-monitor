@@ -293,70 +293,96 @@ body.tv .card-st-label{font-size:0.9rem;}
     height:100vh;
     overflow:hidden;
   }
+
+  /* ── Header portrait ── */
   body.tv header{
     display:grid;
-    grid-template-columns:140px 1fr 140px;
+    grid-template-columns:160px 1fr 160px;
     align-items:center;
-    height:60px;
-    min-height:60px;
+    height:80px;
+    min-height:80px;
+    max-height:80px;
+    overflow:hidden;
     flex-shrink:0;
-    padding:0 14px;
+    padding:0 20px;
   }
   body.tv .header-left > div:last-child{
     justify-content:center;
     align-items:center;
     text-align:center;
+    height:100%;
+    padding:8px 0;
   }
-
-  body.tv .logo{ width:70px; }
-  body.tv .header-title-main{ font-size:1.1rem; }
-  body.tv .header-title-sub{ font-size:0.55rem; }
+  body.tv .logo{
+    width:90px;
+    max-height:60px;
+  }
+  body.tv .logo img{ max-height:60px; }
+  body.tv .header-title-main{ font-size:1.4rem; }
+  body.tv .header-title-sub{ font-size:0.62rem; }
   body.tv .status-pill{
-    gap:8px;
-    padding:6px 12px 6px 10px;
-    border-radius:10px;
+    gap:10px;
+    padding:8px 14px 8px 12px;
+    border-radius:12px;
+    max-height:60px;
   }
-  body.tv .conn-dot{ width:9px; height:9px; }
-  body.tv .status-pill #clock{ font-size:1.1rem; }
+  body.tv .conn-dot{ width:11px; height:11px; }
+  body.tv .status-pill #clock{ font-size:1.3rem; }
 
+  /* ── Main portrait: rellena el espacio vertical ── */
   body.tv main{
     flex:1;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-    padding:10px 16px;
+    padding:14px 20px 20px;
     overflow:hidden;
   }
   body.tv .footer{ display:none; }
-  body.tv .section-title{ font-size:0.72rem; margin:6px 0 5px; }
+  body.tv .section-title{
+    font-size:0.85rem;
+    letter-spacing:.1em;
+    margin:10px 0 8px;
+  }
 
-  /* Agua: 2 columnas en portrait */
-  body.tv .grid-main{ grid-template-columns:repeat(2,1fr); gap:10px; }
-  body.tv .card{ padding:12px 14px; }
-  body.tv .card-value{ font-size:2.6rem; }
-  body.tv .card-unit{ font-size:0.95rem; }
-  body.tv .card-label{ font-size:0.72rem; }
+  /* ── Parámetros agua: 2x2, valores grandes ── */
+  body.tv .grid-main{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  body.tv .card{
+    padding:18px 20px;
+    border-radius:14px;
+  }
+  body.tv .card-value{ font-size:3.8rem; }
+  body.tv .card-unit{ font-size:1.2rem; }
+  body.tv .card-label{ font-size:0.85rem; }
+  body.tv .card-st-label{ font-size:0.8rem; margin-top:6px; }
+  body.tv .bar-wrap{ display:none; }
 
-  /* Clima: 2 columnas */
-  body.tv .clima-grid{ grid-template-columns:repeat(2,1fr); gap:10px; }
-  body.tv .meteo-card{ padding:10px 14px; }
-  body.tv .meteo-frase{ font-size:0.9rem; line-height:1.3; }
-  body.tv #meteo-icon{ font-size:2.2rem !important; }
-  body.tv .meteo-sub{ font-size:0.65rem; gap:6px; }
+  /* ── Clima: 2x2, bien proporcional ── */
+  body.tv .clima-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  body.tv .meteo-card{ padding:16px 18px; }
+  body.tv .meteo-frase{ font-size:1.1rem; line-height:1.35; }
+  body.tv #meteo-icon{ font-size:3rem !important; }
+  body.tv .meteo-sub{ font-size:0.75rem; gap:8px; }
 
-  /* Previsión 7 días */
+  /* ── Prevision 7 dias: 4+3 en dos filas ── */
   body.tv .prev7-grid{
     grid-template-columns:repeat(4,1fr);
-    gap:6px;
+    gap:10px;
   }
-  body.tv .prev7-dia{ padding:8px 4px; border-radius:8px; }
-  body.tv .p7-fecha{ font-size:0.58rem; margin-bottom:2px; }
-  body.tv .p7-icon{ font-size:1.4rem; margin:3px 0; }
-  body.tv .p7-tmax{ font-size:0.85rem; }
-  body.tv .p7-tmin{ font-size:0.72rem; }
-  body.tv .p7-temps{ gap:3px; margin:2px 0; }
-  body.tv .p7-lluvia{ font-size:0.55rem; margin-top:2px; }
-  body.tv .p7-viento{ font-size:0.52rem; margin-top:1px; }
+  body.tv .prev7-dia{ padding:12px 8px; border-radius:12px; }
+  body.tv .p7-fecha{ font-size:0.72rem; margin-bottom:4px; }
+  body.tv .p7-icon{ font-size:2rem; margin:6px 0; }
+  body.tv .p7-tmax{ font-size:1.1rem; }
+  body.tv .p7-tmin{ font-size:0.9rem; }
+  body.tv .p7-temps{ gap:5px; margin:4px 0; }
+  body.tv .p7-lluvia{ font-size:0.65rem; margin-top:4px; }
+  body.tv .p7-viento{ font-size:0.62rem; margin-top:3px; }
 }
 /* ── TV LANGUAGE TRANSITION ── */
 .lang-fade{}
