@@ -281,71 +281,71 @@ body.tv .res-indicator{
 @media(min-width:2560px){
   /* ── Header ── */
   body.tv header{
-    height:200px;
-    min-height:200px;
-    padding:0 100px;
+    height:150px;
+    min-height:150px;
+    padding:0 80px;
     box-shadow:0 4px 40px rgba(61,122,90,.12),0 2px 0 var(--border);
   }
-  body.tv header::after{ height:5px; }
-  body.tv .logo{ width:220px; }
-  body.tv .header-title-main{ font-size:4.4rem; }
-  body.tv .header-title-sub{  font-size:1.6rem; letter-spacing:0.22em; }
+  body.tv header::after{ height:4px; }
+  body.tv .logo{ width:170px; }
+  body.tv .header-title-main{ font-size:3.2rem; }
+  body.tv .header-title-sub{  font-size:1.2rem; letter-spacing:0.20em; }
   body.tv .status-pill{
-    gap:24px;
-    padding:18px 40px 18px 28px;
-    border-radius:26px;
+    gap:18px;
+    padding:14px 30px 14px 22px;
+    border-radius:22px;
   }
-  body.tv .conn-dot{ width:22px; height:22px; }
+  body.tv .conn-dot{ width:18px; height:18px; }
   body.tv .status-pill #clock{
-    font-size:4.4rem;
+    font-size:3.2rem;
     letter-spacing:0.05em;
   }
 
-  /* ── Layout principal ── */
-  body.tv main{ padding:70px 80px; }
-  body.tv .section-title{ font-size:1.7rem; margin:46px 0 22px; letter-spacing:.10em; }
-  body.tv .grid-main{ gap:50px; }
-  body.tv .clima-grid{ gap:50px; }
+  /* ── Layout principal — padding reducido para que quepan todas las secciones ── */
+  body.tv main{ padding:30px 60px; }
+  body.tv .section-title{ font-size:1.3rem; margin:20px 0 12px; letter-spacing:.10em; }
+  body.tv .grid-main{ gap:30px; }
+  body.tv .clima-grid{ gap:30px; }
 
   /* ── Tarjetas de datos ── */
-  body.tv .card{ padding:50px 44px; border-radius:26px; border-left-width:5px; }
-  body.tv .card-label{  font-size:1.7rem; letter-spacing:.08em; }
-  body.tv .card-value{  font-size:7rem; }
-  body.tv .card-unit{   font-size:2.4rem; }
-  body.tv .card-st-label{ font-size:1.5rem; margin-top:16px; }
+  body.tv .card{ padding:32px 30px; border-radius:22px; border-left-width:5px; }
+  body.tv .card-label{  font-size:1.3rem; letter-spacing:.06em; }
+  body.tv .card-value{  font-size:5rem; }
+  body.tv .card-unit{   font-size:1.8rem; }
+  body.tv .card-st-label{ font-size:1.2rem; margin-top:10px; }
 
   /* ── Tarjeta meteorológica ── */
-  body.tv .meteo-card{ padding:44px 52px; min-height:200px; border-radius:26px; }
-  body.tv .meteo-frase{ font-size:2.4rem; line-height:1.3; margin-bottom:14px; }
-  body.tv .meteo-sub{ font-size:1.3rem; gap:18px; }
-  body.tv .meteo-badge{ font-size:1.1rem; padding:6px 18px; border-radius:30px; }
-  body.tv #meteo-icon{ font-size:8rem !important; }
+  body.tv .meteo-card{ padding:30px 36px; min-height:140px; border-radius:22px; }
+  body.tv .meteo-frase{ font-size:1.8rem; line-height:1.3; margin-bottom:10px; }
+  body.tv .meteo-sub{ font-size:1.0rem; gap:14px; }
+  body.tv .meteo-badge{ font-size:0.9rem; padding:5px 14px; border-radius:26px; }
+  body.tv #meteo-icon{ font-size:6rem !important; }
 
   /* ── Previsión 7 días ── */
-  body.tv .prev7-grid{ gap:28px; }
+  body.tv .prev7-grid{ gap:20px; }
   body.tv .prev7-dia{
-    padding:32px 22px;
-    border-radius:26px;
+    padding:20px 16px;
+    border-radius:22px;
   }
-  body.tv .p7-fecha{   font-size:1.6rem; margin-bottom:10px; }
-  body.tv .p7-icon{    font-size:5.5rem; margin:14px 0; }
-  body.tv .p7-temps{   gap:14px; margin:10px 0; }
-  body.tv .p7-tmax{    font-size:2.8rem; }
-  body.tv .p7-tmin{    font-size:2.2rem; }
-  body.tv .p7-lluvia{  font-size:1.6rem; margin-top:10px; }
-  body.tv .p7-viento{  font-size:1.5rem; margin-top:8px; }
+  body.tv .p7-fecha{   font-size:1.2rem; margin-bottom:6px; }
+  body.tv .p7-icon{    font-size:3.8rem; margin:8px 0; }
+  body.tv .p7-temps{   gap:10px; margin:6px 0; }
+  body.tv .p7-tmax{    font-size:2.0rem; }
+  body.tv .p7-tmin{    font-size:1.6rem; }
+  body.tv .p7-lluvia{  font-size:1.2rem; margin-top:6px; }
+  body.tv .p7-viento{  font-size:1.1rem; margin-top:4px; }
 
   /* ── Indicador de idioma ── */
   body.tv .lang-indicator{
-    bottom:32px;right:44px;
-    font-size:1.3rem;
-    letter-spacing:.14em;
+    bottom:24px;right:36px;
+    font-size:1.1rem;
+    letter-spacing:.12em;
   }
   /* ── Indicador de resolución ── */
   body.tv .res-indicator{
-    bottom:32px;left:44px;
-    font-size:1.3rem;
-    letter-spacing:.14em;
+    bottom:24px;left:36px;
+    font-size:1.1rem;
+    letter-spacing:.12em;
   }
 }
 /* ── FONDO METEOROLÓGICO ── */
