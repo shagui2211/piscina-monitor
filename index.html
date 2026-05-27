@@ -153,27 +153,37 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
   .p7-viento{font-size:0.7rem;margin-top:4px;}
 }
 /* ── TV MODE ── */
-body.tv main{max-width:100%;padding:40px;}
+body.tv main{max-width:100%;padding:16px 32px;}
 body.tv .prev7-dia{animation:none;}
 body.tv .prev7-dia.hoy{animation:none;}
-body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:30px;}
-body.tv .card{padding:28px 24px;}
-body.tv .card-value{font-size:4rem;}
-body.tv .card-unit{font-size:1.4rem;}
-body.tv .card-label{font-size:1rem;}
+body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:14px;}
+body.tv .clima-grid{gap:14px;}
+body.tv .card{padding:16px 18px;}
+body.tv .card-value{font-size:3.2rem;}
+body.tv .card-unit{font-size:1.1rem;}
+body.tv .card-label{font-size:0.85rem;}
 body.tv .bar-wrap{display:none;}
-body.tv .section-title{font-size:1rem;margin:30px 0 14px;}
-body.tv .meteo-frase{font-size:1.4rem;}
-body.tv .meteo-card{padding:24px 28px;min-height:110px;}
+body.tv .section-title{font-size:0.85rem;margin:12px 0 8px;}
+body.tv .meteo-frase{font-size:1.1rem;}
+body.tv .meteo-card{padding:14px 20px;min-height:unset;}
+body.tv .prev7-grid{gap:8px;}
+body.tv .prev7-dia{padding:10px 6px;border-radius:10px;}
+body.tv .p7-fecha{font-size:0.65rem;margin-bottom:3px;}
+body.tv .p7-icon{font-size:1.8rem;margin:4px 0;}
+body.tv .p7-tmax{font-size:1.0rem;}
+body.tv .p7-tmin{font-size:0.85rem;}
+body.tv .p7-temps{gap:4px;margin:3px 0;}
+body.tv .p7-lluvia{font-size:0.6rem;margin-top:3px;}
+body.tv .p7-viento{font-size:0.58rem;margin-top:2px;}
 /* ── TV HEADER ── */
 body.tv header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   justify-items: center;
-  padding: 0 56px;
-  height: 120px;
-  min-height: 120px;
+  padding: 0 40px;
+  height: 72px;
+  min-height: 72px;
   background: linear-gradient(135deg, #ffffff 0%, #f4f8f6 60%, #e8f0ec 100%);
   border-bottom: none;
   box-shadow: 0 2px 24px rgba(61,122,90,.10), 0 1px 0 var(--border);
@@ -206,14 +216,14 @@ body.tv .header-left > div:last-child {
   gap: 4px;
 }
 body.tv .header-title-main {
-  font-size: 2.6rem;
+  font-size: 1.6rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text);
   line-height: 1.1;
 }
 body.tv .header-title-sub {
-  font-size: 0.95rem;
+  font-size: 0.65rem;
   color: var(--muted);
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -238,7 +248,7 @@ body.tv .conn-dot {
 }
 body.tv .status-pill #clock {
   font-family: var(--mono);
-  font-size: 2.6rem;
+  font-size: 1.6rem;
   font-weight: 500;
   letter-spacing: 0.04em;
   color: var(--text);
