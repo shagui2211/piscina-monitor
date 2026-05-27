@@ -153,7 +153,11 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
   .p7-viento{font-size:0.7rem;margin-top:4px;}
 }
 /* ── TV MODE ── */
-body.tv main{max-width:100%;padding:16px 32px;}
+body.tv main{max-width:100%;padding:16px 56px;}
+/* Forzar canvas visible en TV aunque prefers-reduced-motion este activo */
+body.tv #weather-canvas,
+body.tv #splash-canvas,
+body.tv #dawn-glow{ display:block !important; }
 body.tv .prev7-dia{animation:none;}
 body.tv .prev7-dia.hoy{animation:none;}
 body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:14px;}
@@ -1576,8 +1580,10 @@ var LANG_ALIAS = {
   var ctx    = canvas.getContext('2d');
   var particles = [], bolts = [], boltTimer = 0;
   var animFrame = null, currentMode = null;
-  /* Respetar preferencia de movimiento reducido */
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* En TV mode ignorar prefers-reduced-motion para mostrar efectos del tiempo */
+  var prefersReducedMotion = document.body.classList.contains('tv')
+    ? false
+    : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
   window.addEventListener('resize', resize);
   resize();
@@ -1667,9 +1673,9 @@ var LANG_ALIAS = {
         p.push({ type:'ray', angle:angle,
           phase:Math.random()*Math.PI*2,
           speed: warm ? 0.004+Math.random()*0.004 : 0.006+Math.random()*0.005,
-          baseAlpha: warm ? 0.30+Math.random()*0.20 : 0.20+Math.random()*0.15,
+          baseAlpha: warm ? 0.55+Math.random()*0.25 : 0.42+Math.random()*0.28,
           len:(canvas.width*(warm?0.5:0.55))+Math.random()*canvas.width*0.4,
-          width: warm ? 28+Math.random()*55 : (Math.random()>0.5 ? 6+Math.random()*8 : 22+Math.random()*40),
+          width: warm ? 40+Math.random()*70 : (Math.random()>0.5 ? 10+Math.random()*14 : 32+Math.random()*55),
           warm: warm,
         });
       }
@@ -2213,7 +2219,9 @@ var LANG_ALIAS = {
   var sx = sc.getContext('2d');
   var particles = [];
   var currentMode = null;
-  var _prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var _prefersReducedMotion = document.body.classList.contains('tv')
+    ? false
+    : window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function resizeSplash(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
   window.addEventListener('resize', resizeSplash);
   resizeSplash();
