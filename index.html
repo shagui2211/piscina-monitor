@@ -154,10 +154,11 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
 }
 /* ── TV MODE ── */
 body.tv main{max-width:100%;padding:16px 56px;}
-/* Forzar canvas visible en TV aunque prefers-reduced-motion este activo */
+/* Forzar efectos meteorologicos visibles en TV aunque prefers-reduced-motion este activo */
 body.tv #weather-canvas,
-body.tv #splash-canvas,
-body.tv #dawn-glow{ display:block !important; }
+body.tv #splash-canvas{ display:block !important; }
+body.tv.wbg-fog #fog-overlay{ display:block !important; }
+body.tv.tod-dawn #dawn-glow{ display:block !important; }
 body.tv .prev7-dia{animation:none;}
 body.tv .prev7-dia.hoy{animation:none;}
 body.tv .grid-main{grid-template-columns:repeat(4,1fr);gap:14px;}
@@ -492,7 +493,7 @@ body.tv .res-indicator{
   position:absolute;top:0;left:0;width:100%;height:100%;
   pointer-events:none;
 }
-body > *:not(#weather-bg):not(#fog-overlay){ position:relative; z-index:1; }
+body > *:not(#weather-bg):not(#fog-overlay):not(#dawn-glow):not(#splash-canvas){ position:relative; z-index:1; }
 header{ position:relative; z-index:2; }
 /* ── OVERLAY DE NIEBLA CSS puro ── */
 #fog-overlay{
