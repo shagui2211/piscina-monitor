@@ -426,6 +426,10 @@ body.tv .card-st-label{font-size:0.9rem;}
 }
 /* ── TV LANGUAGE TRANSITION ── */
 .lang-fade{}
+/* ── ICONO ACTUALIZANDO (modo TV, sin datos de clima) ── */
+@keyframes spin-slow{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+body.tv #meteo-icon.updating{ display:inline-block; animation:spin-slow 2s linear infinite; opacity:0.55; }
+body.tv #meteo-frase.updating{ color:var(--muted); font-style:italic; }
 body.tv .lang-indicator{
   position:fixed;bottom:18px;right:24px;
   font-family:var(--mono);font-size:0.75rem;color:var(--muted);
@@ -809,6 +813,7 @@ var I18N = {
     clock12:       false,
     locale:        'es-ES',
     loading:       'Cargando…',
+    updating_weather: 'Actualizando datos…',
     no_prev:       'Sin datos de previsión',
     error_conn:    'Error de conexión — No se puede contactar con la API.',
     error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
@@ -843,6 +848,7 @@ var I18N = {
     clock12:       true,
     locale:        'en-US',
     loading:       'Loading…',
+    updating_weather: 'Updating data…',
     no_prev:       'No forecast data',
     error_conn:    'Connection error — Cannot reach the API.',
     error_check:   'Check that Node-RED and Tailscale Funnel are active.',
@@ -877,6 +883,7 @@ var I18N = {
     clock12:       false,
     locale:        'de-DE',
     loading:       'Lädt…',
+    updating_weather: 'Daten werden aktualisiert…',
     no_prev:       'Keine Vorschaudaten',
     error_conn:    'Verbindungsfehler — API nicht erreichbar.',
     error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
@@ -911,6 +918,7 @@ var I18N = {
     clock12:       false,
     locale:        'fr-FR',
     loading:       'Chargement…',
+    updating_weather: 'Mise à jour…',
     no_prev:       'Pas de données de prévision',
     error_conn:    "Erreur de connexion — Impossible de contacter l'API.",
     error_check:   'Vérifiez que Node-RED et Tailscale Funnel sont actifs.',
@@ -945,6 +953,7 @@ var I18N = {
     clock12:       false,
     locale:        'it-IT',
     loading:       'Caricamento…',
+    updating_weather: 'Aggiornamento dati…',
     no_prev:       'Nessun dato di previsione',
     error_conn:    "Errore di connessione — Impossibile contattare l'API.",
     error_check:   'Verifica che Node-RED e Tailscale Funnel siano attivi.',
@@ -1341,6 +1350,17 @@ function renderMeteo(m){
   var horas=m.prevision24||m.horas24||[];
   var iconEl=document.getElementById('meteo-icon');
   var fraseEl=document.getElementById('meteo-frase');
+  /* ── Sin datos de clima disponibles ── */
+  var hasWmoData = (horas.length && horas[0].wmo) || m.wmo_actual;
+  if(!hasWmoData){
+    if(iconEl){ iconEl.textContent = '🔄'; iconEl.classList.add('updating'); }
+    if(fraseEl){ fraseEl.textContent = (I18N[currentLang]||I18N.es).updating_weather || 'Actualizando datos…'; fraseEl.classList.add('updating'); }
+    /* No cambiar el fondo cuando no hay datos */
+    return;
+  }
+  /* Hay datos: quitar clase updating si estaba */
+  if(iconEl)  iconEl.classList.remove('updating');
+  if(fraseEl) fraseEl.classList.remove('updating');
   var ICON_TO_WMO = {
     '☀️':0, '🌤️':1, '⛅':2, '☁️':3,
     '🌫️':45, '🌥️':2,
@@ -1551,6 +1571,13 @@ async function load(){
     dot.className='conn-dot danger';
     dot.setAttribute('aria-label','Sin conexión');
     if(!isTvMode) banner.classList.add('visible');
+    else {
+      /* En TV mode: mostrar estado "actualizando" en el widget de clima */
+      var iconEl2 = document.getElementById('meteo-icon');
+      var fraseEl2 = document.getElementById('meteo-frase');
+      if(iconEl2){ iconEl2.textContent = '🔄'; iconEl2.classList.add('updating'); }
+      if(fraseEl2){ fraseEl2.textContent = (I18N[currentLang]||I18N.es).updating_weather || 'Actualizando datos…'; fraseEl2.classList.add('updating'); }
+    }
     console.error('API error:',err);
   }
 }
