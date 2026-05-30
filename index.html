@@ -1100,6 +1100,17 @@ var FC = {
 
 function generarFraseClima(m, tamb, hum){
   if(!m) return '';
+  // ── Si el backend señala que aún acumula datos (~30 min post-arranque),
+  // no inventamos frase: devolvemos el texto i18n con cuenta atrás.
+  if(m.meteo_acumulando){
+    var min = m.meteo_acumulando_min_restantes;
+    var texto = t('meteo_calculando');
+    if(typeof min === 'number' && min > 0){
+      var minTpl = (min === 1) ? t('meteo_calculando_min_sg') : t('meteo_calculando_min_pl');
+      texto += ' (' + minTpl.replace('{n}', min) + ')';
+    }
+    return texto;
+  }
   var f = FC[currentLang] || FC.es;
   var prev = m.prevision24 || [];
   var h0   = prev[0] || {};
