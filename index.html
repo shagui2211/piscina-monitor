@@ -426,10 +426,6 @@ body.tv .card-st-label{font-size:0.9rem;}
 }
 /* ── TV LANGUAGE TRANSITION ── */
 .lang-fade{}
-/* ── ICONO ACTUALIZANDO (modo TV, sin datos de clima) ── */
-@keyframes spin-slow{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
-body.tv #meteo-icon.updating{ display:inline-block; animation:spin-slow 2s linear infinite; opacity:0.55; }
-body.tv #meteo-frase.updating{ color:var(--muted); font-style:italic; }
 body.tv .lang-indicator{
   position:fixed;bottom:18px;right:24px;
   font-family:var(--mono);font-size:0.75rem;color:var(--muted);
@@ -813,7 +809,6 @@ var I18N = {
     clock12:       false,
     locale:        'es-ES',
     loading:       'Cargando…',
-    updating_weather: 'Actualizando datos…',
     no_prev:       'Sin datos de previsión',
     error_conn:    'Error de conexión — No se puede contactar con la API.',
     error_check:   'Comprueba que Node-RED y Tailscale Funnel están activos.',
@@ -826,6 +821,9 @@ var I18N = {
           71:'Nieve leve',73:'Nieve moderada',75:'Nieve intensa',77:'Granizo',
           80:'Chubascos leves',81:'Chubascos moderados',82:'Chubascos intensos',
           85:'Chubascos de nieve',95:'Tormenta',96:'Tormenta con granizo',99:'Tormenta severa'},
+    meteo_calculando:        'Calculando clima…',
+    meteo_calculando_min_sg: '1 min restante',
+    meteo_calculando_min_pl: '{n} min restantes',
   },
   en: {
     title:         'Outdoor Pool',
@@ -848,7 +846,6 @@ var I18N = {
     clock12:       true,
     locale:        'en-US',
     loading:       'Loading…',
-    updating_weather: 'Updating data…',
     no_prev:       'No forecast data',
     error_conn:    'Connection error — Cannot reach the API.',
     error_check:   'Check that Node-RED and Tailscale Funnel are active.',
@@ -861,6 +858,9 @@ var I18N = {
           71:'Light snow',73:'Moderate snow',75:'Heavy snow',77:'Hail',
           80:'Light showers',81:'Moderate showers',82:'Heavy showers',
           85:'Snow showers',95:'Thunderstorm',96:'Thunderstorm with hail',99:'Severe thunderstorm'},
+    meteo_calculando:        'Calculating weather…',
+    meteo_calculando_min_sg: '1 min remaining',
+    meteo_calculando_min_pl: '{n} min remaining',
   },
   de: {
     title:         'Außenpool',
@@ -883,7 +883,6 @@ var I18N = {
     clock12:       false,
     locale:        'de-DE',
     loading:       'Lädt…',
-    updating_weather: 'Daten werden aktualisiert…',
     no_prev:       'Keine Vorschaudaten',
     error_conn:    'Verbindungsfehler — API nicht erreichbar.',
     error_check:   'Prüfe ob Node-RED und Tailscale Funnel aktiv sind.',
@@ -896,6 +895,9 @@ var I18N = {
           71:'Leichter Schnee',73:'Mäßiger Schnee',75:'Starker Schnee',77:'Hagel',
           80:'Leichte Schauer',81:'Mäßige Schauer',82:'Starke Schauer',
           85:'Schneeschauer',95:'Gewitter',96:'Gewitter mit Hagel',99:'Schweres Gewitter'},
+    meteo_calculando:        'Wetter wird berechnet…',
+    meteo_calculando_min_sg: 'noch 1 Min.',
+    meteo_calculando_min_pl: 'noch {n} Min.',
   },
   fr: {
     title:         'Piscine Extérieure',
@@ -918,7 +920,6 @@ var I18N = {
     clock12:       false,
     locale:        'fr-FR',
     loading:       'Chargement…',
-    updating_weather: 'Mise à jour…',
     no_prev:       'Pas de données de prévision',
     error_conn:    "Erreur de connexion — Impossible de contacter l'API.",
     error_check:   'Vérifiez que Node-RED et Tailscale Funnel sont actifs.',
@@ -931,6 +932,9 @@ var I18N = {
           71:'Neige légère',73:'Neige modérée',75:'Neige forte',77:'Grêle',
           80:'Averses légères',81:'Averses modérées',82:'Averses fortes',
           85:'Averses de neige',95:'Orage',96:'Orage avec grêle',99:'Orage violent'},
+    meteo_calculando:        'Calcul de la météo…',
+    meteo_calculando_min_sg: '1 min restante',
+    meteo_calculando_min_pl: '{n} min restantes',
   },
   it: {
     title:         'Piscina Esterna',
@@ -953,7 +957,6 @@ var I18N = {
     clock12:       false,
     locale:        'it-IT',
     loading:       'Caricamento…',
-    updating_weather: 'Aggiornamento dati…',
     no_prev:       'Nessun dato di previsione',
     error_conn:    "Errore di connessione — Impossibile contattare l'API.",
     error_check:   'Verifica che Node-RED e Tailscale Funnel siano attivi.',
@@ -966,6 +969,9 @@ var I18N = {
           71:'Neve leggera',73:'Neve moderata',75:'Neve intensa',77:'Grandine',
           80:'Rovesci leggeri',81:'Rovesci moderati',82:'Rovesci intensi',
           85:'Rovesci di neve',95:'Temporale',96:'Temporale con grandine',99:'Temporale violento'},
+    meteo_calculando:        'Calcolo del meteo…',
+    meteo_calculando_min_sg: '1 min rimanente',
+    meteo_calculando_min_pl: '{n} min rimanenti',
   }
 };
 function t(key){ return (I18N[currentLang]||I18N.es)[key] || key; }
@@ -1350,17 +1356,31 @@ function renderMeteo(m){
   var horas=m.prevision24||m.horas24||[];
   var iconEl=document.getElementById('meteo-icon');
   var fraseEl=document.getElementById('meteo-frase');
-  /* ── Sin datos de clima disponibles ── */
-  var hasWmoData = (horas.length && horas[0].wmo) || m.wmo_actual;
-  if(!hasWmoData){
-    if(iconEl){ iconEl.textContent = '🔄'; iconEl.classList.add('updating'); }
-    if(fraseEl){ fraseEl.textContent = (I18N[currentLang]||I18N.es).updating_weather || 'Actualizando datos…'; fraseEl.classList.add('updating'); }
-    /* No cambiar el fondo cuando no hay datos */
+  // ── Estado "Calculando clima…" durante los primeros ~30 min ──
+  // Si BME280 todavía no tiene tendencia barométrica fiable, el backend
+  // expone meteo_acumulando=true y no envía wmo_actual ni frase, para no
+  // mostrar diagnósticos engañosos. Aquí mostramos cuenta atrás y fondo neutro.
+  if (m.meteo_acumulando) {
+    if (iconEl) iconEl.textContent = '⏳';
+    if (fraseEl) {
+      var min = m.meteo_acumulando_min_restantes;
+      var texto = t('meteo_calculando');
+      if (typeof min === 'number' && min > 0) {
+        var minTpl = (min === 1) ? t('meteo_calculando_min_sg') : t('meteo_calculando_min_pl');
+        texto += ' (' + minTpl.replace('{n}', min) + ')';
+      }
+      fraseEl.textContent = texto;
+    }
+    var alertaEl = document.getElementById('meteo-badge-alerta');
+    if (alertaEl) alertaEl.innerHTML = '';
+    var tendEl = document.getElementById('meteo-tend');
+    if (tendEl) tendEl.innerHTML = '';
+    lastWmoCode = 0; // tratar como 'clear' a efectos internos
+    if (window.setWeatherBackground && !window._debugWeatherLocked) {
+      window.setWeatherBackground(0);  // WMO 0 = clear (fondo neutro)
+    }
     return;
   }
-  /* Hay datos: quitar clase updating si estaba */
-  if(iconEl)  iconEl.classList.remove('updating');
-  if(fraseEl) fraseEl.classList.remove('updating');
   var ICON_TO_WMO = {
     '☀️':0, '🌤️':1, '⛅':2, '☁️':3,
     '🌫️':45, '🌥️':2,
@@ -1571,13 +1591,6 @@ async function load(){
     dot.className='conn-dot danger';
     dot.setAttribute('aria-label','Sin conexión');
     if(!isTvMode) banner.classList.add('visible');
-    else {
-      /* En TV mode: mostrar estado "actualizando" en el widget de clima */
-      var iconEl2 = document.getElementById('meteo-icon');
-      var fraseEl2 = document.getElementById('meteo-frase');
-      if(iconEl2){ iconEl2.textContent = '🔄'; iconEl2.classList.add('updating'); }
-      if(fraseEl2){ fraseEl2.textContent = (I18N[currentLang]||I18N.es).updating_weather || 'Actualizando datos…'; fraseEl2.classList.add('updating'); }
-    }
     console.error('API error:',err);
   }
 }
