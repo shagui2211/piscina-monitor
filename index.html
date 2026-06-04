@@ -287,6 +287,28 @@ body.tv .p7-viento{font-size:0.9rem;margin-top:4px;}
 body.tv #card-ppm [data-i18n="lbl_ppm_nota"]{display:none;}
 body.tv .card-st-label{font-size:0.9rem;}
 /* ══════════════════════════════════════════════════════════════
+   TV MODE — PANTALLA HORIZONTAL (landscape): MARGEN DE SEGURIDAD
+   Da aire arriba y a los lados para que el contenido no quede
+   pegado al borde del televisor (compensa el overscan típico).
+   Solo afecta a horizontal en TV estándar (FHD/QHD); no toca
+   ni el modo vertical (portrait) ni el bloque 4K (≥2560px).
+   ▸ Para ajustar el margen, cambia estos dos valores:
+       vertical  → 3vh   (arriba/abajo)
+       lateral   → 3.5vw (izquierda/derecha)
+   ══════════════════════════════════════════════════════════════ */
+@media(orientation:landscape) and (max-width:2559px){
+  body.tv{ padding:3vh 3.5vw; }
+  body.tv header{
+    border-radius:16px;
+    margin:0;
+  }
+  body.tv main{
+    max-width:100%;
+    padding:2.5vh 0 0;   /* hueco bajo la cabecera; los lados los pone el body */
+    margin:0;
+  }
+}
+/* ══════════════════════════════════════════════════════════════
    TV MODE — PANTALLA VERTICAL (portrait)
    Aplica cuando el alto es mayor que el ancho en modo TV
    ══════════════════════════════════════════════════════════════ */
