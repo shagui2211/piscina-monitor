@@ -1406,6 +1406,7 @@ function iconSegunHora(icon){
       '☀️':'🌙',   // despejado            -> luna
       '🌤️':'🌙',  // mayormente despejado -> luna
       '⛅':'☁️',   // parcialmente nublado -> nube (sin sol)
+      '🌥️':'☁️',  // niebla (ICON_FIX la convierte en 🌥️, con sol) -> nube
       '🌦️':'🌧️'   // llovizna/chubasco con sol -> nube de lluvia
     };
     return nightMap[icon] || icon;
@@ -1489,19 +1490,24 @@ function renderMeteo(m){
     // Modo debug activo: el icono/frase/fondo del clima actual los fija el
     // panel de prueba (testWeather). No los sobrescribimos aquí; el resto de
     // la tarjeta (badges, tendencia, previsión) sí se sigue actualizando.
-  } else if(m.lluvia_actual !== undefined || m.nubes_actual !== undefined){
+  } else if(m.lluvia_actual !== undefined || m.nubes_actual !== undefined || m.code_actual !== undefined){
     // ── TIEMPO ACTUAL REAL (Open-Meteo "current", vía Node-RED) ──
-    // Preferente sobre la previsión: estos campos reflejan lo que ocurre
-    // AHORA, no lo previsto para la hora. Node-RED debe enviar:
+    // Refleja lo que ocurre AHORA (no la previsión de la hora). Node-RED envía:
     //   lluvia_actual : mm de precipitación en este momento
     //   nubes_actual  : % de nubosidad actual (0–100)
+    //   code_actual   : código WMO actual — necesario para niebla / nieve /
+    //                   tormenta / granizo, que ni los mm ni el % expresan.
     var llNow = (+m.lluvia_actual || 0);
     var nubes = (m.nubes_actual != null) ? +m.nubes_actual : null;
+    var codeNow = (m.code_actual != null) ? +m.code_actual : null;
     var rtCode;
-    if(llNow >= 1.0)       rtCode = 61;   // lluvia
-    else if(llNow >= 0.1)  rtCode = 51;   // llovizna
-    else if(nubes != null) rtCode = (nubes >= 70) ? 3 : (nubes >= 30 ? 2 : 0); // nublado / parcial / despejado
-    else                   rtCode = 3;    // sin dato de nubes pero sin lluvia -> nublado
+    if(codeNow === 45 || codeNow === 48)  rtCode = codeNow;       // niebla
+    else if(codeNow !== null && codeNow >= 95) rtCode = codeNow;  // tormenta
+    else if(codeNow !== null && ((codeNow >= 71 && codeNow <= 75) || codeNow === 77 || codeNow === 85)) rtCode = codeNow; // nieve / granizo
+    else if(llNow >= 1.0)       rtCode = 61;          // lluvia (mm reales)
+    else if(llNow >= 0.1)       rtCode = 51;          // llovizna (mm reales)
+    else if(nubes !== null)     rtCode = (nubes >= 70) ? 3 : (nubes >= 30 ? 2 : 0); // nublado / parcial / despejado
+    else                        rtCode = 3;           // sin dato de nubes pero sin lluvia -> nublado
     iconEl.textContent = iconSegunHora(wmoIcon(rtCode));
     lastWmoCode = rtCode;
     condReal = wmoCodeToCond(rtCode);
