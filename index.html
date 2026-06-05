@@ -1130,7 +1130,7 @@ var FC = {
   },
 };
 
-function generarFraseClima(m, tamb, hum){
+function generarFraseClima(m, tamb, hum, condOverride){
   if(!m) return '';
   // ── Si el backend señala que aún acumula datos (~30 min post-arranque),
   // no inventamos frase: devolvemos el texto i18n con cuenta atrás.
@@ -1157,7 +1157,7 @@ function generarFraseClima(m, tamb, hum){
   }
   lp3 = cnt > 0 ? lp3 / cnt : 0;
 
-  var wmoA    = m.wmo_actual || 'clouds';
+  var wmoA    = condOverride || m.wmo_actual || 'clouds';
   var tendDph = m.tendDph   || 0;
   var isPrecip = /^(rain|storm|snow|hail|drizzle)$/.test(wmoA);
 
@@ -1399,9 +1399,32 @@ function getCurrentDayPhase(){
 function iconSegunHora(icon){
   if(!icon) return icon;
   var phase = getCurrentDayPhase();
-  /* Solo de noche sustituimos el sol por luna; amanecer mantiene el sol */
-  if(phase === 'night' && icon === '☀️') return '🌙';
+  /* De noche el sol no debe aparecer: cambiamos los iconos con sol por su
+     equivalente nocturno. El amanecer mantiene el sol. */
+  if(phase === 'night'){
+    var nightMap = {
+      '☀️':'🌙',   // despejado            -> luna
+      '🌤️':'🌙',  // mayormente despejado -> luna
+      '⛅':'☁️',   // parcialmente nublado -> nube (sin sol)
+      '🌦️':'🌧️'   // llovizna/chubasco con sol -> nube de lluvia
+    };
+    return nightMap[icon] || icon;
+  }
   return icon;
+}
+/* Código WMO -> familia de condición (para que la FRASE use la misma
+   condición real que el icono, no la deducción del BME280). */
+function wmoCodeToCond(code){
+  if(code === null || code === undefined) return null;
+  if(code <= 1) return 'clear';
+  if(code <= 3) return 'clouds';
+  if(code === 45 || code === 48) return 'fog';
+  if(code >= 51 && code <= 55) return 'drizzle';
+  if((code >= 61 && code <= 65) || (code >= 80 && code <= 82)) return 'rain';
+  if(code >= 95) return 'storm';
+  if((code >= 71 && code <= 75) || code === 85 || code === 86) return 'snow';
+  if(code === 77) return 'hail';
+  return 'clouds';
 }
 function badgeHTML(text,color){
   var cls='meteo-badge badge-'+(color||'off');
@@ -1461,6 +1484,7 @@ function renderMeteo(m){
   var BME_WMO_MAP  = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
   var BME_ICON_MAP = {'clear':'☀️','clouds':'⛅','fog':'🌫️','drizzle':'🌦️','rain':'🌧️','storm':'⛈️','snow':'❄️','hail':'🌨️'};
 
+  var condReal = null;  // condición real mostrada (para que la frase la use)
   if(window._debugWeatherLocked){
     // Modo debug activo: el icono/frase/fondo del clima actual los fija el
     // panel de prueba (testWeather). No los sobrescribimos aquí; el resto de
@@ -1480,7 +1504,7 @@ function renderMeteo(m){
     else                   rtCode = 3;    // sin dato de nubes pero sin lluvia -> nublado
     iconEl.textContent = iconSegunHora(wmoIcon(rtCode));
     lastWmoCode = rtCode;
-    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
+    condReal = wmoCodeToCond(rtCode);
     if(window.setWeatherBackground) window.setWeatherBackground(rtCode);
   } else if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
@@ -1520,11 +1544,10 @@ function renderMeteo(m){
     }
     if(skyIcon) iconEl.textContent = iconSegunHora(sanitizeIcon(skyIcon));
     if(skyCode !== null) lastWmoCode = skyCode;
-    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
+    condReal = wmoCodeToCond(skyCode);
     if(window.setWeatherBackground) window.setWeatherBackground(skyCode);
   } else {
     // Sin previsión Open-Meteo disponible: respaldo al BME280 si existe.
-    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
     if(window.setWeatherBackground){
       if(m.wmo_actual){
         var bmeCode2 = BME_WMO_MAP[m.wmo_actual];
@@ -1534,12 +1557,20 @@ function renderMeteo(m){
       }
     }
   }
-  // Durante "acumulando" la frase del barómetro (Zambretti) aún no está lista;
-  // en su lugar mostramos la etiqueta de la condición real (p. ej. "Nublado").
-  if (m.meteo_acumulando && fraseEl) {
-    var L_ac = I18N[currentLang] || I18N.es;
-    var lab_ac = (L_ac.wmo && L_ac.wmo[lastWmoCode]) || (I18N.es.wmo && I18N.es.wmo[lastWmoCode]) || '';
-    if (lab_ac) fraseEl.textContent = lab_ac;
+  // Frase del clima actual:
+  //  · debug: la fija el panel de prueba (no tocar aquí)
+  //  · acumulando: el barómetro aún no da narrativa -> etiqueta de condición real
+  //  · normal: narrativa del barómetro, pero con la CONDICIÓN basada en lo que
+  //    muestra el icono (Open-Meteo), no en wmo_actual del BME280, para que la
+  //    frase no diga "despejado" con el cielo nublado.
+  if(fraseEl && !window._debugWeatherLocked){
+    if(m.meteo_acumulando){
+      var L_ac = I18N[currentLang] || I18N.es;
+      var lab_ac = (L_ac.wmo && L_ac.wmo[lastWmoCode]) || (I18N.es.wmo && I18N.es.wmo[lastWmoCode]) || '';
+      if(lab_ac) fraseEl.textContent = lab_ac;
+    } else {
+      fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum, condReal);
+    }
   }
   var badge='';
   if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
