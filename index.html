@@ -1473,6 +1473,23 @@ function renderMeteo(m){
       var bmeFb = BME_WMO_MAP[m.wmo_actual];
       if(skyCode === null && bmeFb !== undefined) skyCode = bmeFb;
     }
+    // Graduación por LLUVIA REAL de la hora actual (mm), no por el código de
+    // Open-Meteo (que marca lluvia por probabilidad aunque no caiga nada):
+    //   < 0.1 mm  -> nublado  (cubierto pero sin precipitación)
+    //   < 1.0 mm  -> llovizna (precipitación ligera)
+    //   >= 1.0 mm -> lluvia
+    // Solo reclasifica precipitación líquida; nieve/granizo/tormenta se respetan.
+    var lluviaAhora = (horas[0].lluvia || 0);
+    if(skyCode !== null && skyCode >= 51){
+      var esLiquida = (skyCode >= 51 && skyCode <= 65) || (skyCode >= 80 && skyCode <= 82);
+      if(lluviaAhora < 0.1){
+        skyCode = 3;                                 // nublado
+        skyIcon = wmoIcon(skyCode);
+      } else if(esLiquida){
+        skyCode = (lluviaAhora < 1.0) ? 51 : 61;     // llovizna / lluvia
+        skyIcon = wmoIcon(skyCode);
+      }
+    }
     if(skyIcon) iconEl.textContent = iconSegunHora(sanitizeIcon(skyIcon));
     if(skyCode !== null) lastWmoCode = skyCode;
     if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
