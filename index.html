@@ -1420,25 +1420,36 @@ function renderMeteo(m){
   // expone meteo_acumulando=true y no envía wmo_actual ni frase, para no
   // mostrar diagnósticos engañosos. Aquí mostramos cuenta atrás y fondo neutro.
   if (m.meteo_acumulando) {
-    if (iconEl) iconEl.textContent = '⏳';
-    if (fraseEl) {
-      var min = m.meteo_acumulando_min_restantes;
-      var texto = t('meteo_calculando');
-      if (typeof min === 'number' && min > 0) {
-        var minTpl = (min === 1) ? t('meteo_calculando_min_sg') : t('meteo_calculando_min_pl');
-        texto += ' (' + minTpl.replace('{n}', min) + ')';
-      }
-      fraseEl.textContent = texto;
-    }
+    // El BME280 aún calcula su tendencia barométrica (~30 min tras arrancar),
+    // así que los extras del barómetro (alerta de tormenta, tendencia, frase
+    // Zambretti) no están listos y los ocultamos. PERO el tiempo actual de
+    // Open-Meteo sí está disponible: si lo hay, no mostramos el reloj de arena;
+    // dejamos que la condición real (icono/fondo/frase) se rellene abajo.
     var alertaEl = document.getElementById('meteo-badge-alerta');
     if (alertaEl) alertaEl.innerHTML = '';
     var tendEl = document.getElementById('meteo-tend');
     if (tendEl) tendEl.innerHTML = '';
-    lastWmoCode = 0; // tratar como 'clear' a efectos internos
-    if (window.setWeatherBackground && !window._debugWeatherLocked) {
-      window.setWeatherBackground(0);  // WMO 0 = clear (fondo neutro)
+    var hayDatoReal = (m.lluvia_actual !== undefined || m.nubes_actual !== undefined ||
+                       (horas.length && horas[0] && horas[0].wmo));
+    if (!hayDatoReal) {
+      // Aún no hay datos de Open-Meteo: mantenemos la cuenta atrás como antes.
+      if (iconEl) iconEl.textContent = '⏳';
+      if (fraseEl) {
+        var min = m.meteo_acumulando_min_restantes;
+        var texto = t('meteo_calculando');
+        if (typeof min === 'number' && min > 0) {
+          var minTpl = (min === 1) ? t('meteo_calculando_min_sg') : t('meteo_calculando_min_pl');
+          texto += ' (' + minTpl.replace('{n}', min) + ')';
+        }
+        fraseEl.textContent = texto;
+      }
+      lastWmoCode = 0; // tratar como 'clear' a efectos internos
+      if (window.setWeatherBackground && !window._debugWeatherLocked) {
+        window.setWeatherBackground(0);  // WMO 0 = clear (fondo neutro)
+      }
+      return;
     }
-    return;
+    // Si hay dato real, NO hacemos return: seguimos abajo con la condición real.
   }
   var ICON_TO_WMO = {
     '☀️':0, '🌤️':1, '⛅':2, '☁️':3,
@@ -1454,6 +1465,23 @@ function renderMeteo(m){
     // Modo debug activo: el icono/frase/fondo del clima actual los fija el
     // panel de prueba (testWeather). No los sobrescribimos aquí; el resto de
     // la tarjeta (badges, tendencia, previsión) sí se sigue actualizando.
+  } else if(m.lluvia_actual !== undefined || m.nubes_actual !== undefined){
+    // ── TIEMPO ACTUAL REAL (Open-Meteo "current", vía Node-RED) ──
+    // Preferente sobre la previsión: estos campos reflejan lo que ocurre
+    // AHORA, no lo previsto para la hora. Node-RED debe enviar:
+    //   lluvia_actual : mm de precipitación en este momento
+    //   nubes_actual  : % de nubosidad actual (0–100)
+    var llNow = (+m.lluvia_actual || 0);
+    var nubes = (m.nubes_actual != null) ? +m.nubes_actual : null;
+    var rtCode;
+    if(llNow >= 1.0)       rtCode = 61;   // lluvia
+    else if(llNow >= 0.1)  rtCode = 51;   // llovizna
+    else if(nubes != null) rtCode = (nubes >= 70) ? 3 : (nubes >= 30 ? 2 : 0); // nublado / parcial / despejado
+    else                   rtCode = 3;    // sin dato de nubes pero sin lluvia -> nublado
+    iconEl.textContent = iconSegunHora(wmoIcon(rtCode));
+    lastWmoCode = rtCode;
+    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
+    if(window.setWeatherBackground) window.setWeatherBackground(rtCode);
   } else if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
     var rawIcon = wmoObj.icon || '';
@@ -1505,6 +1533,13 @@ function renderMeteo(m){
         window.setWeatherBackground(null);
       }
     }
+  }
+  // Durante "acumulando" la frase del barómetro (Zambretti) aún no está lista;
+  // en su lugar mostramos la etiqueta de la condición real (p. ej. "Nublado").
+  if (m.meteo_acumulando && fraseEl) {
+    var L_ac = I18N[currentLang] || I18N.es;
+    var lab_ac = (L_ac.wmo && L_ac.wmo[lastWmoCode]) || (I18N.es.wmo && I18N.es.wmo[lastWmoCode]) || '';
+    if (lab_ac) fraseEl.textContent = lab_ac;
   }
   var badge='';
   if(m.alerta&&m.alerta!=='...'&&m.alerta!=='ESTABLE'){
