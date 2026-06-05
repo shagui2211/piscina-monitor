@@ -1359,6 +1359,22 @@ function sanitizeIcon(icon){
   if(!icon) return '⛅';
   return ICON_FIX[icon] || icon;
 }
+/* DEBUG: deja la tarjeta "Clima actual" coherente con el modo forzado.
+   Con wmo=null restaura los datos reales (Open-Meteo). */
+function applyDebugMeteoCard(wmo){
+  var iconEl  = document.getElementById('meteo-icon');
+  var fraseEl = document.getElementById('meteo-frase');
+  if(wmo === null || wmo === undefined){
+    if(typeof lastMeteoObj !== 'undefined' && lastMeteoObj) renderMeteo(lastMeteoObj);
+    return;
+  }
+  if(iconEl)  iconEl.textContent = iconSegunHora(wmoIcon(wmo));
+  if(fraseEl){
+    var L = I18N[currentLang] || I18N.es;
+    var label = (L.wmo && L.wmo[wmo]) || (I18N.es.wmo && I18N.es.wmo[wmo]) || '';
+    if(label) fraseEl.textContent = label;
+  }
+}
 /* Devuelve la fase del día (simplificada, sin depender del IIFE del canvas) */
 function getCurrentDayPhase(){
   var debugH = (typeof window._debugHour !== 'undefined') ? window._debugHour : -1;
@@ -1434,31 +1450,37 @@ function renderMeteo(m){
   var BME_WMO_MAP  = {'clear':0,'clouds':3,'fog':45,'drizzle':51,'rain':61,'storm':95,'snow':71,'hail':77};
   var BME_ICON_MAP = {'clear':'☀️','clouds':'⛅','fog':'🌫️','drizzle':'🌦️','rain':'🌧️','storm':'⛈️','snow':'❄️','hail':'🌨️'};
 
-  if(horas.length&&horas[0].wmo){
+  if(window._debugWeatherLocked){
+    // Modo debug activo: el icono/frase/fondo del clima actual los fija el
+    // panel de prueba (testWeather). No los sobrescribimos aquí; el resto de
+    // la tarjeta (badges, tendencia, previsión) sí se sigue actualizando.
+  } else if(horas.length&&horas[0].wmo){
     var wmoObj = horas[0].wmo;
     var rawIcon = wmoObj.icon || '';
     var detectedCode = ICON_TO_WMO[rawIcon];
     if(detectedCode === undefined) detectedCode = null;
 
-    if(m.wmo_actual){
-      // BME280 disponible: usar su condicion real para icono, texto y fondo
-      var bmeCode = BME_WMO_MAP[m.wmo_actual];
-      var bmeIcon = BME_ICON_MAP[m.wmo_actual] || wmoObj.icon;
-      var finalCode = (bmeCode !== undefined) ? bmeCode : detectedCode;
-      iconEl.textContent = iconSegunHora(sanitizeIcon(bmeIcon));
-      lastWmoCode = finalCode;
-      if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
-      if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(finalCode);
-    } else {
-      // Sin BME280: usar Open-Meteo como antes
-      if(wmoObj.icon) iconEl.textContent = iconSegunHora(sanitizeIcon(wmoObj.icon));
-      if(detectedCode !== null) lastWmoCode = detectedCode;
-      if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
-      if(window.setWeatherBackground && !window._debugWeatherLocked) window.setWeatherBackground(detectedCode);
+    // La nubosidad real la aporta Open-Meteo: un BME280 (presión/temp/humedad)
+    // no puede "ver" el cielo, así que su deducción confunde nublado con
+    // despejado bajo presión estable. Por eso el ICONO y el FONDO del clima
+    // actual se basan en Open-Meteo; el BME280 (wmo_actual, tendencia) queda
+    // reservado para presión y sensación térmica, no para el estado del cielo.
+    var skyIcon = wmoObj.icon;
+    var skyCode = detectedCode;
+    // Respaldo al BME280 solo si Open-Meteo no trae dato de cielo.
+    if(!skyIcon && m.wmo_actual){
+      skyIcon = BME_ICON_MAP[m.wmo_actual] || '';
+      var bmeFb = BME_WMO_MAP[m.wmo_actual];
+      if(skyCode === null && bmeFb !== undefined) skyCode = bmeFb;
     }
-  } else {
+    if(skyIcon) iconEl.textContent = iconSegunHora(sanitizeIcon(skyIcon));
+    if(skyCode !== null) lastWmoCode = skyCode;
     if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
-    if(window.setWeatherBackground && !window._debugWeatherLocked){
+    if(window.setWeatherBackground) window.setWeatherBackground(skyCode);
+  } else {
+    // Sin previsión Open-Meteo disponible: respaldo al BME280 si existe.
+    if(fraseEl) fraseEl.textContent = generarFraseClima(m, lastTamb, lastHum);
+    if(window.setWeatherBackground){
       if(m.wmo_actual){
         var bmeCode2 = BME_WMO_MAP[m.wmo_actual];
         window.setWeatherBackground(bmeCode2 !== undefined ? bmeCode2 : null);
@@ -2583,12 +2605,16 @@ var LANG_ALIAS = {
     if(e.key === 'd' || e.key === 'D'){
       visible = !visible;
       panel.style.display = visible ? 'flex' : 'none';
-      if(!visible) window._debugWeatherLocked = false;
+      if(!visible){
+        window._debugWeatherLocked = false;
+        if(typeof applyDebugMeteoCard === 'function') applyDebugMeteoCard(null);
+      }
     }
   });
   window.testWeather = function(wmo){
     window._debugWeatherLocked = (wmo !== null && wmo !== undefined);
     if(window.setWeatherBackground) window.setWeatherBackground(wmo);
+    if(typeof applyDebugMeteoCard === 'function') applyDebugMeteoCard(wmo);
     panel.querySelectorAll('button[data-mode]').forEach(function(btn){ btn.classList.remove('active'); });
     var modeMap = {0:'clear',3:'clouds',45:'fog',51:'drizzle',61:'rain',95:'storm',71:'snow',77:'hail'};
     panel.querySelectorAll('button[data-mode]').forEach(function(btn){
