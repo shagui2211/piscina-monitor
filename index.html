@@ -1838,32 +1838,61 @@ var LANG_ALIAS = {
   }
   function mkClouds(){
     var clouds = [];
+    /* Nubes tipo cúmulo, compactas y SEPARADAS entre sí (con cielo de por
+       medio) para que se lean como nubes individuales en vez de fundirse
+       en una mancha. Posición horizontal repartida con huecos. */
     var configs = [
-      { yFrac:0.02, scale:3.2, speed:0.07, alpha:0.80 },
-      { yFrac:0.10, scale:2.8, speed:0.11, alpha:0.78 },
-      { yFrac:0.20, scale:3.0, speed:0.09, alpha:0.82 },
-      { yFrac:0.05, scale:2.0, speed:0.16, alpha:0.72 },
-      { yFrac:0.15, scale:2.4, speed:0.12, alpha:0.76 },
-      { yFrac:0.25, scale:1.8, speed:0.19, alpha:0.68 },
-      { yFrac:0.30, scale:2.2, speed:0.10, alpha:0.74 },
-      { yFrac:0.08, scale:1.6, speed:0.24, alpha:0.65 },
-      { yFrac:0.35, scale:1.4, speed:0.20, alpha:0.60 },
+      { xFrac:0.10, yFrac:0.06, scale:1.5, speed:0.06, alpha:0.64 },
+      { xFrac:0.40, yFrac:0.03, scale:1.8, speed:0.05, alpha:0.68 },
+      { xFrac:0.71, yFrac:0.11, scale:1.4, speed:0.08, alpha:0.60 },
+      { xFrac:0.24, yFrac:0.22, scale:1.3, speed:0.10, alpha:0.56 },
+      { xFrac:0.57, yFrac:0.28, scale:1.6, speed:0.07, alpha:0.56 },
+      { xFrac:0.87, yFrac:0.20, scale:1.2, speed:0.12, alpha:0.52 },
     ];
     configs.forEach(function(c){
-      var scale = c.scale + Math.random()*0.5;
+      var scale = c.scale + Math.random()*0.25;
       var alpha = c.alpha;
-      var puffs = mkCloudPuffs();
+      var puffs = mkCloudPuffsOvercast();
       clouds.push({
-        x: (Math.random() * 1.4 - 0.2) * canvas.width,
-        y: canvas.height * c.yFrac + (Math.random()-0.5) * 20,
+        x: c.xFrac * canvas.width + (Math.random()-0.5) * 40,
+        y: canvas.height * c.yFrac + (Math.random()-0.5) * 22,
         scale: scale,
-        speed: c.speed + Math.random()*0.05,
+        speed: c.speed + Math.random()*0.04,
         alpha: alpha,
         puffs: puffs,
         baked: bakeCloud(puffs, scale, alpha, 'grey'),
       });
     });
     return clouds;
+  }
+  /* Cúmulo compacto: base plana ancha + bultos redondeados arriba.
+     Más estrecho y redondo que mkCloudPuffs (que es para las nubes
+     decorativas blancas del modo despejado). */
+  function mkCloudPuffsOvercast(){
+    var puffs = [];
+    var baseCount = 4 + Math.floor(Math.random()*2);   // 4-5
+    var spread = 95 + Math.random()*40;
+    for(var i=0;i<baseCount;i++){
+      var t = (i/(baseCount-1))-0.5;
+      puffs.push({
+        dx:  t * spread * 2.0,
+        dy:  14 + Math.abs(t)*6 + Math.random()*4,
+        r:   46 + Math.random()*24,
+        top: 0.0 + Math.random()*0.10,
+      });
+    }
+    var humps = 2 + Math.floor(Math.random()*2);        // 2-3
+    for(var j=0;j<humps;j++){
+      var dt2 = (humps>1 ? (j/(humps-1))-0.5 : 0);
+      puffs.push({
+        dx:  dt2 * spread * 1.1 + (Math.random()-0.5)*22,
+        dy:  -10 - Math.random()*14,
+        r:   38 + Math.random()*20,
+        top: 0.32 + Math.random()*0.24,
+      });
+    }
+    puffs.push({ dx:0, dy:2, r:66+Math.random()*22, top:0.12 });
+    return puffs;
   }
   function mkCloudPuffs(){
     var puffs = [];
@@ -1895,11 +1924,15 @@ var LANG_ALIAS = {
   /* Precalcula la nube en un canvas offscreen (solo una vez por nube) */
   function bakeCloud(puffs, scale, alpha, palette){
     /* palette: 'grey' (nublado) | 'white' (despejado, default) */
+    /* Las nubes "grey" usan elipses más redondas (menos planas) para tener
+       silueta de nube; las blancas decorativas siguen anchas como antes. */
+    var AW = (palette === 'grey') ? 1.15 : 1.6;
+    var AH = (palette === 'grey') ? 0.90 : 0.7;
     var pad  = Math.round(70 * scale);
     var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     puffs.forEach(function(p){
-      var rw = p.r * scale * 1.6;
-      var rh = p.r * scale * 0.7;
+      var rw = p.r * scale * AW;
+      var rh = p.r * scale * AH;
       minX = Math.min(minX, p.dx*scale - rw);
       maxX = Math.max(maxX, p.dx*scale + rw);
       minY = Math.min(minY, p.dy*scale - rh);
@@ -1914,19 +1947,25 @@ var LANG_ALIAS = {
     oc.width  = w;
     oc.height = h;
     var octx = oc.getContext('2d');
-    octx.filter = 'blur(' + Math.round(30 * scale) + 'px)';
+    /* Las nubes de "nublado" (grey) llevan menos desenfoque para conservar
+       forma y no fundirse en una mancha; las blancas decorativas se quedan
+       igual de suaves que antes. */
+    octx.filter = 'blur(' + Math.round((palette === 'grey' ? 13 : 30) * scale) + 'px)';
 
     puffs.forEach(function(p){
       var cx = ox + p.dx * scale;
       var cy = oy + p.dy * scale;
-      var rw = p.r * scale * 1.6;
-      var rh = p.r * scale * 0.7;
+      var rw = p.r * scale * AW;
+      var rh = p.r * scale * AH;
       var t  = p.top;
       var rC, gC, bC;
       if(palette === 'grey'){
-        rC = Math.round(148 + t*65);
-        gC = Math.round(158 + t*60);
-        bC = Math.round(170 + t*52);
+        /* Verde-salvia desaturado acorde a la marca (--ok #3d7a5a):
+           base verdosa apagada, con la parte superior del puff más clara
+           (luz). Lean: verde > azul > rojo. */
+        rC = Math.round(150 + t*72);
+        gC = Math.round(168 + t*64);
+        bC = Math.round(158 + t*66);
       } else {
         /* blanco brillante con sombra azul muy suave en la base */
         rC = Math.round(220 + t*35);
