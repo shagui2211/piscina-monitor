@@ -2524,12 +2524,97 @@ var LANG_ALIAS = {
       });
     }
   }
+  /* ── MONTONES DE NIEVE ── */
+  var snowPiles = [];
+  var PILE_COLS = 40;
+  var PILE_MAX  = 10;
+  var PILE_MELT = 0.04;
+
+  function getPileForCard(rect){
+    for(var i=0;i<snowPiles.length;i++){
+      var p=snowPiles[i];
+      if(Math.abs(p.rect.left-rect.left)<2 && Math.abs(p.rect.top-rect.top)<2) return p;
+    }
+    var cols=[];
+    for(var c=0;c<PILE_COLS;c++) cols.push(0);
+    var pile={rect:rect, cols:cols, melting:false};
+    snowPiles.push(pile);
+    return pile;
+  }
+
+  function addSnowToPile(rect, x){
+    var pile = getPileForCard(rect);
+    var col = Math.floor((x - rect.left) / rect.width * PILE_COLS);
+    col = Math.max(0, Math.min(PILE_COLS-1, col));
+    var add = 0.35 + Math.random()*0.25;
+    pile.cols[col]             = Math.min(PILE_MAX, pile.cols[col] + add);
+    if(col > 0)           pile.cols[col-1] = Math.min(PILE_MAX, pile.cols[col-1] + add*0.45);
+    if(col < PILE_COLS-1) pile.cols[col+1] = Math.min(PILE_MAX, pile.cols[col+1] + add*0.45);
+    if(col > 1)           pile.cols[col-2] = Math.min(PILE_MAX, pile.cols[col-2] + add*0.15);
+    if(col < PILE_COLS-2) pile.cols[col+2] = Math.min(PILE_MAX, pile.cols[col+2] + add*0.15);
+  }
+
+  function drawSnowPiles(){
+    for(var i=snowPiles.length-1; i>=0; i--){
+      var pile = snowPiles[i];
+      var rect = pile.rect;
+      var alive = false;
+      for(var c=0;c<PILE_COLS;c++){ if(pile.cols[c]>0.05){ alive=true; break; } }
+      if(!alive){ snowPiles.splice(i,1); continue; }
+      if(pile.melting){
+        for(var c=0;c<PILE_COLS;c++) pile.cols[c] = Math.max(0, pile.cols[c]-PILE_MELT);
+      }
+      var colW = rect.width / PILE_COLS;
+      sx.save();
+      sx.beginPath();
+      sx.rect(rect.left-1, rect.top-PILE_MAX-2, rect.width+2, PILE_MAX+4);
+      sx.clip();
+      sx.shadowColor = 'rgba(180,210,230,0.5)';
+      sx.shadowBlur  = 4;
+      var grad = sx.createLinearGradient(0, rect.top-PILE_MAX, 0, rect.top+1);
+      grad.addColorStop(0,   'rgba(255,255,255,0.96)');
+      grad.addColorStop(0.6, 'rgba(235,245,252,0.88)');
+      grad.addColorStop(1,   'rgba(210,230,245,0.55)');
+      sx.fillStyle = grad;
+      sx.beginPath();
+      sx.moveTo(rect.left, rect.top+1);
+      for(var c=0;c<PILE_COLS;c++){
+        var px = rect.left + c*colW + colW*0.5;
+        var py = rect.top - pile.cols[c];
+        if(c===0){ sx.moveTo(rect.left, rect.top+1); sx.lineTo(rect.left, py); continue; }
+        var cpx = rect.left + c*colW;
+        sx.quadraticCurveTo(cpx, rect.top - pile.cols[c-1], px, py);
+      }
+      sx.lineTo(rect.left + rect.width, rect.top+1);
+      sx.closePath();
+      sx.fill();
+      sx.shadowBlur = 0;
+      sx.strokeStyle = 'rgba(255,255,255,0.75)';
+      sx.lineWidth = 0.8;
+      sx.beginPath();
+      for(var c=0;c<PILE_COLS;c++){
+        var px = rect.left + c*colW + colW*0.5;
+        var py = rect.top - pile.cols[c];
+        if(c===0){ sx.moveTo(rect.left, rect.top - pile.cols[0]); continue; }
+        var cpx = rect.left + c*colW;
+        sx.quadraticCurveTo(cpx, rect.top - pile.cols[c-1], px, py);
+      }
+      sx.stroke();
+      sx.restore();
+    }
+  }
+
+  function meltAllPiles(){
+    snowPiles.forEach(function(p){ p.melting=true; });
+  }
+
   function mkSnowSettle(rects){
     if(!rects.length) return;
     var card = rects[Math.floor(Math.random()*rects.length)];
     var x = card.left + Math.random()*card.width;
     var y = card.top + 1 + Math.random()*3;
-    particles.push({ type:'flake', x:x, y:y, r:2.5+Math.random()*2, life:1.0, decay:0.018+Math.random()*0.01 });
+    addSnowToPile(card, x);
+    particles.push({ type:'flake', x:x, y:y - 6 - Math.random()*8, r:2.5+Math.random()*2, life:1.0, decay:0.022+Math.random()*0.012 });
   }
   function mkHailImpact(rects){
     if(!rects.length) return;
@@ -2582,6 +2667,7 @@ var LANG_ALIAS = {
       else if(currentMode==='snow') mkSnowSettle(rects);
       else if(currentMode==='hail') mkHailImpact(rects);
     }
+    drawSnowPiles();
     particles = particles.filter(function(p){
       p.life -= p.decay;
       if(p.life<=0) return false;
@@ -2640,7 +2726,12 @@ var LANG_ALIAS = {
     else if(cls.indexOf('wbg-snow')    >= 0) m = 'snow';
     else if(cls.indexOf('wbg-hail')    >= 0) m = 'hail';
     currentMode = m;
-    if(m !== _lastWeatherMode){ particles = []; _lastWeatherMode = m; }
+    if(m !== _lastWeatherMode){
+      particles = [];
+      if(_lastWeatherMode === 'snow' && m !== 'snow') meltAllPiles();
+      if(m !== 'snow') snowPiles = [];
+      _lastWeatherMode = m;
+    }
   }
   if(!_prefersReducedMotion) requestAnimationFrame(loop);
 })();
