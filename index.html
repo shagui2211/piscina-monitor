@@ -3019,10 +3019,10 @@ var LANG_ALIAS = {
   var state = 'idle';        /* idle | flyin | perch | flyout */
   var P = PARAM.bird;
   var fx, fy, tx, ty, t0, dur, arc;
-  var prevX = 0, prevY = 0, faceSign = 1;
+  var prevX = 0, prevY = 0, faceSign = 1, curX = 0, curY = 0;
   var wingUp = false, flapAcc = 0, lastNow = 0;
   var perchCard = null, perchRX = 0.5, perchUntil = 0, baseFace = 1;
-  var nextIdle = 0, hopStart = 0, hopUntil = 0, flickUntil = 0;
+  var nextIdle = 0, hopStart = 0, hopUntil = 0, hopAmp = 0, hopDur = 320, flickUntil = 0;
   var schedTimer = null;
 
   function modeOK(){ var c = document.body.className; return /\bwbg-clear\b/.test(c) || /\bwbg-clouds\b/.test(c); }
@@ -3035,7 +3035,7 @@ var LANG_ALIAS = {
     }
     return out;
   }
-  function setPos(x,y){ wrap.style.transform = 'translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'; }
+  function setPos(x,y){ curX=x; curY=y; wrap.style.transform = 'translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'; }
   function setFace(dir){ faceSign = dir; faceEl.style.transform = dir < 0 ? 'scaleX(-1)' : 'scaleX(1)'; }
   function setTilt(d){ tiltEl.style.transform = 'rotate('+d.toFixed(1)+'deg)'; }
   function ease(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
@@ -3079,18 +3079,18 @@ var LANG_ALIAS = {
   }
 
   function leave(){
-    var p = perchPoint();
+    var sx0 = curX, sy0 = curY;                 /* salir desde donde esté ahora */
     var exitLeft = Math.random() < 0.5;
     var ex = exitLeft ? -P.w - 50 : window.innerWidth + 50;
-    var ey = p.y - (80 + Math.random()*100);
-    setFace(ex >= p.x ? 1 : -1);
-    legTo('flyout', p.x, p.y, ex, ey, 1900 + Math.random()*500, 60 + Math.random()*35);
+    var ey = sy0 - (60 + Math.random()*100);
+    setFace(ex >= sx0 ? 1 : -1);
+    legTo('flyout', sx0, sy0, ex, ey, 1800 + Math.random()*500, 55 + Math.random()*35);
   }
 
   function doIdle(now){
     var roll = Math.random();
     if(roll < 0.42){                 /* saltito */
-      hopStart = now; hopUntil = now + 340;
+      hopStart = now; hopDur = 340; hopUntil = now + 340; hopAmp = -4.5;  /* saltito hacia arriba */
     } else if(roll < 0.74){          /* girar la cabeza/cuerpo */
       baseFace = -baseFace; setFace(baseFace);
     } else {                         /* sacudida de alas */
@@ -3108,7 +3108,8 @@ var LANG_ALIAS = {
       var t = (now - t0) / dur; if(t > 1) t = 1;
       var e = ease(t);
       var x = fx + (tx-fx)*e;
-      var und = Math.sin(t * P.undCyc * 6.2832) * P.undAmp * (1 - t*0.35);
+      var endW = t > 0.85 ? (1 - t) / 0.15 : 1;     /* 1 → 0 en el último 15% (toma suave) */
+      var und = Math.sin(t * P.undCyc * 6.2832) * P.undAmp * endW;
       var y = fy + (ty-fy)*e - Math.sin(t*Math.PI)*arc + und;
       setPos(x, y);
 
@@ -3118,20 +3119,21 @@ var LANG_ALIAS = {
       var deg = Math.atan2(dvy, Math.abs(dvx) || 0.001) * 57.2958 * P.kp;
       if(deg >  P.maxTilt) deg =  P.maxTilt;
       if(deg < -P.maxTilt) deg = -P.maxTilt;
-      setTilt(faceSign * deg);
+      setTilt(faceSign * deg * endW);               /* nivela antes de aterrizar */
 
       /* aleteo (cambio de fotograma); al aproximarse, alas arriba para frenar */
-      if(state === 'flyin' && t > 0.82){ showFrame('up'); }
+      if(state === 'flyin' && t > 0.8){ showFrame('up'); }
       else { flapAcc += dt; if(flapAcc >= P.flap){ flapAcc = 0; wingUp = !wingUp; showFrame(wingUp ? 'up' : 'down'); } }
 
       if(t >= 1){
         if(state === 'flyin'){
           state = 'perch';
           wrap.classList.remove('fly'); wrap.classList.add('perch');
-          setTilt(0); showFrame('rest');
+          setTilt(0);
+          showFrame('down'); flickUntil = now + 140;  /* alas bajan y luego se pliegan */
+          hopStart = now; hopDur = 300; hopUntil = now + 300; hopAmp = 3.2; /* amortiguado (patas absorben) */
           perchUntil = now + 5500 + Math.random()*6000;
-          nextIdle = now + 1500 + Math.random()*2500;
-          hopUntil = 0; flickUntil = 0;
+          nextIdle = now + 1700 + Math.random()*2500;
           var r = perchCard.getBoundingClientRect();
           baseFace = (tx + P.w/2) < (r.left + r.width/2) ? 1 : -1; setFace(baseFace);
         } else {
@@ -3149,7 +3151,7 @@ var LANG_ALIAS = {
       if(now > nextIdle && !flickUntil && now > hopUntil) doIdle(now);
       var pp = perchPoint();
       var hop = 0;
-      if(now < hopUntil){ var hp = (now - hopStart) / 340; hop = -Math.sin(hp*Math.PI) * 4; }
+      if(now < hopUntil){ var hp = (now - hopStart) / hopDur; hop = Math.sin(hp*Math.PI) * hopAmp; }
       setPos(pp.x, pp.y + hop);
     }
   }
