@@ -1540,7 +1540,7 @@ function renderMeteo(m){
     var lluviaAhora = (horas[0].lluvia || 0);
     if(skyCode !== null && skyCode >= 51){
       var esLiquida = (skyCode >= 51 && skyCode <= 65) || (skyCode >= 80 && skyCode <= 82);
-      if(lluviaAhora < 0.1){
+      if(esLiquida && lluviaAhora < 0.1){
         skyCode = 3;                                 // nublado
         skyIcon = wmoIcon(skyCode);
       } else if(esLiquida){
