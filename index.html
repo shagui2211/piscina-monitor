@@ -2589,21 +2589,6 @@ var LANG_ALIAS = {
 
   var PILE_MIN_DRAW = 0.35; /* altura mínima (px) para empezar a dibujar la capa */
 
-  /* recorta al contorno superior redondeado de la tarjeta:
-     base plana en el centro, redondeada en las esquinas, sin chorrear por los lados */
-  function clipCardTop(left, right, top, r){
-    var up = top - PILE_MAX - 14;
-    sx.beginPath();
-    sx.moveTo(left, up);
-    sx.lineTo(right, up);
-    sx.lineTo(right, top - r);
-    sx.quadraticCurveTo(right, top, right - r, top);  /* esquina inferior derecha */
-    sx.lineTo(left + r, top);
-    sx.quadraticCurveTo(left, top, left, top - r);     /* esquina inferior izquierda */
-    sx.closePath();
-    sx.clip();
-  }
-
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
       var pile = snowPiles[i];
@@ -2643,8 +2628,38 @@ var LANG_ALIAS = {
       var right= rect.right;
       var r    = Math.min(cardRadius(pile.el), rect.width * 0.5, rect.height * 0.5);
 
+      /* la base de la nieve sigue el contorno superior REDONDEADO de la tarjeta:
+         plano en el centro y curvándose hacia ABAJO en las esquinas, de modo que
+         la punta nunca pueda apuntar hacia arriba */
+      if(right - left < 2 * r + colW) continue;
+
+      function topEdgeY(xc){                 /* y del borde de la tarjeta en xc */
+        var dx;
+        if(xc < left + r)      dx = (left + r) - xc;
+        else if(xc > right - r) dx = xc - (right - r);
+        else return top;
+        dx = Math.min(dx, r);
+        return top + (r - Math.sqrt(r * r - dx * dx));
+      }
+      function edgeFade(xc){                  /* grosor → 0 justo en la esquina */
+        var dEdge = Math.min(xc - left, right - xc);
+        var t = dEdge / (r * 0.85);
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        return t * t * (3 - 2 * t);
+      }
+
+      var surf = [], baseLine = [];
+      for(var c = 0; c < PILE_COLS; c++){
+        var xc = left + c * colW + colW * 0.5;
+        if(xc < left || xc > right) continue;
+        var by = topEdgeY(xc);
+        var th = pile.cols[c] * edgeFade(xc);
+        surf.push({ x: xc, y: by - th });
+        baseLine.push({ x: xc, y: by });
+      }
+      if(surf.length < 2) continue;
+
       sx.save();
-      clipCardTop(left, right, top, r);   /* la curva de la tarjeta recorta la nieve */
 
       var grad = sx.createLinearGradient(0, top - PILE_MAX, 0, top + 1);
       grad.addColorStop(0,   'rgba(255,255,255,0.0)');
@@ -2652,19 +2667,17 @@ var LANG_ALIAS = {
       grad.addColorStop(0.8, 'rgba(238,248,255,0.85)');
       grad.addColorStop(1,   'rgba(214,234,250,0.70)');
 
-      /* ── capa continua: una sola forma que va engrosando ── */
+      /* ── relleno: superficie (izq→der) + contorno de la tarjeta (der→izq) ── */
       sx.fillStyle = grad;
       sx.beginPath();
-      sx.moveTo(left, top + 2);                 /* base, el clip la recorta a la curva */
-      sx.lineTo(left, top - pile.cols[0]);
-      for(var c = 1; c < PILE_COLS; c++){
-        var px  = left + c * colW + colW * 0.5;
-        var py  = top  - pile.cols[c];
-        var cpx = left + c * colW;
-        var cpy = top  - pile.cols[c - 1];
-        sx.quadraticCurveTo(cpx, cpy, px, py);
+      sx.moveTo(surf[0].x, surf[0].y);
+      for(var k = 1; k < surf.length; k++){
+        var mx = (surf[k-1].x + surf[k].x) * 0.5;
+        var my = (surf[k-1].y + surf[k].y) * 0.5;
+        sx.quadraticCurveTo(surf[k-1].x, surf[k-1].y, mx, my);
       }
-      sx.lineTo(right, top + 2);                 /* base derecha */
+      sx.lineTo(surf[surf.length-1].x, surf[surf.length-1].y);
+      for(var b = baseLine.length - 1; b >= 0; b--) sx.lineTo(baseLine[b].x, baseLine[b].y);
       sx.closePath();
       sx.fill();
 
@@ -2672,14 +2685,13 @@ var LANG_ALIAS = {
       sx.strokeStyle = 'rgba(255,255,255,0.45)';
       sx.lineWidth   = 1;
       sx.beginPath();
-      sx.moveTo(left, top - pile.cols[0]);
-      for(var c2 = 1; c2 < PILE_COLS; c2++){
-        var px2  = left + c2 * colW + colW * 0.5;
-        var py2  = top  - pile.cols[c2];
-        var cpx2 = left + c2 * colW;
-        var cpy2 = top  - pile.cols[c2 - 1];
-        sx.quadraticCurveTo(cpx2, cpy2, px2, py2);
+      sx.moveTo(surf[0].x, surf[0].y);
+      for(var k2 = 1; k2 < surf.length; k2++){
+        var mx2 = (surf[k2-1].x + surf[k2].x) * 0.5;
+        var my2 = (surf[k2-1].y + surf[k2].y) * 0.5;
+        sx.quadraticCurveTo(surf[k2-1].x, surf[k2-1].y, mx2, my2);
       }
+      sx.lineTo(surf[surf.length-1].x, surf[surf.length-1].y);
       sx.stroke();
 
       sx.restore();
