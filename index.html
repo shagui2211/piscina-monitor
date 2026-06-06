@@ -2971,36 +2971,61 @@ var LANG_ALIAS = {
   var st = document.createElement('style');
   st.textContent =
     '#critter{position:fixed !important;left:0 !important;top:0 !important;width:0;height:0;z-index:70 !important;pointer-events:none;will-change:transform}' +
-    '#critter .c-face{transform-origin:center bottom}' +
-    '#critter .c-bob{transform-origin:center bottom;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}' +
-    '#critter.fly .c-bob{animation:cFlap .16s ease-in-out infinite}' +
-    '#critter.perch .c-bob{animation:cBob 2.8s ease-in-out infinite}' +
-    '@keyframes cFlap{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-1px) scaleY(.84)}}' +
-    '@keyframes cBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.4px)}}';
+    '#critter .c-tilt{transform-origin:center 72%;transition:transform .12s linear}' +
+    '#critter .c-face{transform-origin:center 72%}' +
+    '#critter .c-body{position:relative;transform-origin:center bottom;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}' +
+    '#critter.perch .c-body{animation:cBob 2.9s ease-in-out infinite}' +
+    '#critter .fr{position:absolute;left:0;top:0;line-height:0;display:none}' +
+    '@keyframes cBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.3px)}}';
   document.head.appendChild(st);
 
-  var BIRD = '<svg width="30" height="26" viewBox="0 0 30 26" xmlns="http://www.w3.org/2000/svg"><g stroke="#3a3530" stroke-width="1.1" stroke-linecap="round"><line x1="13" y1="17" x2="12" y2="24"/><line x1="12" y1="24" x2="10" y2="25"/><line x1="12" y1="24" x2="14" y2="25"/><line x1="16" y1="17" x2="16" y2="24"/><line x1="16" y1="24" x2="14" y2="25"/><line x1="16" y1="24" x2="18" y2="25"/></g><path d="M10 12 L0 8.5 L3 15.5 Z" fill="#41372f"/><path d="M7 14 Q6 5 15 5 Q23 5 24 10 Q24 16 17 18 Q10 19 7 14 Z" fill="#6a5848" stroke="rgba(240,238,230,0.28)" stroke-width="0.5"/><path d="M11.5 16.8 Q16.5 18 21 13.6 Q20 18.2 15 18.6 Q12 18.6 11.5 16.8 Z" fill="#c8693a"/><path d="M10 11.5 Q15 10.5 19 13 Q14.5 15.4 10 13.4 Z" fill="#46382c"/><circle cx="20" cy="9" r="4.6" fill="#6a5848" stroke="rgba(240,238,230,0.28)" stroke-width="0.5"/><path d="M24 8 L30 9 L24 10.4 Z" fill="#e6a32e"/><circle cx="21.5" cy="8.2" r="1.5" fill="#1c1712"/><circle cx="22" cy="7.7" r="0.5" fill="#fff"/></svg>';
-  var OWL = '<svg width="38" height="42" viewBox="0 0 38 42" xmlns="http://www.w3.org/2000/svg"><g stroke="#b08a3a" stroke-width="1.4" stroke-linecap="round"><line x1="15" y1="35" x2="15" y2="40"/><line x1="15" y1="40" x2="12" y2="41"/><line x1="15" y1="40" x2="18" y2="41"/><line x1="23" y1="35" x2="23" y2="40"/><line x1="23" y1="40" x2="20" y2="41"/><line x1="23" y1="40" x2="26" y2="41"/></g><path d="M9 9 L6 1 L13 6 Z" fill="#5b4f42"/><path d="M29 9 L32 1 L25 6 Z" fill="#5b4f42"/><path d="M19 3 Q33 3 33 20 Q33 37 19 37 Q5 37 5 20 Q5 3 19 3 Z" fill="#6b5d4c"/><ellipse cx="19" cy="24" rx="9" ry="11" fill="#8a7a64"/><path d="M6 16 Q3 26 8 33 Q9 24 11 18 Z" fill="#5a4d3f"/><path d="M32 16 Q35 26 30 33 Q29 24 27 18 Z" fill="#5a4d3f"/><ellipse cx="19" cy="15" rx="13" ry="11" fill="#766654"/><circle cx="13" cy="15" r="5.2" fill="#f1ead6"/><circle cx="25" cy="15" r="5.2" fill="#f1ead6"/><circle cx="13.6" cy="15" r="2.6" fill="#22180f"/><circle cx="24.4" cy="15" r="2.6" fill="#22180f"/><circle cx="14.4" cy="14.2" r="0.8" fill="#fff"/><circle cx="25.2" cy="14.2" r="0.8" fill="#fff"/><path d="M19 17 L17 20 L21 20 Z" fill="#e0a32e"/></svg>';
-  var DIM = { bird:{w:30,h:26}, owl:{w:38,h:42} };
+  /* ── fotogramas (alas: reposo / abajo / arriba) ── */
+  var CBpre  = '<g stroke="#3a3530" stroke-width="1.1" stroke-linecap="round"><line x1="13" y1="17" x2="12" y2="24"/><line x1="12" y1="24" x2="10" y2="25"/><line x1="12" y1="24" x2="14" y2="25"/><line x1="16" y1="17" x2="16" y2="24"/><line x1="16" y1="24" x2="14" y2="25"/><line x1="16" y1="24" x2="18" y2="25"/></g><path d="M10 12 L0 8.5 L3 15.5 Z" fill="#41372f"/><path d="M7 14 Q6 5 15 5 Q23 5 24 10 Q24 16 17 18 Q10 19 7 14 Z" fill="#6a5848" stroke="rgba(240,238,230,0.28)" stroke-width="0.5"/><path d="M11.5 16.8 Q16.5 18 21 13.6 Q20 18.2 15 18.6 Q12 18.6 11.5 16.8 Z" fill="#c8693a"/>';
+  var CBpost = '<circle cx="20" cy="9" r="4.6" fill="#6a5848" stroke="rgba(240,238,230,0.28)" stroke-width="0.5"/><path d="M24 8 L30 9 L24 10.4 Z" fill="#e6a32e"/><circle cx="21.5" cy="8.2" r="1.5" fill="#1c1712"/><circle cx="22" cy="7.7" r="0.5" fill="#fff"/>';
+  function bird(w){ return '<svg width="30" height="34" viewBox="0 -6 30 34" xmlns="http://www.w3.org/2000/svg">'+CBpre+w+CBpost+'</svg>'; }
+  var BIRD = {
+    rest: bird('<path d="M10 11.5 Q15 10.5 19 13 Q14.5 15.4 10 13.4 Z" fill="#46382c"/>'),
+    down: bird('<path d="M11 10 Q7 16 4 20 Q10 17 16 12 Z" fill="#4a3b2e"/>'),
+    up:   bird('<path d="M11 10 Q10 1 14 -4 Q18 1 17 10 Z" fill="#4a3b2e"/>')
+  };
+
+  var OBpre  = '<g stroke="#b08a3a" stroke-width="1.4" stroke-linecap="round"><line x1="15" y1="35" x2="15" y2="40"/><line x1="15" y1="40" x2="12" y2="41"/><line x1="15" y1="40" x2="18" y2="41"/><line x1="23" y1="35" x2="23" y2="40"/><line x1="23" y1="40" x2="20" y2="41"/><line x1="23" y1="40" x2="26" y2="41"/></g><path d="M9 9 L6 1 L13 6 Z" fill="#5b4f42"/><path d="M29 9 L32 1 L25 6 Z" fill="#5b4f42"/>';
+  var OBbody = '<path d="M19 3 Q33 3 33 20 Q33 37 19 37 Q5 37 5 20 Q5 3 19 3 Z" fill="#6b5d4c"/><ellipse cx="19" cy="24" rx="9" ry="11" fill="#8a7a64"/><ellipse cx="19" cy="15" rx="13" ry="11" fill="#766654"/><circle cx="13" cy="15" r="5.2" fill="#f1ead6"/><circle cx="25" cy="15" r="5.2" fill="#f1ead6"/><circle cx="13.6" cy="15" r="2.6" fill="#22180f"/><circle cx="24.4" cy="15" r="2.6" fill="#22180f"/><circle cx="14.4" cy="14.2" r="0.8" fill="#fff"/><circle cx="25.2" cy="14.2" r="0.8" fill="#fff"/><path d="M19 17 L17 20 L21 20 Z" fill="#e0a32e"/>';
+  function owl(w){ return '<svg width="38" height="48" viewBox="0 -4 38 48" xmlns="http://www.w3.org/2000/svg">'+OBpre+w+OBbody+'</svg>'; }
+  var OWL = {
+    rest: owl('<path d="M6 16 Q3 26 8 33 Q9 24 11 18 Z" fill="#5a4d3f"/><path d="M32 16 Q35 26 30 33 Q29 24 27 18 Z" fill="#5a4d3f"/>'),
+    down: owl('<path d="M8 17 Q-3 23 -1 34 Q7 27 12 19 Z" fill="#5a4d3f"/><path d="M30 17 Q41 23 39 34 Q31 27 26 19 Z" fill="#5a4d3f"/>'),
+    up:   owl('<path d="M9 16 Q0 6 3 -2 Q9 8 12 17 Z" fill="#5a4d3f"/><path d="M29 16 Q38 6 35 -2 Q29 8 26 17 Z" fill="#5a4d3f"/>')
+  };
+
+  var PARAM = {
+    bird:{ w:30, h:34, feet:31, flap:95,  undAmp:7, undCyc:3.0, maxTilt:20, kp:1.0 },
+    owl: { w:38, h:48, feet:44, flap:175, undAmp:3, undCyc:1.7, maxTilt:13, kp:0.6 }
+  };
 
   var wrap = document.createElement('div');
   wrap.id = 'critter';
   wrap.style.display = 'none';
-  wrap.innerHTML = '<div class="c-face"><div class="c-bob"></div></div>';
+  wrap.innerHTML = '<div class="c-tilt"><div class="c-face"><div class="c-body">'
+    + '<span class="fr fr-down"></span><span class="fr fr-up"></span><span class="fr fr-rest"></span>'
+    + '</div></div></div>';
   document.body.appendChild(wrap);
-  var face = wrap.querySelector('.c-face');
-  var bob  = wrap.querySelector('.c-bob');
+  var tiltEl = wrap.querySelector('.c-tilt');
+  var faceEl = wrap.querySelector('.c-face');
+  var frDown = wrap.querySelector('.fr-down');
+  var frUp   = wrap.querySelector('.fr-up');
+  var frRest = wrap.querySelector('.fr-rest');
 
   var state = 'idle';        /* idle | flyin | perch | flyout */
-  var dim = DIM.bird;
+  var P = PARAM.bird;
   var fx, fy, tx, ty, t0, dur, arc;
-  var perchCard = null, perchRX = 0.5, perchUntil = 0;
+  var prevX = 0, prevY = 0, faceSign = 1;
+  var wingUp = false, flapAcc = 0, lastNow = 0;
+  var perchCard = null, perchRX = 0.5, perchUntil = 0, baseFace = 1;
+  var nextIdle = 0, hopStart = 0, hopUntil = 0, flickUntil = 0;
   var schedTimer = null;
 
-  function modeOK(){
-    var c = document.body.className;
-    return /\bwbg-clear\b/.test(c) || /\bwbg-clouds\b/.test(c);
-  }
+  function modeOK(){ var c = document.body.className; return /\bwbg-clear\b/.test(c) || /\bwbg-clouds\b/.test(c); }
   function isNight(){ return document.body.classList.contains('tod-night'); }
   function cards(){
     var list = document.querySelectorAll('.card, .meteo-card, .prev7-dia'), out = [];
@@ -3011,62 +3036,107 @@ var LANG_ALIAS = {
     return out;
   }
   function setPos(x,y){ wrap.style.transform = 'translate3d('+x.toFixed(1)+'px,'+y.toFixed(1)+'px,0)'; }
-  function setFace(dir){ face.style.transform = dir < 0 ? 'scaleX(-1)' : 'scaleX(1)'; }
+  function setFace(dir){ faceSign = dir; faceEl.style.transform = dir < 0 ? 'scaleX(-1)' : 'scaleX(1)'; }
+  function setTilt(d){ tiltEl.style.transform = 'rotate('+d.toFixed(1)+'deg)'; }
   function ease(t){ return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+  var curKind = 'bird';
+  function showFrame(name){
+    frDown.style.display = name==='down' ? 'block' : 'none';
+    frUp.style.display   = name==='up'   ? 'block' : 'none';
+    frRest.style.display = name==='rest' ? 'block' : 'none';
+  }
+  function loadKind(kind){
+    curKind = kind; P = PARAM[kind];
+    var set = kind === 'owl' ? OWL : BIRD;
+    frDown.innerHTML = set.down; frUp.innerHTML = set.up; frRest.innerHTML = set.rest;
+  }
   function perchPoint(){
     var r = perchCard.getBoundingClientRect(), rad = 16;
     var x = r.left + rad + perchRX * Math.max(0, r.width - 2*rad);
-    return { x: x - dim.w/2, y: r.top - dim.h + 2 };   /* las patas sobre el borde */
+    return { x: x - P.w/2, y: r.top - P.feet };   /* las patas sobre el borde */
   }
-  function leg(name, x0,y0, x1,y1, d, a){ state=name; fx=x0; fy=y0; tx=x1; ty=y1; dur=d; arc=a||0; t0=performance.now(); }
+  function legTo(name, x0,y0, x1,y1, d, a){
+    state = name; fx=x0; fy=y0; tx=x1; ty=y1; dur=d; arc=a||0; t0=performance.now();
+    prevX = x0; prevY = y0; wingUp = false; flapAcc = 0; lastNow = t0;
+    wrap.classList.add('fly'); wrap.classList.remove('perch');
+    showFrame('down');
+  }
 
   function startVisit(){
     var cs = cards();
     if(!cs.length){ schedule(5000); return; }
     perchCard = cs[(Math.random()*cs.length)|0];
-    var kind = isNight() ? 'owl' : 'bird';
-    dim = DIM[kind];
-    bob.innerHTML = kind === 'owl' ? OWL : BIRD;
+    loadKind(isNight() ? 'owl' : 'bird');
     perchRX = 0.18 + Math.random()*0.64;
     var p = perchPoint();
     var fromLeft = Math.random() < 0.5;
-    var sx0 = fromLeft ? -dim.w - 40 : window.innerWidth + 40;
-    var sy0 = p.y - (60 + Math.random()*90);
-    setFace(p.x >= sx0 ? 1 : -1);
-    wrap.classList.add('fly'); wrap.classList.remove('perch');
+    var sx0 = fromLeft ? -P.w - 50 : window.innerWidth + 50;
+    var sy0 = p.y - (70 + Math.random()*90);
+    setFace(p.x >= sx0 ? 1 : -1); setTilt(0);
     wrap.style.display = '';
     setPos(sx0, sy0);
-    leg('flyin', sx0, sy0, p.x, p.y, 2000 + Math.random()*600, 45 + Math.random()*35);
+    legTo('flyin', sx0, sy0, p.x, p.y, 2100 + Math.random()*700, 50 + Math.random()*40);
   }
 
   function leave(){
     var p = perchPoint();
     var exitLeft = Math.random() < 0.5;
-    var ex = exitLeft ? -dim.w - 40 : window.innerWidth + 40;
-    var ey = p.y - (70 + Math.random()*100);
+    var ex = exitLeft ? -P.w - 50 : window.innerWidth + 50;
+    var ey = p.y - (80 + Math.random()*100);
     setFace(ex >= p.x ? 1 : -1);
-    wrap.classList.add('fly'); wrap.classList.remove('perch');
-    leg('flyout', p.x, p.y, ex, ey, 1800 + Math.random()*500, 55 + Math.random()*30);
+    legTo('flyout', p.x, p.y, ex, ey, 1900 + Math.random()*500, 60 + Math.random()*35);
+  }
+
+  function doIdle(now){
+    var roll = Math.random();
+    if(roll < 0.42){                 /* saltito */
+      hopStart = now; hopUntil = now + 340;
+    } else if(roll < 0.74){          /* girar la cabeza/cuerpo */
+      baseFace = -baseFace; setFace(baseFace);
+    } else {                         /* sacudida de alas */
+      showFrame('up'); flickUntil = now + 150;
+    }
+    nextIdle = now + 1700 + Math.random()*3000;
   }
 
   function frame(now){
     requestAnimationFrame(frame);
     if(state === 'idle') return;
+    var dt = now - lastNow; lastNow = now;
 
     if(state === 'flyin' || state === 'flyout'){
       var t = (now - t0) / dur; if(t > 1) t = 1;
       var e = ease(t);
-      setPos(fx + (tx-fx)*e, fy + (ty-fy)*e - Math.sin(t*Math.PI)*arc);
+      var x = fx + (tx-fx)*e;
+      var und = Math.sin(t * P.undCyc * 6.2832) * P.undAmp * (1 - t*0.35);
+      var y = fy + (ty-fy)*e - Math.sin(t*Math.PI)*arc + und;
+      setPos(x, y);
+
+      /* dirección y banqueo según la velocidad real */
+      var dvx = x - prevX, dvy = y - prevY; prevX = x; prevY = y;
+      if(Math.abs(dvx) > 0.15) setFace(dvx > 0 ? 1 : -1);
+      var deg = Math.atan2(dvy, Math.abs(dvx) || 0.001) * 57.2958 * P.kp;
+      if(deg >  P.maxTilt) deg =  P.maxTilt;
+      if(deg < -P.maxTilt) deg = -P.maxTilt;
+      setTilt(faceSign * deg);
+
+      /* aleteo (cambio de fotograma); al aproximarse, alas arriba para frenar */
+      if(state === 'flyin' && t > 0.82){ showFrame('up'); }
+      else { flapAcc += dt; if(flapAcc >= P.flap){ flapAcc = 0; wingUp = !wingUp; showFrame(wingUp ? 'up' : 'down'); } }
+
       if(t >= 1){
         if(state === 'flyin'){
           state = 'perch';
           wrap.classList.remove('fly'); wrap.classList.add('perch');
-          perchUntil = now + 5000 + Math.random()*6000;
+          setTilt(0); showFrame('rest');
+          perchUntil = now + 5500 + Math.random()*6000;
+          nextIdle = now + 1500 + Math.random()*2500;
+          hopUntil = 0; flickUntil = 0;
           var r = perchCard.getBoundingClientRect();
-          setFace((tx + dim.w/2) < (r.left + r.width/2) ? 1 : -1);
+          baseFace = (tx + P.w/2) < (r.left + r.width/2) ? 1 : -1; setFace(baseFace);
         } else {
           state = 'idle'; wrap.style.display = 'none';
-          schedule(25000 + Math.random()*35000);
+          schedule(28000 + Math.random()*40000);
         }
       }
       return;
@@ -3074,8 +3144,13 @@ var LANG_ALIAS = {
 
     if(state === 'perch'){
       if(!perchCard || !perchCard.isConnected){ leave(); return; }
-      var pp = perchPoint(); setPos(pp.x, pp.y);
-      if(now >= perchUntil || !modeOK() || document.hidden) leave();
+      if(now >= perchUntil || !modeOK() || document.hidden){ leave(); return; }
+      if(flickUntil && now > flickUntil){ flickUntil = 0; showFrame('rest'); }
+      if(now > nextIdle && !flickUntil && now > hopUntil) doIdle(now);
+      var pp = perchPoint();
+      var hop = 0;
+      if(now < hopUntil){ var hp = (now - hopStart) / 340; hop = -Math.sin(hp*Math.PI) * 4; }
+      setPos(pp.x, pp.y + hop);
     }
   }
 
