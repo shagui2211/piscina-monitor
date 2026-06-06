@@ -2530,6 +2530,45 @@ var LANG_ALIAS = {
   var PILE_MAX  = 10;
   var PILE_MELT = 0.04;
 
+  /* Dibuja un rounded-rect como path (reutilizable para clip y stroke) */
+  function roundedRectPath(x, y, w, h, r){
+    sx.beginPath();
+    sx.moveTo(x + r, y);
+    sx.lineTo(x + w - r, y);
+    sx.quadraticCurveTo(x + w, y,     x + w, y + r);
+    sx.lineTo(x + w, y + h - r);
+    sx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    sx.lineTo(x + r, y + h);
+    sx.quadraticCurveTo(x, y + h,     x, y + h - r);
+    sx.lineTo(x, y + r);
+    sx.quadraticCurveTo(x, y,         x + r, y);
+    sx.closePath();
+  }
+
+  /* Altura máxima que puede alcanzar la nieve en la columna c,
+     teniendo en cuenta el radio de esquina de la tarjeta.
+     Fuera del arco la nieve sube hasta PILE_MAX; dentro del arco
+     la altura se recorta para seguir la curvatura. */
+  function cornerCapForCol(rect, c, radius){
+    var colW = rect.width / PILE_COLS;
+    var cx   = rect.left + c * colW + colW * 0.5; // centro X de la columna
+    /* Distancia desde el borde izquierdo e derecho */
+    var dLeft  = cx - rect.left;
+    var dRight = rect.right - cx;
+    var d      = Math.min(dLeft, dRight);          // el borde más cercano
+    if(d >= radius) return PILE_MAX;               // zona recta: sin restricción
+    /* Dentro del arco: calcular hasta dónde llega la curva verticalmente */
+    /* Círculo de esquina: centro en (rect.left+r, rect.top+r).
+       Para la posición x, la y del arco es: arcY = r - sqrt(r²-(r-d)²)
+       Eso nos da cuánto "baja" la esquina desde el borde superior.
+       La nieve no puede superar esa profundidad desde el top de la tarjeta. */
+    var inside = radius - d;                       // cuánto estamos dentro del arco
+    var arcDepth = radius - Math.sqrt(Math.max(0, radius*radius - inside*inside));
+    /* La nieve puede acumularse solo a partir de arcDepth hacia abajo,
+       así que la altura máxima visible encima del top es PILE_MAX - arcDepth */
+    return Math.max(0, PILE_MAX - arcDepth);
+  }
+
   function getPileForCard(rect){
     for(var i=0;i<snowPiles.length;i++){
       var p=snowPiles[i];
@@ -2543,22 +2582,27 @@ var LANG_ALIAS = {
   }
 
   function addSnowToPile(rect, x){
-    var pile = getPileForCard(rect);
-    var col = Math.floor((x - rect.left) / rect.width * PILE_COLS);
+    var pile   = getPileForCard(rect);
+    var radius = 12; /* border-radius base de .card */
+    var col    = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS-1, col));
     var add = 0.35 + Math.random()*0.25;
-    pile.cols[col]             = Math.min(PILE_MAX, pile.cols[col] + add);
-    if(col > 0)           pile.cols[col-1] = Math.min(PILE_MAX, pile.cols[col-1] + add*0.45);
-    if(col < PILE_COLS-1) pile.cols[col+1] = Math.min(PILE_MAX, pile.cols[col+1] + add*0.45);
-    if(col > 1)           pile.cols[col-2] = Math.min(PILE_MAX, pile.cols[col-2] + add*0.15);
-    if(col < PILE_COLS-2) pile.cols[col+2] = Math.min(PILE_MAX, pile.cols[col+2] + add*0.15);
+    var apply = function(ci, factor){
+      if(ci < 0 || ci >= PILE_COLS) return;
+      var cap = cornerCapForCol(rect, ci, radius);
+      pile.cols[ci] = Math.min(cap, pile.cols[ci] + add * factor);
+    };
+    apply(col,   1.0);
+    apply(col-1, 0.45); apply(col+1, 0.45);
+    apply(col-2, 0.15); apply(col+2, 0.15);
   }
 
   function drawSnowPiles(){
     for(var i=snowPiles.length-1; i>=0; i--){
-      var pile = snowPiles[i];
-      var rect = pile.rect;
-      var alive = false;
+      var pile   = snowPiles[i];
+      var rect   = pile.rect;
+      var radius = 12;
+      var alive  = false;
       for(var c=0;c<PILE_COLS;c++){ if(pile.cols[c]>0.05){ alive=true; break; } }
       if(!alive){ snowPiles.splice(i,1); continue; }
       if(pile.melting){
@@ -2566,37 +2610,42 @@ var LANG_ALIAS = {
       }
       var colW = rect.width / PILE_COLS;
       sx.save();
-      sx.beginPath();
-      sx.rect(rect.left-1, rect.top-PILE_MAX-2, rect.width+2, PILE_MAX+4);
+      /* Clip exacto al rounded-rect de la tarjeta + zona superior donde cae la nieve */
+      roundedRectPath(rect.left, rect.top, rect.width, rect.height, radius);
       sx.clip();
+
       sx.shadowColor = 'rgba(180,210,230,0.5)';
       sx.shadowBlur  = 4;
-      var grad = sx.createLinearGradient(0, rect.top-PILE_MAX, 0, rect.top+1);
+      var grad = sx.createLinearGradient(0, rect.top - PILE_MAX, 0, rect.top + 2);
       grad.addColorStop(0,   'rgba(255,255,255,0.96)');
       grad.addColorStop(0.6, 'rgba(235,245,252,0.88)');
       grad.addColorStop(1,   'rgba(210,230,245,0.55)');
       sx.fillStyle = grad;
+
+      /* Silueta del montón */
       sx.beginPath();
-      sx.moveTo(rect.left, rect.top+1);
+      sx.moveTo(rect.left, rect.top + 2);
       for(var c=0;c<PILE_COLS;c++){
-        var px = rect.left + c*colW + colW*0.5;
-        var py = rect.top - pile.cols[c];
-        if(c===0){ sx.moveTo(rect.left, rect.top+1); sx.lineTo(rect.left, py); continue; }
-        var cpx = rect.left + c*colW;
+        var px  = rect.left + c * colW + colW * 0.5;
+        var py  = rect.top  - pile.cols[c];
+        if(c === 0){ sx.moveTo(rect.left, rect.top + 2); sx.lineTo(rect.left, py); continue; }
+        var cpx = rect.left + c * colW;
         sx.quadraticCurveTo(cpx, rect.top - pile.cols[c-1], px, py);
       }
-      sx.lineTo(rect.left + rect.width, rect.top+1);
+      sx.lineTo(rect.left + rect.width, rect.top + 2);
       sx.closePath();
       sx.fill();
-      sx.shadowBlur = 0;
+
+      /* Borde superior brillante */
+      sx.shadowBlur  = 0;
       sx.strokeStyle = 'rgba(255,255,255,0.75)';
-      sx.lineWidth = 0.8;
+      sx.lineWidth   = 0.8;
       sx.beginPath();
       for(var c=0;c<PILE_COLS;c++){
-        var px = rect.left + c*colW + colW*0.5;
-        var py = rect.top - pile.cols[c];
-        if(c===0){ sx.moveTo(rect.left, rect.top - pile.cols[0]); continue; }
-        var cpx = rect.left + c*colW;
+        var px  = rect.left + c * colW + colW * 0.5;
+        var py  = rect.top  - pile.cols[c];
+        if(c === 0){ sx.moveTo(rect.left, rect.top - pile.cols[0]); continue; }
+        var cpx = rect.left + c * colW;
         sx.quadraticCurveTo(cpx, rect.top - pile.cols[c-1], px, py);
       }
       sx.stroke();
