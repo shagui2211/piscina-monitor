@@ -1256,8 +1256,8 @@ function applyLang(){
   if(stLbl && stLbl.dataset.stIdx !== undefined){
     stLbl.textContent = L.st_labels[+stLbl.dataset.stIdx] || '';
   }
-  if(window._debugWeatherLocked && lastWmoCode !== null){
-    applyDebugMeteoCard(lastWmoCode);
+  if(window._debugWeatherLocked && window._debugWeatherWmo !== null && window._debugWeatherWmo !== undefined){
+    applyDebugMeteoCard(window._debugWeatherWmo);
   } else if(lastMeteoObj !== null){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = generarFraseClima(lastMeteoObj, lastTamb, lastHum);
@@ -2704,6 +2704,7 @@ var LANG_ALIAS = {
   });
   window.testWeather = function(wmo){
     window._debugWeatherLocked = (wmo !== null && wmo !== undefined);
+    window._debugWeatherWmo = window._debugWeatherLocked ? wmo : null;
     if(window.setWeatherBackground) window.setWeatherBackground(wmo);
     if(typeof applyDebugMeteoCard === 'function') applyDebugMeteoCard(wmo);
     panel.querySelectorAll('button[data-mode]').forEach(function(btn){ btn.classList.remove('active'); });
