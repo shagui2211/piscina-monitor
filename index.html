@@ -2970,7 +2970,7 @@ var LANG_ALIAS = {
 
   var st = document.createElement('style');
   st.textContent =
-    '#critter{position:fixed;left:0;top:0;width:0;height:0;z-index:70;pointer-events:none;will-change:transform}' +
+    '#critter{position:fixed !important;left:0 !important;top:0 !important;width:0;height:0;z-index:70 !important;pointer-events:none;will-change:transform}' +
     '#critter .c-face{transform-origin:center bottom}' +
     '#critter .c-bob{transform-origin:center bottom;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}' +
     '#critter.fly .c-bob{animation:cFlap .16s ease-in-out infinite}' +
@@ -3036,7 +3036,7 @@ var LANG_ALIAS = {
     wrap.classList.add('fly'); wrap.classList.remove('perch');
     wrap.style.display = '';
     setPos(sx0, sy0);
-    leg('flyin', sx0, sy0, p.x, p.y, 1500 + Math.random()*500, 40 + Math.random()*30);
+    leg('flyin', sx0, sy0, p.x, p.y, 2000 + Math.random()*600, 45 + Math.random()*35);
   }
 
   function leave(){
@@ -3046,7 +3046,7 @@ var LANG_ALIAS = {
     var ey = p.y - (70 + Math.random()*100);
     setFace(ex >= p.x ? 1 : -1);
     wrap.classList.add('fly'); wrap.classList.remove('perch');
-    leg('flyout', p.x, p.y, ex, ey, 1400 + Math.random()*400, 50 + Math.random()*30);
+    leg('flyout', p.x, p.y, ex, ey, 1800 + Math.random()*500, 55 + Math.random()*30);
   }
 
   function frame(now){
