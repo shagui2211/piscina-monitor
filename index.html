@@ -2527,9 +2527,9 @@ var LANG_ALIAS = {
   /* ── MONTONES DE NIEVE ── */
   var snowPiles  = [];
   var PILE_COLS  = 50;
-  var PILE_MAX   = 16;   /* altura máxima px encima del borde de la tarjeta */
+  var PILE_MAX   = 11;   /* altura máxima px encima del borde de la tarjeta */
   var PILE_MELT  = 0.015;
-  var PILE_ADD   = 1.1;  /* px por copo en la columna central */
+  var PILE_ADD   = 0.18; /* px por copo en la columna central (más bajo = acumula más despacio) */
   var PILE_SETTLE = 0.06; /* asentamiento: suaviza los picos en montículos cada frame */
 
   /* radio real de la esquina superior de la tarjeta (12px / 16px según CSS) */
@@ -2858,7 +2858,7 @@ var LANG_ALIAS = {
     if(currentMode==='rain')    return 45;
     if(currentMode==='drizzle') return 100;
     if(currentMode==='hail')    return 55;
-    if(currentMode==='snow')    return 32;
+    if(currentMode==='snow')    return 42;
     return 9999;
   }
   var _lastBodyClass = '';
