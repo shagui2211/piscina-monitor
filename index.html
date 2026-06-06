@@ -1256,7 +1256,9 @@ function applyLang(){
   if(stLbl && stLbl.dataset.stIdx !== undefined){
     stLbl.textContent = L.st_labels[+stLbl.dataset.stIdx] || '';
   }
-  if(lastMeteoObj !== null){
+  if(window._debugWeatherLocked && lastWmoCode !== null){
+    applyDebugMeteoCard(lastWmoCode);
+  } else if(lastMeteoObj !== null){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = generarFraseClima(lastMeteoObj, lastTamb, lastHum);
   }
