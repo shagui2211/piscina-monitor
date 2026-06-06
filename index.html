@@ -2578,6 +2578,8 @@ var LANG_ALIAS = {
     apply(col-3, 0.08); apply(col+3, 0.08);
   }
 
+  var PILE_MIN_DRAW = 0.6;  /* altura mínima (px) para dibujar nieve — evita la línea blanca en columnas vacías */
+
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
       var pile = snowPiles[i];
@@ -2606,51 +2608,66 @@ var LANG_ALIAS = {
       var top  = rect.top;
       var left = rect.left;
 
-      sx.save();
-
-      /* ── relleno del montón ── */
+      /* gradiente compartido por todos los montones de la tarjeta */
       var grad = sx.createLinearGradient(0, top - PILE_MAX, 0, top + 1);
       grad.addColorStop(0,   'rgba(255,255,255,0.0)');
       grad.addColorStop(0.3, 'rgba(255,255,255,0.88)');
       grad.addColorStop(0.8, 'rgba(238,248,255,0.82)');
       grad.addColorStop(1,   'rgba(215,235,250,0.60)');
-      sx.fillStyle = grad;
 
-      /* perfil superior del montón */
-      sx.beginPath();
-      var x0 = left;
-      var y0 = top - pile.cols[0];
-      sx.moveTo(x0, top + 1);      /* esquina inferior izquierda */
-      sx.lineTo(x0, y0);           /* subir al perfil */
-      for(var c = 1; c < PILE_COLS; c++){
-        var px  = left + c * colW + colW * 0.5;
-        var py  = top  - pile.cols[c];
-        var cpx = left + c * colW;
-        var cpy = top  - pile.cols[c - 1];
-        sx.quadraticCurveTo(cpx, cpy, px, py);
+      /* dibujar SOLO los tramos contiguos donde hay nieve acumulada,
+         de modo que se formen montones independientes en vez de una línea entera */
+      var c = 0;
+      while(c < PILE_COLS){
+        if(pile.cols[c] <= PILE_MIN_DRAW){ c++; continue; }
+        var start = c;
+        while(c < PILE_COLS && pile.cols[c] > PILE_MIN_DRAW) c++;
+        var end = c - 1;
+        drawPileSegment(pile, colW, top, left, start, end, grad);
       }
-      sx.lineTo(left + pile.width, top + 1);  /* esquina inferior derecha */
-      sx.closePath();
-      sx.fill();
-
-      /* ── cresta brillante ── */
-      sx.strokeStyle = 'rgba(255,255,255,0.90)';
-      sx.lineWidth   = 1.2;
-      sx.shadowColor = 'rgba(200,230,255,0.7)';
-      sx.shadowBlur  = 4;
-      sx.beginPath();
-      sx.moveTo(left, top - pile.cols[0]);
-      for(var c = 1; c < PILE_COLS; c++){
-        var px  = left + c * colW + colW * 0.5;
-        var py  = top  - pile.cols[c];
-        var cpx = left + c * colW;
-        var cpy = top  - pile.cols[c - 1];
-        sx.quadraticCurveTo(cpx, cpy, px, py);
-      }
-      sx.stroke();
-
-      sx.restore();
     }
+  }
+
+  /* dibuja un único montón entre las columnas [start, end] */
+  function drawPileSegment(pile, colW, top, left, start, end, grad){
+    var xStart = left + start * colW + colW * 0.5;
+    var xEnd   = left + end   * colW + colW * 0.5;
+
+    sx.save();
+
+    /* ── relleno del montón ── */
+    sx.fillStyle = grad;
+    sx.beginPath();
+    sx.moveTo(xStart, top + 1);                 /* base izquierda, a ras de la tarjeta */
+    sx.lineTo(xStart, top - pile.cols[start]);  /* subir al perfil */
+    for(var c = start + 1; c <= end; c++){
+      var px  = left + c * colW + colW * 0.5;
+      var py  = top  - pile.cols[c];
+      var cpx = left + c * colW;
+      var cpy = top  - pile.cols[c - 1];
+      sx.quadraticCurveTo(cpx, cpy, px, py);
+    }
+    sx.lineTo(xEnd, top + 1);                    /* base derecha */
+    sx.closePath();
+    sx.fill();
+
+    /* ── cresta brillante (solo sobre este montón) ── */
+    sx.strokeStyle = 'rgba(255,255,255,0.90)';
+    sx.lineWidth   = 1.2;
+    sx.shadowColor = 'rgba(200,230,255,0.7)';
+    sx.shadowBlur  = 4;
+    sx.beginPath();
+    sx.moveTo(xStart, top - pile.cols[start]);
+    for(var c2 = start + 1; c2 <= end; c2++){
+      var px2  = left + c2 * colW + colW * 0.5;
+      var py2  = top  - pile.cols[c2];
+      var cpx2 = left + c2 * colW;
+      var cpy2 = top  - pile.cols[c2 - 1];
+      sx.quadraticCurveTo(cpx2, cpy2, px2, py2);
+    }
+    sx.stroke();
+
+    sx.restore();
   }
 
   function meltAllPiles(){
