@@ -2496,18 +2496,18 @@ var LANG_ALIAS = {
   function resizeSplash(){ sc.width=window.innerWidth; sc.height=window.innerHeight; }
   window.addEventListener('resize', resizeSplash);
   resizeSplash();
-  function getCardRects(){
+  function getCardEls(){
     var cards = document.querySelectorAll('.card, .prev7-dia, .meteo-card');
-    var rects = [];
+    var els = [];
     cards.forEach(function(c){
       var r = c.getBoundingClientRect();
-      if(r.width > 0) rects.push(r);
+      if(r.width > 0) els.push(c);
     });
-    return rects;
+    return els;
   }
-  function mkRainSplash(rects){
-    if(!rects.length) return;
-    var card = rects[Math.floor(Math.random()*rects.length)];
+  function mkRainSplash(els){
+    if(!els.length) return;
+    var card = els[Math.floor(Math.random()*els.length)].getBoundingClientRect();
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*4;
     particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:7+Math.random()*5, life:1.0, decay:0.045, color:'74,140,170' });
@@ -2541,27 +2541,28 @@ var LANG_ALIAS = {
     return Math.max(0, PILE_MAX - arcDepth);
   }
 
-  function getPile(rect){
+  function getPile(el){
     for(var i = 0; i < snowPiles.length; i++){
-      var p = snowPiles[i];
-      if(Math.abs(p.left - rect.left) < 2 && Math.abs(p.top - rect.top) < 2) return p;
+      if(snowPiles[i].el === el) return snowPiles[i];
     }
     var cols = [];
     for(var c = 0; c < PILE_COLS; c++) cols.push(0);
-    var pile = { left: rect.left, top: rect.top, width: rect.width, cols: cols, melting: false };
+    var pile = { el: el, cols: cols, melting: false };
     snowPiles.push(pile);
     return pile;
   }
 
-  function pileHeightAt(rect, x){
-    var pile = getPile(rect);
+  function pileHeightAt(el, x){
+    var pile = getPile(el);
+    var rect = el.getBoundingClientRect();
     var col  = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS - 1, col));
     return pile.cols[col];
   }
 
-  function addSnowToPile(rect, x){
-    var pile   = getPile(rect);
+  function addSnowToPile(el, x){
+    var pile   = getPile(el);
+    var rect   = el.getBoundingClientRect();
     var radius = 12;
     var col    = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS - 1, col));
@@ -2580,6 +2581,8 @@ var LANG_ALIAS = {
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
       var pile = snowPiles[i];
+      /* leer posición fresca en cada frame — sigue el scroll */
+      var rect = pile.el.getBoundingClientRect();
 
       /* fundir */
       if(pile.melting){
@@ -2596,9 +2599,12 @@ var LANG_ALIAS = {
       for(var c = 0; c < PILE_COLS; c++) if(pile.cols[c] > maxH) maxH = pile.cols[c];
       if(maxH < 0.05){ if(!pile.melting) continue; else { snowPiles.splice(i, 1); continue; } }
 
-      var colW = pile.width / PILE_COLS;
-      var top  = pile.top;
-      var left = pile.left;
+      /* no dibujar si está fuera del viewport */
+      if(rect.bottom < -PILE_MAX || rect.top > window.innerHeight) continue;
+
+      var colW = rect.width / PILE_COLS;
+      var top  = rect.top;
+      var left = rect.left;
 
       sx.save();
 
@@ -2654,16 +2660,16 @@ var LANG_ALIAS = {
     snowPiles = [];
   }
 
-  function mkSnowSettle(rects){
-    if(!rects.length) return;
-    var card = rects[Math.floor(Math.random() * rects.length)];
-    var x    = card.left + Math.random() * card.width;
+  function mkSnowSettle(els){
+    if(!els.length) return;
+    var el   = els[Math.floor(Math.random() * els.length)];
+    var rect = el.getBoundingClientRect();
+    var x    = rect.left + Math.random() * rect.width;
     /* altura actual del montón en ese punto — el copo aterriza justo encima */
-    var pileH = pileHeightAt(card, x);
-    var landY = card.top - pileH;
-    /* el copo empieza unos píxeles más arriba y cae hacia landY */
-    var startY = landY - 18 - Math.random() * 12;
-    addSnowToPile(card, x);
+    var pileH  = pileHeightAt(el, x);
+    var landY  = rect.top - pileH;
+    var startY = landY - 20 - Math.random() * 14;
+    addSnowToPile(el, x);
     particles.push({
       type: 'flake',
       x: x, y: startY,
@@ -2673,9 +2679,9 @@ var LANG_ALIAS = {
       decay: 0.016 + Math.random() * 0.01,
     });
   }
-  function mkHailImpact(rects){
-    if(!rects.length) return;
-    var card = rects[Math.floor(Math.random()*rects.length)];
+  function mkHailImpact(els){
+    if(!els.length) return;
+    var card = els[Math.floor(Math.random()*els.length)].getBoundingClientRect();
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*5;
     particles.push({
@@ -2719,10 +2725,10 @@ var LANG_ALIAS = {
     syncMode();
     if(currentMode && ts - lastSpawn > getSpawnInterval()){
       lastSpawn = ts;
-      var rects = getCardRects();
-      if(currentMode==='rain'||currentMode==='drizzle'||currentMode==='storm') mkRainSplash(rects);
-      else if(currentMode==='snow') mkSnowSettle(rects);
-      else if(currentMode==='hail') mkHailImpact(rects);
+      var els = getCardEls();
+      if(currentMode==='rain'||currentMode==='drizzle'||currentMode==='storm') mkRainSplash(els);
+      else if(currentMode==='snow') mkSnowSettle(els);
+      else if(currentMode==='hail') mkHailImpact(els);
     }
     drawSnowPiles();
     particles = particles.filter(function(p){
