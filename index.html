@@ -2525,154 +2525,133 @@ var LANG_ALIAS = {
     }
   }
   /* ── MONTONES DE NIEVE ── */
-  var snowPiles = [];
-  var PILE_COLS  = 60;   /* más resolución = perfil más orgánico */
-  var PILE_MAX   = 14;   /* altura máxima en px */
-  var PILE_MELT  = 0.018;
-  var PILE_ADD   = 0.12; /* incremento por copo — pequeño para que sea gradual */
+  var snowPiles  = [];
+  var PILE_COLS  = 50;
+  var PILE_MAX   = 16;   /* altura máxima px encima del borde de la tarjeta */
+  var PILE_MELT  = 0.015;
+  var PILE_ADD   = 0.28; /* px por copo en la columna central */
 
-  /* Rounded-rect path para clip */
-  function roundedRectPath(x, y, w, h, r){
-    sx.beginPath();
-    sx.moveTo(x + r, y);
-    sx.lineTo(x + w - r, y);
-    sx.quadraticCurveTo(x + w, y,     x + w, y + r);
-    sx.lineTo(x + w, y + h - r);
-    sx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    sx.lineTo(x + r, y + h);
-    sx.quadraticCurveTo(x, y + h,     x, y + h - r);
-    sx.lineTo(x, y + r);
-    sx.quadraticCurveTo(x, y,         x + r, y);
-    sx.closePath();
-  }
-
-  /* Cap de altura por columna según el radio de esquina */
-  function cornerCapForCol(rect, c, radius){
-    var colW   = rect.width / PILE_COLS;
-    var cx     = rect.left + c * colW + colW * 0.5;
-    var dLeft  = cx - rect.left;
-    var dRight = rect.right - cx;
-    var d      = Math.min(dLeft, dRight);
-    if(d >= radius) return PILE_MAX;
-    var inside   = radius - d;
+  function cornerCapForCol(rectWidth, c, radius){
+    var colW  = rectWidth / PILE_COLS;
+    var cx    = c * colW + colW * 0.5;           /* posición relativa dentro de la tarjeta */
+    var dEdge = Math.min(cx, rectWidth - cx);    /* distancia al borde más cercano */
+    if(dEdge >= radius) return PILE_MAX;
+    var inside   = radius - dEdge;
     var arcDepth = radius - Math.sqrt(Math.max(0, radius * radius - inside * inside));
     return Math.max(0, PILE_MAX - arcDepth);
   }
 
-  function getPileForCard(rect){
+  function getPile(rect){
     for(var i = 0; i < snowPiles.length; i++){
       var p = snowPiles[i];
-      if(Math.abs(p.rect.left - rect.left) < 2 && Math.abs(p.rect.top - rect.top) < 2) return p;
+      if(Math.abs(p.left - rect.left) < 2 && Math.abs(p.top - rect.top) < 2) return p;
     }
     var cols = [];
     for(var c = 0; c < PILE_COLS; c++) cols.push(0);
-    var pile = { rect: rect, cols: cols, melting: false };
+    var pile = { left: rect.left, top: rect.top, width: rect.width, cols: cols, melting: false };
     snowPiles.push(pile);
     return pile;
   }
 
-  /* Devuelve la altura actual del montón en la posición x (px absolutos) */
   function pileHeightAt(rect, x){
-    var col = Math.floor((x - rect.left) / rect.width * PILE_COLS);
+    var pile = getPile(rect);
+    var col  = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS - 1, col));
-    var pile = getPileForCard(rect);
     return pile.cols[col];
   }
 
   function addSnowToPile(rect, x){
-    var pile   = getPileForCard(rect);
+    var pile   = getPile(rect);
     var radius = 12;
     var col    = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS - 1, col));
-    var apply = function(ci, factor){
+    var add = PILE_ADD * (0.8 + Math.random() * 0.4);
+    function apply(ci, f){
       if(ci < 0 || ci >= PILE_COLS) return;
-      var cap = cornerCapForCol(rect, ci, radius);
-      pile.cols[ci] = Math.min(cap, pile.cols[ci] + PILE_ADD * factor);
-    };
-    apply(col,   1.0);
-    apply(col-1, 0.55); apply(col+1, 0.55);
-    apply(col-2, 0.22); apply(col+2, 0.22);
-    apply(col-3, 0.07); apply(col+3, 0.07);
+      var cap = cornerCapForCol(rect.width, ci, radius);
+      pile.cols[ci] = Math.min(cap, pile.cols[ci] + add * f);
+    }
+    apply(col,   1.00);
+    apply(col-1, 0.60); apply(col+1, 0.60);
+    apply(col-2, 0.25); apply(col+2, 0.25);
+    apply(col-3, 0.08); apply(col+3, 0.08);
   }
 
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
-      var pile   = snowPiles[i];
-      var rect   = pile.rect;
-      var radius = 12;
-      var alive  = false;
-      for(var c = 0; c < PILE_COLS; c++){ if(pile.cols[c] > 0.05){ alive = true; break; } }
-      if(!alive){ snowPiles.splice(i, 1); continue; }
+      var pile = snowPiles[i];
+
+      /* fundir */
       if(pile.melting){
-        for(var c = 0; c < PILE_COLS; c++) pile.cols[c] = Math.max(0, pile.cols[c] - PILE_MELT);
+        var anyLeft = false;
+        for(var c = 0; c < PILE_COLS; c++){
+          pile.cols[c] = Math.max(0, pile.cols[c] - PILE_MELT);
+          if(pile.cols[c] > 0.05) anyLeft = true;
+        }
+        if(!anyLeft){ snowPiles.splice(i, 1); continue; }
       }
 
-      var colW = rect.width / PILE_COLS;
+      /* comprobar que hay algo visible */
+      var maxH = 0;
+      for(var c = 0; c < PILE_COLS; c++) if(pile.cols[c] > maxH) maxH = pile.cols[c];
+      if(maxH < 0.05){ if(!pile.melting) continue; else { snowPiles.splice(i, 1); continue; } }
+
+      var colW = pile.width / PILE_COLS;
+      var top  = pile.top;
+      var left = pile.left;
+
       sx.save();
 
-      /* Clip: banda estrecha justo sobre el borde superior de la tarjeta,
-         con las esquinas redondeadas aplicadas en X pero abierta por arriba
-         para que la nieve que sobresale del top sea visible */
-      sx.beginPath();
-      /* lado izquierdo: seguir la curva de esquina */
-      sx.moveTo(rect.left, rect.top + radius);
-      sx.quadraticCurveTo(rect.left, rect.top, rect.left + radius, rect.top);
-      /* borde superior recto */
-      sx.lineTo(rect.left + rect.width - radius, rect.top);
-      /* esquina superior derecha */
-      sx.quadraticCurveTo(rect.right, rect.top, rect.right, rect.top + radius);
-      /* bajar un poco dentro de la tarjeta para cerrar la zona de nieve */
-      sx.lineTo(rect.right, rect.top + 3);
-      sx.lineTo(rect.left,  rect.top + 3);
-      sx.closePath();
-      sx.clip();
-
-      /* Gradiente de la nieve: blanco puro arriba, fundido abajo */
-      var grad = sx.createLinearGradient(0, rect.top - PILE_MAX, 0, rect.top + 3);
-      grad.addColorStop(0,    'rgba(255,255,255,0.0)');
-      grad.addColorStop(0.25, 'rgba(255,255,255,0.92)');
-      grad.addColorStop(0.75, 'rgba(240,248,255,0.85)');
-      grad.addColorStop(1,    'rgba(220,235,248,0.5)');
+      /* ── relleno del montón ── */
+      var grad = sx.createLinearGradient(0, top - PILE_MAX, 0, top + 1);
+      grad.addColorStop(0,   'rgba(255,255,255,0.0)');
+      grad.addColorStop(0.3, 'rgba(255,255,255,0.88)');
+      grad.addColorStop(0.8, 'rgba(238,248,255,0.82)');
+      grad.addColorStop(1,   'rgba(215,235,250,0.60)');
       sx.fillStyle = grad;
 
-      /* Silueta del montón — se dibuja desde dentro de la tarjeta
-         subiendo hacia arriba según pile.cols */
+      /* perfil superior del montón */
       sx.beginPath();
-      sx.moveTo(rect.left, rect.top + 3);
-      /* punto inicial izquierdo */
-      sx.lineTo(rect.left, rect.top - pile.cols[0]);
+      var x0 = left;
+      var y0 = top - pile.cols[0];
+      sx.moveTo(x0, top + 1);      /* esquina inferior izquierda */
+      sx.lineTo(x0, y0);           /* subir al perfil */
       for(var c = 1; c < PILE_COLS; c++){
-        var px  = rect.left + c * colW + colW * 0.5;
-        var py  = rect.top  - pile.cols[c];
-        var cpx = rect.left + c * colW;
-        var cpy = rect.top  - pile.cols[c - 1];
+        var px  = left + c * colW + colW * 0.5;
+        var py  = top  - pile.cols[c];
+        var cpx = left + c * colW;
+        var cpy = top  - pile.cols[c - 1];
         sx.quadraticCurveTo(cpx, cpy, px, py);
       }
-      sx.lineTo(rect.right, rect.top + 3);
+      sx.lineTo(left + pile.width, top + 1);  /* esquina inferior derecha */
       sx.closePath();
       sx.fill();
 
-      /* Línea de cresta brillante */
-      sx.strokeStyle = 'rgba(255,255,255,0.82)';
-      sx.lineWidth   = 1.0;
-      sx.shadowColor = 'rgba(200,225,245,0.6)';
-      sx.shadowBlur  = 3;
+      /* ── cresta brillante ── */
+      sx.strokeStyle = 'rgba(255,255,255,0.90)';
+      sx.lineWidth   = 1.2;
+      sx.shadowColor = 'rgba(200,230,255,0.7)';
+      sx.shadowBlur  = 4;
       sx.beginPath();
-      sx.moveTo(rect.left, rect.top - pile.cols[0]);
+      sx.moveTo(left, top - pile.cols[0]);
       for(var c = 1; c < PILE_COLS; c++){
-        var px  = rect.left + c * colW + colW * 0.5;
-        var py  = rect.top  - pile.cols[c];
-        var cpx = rect.left + c * colW;
-        var cpy = rect.top  - pile.cols[c - 1];
+        var px  = left + c * colW + colW * 0.5;
+        var py  = top  - pile.cols[c];
+        var cpx = left + c * colW;
+        var cpy = top  - pile.cols[c - 1];
         sx.quadraticCurveTo(cpx, cpy, px, py);
       }
       sx.stroke();
+
       sx.restore();
     }
   }
 
   function meltAllPiles(){
-    snowPiles.forEach(function(p){ p.melting = true; });
+    for(var i = 0; i < snowPiles.length; i++) snowPiles[i].melting = true;
+  }
+  function clearAllPiles(){
+    snowPiles = [];
   }
 
   function mkSnowSettle(rects){
@@ -2796,7 +2775,7 @@ var LANG_ALIAS = {
     if(currentMode==='rain')    return 45;
     if(currentMode==='drizzle') return 100;
     if(currentMode==='hail')    return 55;
-    if(currentMode==='snow')    return 140;
+    if(currentMode==='snow')    return 60;
     return 9999;
   }
   var _lastBodyClass = '';
@@ -2815,7 +2794,7 @@ var LANG_ALIAS = {
     if(m !== _lastWeatherMode){
       particles = [];
       if(_lastWeatherMode === 'snow' && m !== 'snow') meltAllPiles();
-      if(m !== 'snow') snowPiles = [];
+      else if(m !== 'snow') clearAllPiles();
       _lastWeatherMode = m;
     }
   }
