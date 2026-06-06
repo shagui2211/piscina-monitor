@@ -2529,7 +2529,14 @@ var LANG_ALIAS = {
   var PILE_COLS  = 50;
   var PILE_MAX   = 16;   /* altura máxima px encima del borde de la tarjeta */
   var PILE_MELT  = 0.015;
-  var PILE_ADD   = 0.28; /* px por copo en la columna central */
+  var PILE_ADD   = 1.1;  /* px por copo en la columna central */
+  var PILE_SETTLE = 0.06; /* asentamiento: suaviza los picos en montículos cada frame */
+
+  /* radio real de la esquina superior de la tarjeta (12px / 16px según CSS) */
+  function cardRadius(el){
+    var v = parseFloat(getComputedStyle(el).borderTopLeftRadius);
+    return (isFinite(v) && v > 0) ? v : 12;
+  }
 
   function cornerCapForCol(rectWidth, c, radius){
     var colW  = rectWidth / PILE_COLS;
@@ -2563,7 +2570,7 @@ var LANG_ALIAS = {
   function addSnowToPile(el, x){
     var pile   = getPile(el);
     var rect   = el.getBoundingClientRect();
-    var radius = 12;
+    var radius = cardRadius(el);
     var col    = Math.floor((x - rect.left) / rect.width * PILE_COLS);
     col = Math.max(0, Math.min(PILE_COLS - 1, col));
     var add = PILE_ADD * (0.8 + Math.random() * 0.4);
@@ -2572,13 +2579,30 @@ var LANG_ALIAS = {
       var cap = cornerCapForCol(rect.width, ci, radius);
       pile.cols[ci] = Math.min(cap, pile.cols[ci] + add * f);
     }
+    /* reparto ancho y suave para que cuaje como una capa, no como picos */
     apply(col,   1.00);
-    apply(col-1, 0.60); apply(col+1, 0.60);
-    apply(col-2, 0.25); apply(col+2, 0.25);
-    apply(col-3, 0.08); apply(col+3, 0.08);
+    apply(col-1, 0.78); apply(col+1, 0.78);
+    apply(col-2, 0.52); apply(col+2, 0.52);
+    apply(col-3, 0.30); apply(col+3, 0.30);
+    apply(col-4, 0.14); apply(col+4, 0.14);
   }
 
-  var PILE_MIN_DRAW = 0.6;  /* altura mínima (px) para dibujar nieve — evita la línea blanca en columnas vacías */
+  var PILE_MIN_DRAW = 0.35; /* altura mínima (px) para empezar a dibujar la capa */
+
+  /* recorta al contorno superior redondeado de la tarjeta:
+     base plana en el centro, redondeada en las esquinas, sin chorrear por los lados */
+  function clipCardTop(left, right, top, r){
+    var up = top - PILE_MAX - 14;
+    sx.beginPath();
+    sx.moveTo(left, up);
+    sx.lineTo(right, up);
+    sx.lineTo(right, top - r);
+    sx.quadraticCurveTo(right, top, right - r, top);  /* esquina inferior derecha */
+    sx.lineTo(left + r, top);
+    sx.quadraticCurveTo(left, top, left, top - r);     /* esquina inferior izquierda */
+    sx.closePath();
+    sx.clip();
+  }
 
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
@@ -2596,10 +2620,19 @@ var LANG_ALIAS = {
         if(!anyLeft){ snowPiles.splice(i, 1); continue; }
       }
 
+      /* asentamiento: difusión suave que redondea los picos en montículos
+         (parece que la nieve se compacta y se reparte como una capa real) */
+      var prev = pile.cols.slice();
+      for(var c = 0; c < PILE_COLS; c++){
+        var l  = c > 0            ? prev[c - 1] : prev[c];
+        var rr = c < PILE_COLS-1  ? prev[c + 1] : prev[c];
+        pile.cols[c] += ((l + rr) * 0.5 - prev[c]) * PILE_SETTLE;
+      }
+
       /* comprobar que hay algo visible */
       var maxH = 0;
       for(var c = 0; c < PILE_COLS; c++) if(pile.cols[c] > maxH) maxH = pile.cols[c];
-      if(maxH < 0.05){ if(!pile.melting) continue; else { snowPiles.splice(i, 1); continue; } }
+      if(maxH < PILE_MIN_DRAW){ if(!pile.melting) continue; else { snowPiles.splice(i, 1); continue; } }
 
       /* no dibujar si está fuera del viewport */
       if(rect.bottom < -PILE_MAX || rect.top > window.innerHeight) continue;
@@ -2607,67 +2640,50 @@ var LANG_ALIAS = {
       var colW = rect.width / PILE_COLS;
       var top  = rect.top;
       var left = rect.left;
+      var right= rect.right;
+      var r    = Math.min(cardRadius(pile.el), rect.width * 0.5, rect.height * 0.5);
 
-      /* gradiente compartido por todos los montones de la tarjeta */
+      sx.save();
+      clipCardTop(left, right, top, r);   /* la curva de la tarjeta recorta la nieve */
+
       var grad = sx.createLinearGradient(0, top - PILE_MAX, 0, top + 1);
       grad.addColorStop(0,   'rgba(255,255,255,0.0)');
-      grad.addColorStop(0.3, 'rgba(255,255,255,0.88)');
-      grad.addColorStop(0.8, 'rgba(238,248,255,0.82)');
-      grad.addColorStop(1,   'rgba(215,235,250,0.60)');
+      grad.addColorStop(0.35,'rgba(255,255,255,0.92)');
+      grad.addColorStop(0.8, 'rgba(238,248,255,0.85)');
+      grad.addColorStop(1,   'rgba(214,234,250,0.70)');
 
-      /* dibujar SOLO los tramos contiguos donde hay nieve acumulada,
-         de modo que se formen montones independientes en vez de una línea entera */
-      var c = 0;
-      while(c < PILE_COLS){
-        if(pile.cols[c] <= PILE_MIN_DRAW){ c++; continue; }
-        var start = c;
-        while(c < PILE_COLS && pile.cols[c] > PILE_MIN_DRAW) c++;
-        var end = c - 1;
-        drawPileSegment(pile, colW, top, left, start, end, grad);
+      /* ── capa continua: una sola forma que va engrosando ── */
+      sx.fillStyle = grad;
+      sx.beginPath();
+      sx.moveTo(left, top + 2);                 /* base, el clip la recorta a la curva */
+      sx.lineTo(left, top - pile.cols[0]);
+      for(var c = 1; c < PILE_COLS; c++){
+        var px  = left + c * colW + colW * 0.5;
+        var py  = top  - pile.cols[c];
+        var cpx = left + c * colW;
+        var cpy = top  - pile.cols[c - 1];
+        sx.quadraticCurveTo(cpx, cpy, px, py);
       }
+      sx.lineTo(right, top + 2);                 /* base derecha */
+      sx.closePath();
+      sx.fill();
+
+      /* ── reflejo suave sobre la superficie (sin glow, no es una línea dura) ── */
+      sx.strokeStyle = 'rgba(255,255,255,0.45)';
+      sx.lineWidth   = 1;
+      sx.beginPath();
+      sx.moveTo(left, top - pile.cols[0]);
+      for(var c2 = 1; c2 < PILE_COLS; c2++){
+        var px2  = left + c2 * colW + colW * 0.5;
+        var py2  = top  - pile.cols[c2];
+        var cpx2 = left + c2 * colW;
+        var cpy2 = top  - pile.cols[c2 - 1];
+        sx.quadraticCurveTo(cpx2, cpy2, px2, py2);
+      }
+      sx.stroke();
+
+      sx.restore();
     }
-  }
-
-  /* dibuja un único montón entre las columnas [start, end] */
-  function drawPileSegment(pile, colW, top, left, start, end, grad){
-    var xStart = left + start * colW + colW * 0.5;
-    var xEnd   = left + end   * colW + colW * 0.5;
-
-    sx.save();
-
-    /* ── relleno del montón ── */
-    sx.fillStyle = grad;
-    sx.beginPath();
-    sx.moveTo(xStart, top + 1);                 /* base izquierda, a ras de la tarjeta */
-    sx.lineTo(xStart, top - pile.cols[start]);  /* subir al perfil */
-    for(var c = start + 1; c <= end; c++){
-      var px  = left + c * colW + colW * 0.5;
-      var py  = top  - pile.cols[c];
-      var cpx = left + c * colW;
-      var cpy = top  - pile.cols[c - 1];
-      sx.quadraticCurveTo(cpx, cpy, px, py);
-    }
-    sx.lineTo(xEnd, top + 1);                    /* base derecha */
-    sx.closePath();
-    sx.fill();
-
-    /* ── cresta brillante (solo sobre este montón) ── */
-    sx.strokeStyle = 'rgba(255,255,255,0.90)';
-    sx.lineWidth   = 1.2;
-    sx.shadowColor = 'rgba(200,230,255,0.7)';
-    sx.shadowBlur  = 4;
-    sx.beginPath();
-    sx.moveTo(xStart, top - pile.cols[start]);
-    for(var c2 = start + 1; c2 <= end; c2++){
-      var px2  = left + c2 * colW + colW * 0.5;
-      var py2  = top  - pile.cols[c2];
-      var cpx2 = left + c2 * colW;
-      var cpy2 = top  - pile.cols[c2 - 1];
-      sx.quadraticCurveTo(cpx2, cpy2, px2, py2);
-    }
-    sx.stroke();
-
-    sx.restore();
   }
 
   function meltAllPiles(){
@@ -2798,7 +2814,7 @@ var LANG_ALIAS = {
     if(currentMode==='rain')    return 45;
     if(currentMode==='drizzle') return 100;
     if(currentMode==='hail')    return 55;
-    if(currentMode==='snow')    return 60;
+    if(currentMode==='snow')    return 32;
     return 9999;
   }
   var _lastBodyClass = '';
