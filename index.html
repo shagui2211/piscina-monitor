@@ -2548,13 +2548,37 @@ var LANG_ALIAS = {
     return Math.max(0, PILE_MAX - arcDepth);
   }
 
+  /* clave ESTABLE de la tarjeta: las de previsión se recrean al actualizar,
+     así que se identifican por su posición (día 0–6) y no por el nodo DOM */
+  var snowKeySeq = 0;
+  function cardKey(el){
+    if(el.classList && el.classList.contains('prev7-dia')){
+      var p = el.parentNode, idx = 0;
+      if(p) idx = Array.prototype.indexOf.call(p.children, el);
+      return 'p7:' + idx;
+    }
+    if(el.id) return 'id:' + el.id;
+    if(!el.dataset.snowk) el.dataset.snowk = 's' + (snowKeySeq++);
+    return 'k:' + el.dataset.snowk;
+  }
+  function resolveCard(key){
+    if(key.slice(0,3) === 'p7:') return document.querySelectorAll('.prev7-dia')[parseInt(key.slice(3),10)] || null;
+    if(key.slice(0,3) === 'id:') return document.getElementById(key.slice(3));
+    if(key.slice(0,2) === 'k:')  return document.querySelector('[data-snowk="' + key.slice(2) + '"]');
+    return null;
+  }
+
   function getPile(el){
+    var key = cardKey(el);
     for(var i = 0; i < snowPiles.length; i++){
-      if(snowPiles[i].el === el) return snowPiles[i];
+      if(snowPiles[i].key === key){
+        snowPiles[i].el = el;     /* reenganchar al elemento actual tras un re-render */
+        return snowPiles[i];
+      }
     }
     var cols = [];
     for(var c = 0; c < PILE_COLS; c++) cols.push(0);
-    var pile = { el: el, cols: cols, melting: false };
+    var pile = { el: el, key: key, cols: cols, melting: false };
     snowPiles.push(pile);
     return pile;
   }
@@ -2592,8 +2616,16 @@ var LANG_ALIAS = {
   function drawSnowPiles(){
     for(var i = snowPiles.length - 1; i >= 0; i--){
       var pile = snowPiles[i];
+      /* si la tarjeta se recreó (p. ej. la previsión al actualizar), reenganchar
+         al elemento vigente por su clave estable en vez de perder la nieve */
+      if(!pile.el || !pile.el.isConnected){
+        var ne = resolveCard(pile.key);
+        if(ne){ pile.el = ne; }
+        else { if(pile.melting) snowPiles.splice(i, 1); continue; }
+      }
       /* leer posición fresca en cada frame — sigue el scroll */
       var rect = pile.el.getBoundingClientRect();
+      if(rect.width === 0) continue;   /* aún sin layout (mid re-render) */
 
       /* fundir */
       if(pile.melting){
