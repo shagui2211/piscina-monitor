@@ -1157,7 +1157,17 @@ function generarFraseClima(m, tamb, hum, condOverride){
   }
   lp3 = cnt > 0 ? lp3 / cnt : 0;
 
-  var wmoA    = condOverride || m.wmo_actual || 'clouds';
+  // condOverride viene de renderMeteo y refleja la condición REAL actual (Open-Meteo current).
+  // Si no hay condOverride, usamos lastWmoCode (también de Open-Meteo) convertido a familia.
+  // Solo como último recurso usamos wmo_actual del BME280 (que no ve el cielo).
+  var wmoA;
+  if(condOverride){
+    wmoA = condOverride;
+  } else if(typeof lastWmoCode === 'number' && lastWmoCode !== null){
+    wmoA = wmoCodeToCond(lastWmoCode);
+  } else {
+    wmoA = m.wmo_actual || 'clouds';
+  }
   var tendDph = m.tendDph   || 0;
   var isPrecip = /^(rain|storm|snow|hail|drizzle)$/.test(wmoA);
 
@@ -1181,11 +1191,19 @@ function generarFraseClima(m, tamb, hum, condOverride){
   } else if(wmoA === 'clear'){
     condKey = 'clear_' + tCtx;
   } else {
-    /* nubes: determinar densidad por icono WMO */
-    var ic0 = (h0.wmo && h0.wmo.icon) || '⛅';
-    if(ic0 === '🌤️')      condKey = 'few_'     + (tCtx === 'night' ? 'night' : 'day');
-    else if(ic0 === '⛅')  condKey = 'partial_' + (tCtx === 'night' ? 'night' : 'day');
-    else                   condKey = 'overcast';
+    /* nubes: determinar densidad por lastWmoCode (real actual) o icono previsión como respaldo */
+    var cloudCode = (typeof lastWmoCode === 'number' && lastWmoCode !== null) ? lastWmoCode : null;
+    var cloudSide = tCtx === 'night' ? 'night' : 'day';
+    if(cloudCode !== null){
+      if(cloudCode <= 1)       condKey = 'few_'     + cloudSide;   // WMO 0-1: casi despejado
+      else if(cloudCode === 2) condKey = 'partial_' + cloudSide;   // WMO 2: parcialmente nublado
+      else                     condKey = 'overcast';               // WMO 3+: cubierto
+    } else {
+      var ic0 = (h0.wmo && h0.wmo.icon) || '⛅';
+      if(ic0 === '🌤️')      condKey = 'few_'     + cloudSide;
+      else if(ic0 === '⛅')  condKey = 'partial_' + cloudSide;
+      else                   condKey = 'overcast';
+    }
   }
   var condTxt = f.cond[condKey] || f.cond.overcast;
 
