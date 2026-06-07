@@ -1262,6 +1262,19 @@ function applyLang(){
     var fraseEl = document.getElementById('meteo-frase');
     if(fraseEl) fraseEl.textContent = generarFraseClima(lastMeteoObj, lastTamb, lastHum);
   }
+  /* ── Actualizar texto Zambretti (tendencia barométrica) al cambiar idioma ── */
+  if(lastMeteoObj && lastMeteoObj.tendencia && lastMeteoObj.tendencia !== '...' && lastMeteoObj.tendencia !== 'ESTABLE'){
+    var zambrettiES_al = {'Subiendo fuerte':'Tiempo estable y despejado.','Subiendo':'El tiempo está mejorando.','Subiendo leve':'Variable, con tendencia a buen tiempo.','Estable':'El tiempo se mantiene así de momento.','Bajando leve':'Inestable, se espera lluvia más tarde.','Bajando':'Lluvias frecuentes, tiempo empeorando.','Bajando fuerte':'Tiempo muy inestable, lluvia persistente.'};
+    var zambrettiEN_al = {'Subiendo fuerte':'Settled, fine weather.','Subiendo':'Weather is improving.','Subiendo leve':'Variable, trending towards fair.','Estable':'Weather staying much the same for now.','Bajando leve':'Unsettled, rain expected later.','Bajando':'Frequent rain, conditions worsening.','Bajando fuerte':'Very unsettled, persistent rain.'};
+    var zambrettiDE_al = {'Subiendo fuerte':'Beständig, schönes Wetter.','Subiendo':'Wetter bessert sich.','Subiendo leve':'Wechselhaft, Tendenz zu gut.','Estable':'Das Wetter bleibt vorerst so.','Bajando leve':'Unbeständig, Regen später möglich.','Bajando':'Häufiger Regen, Verschlechterung.','Bajando fuerte':'Sehr unbeständig, anhaltender Regen.'};
+    var zambrettiFR_al = {'Subiendo fuerte':'Temps stable et dégagé.','Subiendo':'Le temps s\'améliore.','Subiendo leve':'Variable, tendance au beau temps.','Estable':'Le temps reste stable pour l\'instant.','Bajando leve':'Instable, pluie attendue plus tard.','Bajando':'Pluies fréquentes, dégradation.','Bajando fuerte':'Très instable, pluie persistante.'};
+    var zambrettiIT_al = {'Subiendo fuerte':'Tempo stabile e sereno.','Subiendo':'Il tempo sta migliorando.','Subiendo leve':'Variabile, tendenza al bello.','Estable':'Il tempo rimane così per ora.','Bajando leve':'Instabile, pioggia attesa più tardi.','Bajando':'Piogge frequenti, peggioramento.','Bajando fuerte':'Molto instabile, pioggia persistente.'};
+    var mapsAl = {es:zambrettiES_al, en:zambrettiEN_al, de:zambrettiDE_al, fr:zambrettiFR_al, it:zambrettiIT_al};
+    var zmapAl = mapsAl[currentLang] || zambrettiES_al;
+    var zTxtAl = zmapAl[lastMeteoObj.tendencia];
+    var tendEl = document.getElementById('meteo-tend');
+    if(tendEl && zTxtAl) tendEl.innerHTML = '<span style="font-size:.75rem">'+zTxtAl+'</span>';
+  }
   if(lastDias7.length){
     var diasCortos2 = L.dias_cortos || ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
     var fechaEls = document.querySelectorAll('#prev-24h .p7-fecha');
