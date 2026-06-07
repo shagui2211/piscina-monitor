@@ -3075,7 +3075,7 @@ var LANG_ALIAS = {
     setFace(p.x >= sx0 ? 1 : -1); setTilt(0);
     wrap.style.display = '';
     setPos(sx0, sy0);
-    legTo('flyin', sx0, sy0, p.x, p.y, 2100 + Math.random()*700, 50 + Math.random()*40);
+    legTo('flyin', sx0, sy0, p.x, p.y, 1700 + Math.random()*500, 50 + Math.random()*40);
   }
 
   function leave(){
@@ -3084,7 +3084,7 @@ var LANG_ALIAS = {
     var ex = exitLeft ? -P.w - 50 : window.innerWidth + 50;
     var ey = sy0 - (60 + Math.random()*100);
     setFace(ex >= sx0 ? 1 : -1);
-    legTo('flyout', sx0, sy0, ex, ey, 1800 + Math.random()*500, 55 + Math.random()*35);
+    legTo('flyout', sx0, sy0, ex, ey, 1500 + Math.random()*400, 55 + Math.random()*35);
   }
 
   function doIdle(now){
@@ -3132,13 +3132,13 @@ var LANG_ALIAS = {
           setTilt(0);
           showFrame('down'); flickUntil = now + 140;  /* alas bajan y luego se pliegan */
           hopStart = now; hopDur = 300; hopUntil = now + 300; hopAmp = 3.2; /* amortiguado (patas absorben) */
-          perchUntil = now + 5500 + Math.random()*6000;
+          perchUntil = now + 4500 + Math.random()*4500;
           nextIdle = now + 1700 + Math.random()*2500;
           var r = perchCard.getBoundingClientRect();
           baseFace = (tx + P.w/2) < (r.left + r.width/2) ? 1 : -1; setFace(baseFace);
         } else {
           state = 'idle'; wrap.style.display = 'none';
-          schedule(28000 + Math.random()*40000);
+          schedule(7000 + Math.random()*9000);   /* siguiente visita en ~7-16 s */
         }
       }
       return;
@@ -3164,7 +3164,7 @@ var LANG_ALIAS = {
   }
 
   requestAnimationFrame(frame);
-  schedule(8000 + Math.random()*9000);   /* primera visita al poco de cargar */
+  schedule(2000 + Math.random()*3000);   /* primera visita a los ~2-5 s */
 })();
 </script>
 </body>
