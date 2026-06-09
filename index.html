@@ -308,6 +308,77 @@ body.tv .card-st-label{font-size:0.9rem;}
     margin:0;
   }
 }
+
+/* ── TV MODE — DTV 720HD (1280x720) ── */
+@media (orientation:landscape) and (max-width:1280px) and (max-height:720px){
+
+  body.tv{
+    padding:1.2vh 1.5vw;
+    overflow:hidden;
+  }
+
+  body.tv header{
+    height:72px;
+    min-height:72px;
+    padding:0 28px;
+    border-radius:10px;
+  }
+
+  body.tv .logo{
+    width:90px;
+    max-height:38px;
+  }
+
+  body.tv .header-title-main{
+    font-size:1.15rem;
+  }
+
+  body.tv .status-pill #clock{
+    font-size:1.1rem;
+  }
+
+  body.tv main{
+    padding:10px 0 0;
+  }
+
+  body.tv .grid-main,
+  body.tv .clima-grid{
+    gap:10px;
+  }
+
+  body.tv .card{
+    padding:12px;
+  }
+
+  body.tv .card-value{
+    font-size:2.3rem;
+  }
+
+  body.tv .card-label{
+    font-size:.72rem;
+  }
+
+  body.tv .prev7-grid{
+    gap:8px;
+  }
+
+  body.tv .prev7-dia{
+    padding:8px;
+  }
+
+  body.tv .p7-icon{
+    font-size:1.8rem;
+  }
+
+  body.tv .p7-tmax{
+    font-size:1rem;
+  }
+
+  body.tv .p7-tmin{
+    font-size:.9rem;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    TV MODE — PANTALLA VERTICAL (portrait)
    Aplica cuando el alto es mayor que el ancho en modo TV
