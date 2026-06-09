@@ -153,7 +153,14 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
   .p7-viento{font-size:0.7rem;margin-top:4px;}
 }
 /* ── TV MODE ── */
-body.tv main{max-width:100%;padding:16px 56px;}
+body.tv{
+  padding:2.5vh 3vw;
+  box-sizing:border-box;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+body.tv main{max-width:100%;padding:1.5vh 0 0;margin:0;flex:1;}
 /* Forzar efectos meteorologicos visibles en TV aunque prefers-reduced-motion este activo */
 body.tv #weather-canvas,
 body.tv #splash-canvas{ display:block !important; }
@@ -185,15 +192,17 @@ body.tv header {
   display: grid;
   grid-template-columns: 220px 1fr 220px;
   align-items: center;
-  padding: 6px 56px;
-  height: 96px;
-  min-height: 96px;
-  max-height: 96px;
+  padding: 6px 32px;
+  height: 80px;
+  min-height: 80px;
+  max-height: 80px;
   overflow: hidden;
   background: linear-gradient(135deg, #ffffff 0%, #f4f8f6 60%, #e8f0ec 100%);
   border-bottom: none;
   box-shadow: 0 2px 24px rgba(61,122,90,.10), 0 1px 0 var(--border);
   position: relative;
+  border-radius: 14px;
+  margin: 0;
 }
 body.tv header::after {
   content: '';
@@ -301,7 +310,14 @@ body.tv .card-st-label{font-size:0.9rem;}
   body.tv header{
     border-radius:16px;
     margin:0;
+    height:96px;
+    min-height:96px;
+    max-height:96px;
+    padding:6px 32px;
+    grid-template-columns:220px 1fr 220px;
   }
+  body.tv .header-title-main{ font-size:1.6rem; }
+  body.tv .status-pill #clock{ font-size:1.6rem; }
   body.tv main{
     max-width:100%;
     padding:2.5vh 0 0;
@@ -418,6 +434,7 @@ body.tv.dtv720 .res-indicator{ bottom:8px !important; left:12px !important; font
     min-height:100vh;
     height:100vh;
     overflow:hidden;
+    padding:0;
   }
 
   /* ── Header portrait ── */
