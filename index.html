@@ -311,64 +311,102 @@ body.tv .card-st-label{font-size:0.9rem;}
 /* ══════════════════════════════════════════════════════════════
    TV MODE — DTV 720 HD  (≤ 1280 px ancho, landscape)
    Resolución 1280×720. Márgenes de overscan reducidos para
-   aprovechar mejor el espacio. Header con esquinas redondeadas
-   igual que en FHD. Fuentes y tarjetas ajustadas a 720p.
+   aprovechar mejor el espacio. Header con esquinas redondeadas.
+   !important necesario para superar los estilos base body.tv.
    ══════════════════════════════════════════════════════════════ */
 @media(orientation:landscape) and (max-width:1280px){
-  body.tv{
-    padding:2vh 2.2vw;
-  }
+  body.tv{ padding:1.8vh 2vw !important; }
   body.tv header{
-    border-radius:14px;
-    margin:0;
-    height:76px;
-    min-height:76px;
-    max-height:76px;
-    padding:0 28px;
-    grid-template-columns:160px 1fr 160px;
+    border-radius:14px !important;
+    margin:0 !important;
+    height:72px !important;
+    min-height:72px !important;
+    max-height:72px !important;
+    padding:0 24px !important;
+    grid-template-columns:150px 1fr 150px !important;
   }
-  body.tv .logo{ width:100px; }
-  body.tv .header-title-main{ font-size:1.2rem; }
-  body.tv .header-title-sub{ font-size:0.58rem; }
+  body.tv .logo{ width:90px !important; max-height:42px !important; }
+  body.tv .logo img{ max-height:42px !important; }
+  body.tv .header-title-main{ font-size:1.1rem !important; }
+  body.tv .header-title-sub{ font-size:0.55rem !important; }
   body.tv .status-pill{
-    padding:6px 14px 6px 10px;
-    gap:10px;
-    border-radius:12px;
+    padding:5px 12px 5px 9px !important;
+    gap:8px !important;
+    border-radius:11px !important;
+    max-height:42px !important;
   }
-  body.tv .conn-dot{ width:11px; height:11px; }
-  body.tv .status-pill #clock{
-    font-size:1.2rem;
-  }
-  body.tv main{
-    max-width:100%;
-    padding:1.8vh 0 0;
-    margin:0;
-  }
-  body.tv .section-title{ font-size:0.75rem; margin:10px 0 7px; }
-  body.tv .grid-main{ gap:10px; }
-  body.tv .clima-grid{ gap:10px; }
-  body.tv .card{ padding:12px 14px; border-radius:12px; }
-  body.tv .card-label{ font-size:0.72rem; }
-  body.tv .card-value{ font-size:2.4rem; }
-  body.tv .card-unit{ font-size:0.9rem; }
-  body.tv .card-st-label{ font-size:0.7rem; margin-top:4px; }
-  body.tv .meteo-card{ padding:12px 16px; border-radius:12px; }
-  body.tv .meteo-frase{ font-size:0.92rem; }
-  body.tv .meteo-sub{ font-size:0.72rem; gap:6px; }
-  body.tv #meteo-icon{ font-size:2.8rem !important; }
-  body.tv .prev7-grid{ gap:8px; }
-  body.tv .prev7-dia{ padding:10px 6px; border-radius:10px; }
-  body.tv .p7-fecha{ font-size:0.62rem; margin-bottom:3px; }
-  body.tv .p7-icon{ font-size:1.6rem; margin:4px 0; }
-  body.tv .p7-tmax{ font-size:0.92rem; }
-  body.tv .p7-tmin{ font-size:0.76rem; }
-  body.tv .p7-temps{ gap:4px; margin:3px 0; }
-  body.tv .p7-lluvia{ font-size:0.58rem; margin-top:2px; }
-  body.tv .p7-viento{ font-size:0.56rem; margin-top:2px; }
-  body.tv #card-ppm [data-i18n="lbl_ppm_nota"]{ display:none; }
-  body.tv .lang-indicator{ bottom:10px; right:14px; font-size:0.65rem; }
-  body.tv .res-indicator{  bottom:10px; left:14px;  font-size:0.65rem; }
+  body.tv .conn-dot{ width:10px !important; height:10px !important; }
+  body.tv .status-pill #clock{ font-size:1.1rem !important; }
+  body.tv main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; }
+  body.tv .section-title{ font-size:0.72rem !important; margin:8px 0 6px !important; }
+  body.tv .grid-main{ gap:9px !important; }
+  body.tv .clima-grid{ gap:9px !important; }
+  body.tv .card{ padding:11px 13px !important; border-radius:11px !important; }
+  body.tv .card-label{ font-size:0.7rem !important; }
+  body.tv .card-value{ font-size:2.2rem !important; }
+  body.tv .card-unit{ font-size:0.85rem !important; }
+  body.tv .card-st-label{ font-size:0.68rem !important; margin-top:3px !important; }
+  body.tv .meteo-card{ padding:11px 14px !important; border-radius:11px !important; min-height:unset !important; }
+  body.tv .meteo-frase{ font-size:0.88rem !important; }
+  body.tv .meteo-sub{ font-size:0.68rem !important; gap:5px !important; }
+  body.tv #meteo-icon{ font-size:2.5rem !important; }
+  body.tv .prev7-grid{ gap:7px !important; }
+  body.tv .prev7-dia{ padding:9px 5px !important; border-radius:10px !important; }
+  body.tv .p7-fecha{ font-size:0.6rem !important; margin-bottom:2px !important; }
+  body.tv .p7-icon{ font-size:1.5rem !important; margin:3px 0 !important; }
+  body.tv .p7-tmax{ font-size:0.88rem !important; }
+  body.tv .p7-tmin{ font-size:0.74rem !important; }
+  body.tv .p7-temps{ gap:3px !important; margin:2px 0 !important; }
+  body.tv .p7-lluvia{ font-size:0.56rem !important; margin-top:2px !important; }
+  body.tv .p7-viento{ font-size:0.54rem !important; margin-top:1px !important; }
+  body.tv #card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
+  body.tv .lang-indicator{ bottom:8px !important; right:12px !important; font-size:0.6rem !important; }
+  body.tv .res-indicator{ bottom:8px !important; left:12px !important; font-size:0.6rem !important; }
 }
+/* ══════════════════════════════════════════════════════════════
+   TV MODE — DTV 720 HD: clase .dtv720 (respaldo JS)
+   Mismos valores que el media query pero activado por clase.
+   Garantiza el look correcto aunque el media query no dispare.
+   ══════════════════════════════════════════════════════════════ */
+body.tv.dtv720{ padding:1.8vh 2vw !important; }
+body.tv.dtv720 header{
+  border-radius:14px !important;
+  height:72px !important; min-height:72px !important; max-height:72px !important;
+  padding:0 24px !important;
+  grid-template-columns:150px 1fr 150px !important;
+}
+body.tv.dtv720 .logo{ width:90px !important; max-height:42px !important; }
+body.tv.dtv720 .logo img{ max-height:42px !important; }
+body.tv.dtv720 .header-title-main{ font-size:1.1rem !important; }
+body.tv.dtv720 .header-title-sub{ font-size:0.55rem !important; }
+body.tv.dtv720 .status-pill{ padding:5px 12px 5px 9px !important; gap:8px !important; border-radius:11px !important; max-height:42px !important; }
+body.tv.dtv720 .conn-dot{ width:10px !important; height:10px !important; }
+body.tv.dtv720 .status-pill #clock{ font-size:1.1rem !important; }
+body.tv.dtv720 main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; }
+body.tv.dtv720 .section-title{ font-size:0.72rem !important; margin:8px 0 6px !important; }
+body.tv.dtv720 .grid-main{ gap:9px !important; }
+body.tv.dtv720 .clima-grid{ gap:9px !important; }
+body.tv.dtv720 .card{ padding:11px 13px !important; border-radius:11px !important; }
+body.tv.dtv720 .card-label{ font-size:0.7rem !important; }
+body.tv.dtv720 .card-value{ font-size:2.2rem !important; }
+body.tv.dtv720 .card-unit{ font-size:0.85rem !important; }
+body.tv.dtv720 .card-st-label{ font-size:0.68rem !important; margin-top:3px !important; }
+body.tv.dtv720 .meteo-card{ padding:11px 14px !important; border-radius:11px !important; min-height:unset !important; }
+body.tv.dtv720 .meteo-frase{ font-size:0.88rem !important; }
+body.tv.dtv720 .meteo-sub{ font-size:0.68rem !important; gap:5px !important; }
+body.tv.dtv720 #meteo-icon{ font-size:2.5rem !important; }
+body.tv.dtv720 .prev7-grid{ gap:7px !important; }
+body.tv.dtv720 .prev7-dia{ padding:9px 5px !important; border-radius:10px !important; }
+body.tv.dtv720 .p7-fecha{ font-size:0.6rem !important; margin-bottom:2px !important; }
+body.tv.dtv720 .p7-icon{ font-size:1.5rem !important; margin:3px 0 !important; }
+body.tv.dtv720 .p7-tmax{ font-size:0.88rem !important; }
+body.tv.dtv720 .p7-tmin{ font-size:0.74rem !important; }
+body.tv.dtv720 .p7-temps{ gap:3px !important; margin:2px 0 !important; }
+body.tv.dtv720 .p7-lluvia{ font-size:0.56rem !important; margin-top:2px !important; }
+body.tv.dtv720 .p7-viento{ font-size:0.54rem !important; margin-top:1px !important; }
+body.tv.dtv720 #card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
+body.tv.dtv720 .lang-indicator{ bottom:8px !important; right:12px !important; font-size:0.6rem !important; }
+body.tv.dtv720 .res-indicator{ bottom:8px !important; left:12px !important; font-size:0.6rem !important; }
 /* ══════════════════════════════════════════════════════════════
    TV MODE — PANTALLA VERTICAL (portrait)
    Aplica cuando el alto es mayor que el ancho en modo TV
@@ -1877,21 +1915,27 @@ var LANG_ALIAS = {
     }
   }
 })();
-/* ── Indicador de resolución en TV mode ── */
+/* ── Indicador de resolución en TV mode + clase dtv720 ── */
 (function(){
   var el = document.getElementById('res-indicator');
-  if(!el) return;
-  function tier(w){
-    if(w >= 3840) return '4K';
-    if(w >= 2560) return 'QHD';
-    if(w >= 1920) return 'FHD';
-    if(w >= 1280) return 'HD';
-    return 'SD';
+  function isDtv720(){
+    /* DTV 720HD: ancho efectivo <= 1280 en landscape */
+    var w = Math.min(window.innerWidth, screen.width);
+    var h = Math.min(window.innerHeight, screen.height);
+    if(w === 0) { w = screen.width; h = screen.height; }
+    return w <= 1280 && w >= h; /* landscape */
   }
   function update(){
     var sw = screen.width, sh = screen.height;
-    var ww = window.innerWidth, wh = window.innerHeight;
-    el.textContent = sw + '×' + sh;
+    if(el) el.textContent = sw + '×' + sh;
+    /* Añadir/quitar clase dtv720 en TV mode para garantizar estilos 720p */
+    if(document.body.classList.contains('tv')){
+      if(isDtv720()){
+        document.body.classList.add('dtv720');
+      } else {
+        document.body.classList.remove('dtv720');
+      }
+    }
   }
   update();
   window.addEventListener('resize', update);
