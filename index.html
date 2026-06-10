@@ -3398,7 +3398,8 @@ var LANG_ALIAS = {
   function schedule(ms){ clearTimeout(schedTimer); schedTimer = setTimeout(tryStart, ms); }
   function tryStart(){
     if(state !== 'idle'){ schedule(8000); return; }
-    if(!isTv && (document.hidden || !modeOK())){ schedule(8000); return; }
+    if(!modeOK()){ schedule(8000); return; }
+    if(!isTv && document.hidden){ schedule(8000); return; }
     startVisit();
   }
 
