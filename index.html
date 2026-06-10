@@ -2137,14 +2137,13 @@ var LANG_ALIAS = {
         });
       }
       p.push({ type:'flare', t:0 });
-      /* el doble de nubecitas que en despejado, en verde-salvia corporativo
-         (paleta 'grey', la del modo nublado) para que se vean sobre el fondo claro */
-      p.push(mkClearCloud(0.08, 1.2, 0.16, 0.58, 'grey'));
-      p.push(mkClearCloud(0.20, 0.95, 0.21, 0.50, 'grey'));
-      p.push(mkClearCloud(0.30, 0.75, 0.26, 0.42, 'grey'));
-      p.push(mkClearCloud(0.13, 0.65, 0.30, 0.34, 'grey'));
-      p.push(mkClearCloud(0.38, 0.55, 0.23, 0.30, 'grey'));
-      p.push(mkClearCloud(0.26, 1.05, 0.14, 0.46, 'grey'));
+      /* nubecitas en salvia claro corporativo, compactas y amables */
+      p.push(mkClearCloud(0.08, 0.85, 0.16, 0.60, 'sageLight'));
+      p.push(mkClearCloud(0.20, 0.68, 0.21, 0.54, 'sageLight'));
+      p.push(mkClearCloud(0.30, 0.55, 0.26, 0.46, 'sageLight'));
+      p.push(mkClearCloud(0.13, 0.48, 0.30, 0.40, 'sageLight'));
+      p.push(mkClearCloud(0.38, 0.42, 0.23, 0.36, 'sageLight'));
+      p.push(mkClearCloud(0.26, 0.75, 0.14, 0.50, 'sageLight'));
     }
     return p;
   }
@@ -2268,8 +2267,9 @@ var LANG_ALIAS = {
     /* palette: 'grey' (nublado) | 'white' (despejado, default) */
     /* Las nubes "grey" usan elipses más redondas (menos planas) para tener
        silueta de nube; las blancas decorativas siguen anchas como antes. */
-    var AW = (palette === 'grey') ? 1.15 : 1.6;
-    var AH = (palette === 'grey') ? 0.90 : 0.7;
+    var shaped = (palette === 'grey' || palette === 'sageLight');
+    var AW = shaped ? 1.15 : 1.6;
+    var AH = shaped ? 0.90 : 0.7;
     var pad  = Math.round(70 * scale);
     var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
     puffs.forEach(function(p){
@@ -2292,7 +2292,7 @@ var LANG_ALIAS = {
     /* Las nubes de "nublado" (grey) llevan menos desenfoque para conservar
        forma y no fundirse en una mancha; las blancas decorativas se quedan
        igual de suaves que antes. */
-    octx.filter = 'blur(' + Math.round((palette === 'grey' ? 13 : 30) * scale) + 'px)';
+    octx.filter = 'blur(' + Math.round((shaped ? 13 : 30) * scale) + 'px)';
 
     puffs.forEach(function(p){
       var cx = ox + p.dx * scale;
@@ -2308,6 +2308,12 @@ var LANG_ALIAS = {
         rC = Math.round(150 + t*72);
         gC = Math.round(168 + t*64);
         bC = Math.round(158 + t*66);
+      } else if(palette === 'sageLight'){
+        /* Salvia claro: mismo carácter corporativo que 'grey' pero más
+           luminoso; base con un punto de cuerpo para que se lea en el día. */
+        rC = Math.round(176 + t*64);
+        gC = Math.round(192 + t*54);
+        bC = Math.round(183 + t*59);
       } else {
         /* blanco brillante con sombra azul muy suave en la base */
         rC = Math.round(220 + t*35);
