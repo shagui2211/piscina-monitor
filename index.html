@@ -1933,19 +1933,14 @@ var LANG_ALIAS = {
     }
   }
 
-  /* ?dtv=1 — fuerza modo DTV 720 HD por URL, sin depender de media queries ni screen.width.
-     Úsalo cuando el PC que alimenta el modulador esté a 1280×720.
-     Ejemplo: index.html?tv=1&dtv=1  o  index.html?lang=de&dtv=1          */
   /* DTV 720p es el modo por defecto en TV.
-     Si el sistema detecta una resolución mayor (FHD/QHD/4K) se quita la clase.
-     Así funciona correctamente aunque el navegador no reporte bien el tamaño. */
+     Se quita solo si el navegador reporta FHD (>=1920px) o superior.
+     ?dtv=0 en la URL permite desactivarlo manualmente. */
   if(document.body.classList.contains('tv')){
-    document.body.classList.add('dtv720'); /* por defecto 720p */
+    document.body.classList.add('dtv720');
     var sw = Math.max(screen.width || 0, window.innerWidth || 0);
-    if(sw >= 1920){ document.body.classList.remove('dtv720'); } /* FHD o superior → quitar */
+    if(sw >= 1920){ document.body.classList.remove('dtv720'); }
   }
-
-  /* ?dtv=0 permite forzar la desactivación manual si hiciera falta */
   if(params.get('dtv') === '0'){ document.body.classList.remove('dtv720'); }
 })();
 /* ── Indicador de resolución en TV mode + clase dtv720 ── */
