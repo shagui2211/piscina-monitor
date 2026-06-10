@@ -2642,12 +2642,13 @@ var LANG_ALIAS = {
     /* Full reset: resizing clears ALL state including clips, transforms, shadows */
     ctx.clearRect(0,0,canvas.width,canvas.height);
     var m=currentMode||'clear';
-    if(m==='clear'){
+    if(m==='clear'||m==='few'){
       var phase = getDayPhase();
       if(phase==='night'){
         particles.forEach(function(p){
-          if(p.type==='star') drawStar(p,dt);
-          if(p.type==='moon') drawMoon(p);
+          if(p.type==='star')       drawStar(p,dt);
+          if(p.type==='moon')       drawMoon(p);
+          if(p.type==='clearcloud') drawCloud(p,dt);
         });
       } else {
         drawSun();
