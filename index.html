@@ -2053,7 +2053,7 @@ var LANG_ALIAS = {
     return 'clouds';
   }
   /* ── Generadores ── */
-  function mkClearCloud(yFrac, scale, speed, alpha){
+  function mkClearCloud(yFrac, scale, speed, alpha, palette){
     var puffs = mkCloudPuffs();
     var sc = scale + Math.random()*0.2;
     return {
@@ -2064,7 +2064,7 @@ var LANG_ALIAS = {
       speed: speed + Math.random()*0.05,
       alpha: alpha,
       puffs: puffs,
-      baked: bakeCloud(puffs, sc, alpha, 'white'),
+      baked: bakeCloud(puffs, sc, alpha, palette || 'white'),
     };
   }
   function mkClear(){
@@ -2137,13 +2137,14 @@ var LANG_ALIAS = {
         });
       }
       p.push({ type:'flare', t:0 });
-      /* el doble de nubecitas que en despejado, algo más presentes */
-      p.push(mkClearCloud(0.08, 1.2, 0.16, 0.58));
-      p.push(mkClearCloud(0.20, 0.95, 0.21, 0.50));
-      p.push(mkClearCloud(0.30, 0.75, 0.26, 0.42));
-      p.push(mkClearCloud(0.13, 0.65, 0.30, 0.34));
-      p.push(mkClearCloud(0.38, 0.55, 0.23, 0.30));
-      p.push(mkClearCloud(0.26, 1.05, 0.14, 0.46));
+      /* el doble de nubecitas que en despejado, en verde-salvia corporativo
+         (paleta 'grey', la del modo nublado) para que se vean sobre el fondo claro */
+      p.push(mkClearCloud(0.08, 1.2, 0.16, 0.58, 'grey'));
+      p.push(mkClearCloud(0.20, 0.95, 0.21, 0.50, 'grey'));
+      p.push(mkClearCloud(0.30, 0.75, 0.26, 0.42, 'grey'));
+      p.push(mkClearCloud(0.13, 0.65, 0.30, 0.34, 'grey'));
+      p.push(mkClearCloud(0.38, 0.55, 0.23, 0.30, 'grey'));
+      p.push(mkClearCloud(0.26, 1.05, 0.14, 0.46, 'grey'));
     }
     return p;
   }
