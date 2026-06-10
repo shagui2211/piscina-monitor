@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content="Panel de monitorización en tiempo real — parámetros del agua y clima de la piscina exterior"/>
 <title>Piscina Exterior</title>
@@ -1915,7 +1918,6 @@ var LANG_ALIAS = {
     document.body.classList.add('tv');
     isTvMode = true;
     setInterval(switchLang, 10000);
-    return;
   }
 
   /* Modo TV con idioma fijo: ?lang=esp | eng | deu | fra | ita */
@@ -1927,10 +1929,24 @@ var LANG_ALIAS = {
       document.documentElement.lang = resolvedLang;
       document.body.classList.add('tv');
       isTvMode = true;
-      /* Sin rotador — idioma fijo */
       applyLang();
     }
   }
+
+  /* ?dtv=1 — fuerza modo DTV 720 HD por URL, sin depender de media queries ni screen.width.
+     Úsalo cuando el PC que alimenta el modulador esté a 1280×720.
+     Ejemplo: index.html?tv=1&dtv=1  o  index.html?lang=de&dtv=1          */
+  /* DTV 720p es el modo por defecto en TV.
+     Si el sistema detecta una resolución mayor (FHD/QHD/4K) se quita la clase.
+     Así funciona correctamente aunque el navegador no reporte bien el tamaño. */
+  if(document.body.classList.contains('tv')){
+    document.body.classList.add('dtv720'); /* por defecto 720p */
+    var sw = Math.max(screen.width || 0, window.innerWidth || 0);
+    if(sw >= 1920){ document.body.classList.remove('dtv720'); } /* FHD o superior → quitar */
+  }
+
+  /* ?dtv=0 permite forzar la desactivación manual si hiciera falta */
+  if(params.get('dtv') === '0'){ document.body.classList.remove('dtv720'); }
 })();
 /* ── Indicador de resolución en TV mode + clase dtv720 ── */
 (function(){
@@ -3119,9 +3135,8 @@ var LANG_ALIAS = {
 <script>
 /* ── VISITANTE: pajarito de día / búho de noche (solo despejado y nublado) ── */
 (function(){
-  /* En TV mode ignorar prefers-reduced-motion para que el pajarito/búho aparezca siempre */
-  var isTv = document.body.classList.contains('tv');
-  if(!isTv && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var isTv = document.body.classList.contains('tv') || document.body.classList.contains('dtv720');
+  /* prefers-reduced-motion ignorado siempre — el pajarito/búho debe aparecer en todos los entornos */
 
   var st = document.createElement('style');
   st.textContent =
@@ -3315,12 +3330,17 @@ var LANG_ALIAS = {
   function schedule(ms){ clearTimeout(schedTimer); schedTimer = setTimeout(tryStart, ms); }
   function tryStart(){
     if(state !== 'idle'){ schedule(8000); return; }
-    if(document.hidden || !modeOK()){ schedule(8000); return; }
+    if(!isTv && (document.hidden || !modeOK())){ schedule(8000); return; }
     startVisit();
   }
 
   requestAnimationFrame(frame);
-  schedule(isTv ? 800 + Math.random()*1200 : 2000 + Math.random()*3000);   /* TV: ~0.8-2s | normal: ~2-5s */
+  /* Función de test: escribe showBird() en la consola del TV para forzar aparición */
+  window.showBird = function(){ clearTimeout(schedTimer); tryStart(); };
+
+  /* ?bird=force en la URL hace aparecer el pájaro a los 500ms sin espera */
+  var birdForce = new URLSearchParams(location.search).has('bird');
+  schedule(birdForce ? 500 : (isTv ? 800 + Math.random()*1200 : 2000 + Math.random()*3000));
 })();
 </script>
 </body>
