@@ -334,7 +334,7 @@ body.tv .card-st-label{font-size:0.9rem;}
    !important necesario para superar los estilos base body.tv.
    ══════════════════════════════════════════════════════════════ */
 @media(orientation:landscape) and (max-width:1280px){
-  body.tv{ padding:1.8vh 2vw !important; }
+  body.tv{ padding:3.2vh 3.4vw !important; }
   body.tv header{
     border-radius:14px !important;
     margin:0 !important;
@@ -356,7 +356,14 @@ body.tv .card-st-label{font-size:0.9rem;}
   }
   body.tv .conn-dot{ width:10px !important; height:10px !important; }
   body.tv .status-pill #clock{ font-size:1.1rem !important; }
-  body.tv main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; }
+  body.tv main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; display:flex !important; flex-direction:column !important; }
+  body.tv .grid-main,
+  body.tv .clima-grid{ flex:1 !important; }
+  body.tv #prev-24h{ flex:1.25 !important; display:flex !important; }
+  body.tv .prev7-grid{ flex:1 !important; width:100% !important; }
+  body.tv .grid-main .card{ display:flex !important; flex-direction:column !important; justify-content:center !important; }
+  body.tv .prev7-dia{ display:flex !important; flex-direction:column !important; justify-content:center !important; }
+  body.tv .footer{ margin-top:auto !important; padding-top:6px !important; }
   body.tv .section-title{ font-size:0.72rem !important; margin:8px 0 6px !important; }
   body.tv .grid-main{ gap:9px !important; }
   body.tv .clima-grid{ gap:9px !important; }
@@ -387,7 +394,7 @@ body.tv .card-st-label{font-size:0.9rem;}
    Mismos valores que el media query pero activado por clase.
    Garantiza el look correcto aunque el media query no dispare.
    ══════════════════════════════════════════════════════════════ */
-body.tv.dtv720{ padding:1.8vh 2vw !important; }
+body.tv.dtv720{ padding:3.2vh 3.4vw !important; }
 body.tv.dtv720 header{
   border-radius:14px !important;
   height:72px !important; min-height:72px !important; max-height:72px !important;
@@ -401,7 +408,14 @@ body.tv.dtv720 .header-title-sub{ font-size:0.55rem !important; }
 body.tv.dtv720 .status-pill{ padding:5px 12px 5px 9px !important; gap:8px !important; border-radius:11px !important; max-height:42px !important; }
 body.tv.dtv720 .conn-dot{ width:10px !important; height:10px !important; }
 body.tv.dtv720 .status-pill #clock{ font-size:1.1rem !important; }
-body.tv.dtv720 main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; }
+body.tv.dtv720 main{ max-width:100% !important; padding:1.4vh 0 0 !important; margin:0 !important; display:flex !important; flex-direction:column !important; }
+body.tv.dtv720 .grid-main,
+body.tv.dtv720 .clima-grid{ flex:1 !important; }
+body.tv.dtv720 #prev-24h{ flex:1.25 !important; display:flex !important; }
+body.tv.dtv720 .prev7-grid{ flex:1 !important; width:100% !important; }
+body.tv.dtv720 .grid-main .card{ display:flex !important; flex-direction:column !important; justify-content:center !important; }
+body.tv.dtv720 .prev7-dia{ display:flex !important; flex-direction:column !important; justify-content:center !important; }
+body.tv.dtv720 .footer{ margin-top:auto !important; padding-top:6px !important; }
 body.tv.dtv720 .section-title{ font-size:0.72rem !important; margin:8px 0 6px !important; }
 body.tv.dtv720 .grid-main{ gap:9px !important; }
 body.tv.dtv720 .clima-grid{ gap:9px !important; }
