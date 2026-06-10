@@ -3263,7 +3263,7 @@ var LANG_ALIAS = {
   var nextIdle = 0, hopStart = 0, hopUntil = 0, hopAmp = 0, hopDur = 320, flickUntil = 0;
   var schedTimer = null;
 
-  function modeOK(){ var c = document.body.className; if(isTv) return !/\bwbg-storm\b/.test(c) && !/\bwbg-snow\b/.test(c) && !/\bwbg-hail\b/.test(c); return /\bwbg-clear\b/.test(c) || /\bwbg-few\b/.test(c) || /\bwbg-clouds\b/.test(c); }
+  function modeOK(){ var c = document.body.className; return /\bwbg-clear\b/.test(c) || /\bwbg-few\b/.test(c) || /\bwbg-clouds\b/.test(c); }
   function isNight(){ return document.body.classList.contains('tod-night'); }
   function cards(){
     var list = document.querySelectorAll('.card, .meteo-card, .prev7-dia'), out = [];
