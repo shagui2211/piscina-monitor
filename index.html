@@ -1033,21 +1033,21 @@ body.tod-dawn.wbg-snow #weather-bg{filter:saturate(.48) brightness(1.02);}
 body.tod-dawn.wbg-hail #weather-bg{filter:saturate(.60) brightness(.74);}
 header{background:rgba(2,36,61,.48)!important;border:1px solid rgba(255,255,255,.20)!important;box-shadow:0 12px 35px rgba(0,20,35,.18)!important;backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);border-radius:0 0 18px 18px!important;}
 header::after{background:linear-gradient(90deg,transparent,#8ee9ff,transparent)!important;opacity:.55!important;}
-.header-title-main{color:#fff!important;text-transform:uppercase;}
+.header-title-main{font-size:clamp(1.5rem,2.2vw,2.5rem)!important;color:#fff!important;letter-spacing:.02em!important;text-transform:uppercase;}
 .header-title-sub{color:rgba(255,255,255,.78)!important;}
 .status-pill{color:#fff!important;background:rgba(0,33,53,.55)!important;border-color:rgba(255,255,255,.25)!important;backdrop-filter:blur(6px);}
-.status-pill #clock{color:#fff!important;}
-.logo{opacity:1!important;filter:brightness(0) invert(1) drop-shadow(0 2px 8px rgba(0,0,0,.45))!important;}
 .conn-dot.ok{background:#69ef72!important;box-shadow:0 0 12px #69ef72!important;}
+main{max-width:1500px!important;padding:18px 34px 28px!important;}
 .error-banner{background:rgba(100,20,20,.72)!important;color:#fff!important;border-color:rgba(255,170,170,.35)!important;}
-.section-title{color:#fff!important;font-weight:600!important;letter-spacing:.06em!important;text-shadow:0 2px 8px rgba(0,0,0,.35);}
+.section-title{color:#fff!important;font-size:.9rem!important;font-weight:600!important;letter-spacing:.06em!important;text-shadow:0 2px 8px rgba(0,0,0,.35);margin:16px 0 9px!important;}
 .card,.meteo-card,.prev7-dia{background:linear-gradient(180deg,rgba(7,55,82,.58),rgba(4,40,62,.66))!important;border:1px solid var(--glass-border)!important;color:#fff!important;box-shadow:0 10px 28px rgba(0,24,40,.16),inset 0 1px 0 rgba(255,255,255,.08)!important;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.card{border-left:1px solid var(--glass-border)!important;}
+.card{border-left:1px solid var(--glass-border)!important;border-radius:12px!important;padding:14px 16px!important;}
 .card.ok-card{border-left:3px solid #62e875!important;}
 .card-label,.card-unit,.card-st-label,.legal-label,.p7-fecha,.p7-lluvia,.p7-viento{color:var(--muted-glass)!important;}
 .card-value{color:#fff!important;text-shadow:0 2px 10px rgba(0,0,0,.25);}
 .bar-wrap{background:rgba(255,255,255,.22)!important;}
 .legal-zone{background:rgba(94,239,125,.25)!important;}
+.meteo-card{padding:18px 20px!important;min-height:116px;}
 .meteo-frase{color:#fff!important;font-size:1.22rem!important;text-shadow:0 2px 8px rgba(0,0,0,.25);}
 .meteo-sub{color:rgba(255,255,255,.8)!important;}
 #meteo-icon{filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));}
@@ -1055,13 +1055,28 @@ header::after{background:linear-gradient(90deg,transparent,#8ee9ff,transparent)!
 .p7-tmax,.p7-tmin{color:#fff!important;}
 .footer{color:rgba(255,255,255,.78)!important;border-top-color:rgba(255,255,255,.20)!important;}
 .lang-indicator,.res-indicator{color:rgba(255,255,255,.8)!important;}
+/* Composición tipo resort: clima arriba, después agua, después previsión. */
+.clima-grid{grid-template-columns:1.55fr repeat(3,1fr)!important;gap:12px!important;}
+.clima-grid .meteo-card{grid-column:auto!important;}
+.grid-main{gap:12px!important;}
+.prev7-grid{gap:8px!important;}
 #debug-weather{background:rgba(2,39,60,.88)!important;border-color:rgba(255,255,255,.28)!important;box-shadow:0 12px 35px rgba(0,0,0,.28)!important;backdrop-filter:blur(10px)!important;}
 #debug-weather span{color:rgba(255,255,255,.8)!important;}
 #debug-weather button{background:rgba(255,255,255,.08)!important;color:#fff!important;border-color:rgba(255,255,255,.25)!important;}
 #debug-weather button:hover,#debug-weather button.active{background:rgba(74,213,139,.35)!important;border-color:#6eef8a!important;color:#fff!important;}
-@media(max-width:900px){#weather-bg{background-position:center 58%!important;}}
+@media(max-width:900px){main{padding:14px!important;}.clima-grid{grid-template-columns:repeat(2,1fr)!important;}#weather-bg{background-position:center 58%!important;}}
 
 body.tod-night #weather-bg::before{animation:nightScene 24s ease-in-out infinite alternate !important;}
+
+/* ===== Vídeo de la piscina como fondo (agua real en movimiento) =====
+   Hijo de #weather-bg (z-index:0), pointer-events:none. No afecta a tarjetas ni layout.
+   Hereda los filtros meteorológicos/noche de #weather-bg. La foto ::before queda de reserva. */
+#agua-video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center center;
+  pointer-events:none;z-index:1;background:transparent;
+}
+@media (prefers-reduced-motion:reduce){#agua-video{display:none;}}
 @keyframes nightScene{from{transform:scale(1.04) translate3d(-.25%,0,0)}to{transform:scale(1.07) translate3d(.25%,-.15%,0)}}
 
 /* Fondo fotográfico único: la misma piscina aparece en TODOS los estados.
@@ -1184,7 +1199,7 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
-<div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas></div>
+<div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
 <!-- OVERLAY AMANECER -->
 <div id="dawn-glow" aria-hidden="true"></div>
 <!-- OVERLAY SOL (llovizna/lluvia/tormenta) -->
@@ -3733,6 +3748,19 @@ var LANG_ALIAS = {
   /* ?bird=force en la URL hace aparecer el pájaro a los 500ms sin espera */
   var birdForce = new URLSearchParams(location.search).has('bird');
   schedule(birdForce ? 500 : (isTv ? 800 + Math.random()*1200 : 2000 + Math.random()*3000));
+})();
+</script>
+<script>
+/* Asegura la reproducción del vídeo de fondo (autoplay en modo kiosco/Chromium). */
+(function(){
+  var v = document.getElementById('agua-video');
+  if(!v) return;
+  v.muted = true;
+  var go = function(){ var p = v.play(); if(p && p.catch){ p.catch(function(){}); } };
+  v.addEventListener('canplay', go);
+  v.addEventListener('loadeddata', go);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
+  go();
 })();
 </script>
 </body>
