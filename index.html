@@ -1077,6 +1077,8 @@ body.tod-night #weather-bg::before{animation:nightScene 24s ease-in-out infinite
   pointer-events:none;z-index:1;background:transparent;
 }
 @media (prefers-reduced-motion:reduce){#agua-video{display:none;}}
+/* mismo encuadre responsive que tenía la foto de fondo */
+@media(max-width:900px){#agua-video{object-position:center 58%;}}
 @keyframes nightScene{from{transform:scale(1.04) translate3d(-.25%,0,0)}to{transform:scale(1.07) translate3d(.25%,-.15%,0)}}
 
 /* Fondo fotográfico único: la misma piscina aparece en TODOS los estados.
