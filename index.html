@@ -1213,7 +1213,27 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 @media(max-width:900px){#weather-bg{background-position:center 58%!important;}}
 </style>
 
+
+<style id="tv-video-diagnostic-css">
+#tv-video-diagnostic{
+  display:none;
+  position:fixed;
+  left:16px;
+  bottom:16px;
+  z-index:2147483647;
+  padding:10px 14px;
+  border-radius:10px;
+  background:rgba(0,0,0,.82);
+  color:#fff;
+  font:600 14px/1.35 Arial,sans-serif;
+  white-space:pre-line;
+  pointer-events:none;
+  box-shadow:0 4px 20px rgba(0,0,0,.35);
+}
+body.tv #tv-video-diagnostic{display:block;}
+</style>
 </head>
+<div id="tv-video-diagnostic" aria-hidden="true">VIDEO: comprobando…</div>
 <body>
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
@@ -3810,6 +3830,87 @@ var LANG_ALIAS = {
   window.addEventListener('focus', iniciarVideo);
 
   iniciarVideo();
+})();
+</script>
+
+<script id="tv-video-compatibility">
+(function(){
+  var v = document.getElementById('agua-video');
+  var box = document.getElementById('tv-video-diagnostic');
+  if(!v) return;
+
+  /* Compatibilidad de composición para navegadores de TV */
+  var css = document.createElement('style');
+  css.id = 'tv-video-compatibility-css';
+  css.textContent =
+    '#weather-bg{position:fixed!important;inset:0!important;overflow:hidden!important;}' +
+    '#agua-video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;' +
+      'display:block!important;visibility:visible!important;opacity:1!important;' +
+      'object-fit:cover!important;object-position:center center!important;z-index:0!important;' +
+      'transform:translateZ(0)!important;}' +
+    '#weather-bg::before{z-index:1!important;}' +
+    '#weather-canvas{z-index:2!important;}' +
+    'header,main,footer{position:relative!important;z-index:10!important;}';
+  document.head.appendChild(css);
+
+  v.muted = true;
+  v.defaultMuted = true;
+  v.playsInline = true;
+  v.setAttribute('muted','');
+  v.setAttribute('playsinline','');
+  v.setAttribute('webkit-playsinline','');
+
+  function stateName(){
+    if(v.error) return 'ERROR ' + v.error.code;
+    if(v.readyState >= 3 && !v.paused) return 'REPRODUCIENDO';
+    if(v.readyState >= 3) return 'CARGADO / PAUSADO';
+    if(v.readyState > 0) return 'CARGANDO';
+    return 'SIN DATOS';
+  }
+
+  function updateDiagnostic(){
+    if(!box) return;
+    var r = v.getBoundingClientRect();
+    var cs = getComputedStyle(v);
+    box.textContent =
+      'VIDEO: ' + stateName() +
+      '\nreadyState: ' + v.readyState +
+      '   paused: ' + v.paused +
+      '\nsize: ' + Math.round(r.width) + '×' + Math.round(r.height) +
+      '\ndisplay: ' + cs.display +
+      '   opacity: ' + cs.opacity +
+      '\nsrc: ' + (v.currentSrc || v.src || '—');
+  }
+
+  function playVideo(){
+    try{
+      v.play().catch(function(){});
+    }catch(e){}
+    updateDiagnostic();
+  }
+
+  ['loadedmetadata','loadeddata','canplay','canplaythrough','playing','pause','waiting','stalled','error'].forEach(function(ev){
+    v.addEventListener(ev, updateDiagnostic);
+  });
+
+  v.addEventListener('error', function(){
+    updateDiagnostic();
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) playVideo();
+  });
+
+  window.addEventListener('pageshow', playVideo);
+  window.addEventListener('resize', updateDiagnostic);
+
+  setInterval(function(){
+    if(!document.hidden && v.paused) playVideo();
+    updateDiagnostic();
+  }, 3000);
+
+  playVideo();
+  updateDiagnostic();
 })();
 </script>
 </body>
