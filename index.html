@@ -1078,6 +1078,20 @@ body.tod-night #weather-bg::before{animation:nightScene 24s ease-in-out infinite
   pointer-events:none;z-index:1;background:transparent;
 }
 @media (prefers-reduced-motion:reduce){#agua-video{display:none;}}
+
+/* FIX: el vídeo de fondo debe estar disponible en todos los modos TV
+   y resoluciones. La animación meteorológica puede seguir respetando
+   prefers-reduced-motion, pero el vídeo de la piscina no se oculta. */
+#agua-video{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+body.tv #agua-video{
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
 /* mismo encuadre responsive que tenía la foto de fondo */
 @media(max-width:900px){#agua-video{object-position:center 58%;}}
 @keyframes nightScene{from{transform:scale(1.04) translate3d(-.25%,0,0)}to{transform:scale(1.07) translate3d(.25%,-.15%,0)}}
@@ -3754,16 +3768,48 @@ var LANG_ALIAS = {
 })();
 </script>
 <script>
-/* Asegura la reproducción del vídeo de fondo (autoplay en modo kiosco/Chromium). */
+/* Asegura la reproducción del vídeo de fondo en todos los modos
+   TV/resoluciones (incluido Chromium en modo kiosco). */
 (function(){
   var v = document.getElementById('agua-video');
   if(!v) return;
+
   v.muted = true;
-  var go = function(){ var p = v.play(); if(p && p.catch){ p.catch(function(){}); } };
-  v.addEventListener('canplay', go);
-  v.addEventListener('loadeddata', go);
-  document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
-  go();
+  v.defaultMuted = true;
+  v.playsInline = true;
+  v.setAttribute('muted', '');
+  v.setAttribute('playsinline', '');
+  v.setAttribute('webkit-playsinline', '');
+
+  function iniciarVideo(){
+    try{
+      if(v.readyState < 2) return;
+      if(v.paused){
+        var p = v.play();
+        if(p && p.catch){ p.catch(function(){}); }
+      }
+    }catch(e){}
+  }
+
+  v.addEventListener('loadedmetadata', iniciarVideo);
+  v.addEventListener('loadeddata', iniciarVideo);
+  v.addEventListener('canplay', iniciarVideo);
+  v.addEventListener('canplaythrough', iniciarVideo);
+  v.addEventListener('playing', function(){});
+  v.addEventListener('pause', function(){ setTimeout(iniciarVideo, 100); });
+  v.addEventListener('ended', function(){
+    try{ v.currentTime = 0; }catch(e){}
+    iniciarVideo();
+  });
+
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) iniciarVideo();
+  });
+
+  window.addEventListener('pageshow', iniciarVideo);
+  window.addEventListener('focus', iniciarVideo);
+
+  iniciarVideo();
 })();
 </script>
 </body>
