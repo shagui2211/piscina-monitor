@@ -1232,8 +1232,23 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 }
 body.tv #tv-video-diagnostic{display:block;}
 </style>
+
+<style id="tv-video-top-test">
+body.tv #agua-video{
+  z-index:2147483646 !important;
+  transform:translate3d(0,0,0) !important;
+  backface-visibility:hidden !important;
+  -webkit-backface-visibility:hidden !important;
+  will-change:transform !important;
+}
+body.tv #weather-bg{
+  z-index:2147483645 !important;
+}
+</style>
 </head>
 <div id="tv-video-diagnostic" aria-hidden="true">VIDEO: comprobando…</div>
+
+<div id="tv-video-top-test-label" style="display:none;position:fixed;right:16px;top:16px;z-index:2147483647;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,.78);color:#fff;font:600 13px Arial,sans-serif;pointer-events:none;">PRUEBA VÍDEO: CAPA SUPERIOR</div>
 <body>
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
@@ -3911,6 +3926,17 @@ var LANG_ALIAS = {
 
   playVideo();
   updateDiagnostic();
+})();
+</script>
+
+<script id="tv-video-top-test-js">
+(function(){
+  function show(){
+    var b=document.getElementById('tv-video-top-test-label');
+    if(document.body.classList.contains('tv') && b) b.style.display='block';
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',show);
+  else show();
 })();
 </script>
 </body>
