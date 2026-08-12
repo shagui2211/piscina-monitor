@@ -701,7 +701,7 @@ body.tv .res-indicator{
   position:absolute;top:0;left:0;width:100%;height:100%;
   pointer-events:none;
 }
-body > *:not(#weather-bg):not(#fog-overlay):not(#dawn-glow):not(#splash-canvas):not(#sun-glow):not(#cloud-overlay){ position:relative; z-index:1; }
+body > *:not(#weather-bg):not(#fog-overlay):not(#dawn-glow):not(#splash-canvas):not(#sun-glow):not(#cloud-overlay):not(#eclipse-bg){ position:relative; z-index:1; }
 header{ position:relative; z-index:2; }
 /* ── OVERLAY DE NIEBLA CSS puro ── */
 #fog-overlay{
@@ -1199,11 +1199,142 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 /* Responsive: ajustar posición de la foto en móvil */
 @media(max-width:900px){#weather-bg{background-position:center 58%!important;}}
 </style>
+<style id="eclipse-scene">
+/* ══════════════════════════════════════════════════════════════
+   ECLIPSE SOLAR — escena de fondo 100% CSS (sin vídeo real).
+   Un ciclo de 60s: sol visible → la luna cruza por delante →
+   totalidad (corona + estrellas) → la luna se retira → repite.
+   Se apoya en las mismas capas de fondo (#weather-bg, #agua-video)
+   sin tocarlas: simplemente se pinta encima. ══════════════════ */
+#eclipse-bg{
+  position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none;
+}
+.eclipse-sky{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,#050912 0%,#0b1330 32%,#1b2a52 58%,#2c3c62 80%,#3c4a70 100%);
+  animation:eclipseSky 30s ease-in-out infinite;
+}
+@keyframes eclipseSky{
+  0%,30%,100%{filter:brightness(1);}
+  42%{filter:brightness(.82);}
+  50%{filter:brightness(.48);}
+  58%{filter:brightness(.72);}
+  70%{filter:brightness(1);}
+}
+.eclipse-stars{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 8% 12%,#fff,transparent),
+    radial-gradient(1.2px 1.2px at 18% 22%,#fff,transparent),
+    radial-gradient(1.8px 1.8px at 27% 9%,#fff,transparent),
+    radial-gradient(1.3px 1.3px at 35% 28%,#fff,transparent),
+    radial-gradient(1.6px 1.6px at 44% 14%,#fff,transparent),
+    radial-gradient(1.2px 1.2px at 58% 20%,#fff,transparent),
+    radial-gradient(1.8px 1.8px at 66% 10%,#fff,transparent),
+    radial-gradient(1.3px 1.3px at 74% 26%,#fff,transparent),
+    radial-gradient(1.6px 1.6px at 83% 15%,#fff,transparent),
+    radial-gradient(1.2px 1.2px at 91% 24%,#fff,transparent),
+    radial-gradient(1.4px 1.4px at 12% 35%,#fff,transparent),
+    radial-gradient(1.4px 1.4px at 95% 8%,#fff,transparent);
+  opacity:0;
+  animation:eclipseStars 30s ease-in-out infinite;
+}
+@keyframes eclipseStars{
+  0%,36%,100%{opacity:0;}
+  45%{opacity:.65;}
+  50%{opacity:1;}
+  55%{opacity:.75;}
+  66%{opacity:0;}
+}
+.eclipse-horizon{
+  position:absolute;left:0;right:0;bottom:0;height:16%;
+  background:linear-gradient(180deg,transparent,#040509 75%);
+}
+.eclipse-sun{
+  position:absolute;top:36%;left:50%;
+  width:16vmin;height:16vmin;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#fff8e1 0%,#ffe58a 35%,#ffb347 62%,transparent 74%);
+  box-shadow:0 0 9vmin 4vmin rgba(255,210,120,.5);
+}
+
+.eclipse-flash{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:5;
+  opacity:0;
+  background:
+    radial-gradient(circle at 50% 36%,
+      rgba(255,255,255,1) 0%,
+      rgba(255,255,245,.92) 1.2%,
+      rgba(255,244,190,.48) 4%,
+      rgba(255,230,150,.16) 10%,
+      transparent 22%);
+  mix-blend-mode:screen;
+  animation:eclipseFlash 30s ease-in-out infinite;
+}
+@keyframes eclipseFlash{
+  0%,58%,100%{opacity:0;}
+  62%{opacity:.18;}
+  64%{opacity:.95;}
+  65%{opacity:.30;}
+  66%{opacity:.08;}
+  68%{opacity:0;}
+}
+
+.eclipse-corona{
+  position:absolute;inset:-45%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.95) 0%,rgba(255,255,255,.35) 32%,transparent 68%);
+  opacity:0;
+  animation:eclipseCorona 30s ease-in-out infinite;
+}
+@keyframes eclipseCorona{
+  0%,38%,100%{opacity:0;transform:scale(1);}
+  46%{opacity:.78;transform:scale(1.08);}
+  50%{opacity:1;transform:scale(1.22);}
+  54%{opacity:.9;transform:scale(1.10);}
+  63%{opacity:0;transform:scale(1);}
+}
+.eclipse-moon{
+  position:absolute;top:36%;left:-12%;
+  width:16.6vmin;height:16.6vmin;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#5a6472 0%,#282d36 55%,#0c0e12 100%);
+  box-shadow:inset -1.2vmin -1.2vmin 3vmin rgba(0,0,0,.65);
+  animation:eclipseMoon 30s ease-in-out infinite;
+}
+@keyframes eclipseMoon{
+  0%{left:39%;}
+  50%{left:50%;}
+  100%{left:61%;}
+}
+@media(prefers-reduced-motion:reduce){
+  .eclipse-sky,.eclipse-stars,.eclipse-corona,.eclipse-moon{animation:none!important;}
+}
+body.tv .eclipse-sky,body.tv .eclipse-stars,body.tv .eclipse-corona,body.tv .eclipse-moon,body.tv .eclipse-flash{animation-play-state:running!important;}
+/* Esta página es solo para el eclipse: se anulan los efectos del clima real
+   (lluvia/nieve/niebla/nubes/sol) para que no se mezclen con la escena. */
+#weather-canvas,#splash-canvas,#dawn-glow,#sun-glow,#cloud-overlay,#fog-overlay,#agua-video{display:none!important;}
+body.tv #weather-canvas,body.tv #splash-canvas,body.tv #agua-video{display:none!important;}
+</style>
 
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+<!-- ECLIPSE SOLAR — escena animada en CSS (sin vídeo real), sustituye visualmente al fondo de piscina -->
+<div id="eclipse-bg" aria-hidden="true">
+  <div class="eclipse-sky"></div>
+  <div class="eclipse-stars"></div>
+  <div class="eclipse-horizon"></div>
+  <div class="eclipse-sun"><div class="eclipse-corona"></div></div>
+  <div class="eclipse-flash"></div>
+  <div class="eclipse-moon"></div>
+</div>
 <!-- OVERLAY AMANECER -->
 <div id="dawn-glow" aria-hidden="true"></div>
 <!-- OVERLAY SOL (llovizna/lluvia/tormenta) -->
