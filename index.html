@@ -1315,7 +1315,23 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 @media(prefers-reduced-motion:reduce){
   .eclipse-sky,.eclipse-stars,.eclipse-corona,.eclipse-moon{animation:none!important;}
 }
-body.tv .eclipse-sky,body.tv .eclipse-stars,body.tv .eclipse-corona,body.tv .eclipse-moon,body.tv .eclipse-flash{animation-play-state:running!important;}
+/* En modo TV/DTV 720 forzamos la animación del eclipse incluso si el navegador
+   del televisor declara prefers-reduced-motion. */
+body.tv .eclipse-sky{
+  animation:eclipseSky 30s ease-in-out infinite !important;
+}
+body.tv .eclipse-stars{
+  animation:eclipseStars 30s ease-in-out infinite !important;
+}
+body.tv .eclipse-corona{
+  animation:eclipseCorona 30s ease-in-out infinite !important;
+}
+body.tv .eclipse-moon{
+  animation:eclipseMoon 30s ease-in-out infinite !important;
+}
+body.tv .eclipse-flash{
+  animation:eclipseFlash 30s ease-in-out infinite !important;
+}
 /* Esta página es solo para el eclipse: se anulan los efectos del clima real
    (lluvia/nieve/niebla/nubes/sol) para que no se mezclen con la escena. */
 #weather-canvas,#splash-canvas,#dawn-glow,#sun-glow,#cloud-overlay,#fog-overlay,#agua-video{display:none!important;}
