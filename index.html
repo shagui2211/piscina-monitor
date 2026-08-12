@@ -166,7 +166,8 @@ body.tv{
 body.tv main{max-width:100%;padding:1.5vh 0 0;margin:0;flex:1;}
 /* Forzar efectos meteorologicos visibles en TV aunque prefers-reduced-motion este activo */
 body.tv #weather-canvas,
-body.tv #splash-canvas{ display:block !important; }
+body.tv #splash-canvas,
+body.tv #agua-video{ display:block !important; }
 body.tv.wbg-fog #fog-overlay{ display:block !important; }
 body.tv.tod-dawn #dawn-glow{ display:block !important; }
 body.tv.wbg-drizzle #sun-glow, body.tv.wbg-rain #sun-glow, body.tv.wbg-storm #sun-glow{ display:block !important; }
@@ -1078,20 +1079,6 @@ body.tod-night #weather-bg::before{animation:nightScene 24s ease-in-out infinite
   pointer-events:none;z-index:1;background:transparent;
 }
 @media (prefers-reduced-motion:reduce){#agua-video{display:none;}}
-
-/* FIX: el vídeo de fondo debe estar disponible en todos los modos TV
-   y resoluciones. La animación meteorológica puede seguir respetando
-   prefers-reduced-motion, pero el vídeo de la piscina no se oculta. */
-#agua-video{
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-}
-body.tv #agua-video{
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-}
 /* mismo encuadre responsive que tenía la foto de fondo */
 @media(max-width:900px){#agua-video{object-position:center 58%;}}
 @keyframes nightScene{from{transform:scale(1.04) translate3d(-.25%,0,0)}to{transform:scale(1.07) translate3d(.25%,-.15%,0)}}
@@ -1213,88 +1200,7 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 @media(max-width:900px){#weather-bg{background-position:center 58%!important;}}
 </style>
 
-
-<style id="tv-video-diagnostic-css">
-#tv-video-diagnostic{
-  display:none;
-  position:fixed;
-  left:16px;
-  bottom:16px;
-  z-index:2147483647;
-  padding:10px 14px;
-  border-radius:10px;
-  background:rgba(0,0,0,.82);
-  color:#fff;
-  font:600 14px/1.35 Arial,sans-serif;
-  white-space:pre-line;
-  pointer-events:none;
-  box-shadow:0 4px 20px rgba(0,0,0,.35);
-}
-body.tv #tv-video-diagnostic{display:none;}
-</style>
-
-
-
-<style id="video-layer-order-fix">
-/* Orden definitivo de capas para compatibilidad con navegadores de TV */
-#weather-bg{
-  position:fixed !important;
-  inset:0 !important;
-  overflow:hidden !important;
-  z-index:0 !important;
-  isolation:isolate !important;
-  background:#0b1b26 !important;
-}
-
-/* Vídeo: siempre visible y por encima del fondo de reserva */
-#weather-bg > #agua-video{
-  position:absolute !important;
-  inset:0 !important;
-  width:100% !important;
-  height:100% !important;
-  display:block !important;
-  visibility:visible !important;
-  opacity:1 !important;
-  object-fit:cover !important;
-  object-position:center center !important;
-  z-index:0 !important;
-  transform:translate3d(0,0,0) !important;
-  backface-visibility:hidden !important;
-  -webkit-backface-visibility:hidden !important;
-}
-
-/* Las capas decorativas no pueden ocultar el vídeo */
-#weather-bg::before{
-  z-index:-1 !important;
-  pointer-events:none !important;
-}
-#weather-bg::after{
-  z-index:1 !important;
-  pointer-events:none !important;
-}
-
-/* Efectos meteorológicos encima del vídeo */
-#weather-bg > #weather-canvas{
-  position:absolute !important;
-  inset:0 !important;
-  z-index:2 !important;
-  pointer-events:none !important;
-}
-
-/* Toda la interfaz siempre por encima del fondo */
-body > header,
-body > main,
-body > footer,
-main,
-header,
-footer{
-  position:relative !important;
-  z-index:10 !important;
-}
-</style>
 </head>
-<div id="tv-video-diagnostic" aria-hidden="true">VIDEO: comprobando…</div>
-
 <body>
 <!-- FONDO METEOROLÓGICO -->
 <div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
@@ -3849,161 +3755,16 @@ var LANG_ALIAS = {
 })();
 </script>
 <script>
-/* Asegura la reproducción del vídeo de fondo en todos los modos
-   TV/resoluciones (incluido Chromium en modo kiosco). */
+/* Asegura la reproducción del vídeo de fondo (autoplay en modo kiosco/Chromium). */
 (function(){
   var v = document.getElementById('agua-video');
   if(!v) return;
-
   v.muted = true;
-  v.defaultMuted = true;
-  v.playsInline = true;
-  v.setAttribute('muted', '');
-  v.setAttribute('playsinline', '');
-  v.setAttribute('webkit-playsinline', '');
-
-  function iniciarVideo(){
-    try{
-      if(v.readyState < 2) return;
-      if(v.paused){
-        var p = v.play();
-        if(p && p.catch){ p.catch(function(){}); }
-      }
-    }catch(e){}
-  }
-
-  v.addEventListener('loadedmetadata', iniciarVideo);
-  v.addEventListener('loadeddata', iniciarVideo);
-  v.addEventListener('canplay', iniciarVideo);
-  v.addEventListener('canplaythrough', iniciarVideo);
-  v.addEventListener('playing', function(){});
-  v.addEventListener('pause', function(){ setTimeout(iniciarVideo, 100); });
-  v.addEventListener('ended', function(){
-    try{ v.currentTime = 0; }catch(e){}
-    iniciarVideo();
-  });
-
-  document.addEventListener('visibilitychange', function(){
-    if(!document.hidden) iniciarVideo();
-  });
-
-  window.addEventListener('pageshow', iniciarVideo);
-  window.addEventListener('focus', iniciarVideo);
-
-  iniciarVideo();
-})();
-</script>
-
-<script id="tv-video-compatibility">
-(function(){
-  var v = document.getElementById('agua-video');
-  var box = document.getElementById('tv-video-diagnostic');
-  if(!v) return;
-
-  /* Compatibilidad de composición para navegadores de TV */
-  var css = document.createElement('style');
-  css.id = 'tv-video-compatibility-css';
-  css.textContent =
-    '#weather-bg{position:fixed!important;inset:0!important;overflow:hidden!important;z-index:0!important;}' +
-    '#agua-video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;' +
-      'display:block!important;visibility:visible!important;opacity:1!important;' +
-      'object-fit:cover!important;object-position:center center!important;z-index:0!important;' +
-      'transform:translate3d(0,0,0)!important;backface-visibility:hidden!important;' +
-      '-webkit-backface-visibility:hidden!important;}' +
-    '#weather-bg::before{z-index:1!important;}' +
-    '#weather-canvas{z-index:2!important;}' +
-    'header,main,footer{position:relative!important;z-index:10!important;}';
-  document.head.appendChild(css);
-
-  v.muted = true;
-  v.defaultMuted = true;
-  v.playsInline = true;
-  v.setAttribute('muted','');
-  v.setAttribute('playsinline','');
-  v.setAttribute('webkit-playsinline','');
-
-  function stateName(){
-    if(v.error) return 'ERROR ' + v.error.code;
-    if(v.readyState >= 3 && !v.paused) return 'REPRODUCIENDO';
-    if(v.readyState >= 3) return 'CARGADO / PAUSADO';
-    if(v.readyState > 0) return 'CARGANDO';
-    return 'SIN DATOS';
-  }
-
-  function updateDiagnostic(){
-    if(!box) return;
-    var r = v.getBoundingClientRect();
-    var cs = getComputedStyle(v);
-    box.textContent =
-      'VIDEO: ' + stateName() +
-      '\nreadyState: ' + v.readyState +
-      '   paused: ' + v.paused +
-      '\nsize: ' + Math.round(r.width) + '×' + Math.round(r.height) +
-      '\ndisplay: ' + cs.display +
-      '   opacity: ' + cs.opacity +
-      '\nsrc: ' + (v.currentSrc || v.src || '—');
-  }
-
-  function playVideo(){
-    try{
-      v.play().catch(function(){});
-    }catch(e){}
-    updateDiagnostic();
-  }
-
-  ['loadedmetadata','loadeddata','canplay','canplaythrough','playing','pause','waiting','stalled','error'].forEach(function(ev){
-    v.addEventListener(ev, updateDiagnostic);
-  });
-
-  v.addEventListener('error', function(){
-    updateDiagnostic();
-  });
-
-  document.addEventListener('visibilitychange', function(){
-    if(!document.hidden) playVideo();
-  });
-
-  window.addEventListener('pageshow', playVideo);
-  window.addEventListener('resize', updateDiagnostic);
-
-  setInterval(function(){
-    if(!document.hidden && v.paused) playVideo();
-    updateDiagnostic();
-  }, 3000);
-
-  playVideo();
-  updateDiagnostic();
-})();
-</script>
-
-
-
-<script id="video-tv-resume-fix">
-(function(){
-  var v = document.getElementById('agua-video');
-  if(!v) return;
-
-  function resume(){
-    try{
-      v.muted = true;
-      v.defaultMuted = true;
-      v.playsInline = true;
-      var p = v.play();
-      if(p && p.catch) p.catch(function(){});
-    }catch(e){}
-  }
-
-  v.addEventListener('pause', function(){
-    setTimeout(resume, 150);
-  });
-  v.addEventListener('stalled', function(){
-    setTimeout(resume, 300);
-  });
-  document.addEventListener('visibilitychange', function(){
-    if(!document.hidden) setTimeout(resume, 100);
-  });
-
-  setTimeout(resume, 300);
+  var go = function(){ var p = v.play(); if(p && p.catch){ p.catch(function(){}); } };
+  v.addEventListener('canplay', go);
+  v.addEventListener('loadeddata', go);
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
+  go();
 })();
 </script>
 </body>
