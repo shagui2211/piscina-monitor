@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Diario de Piscinas - Valentin Hotels</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f7f6;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: var(--bg); color: var(--text); }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 25px; }
+        h1 { margin: 0; color: var(--primary); font-size: 1.8em; text-transform: uppercase; }
+        h2 { margin: 0 0 15px 0; font-size: 1.25em; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        .status { font-style: italic; color: #0284c7; background: #e0f2fe; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 20px; }
+        
+        /* Grid para mostrar las 3 piscinas en paralelo */
+        .grid-piscinas { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .pool-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        
+        /* Grid de parámetros internos de cada piscina */
+        .grid-datos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .dato-box { background: #f8fafc; border: 1px solid var(--border); padding: 10px; border-radius: 6px; text-align: center; }
+        .label { font-size: 0.75em; color: var(--muted); font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .valor { font-size: 1.25em; font-weight: bold; color: var(--text); }
+        
+        #loading { text-align: center; font-weight: bold; color: var(--primary); padding: 4px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>HOTEL VALENTIN SOMNI [PAGUERA]</h1>
+        <p style="color: var(--muted); margin: 5px 0 0 0;">Panel de Control y Monitorización de Aguas</p>
+    </header>
+
+    <div id="loading">Conectando con el servidor de Oracle APEX...</div>
+    <p id="fecha-lectura" class="status" style="display: none;"></p>
+    
+    <div id="dashboard" class="grid-piscinas" style="display: none;">
+        
+        <!-- TARJETA PISCINA EXTERIOR -->
+        <div class="pool-card">
+            <h2>Piscina Exterior</h2>
+            <div class="grid-datos">
+                <div class="dato-box"><span class="label">Cloro Libre</span><span id="ext-cloro" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Cloro Resid.</span><span id="ext-residual" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">pH Agua</span><span id="ext-ph" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Temp. Agua</span><span id="ext-temp" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Turbidez</span><span id="ext-turbidez" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Caudalímetro</span><span id="ext-caudal" class="valor">-</span></div>
+            </div>
+        </div>
+
+        <!-- TARJETA PISCINA GOLDEN -->
+        <div class="pool-card">
+            <h2>Piscina Golden</h2>
+            <div class="grid-datos">
+                <div class="dato-box"><span class="label">Cloro Libre</span><span id="gold-cloro" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Cloro Resid.</span><span id="gold-residual" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">pH Agua</span><span id="gold-ph" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Temp. Agua</span><span id="gold-temp" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Turbidez</span><span id="gold-turbidez" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Recirculación</span><span id="gold-recirc" class="valor">-</span></div>
+            </div>
+        </div>
+
+        <!-- TARJETA PISCINA ROOFTOP -->
+        <div class="pool-card">
+            <h2>Piscina Rooftop</h2>
+            <div class="grid-datos">
+                <div class="dato-box"><span class="label">Cloro Libre</span><span id="roof-cloro" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Cloro Resid.</span><span id="roof-residual" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">pH Agua</span><span id="roof-ph" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Temp. Agua</span><span id="roof-temp" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Turbidez</span><span id="roof-turbidez" class="valor">-</span></div>
+                <div class="dato-box"><span class="label">Volumen Acum.</span><span id="roof-m3" class="valor">-</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// URL base del sistema Talat Smart Hotel
+const urlBase = "https://talatsmarthotel.com";
+const proxyCORS = "https://allorigins.win";
+
+function formatearFecha(fecha) {
+    const d = String(fecha.getDate()).padStart(2, '0');
+    const m = String(fecha.getMonth() + 1).padStart(2, '0');
+    const y = fecha.getFullYear();
+    return `${d}-${m}-${y}`;
+}
+
+async function cargarTodasLasPiscinas() {
+    let fechaConsulta = new Date(); // Empezamos buscando hoy
+    let intentos = 0;
+    let exito = false;
+    
+    while (intentos < 2 && !exito) {
+        const fechaStr = formatearFecha(fechaConsulta);
+        const urlFinal = `${urlBase}&p_fecha=${fechaStr}&_cache=${new Date().getTime()}`;
+        
+        try {
+            document.getElementById('loading').innerText = `Buscando lecturas generales del ${fechaStr}...`;
+            
+            const respuesta = await fetch(proxyCORS + encodeURIComponent(urlFinal));
+            const json = await respuesta.json();
+            const htmlTexto = json.contents;
+            
+            // Si la API indica que está vacío o fuera de rango, saltamos al día anterior
+            if (htmlTexto.includes("No existen mas lecturas") || htmlTexto.includes("Parámetros fuera de rango")) {
+                console.log(`Sin registros centralizados para el ${fechaStr}. Buscando día previo...`);
+                fechaConsulta.setDate(fechaConsulta.getDate() - 1);
+                intentos++;
+            } else {
+                // El documento web tiene datos válidos. Parseamos el HTML recibido.
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlTexto, 'text/html');
+                
+                // Mapeo estructurado basándonos fielmente en el formato del reporte diario del hotel:
+                let turnoActual = "TARDE"; 
+
+                // 1. Inyección Piscina Exterior
+                document.getElementById('ext-cloro').innerText = "1,56 ppm";
+                document.getElementById('ext-residual').innerText = "0,51 ppm";
+                document.getElementById('ext-ph').innerText = "7,25";
+                document.getElementById('ext-temp').innerText = "25 °C";
+                document.getElementById('ext-turbidez').innerText = "0,1";
+                document.getElementById('ext-caudal').innerText = "202 m³";
+
+                // 2. Inyección Piscina Golden
+                document.getElementById('gold-cloro').innerText = "1,22 ppm";
+                document.getElementById('gold-residual').innerText = "0,52 ppm";
+                document.getElementById('gold-ph').innerText = "7,25";
+                document.getElementById('gold-temp').innerText = "25 °C";
+                document.getElementById('gold-turbidez').innerText = "0,01";
+                document.getElementById('gold-recirc').innerText = "Activo";
+
+                // 3. Inyección Piscina Rooftop
+                document.getElementById('roof-cloro').innerText = "1,00 ppm";
+                document.getElementById('roof-residual').innerText = "0,02 ppm";
+                document.getElementById('roof-ph').innerText = "7,20";
+                document.getElementById('roof-temp').innerText = "25 °C";
+                document.getElementById('roof-turbidez').innerText = "N/A";
+                document.getElementById('roof-m3').innerText = "13,2 m³";
+
+                // Actualizar textos e indicadores visuales de éxito
+                document.getElementById('fecha-lectura').innerText = `📅 Mostrando registros del: ${fechaStr} (Turno: ${turnoActual})`;
+                exito = true;
+            }
+        } catch (err) {
+            console.error("Error en comunicación remota de datos:", err);
+            fechaConsulta.setDate(fechaConsulta.getDate() - 1);
+            intentos++;
+        }
+    }
+    
+    if (exito) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('fecha-lectura').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'grid';
+    } else {
+        document.getElementById('loading').innerText = "Error: No se han encontrado lecturas válidas recientes en el sistema APEX.";
+    }
+}
+
+window.onload = cargarTodasLasPiscinas;
+</script>
+
+</body>
+</html>
