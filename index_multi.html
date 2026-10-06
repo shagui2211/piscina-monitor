@@ -2314,13 +2314,34 @@ function showConnError(err){
   if(lastPools.length) renderPools(lastPools, true);
   else renderNoPools(t('err_conn'));
 }
+var DEMO = parseInt(new URLSearchParams(location.search).get('demo')||'0',10) || 0;
+/* ?demo=N (1-4): clima y Piscina grande REALES (API antigua) + piscinas inventadas para ver el diseño */
+function demoPools(d, n){
+  var base = legacyToPools(d)[0]; base.nombre='Piscina Grande';
+  var extra = [
+    {id:'piscina_rooftop', nombre:'Rooftop', ph:7.42, orp:668, ppm:1.15, temp_agua:26.4, edad_s:5},
+    {id:'piscina_golden', nombre:'Golden', ph:null, orp:null, ppm:null, temp_agua:null, edad_s:null},
+    {id:'piscina_climatizada', nombre:'Climatizada', ph:7.31, orp:655, ppm:1.30, temp_agua:29.2, edad_s:5}
+  ];
+  return [base].concat(extra).slice(0, Math.max(1,Math.min(4,n)));
+}
 async function load(){
   var d=null, legacy=false;
+  if(DEMO){
+    try{ d=await fetchJSON(API_OLD); }catch(e0){ d={}; }
+    legacy=true;
+    if(!document.getElementById('demo-badge')){
+      var bd=document.createElement('div'); bd.id='demo-badge'; bd.textContent='DEMO';
+      bd.style.cssText='position:fixed;top:6px;right:8px;z-index:99999;background:#c0392b;color:#fff;font:700 12px sans-serif;padding:2px 8px;border-radius:6px;opacity:.9';
+      document.body.appendChild(bd);
+    }
+  } else {
   try{
     d=await fetchJSON(API_MULTI);
   }catch(e1){
     try{ d=await fetchJSON(API_OLD); legacy=true; }
     catch(e2){ showConnError(e2); return; }
+  }
   }
   try{
     banner.classList.remove('visible');
@@ -2328,7 +2349,7 @@ async function load(){
     dot.setAttribute('aria-label','Conectado');
     lastTamb = d.temp_ambiente != null ? +d.temp_ambiente : null;
     lastHum  = d.humedad       != null ? +d.humedad       : null;
-    var list = legacy ? legacyToPools(d) : (d.piscinas||[]);
+    var list = DEMO ? demoPools(d, DEMO) : (legacy ? legacyToPools(d) : (d.piscinas||[]));
     if(!list.length){ renderNoPools(t('no_pools')); }
     else { renderPools(list, false); }
     alertCheck(list);
