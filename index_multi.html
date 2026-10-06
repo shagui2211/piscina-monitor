@@ -1285,6 +1285,7 @@ var I18N = {
     err_conn:      'Error de conexión',
     no_data:       'Falta de datos',
     no_pools:      'Sin piscinas activas',
+    lbl_manual:    'Medición manual',
     sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
@@ -1326,6 +1327,7 @@ var I18N = {
     err_conn:      'Connection error',
     no_data:       'No data',
     no_pools:      'No active pools',
+    lbl_manual:    'Manual reading',
     sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
@@ -1367,6 +1369,7 @@ var I18N = {
     err_conn:      'Verbindungsfehler',
     no_data:       'Keine Daten',
     no_pools:      'Keine aktiven Becken',
+    lbl_manual:    'Manuelle Messung',
     sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
@@ -1408,6 +1411,7 @@ var I18N = {
     err_conn:      'Erreur de connexion',
     no_data:       'Données manquantes',
     no_pools:      'Aucune piscine active',
+    lbl_manual:    'Mesure manuelle',
     sec_ambiente:  'Météo actuelle',
     sec_condicion: 'Condition actuelle',
     sec_prevision: 'Prévisions 7 jours',
@@ -1449,6 +1453,7 @@ var I18N = {
     err_conn:      'Errore di connessione',
     no_data:       'Dati mancanti',
     no_pools:      'Nessuna piscina attiva',
+    lbl_manual:    'Misura manuale',
     sec_ambiente:  'Meteo attuale',
     sec_condicion: 'Condizione attuale',
     sec_prevision: 'Previsioni 7 giorni',
@@ -1894,25 +1899,37 @@ function ensurePools(list){
     if(nm) nm.textContent=p.nombre||p.id;
   });
 }
+function fmtMedido(iso){
+  var d=new Date(iso); if(isNaN(d.getTime())) return '';
+  var L=I18N[currentLang]||I18N.es;
+  var opts=L.clock12?{hour:'numeric',minute:'2-digit',hour12:true}:{hour:'2-digit',minute:'2-digit',hour12:false};
+  var hm=d.toLocaleTimeString(L.locale,opts);
+  if(d.toDateString()!==new Date().toDateString()){
+    return d.toLocaleDateString(L.locale,{day:'2-digit',month:'2-digit'})+' '+hm;
+  }
+  return hm;
+}
 function renderPools(list, errMode){
   ensurePools(list);
   lastPools=list;
   list.forEach(function(p){
     var id=cleanId(p.id);
     var msg=document.getElementById('msg-'+id);
+    var manual=(p.origen==='manual');   /* lectura manual (DPD1) mientras no hay sensores */
     var vals={ph:p.ph, orp:p.orp, ppm:p.ppm, temp:p.temp_agua};
     var fmt={ph:function(v){return (+v).toFixed(2);}, orp:function(v){return String(Math.round(v));},
              ppm:function(v){return (+v).toFixed(2);}, temp:function(v){return (+v).toFixed(1);}};
-    var stale=(p.edad_s!=null && p.edad_s>STALE_S);
+    var stale=(!manual && p.edad_s!=null && p.edad_s>STALE_S);
     var falta=false;
     ['ph','orp','ppm','temp'].forEach(function(k){
       var v=vals[k];
-      if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); falta=true; }
+      if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); if(!manual) falta=true; }
       else { setCard(k,+v,fmt[k](+v),id); }
     });
     if(msg){
-      msg.textContent = errMode ? t('err_conn') : (falta ? t('no_data') : '');
-      msg.className = 'pool-msg' + (errMode ? '' : ' warn');
+      if(errMode){ msg.textContent=t('err_conn'); msg.className='pool-msg'; }
+      else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts); msg.className='pool-msg info'; }
+      else { msg.textContent=falta?t('no_data'):''; msg.className='pool-msg warn'; }
     }
   });
 }
@@ -2319,7 +2336,7 @@ var DEMO = parseInt(new URLSearchParams(location.search).get('demo')||'0',10) ||
 function demoPools(d, n){
   var base = legacyToPools(d)[0]; base.nombre='Piscina Grande';
   var extra = [
-    {id:'piscina_rooftop', nombre:'Rooftop', ph:7.42, orp:668, ppm:1.15, temp_agua:26.4, edad_s:5},
+    {id:'piscina_rooftop', nombre:'Rooftop', origen:'manual', medido_ts:new Date(Date.now()-3600000).toISOString(), ph:7.42, orp:null, ppm:1.15, temp_agua:26.4, edad_s:null},
     {id:'piscina_golden', nombre:'Golden', ph:null, orp:null, ppm:null, temp_agua:null, edad_s:null},
     {id:'piscina_climatizada', nombre:'Climatizada', ph:7.31, orp:655, ppm:1.30, temp_agua:29.2, edad_s:5}
   ];
@@ -3616,6 +3633,7 @@ var LANG_ALIAS = {
 .pool-msg{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ff9a8f;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
 .pool-msg:empty{display:none;}
 .pool-msg.warn{color:#ffd166;}
+.pool-msg.info{color:#bfe3ff;}
 .card.empty-card{border-left-color:var(--border);}
 .card.empty-card .card-value{color:var(--muted)!important;}
 .pool-empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:1.1rem;}
