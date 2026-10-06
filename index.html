@@ -141,7 +141,7 @@ main{max-width:1400px;margin:auto;padding:32px 48px;}
   .card-st-label{font-size:0.82rem;margin-top:10px;}
   .bar-wrap{height:8px;margin-top:16px;}
   .legal-label{font-size:0.65rem;}
-  #card-ppm [data-i18n="lbl_ppm_nota"]{font-size:0.75rem !important;margin-top:12px;}
+  .card-ppm [data-i18n="lbl_ppm_nota"]{font-size:0.75rem !important;margin-top:12px;}
   .meteo-card{padding:28px 30px;}
   .meteo-frase{font-size:1.3rem;}
   .meteo-sub{font-size:0.88rem;}
@@ -300,7 +300,7 @@ body.tv .p7-temps{gap:8px;margin:6px 0;}
 body.tv .p7-lluvia{font-size:0.95rem;margin-top:6px;}
 body.tv .p7-viento{font-size:0.9rem;margin-top:4px;}
 /* ── TV MODE: TEXTOS PEQUEÑOS EN TARJETAS ── */
-body.tv #card-ppm [data-i18n="lbl_ppm_nota"]{display:none;}
+body.tv .card-ppm [data-i18n="lbl_ppm_nota"]{display:none;}
 body.tv .card-st-label{font-size:0.9rem;}
 /* ══════════════════════════════════════════════════════════════
    TV MODE — PANTALLA HORIZONTAL (landscape): MARGEN DE SEGURIDAD
@@ -391,7 +391,7 @@ body.tv .card-st-label{font-size:0.9rem;}
   body.tv .p7-temps{ gap:3px !important; margin:2px 0 !important; }
   body.tv .p7-lluvia{ font-size:0.68rem !important; margin-top:2px !important; }
   body.tv .p7-viento{ font-size:0.66rem !important; margin-top:1px !important; }
-  body.tv #card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
+  body.tv .card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
   body.tv .lang-indicator{ bottom:8px !important; right:12px !important; font-size:0.6rem !important; }
   body.tv .res-indicator{ bottom:8px !important; left:12px !important; font-size:0.6rem !important; }
 }
@@ -445,7 +445,7 @@ body.tv.dtv720 .p7-tmin{ font-size:0.9rem !important; }
 body.tv.dtv720 .p7-temps{ gap:3px !important; margin:2px 0 !important; }
 body.tv.dtv720 .p7-lluvia{ font-size:0.68rem !important; margin-top:2px !important; }
 body.tv.dtv720 .p7-viento{ font-size:0.66rem !important; margin-top:1px !important; }
-body.tv.dtv720 #card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
+body.tv.dtv720 .card-ppm [data-i18n="lbl_ppm_nota"]{ display:none !important; }
 body.tv.dtv720 .lang-indicator{ bottom:8px !important; right:12px !important; font-size:0.6rem !important; }
 body.tv.dtv720 .res-indicator{ bottom:8px !important; left:12px !important; font-size:0.6rem !important; }
 /* ══════════════════════════════════════════════════════════════
@@ -1231,30 +1231,7 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
     &#x26A0;&#xFE0F; Error de conexi&#243;n &#8212; No se puede contactar con la API.<br>
     Comprueba que Node-RED y Tailscale Funnel est&#225;n activos.
   </div>
-  <p class="section-title" data-i18n="sec_agua">Par&#225;metros del agua</p>
-  <div class="grid-main">
-    <div class="card" id="card-ph">
-      <div class="card-label" data-i18n="lbl_ph">pH</div>
-      <div class="card-value-row"><span class="card-value" id="val-ph">&#8212;</span><span class="card-unit">pH</span></div>
-      <div class="bar-wrap" id="bar-wrap-ph"><div class="legal-zone" id="legal-ph"></div><div class="bar-fill" id="bar-ph"></div></div>
-    </div>
-    <div class="card" id="card-orp">
-      <div class="card-label" data-i18n="lbl_orp">ORP / Redox</div>
-      <div class="card-value-row"><span class="card-value" id="val-orp">&#8212;</span><span class="card-unit">mV</span></div>
-      <div class="bar-wrap" id="bar-wrap-orp"><div class="legal-zone" id="legal-orp"></div><div class="bar-fill" id="bar-orp"></div></div>
-    </div>
-    <div class="card" id="card-ppm">
-      <div class="card-label" data-i18n="lbl_ppm">Cloro libre estimado</div>
-      <div class="card-value-row"><span class="card-value" id="val-ppm">&#8212;</span><span class="card-unit">mg/l</span></div>
-      <div class="bar-wrap" id="bar-wrap-ppm"><div class="legal-zone" id="legal-ppm"></div><div class="bar-fill" id="bar-ppm"></div></div>
-      <div style="font-size:0.58rem;color:var(--muted);margin-top:7px;line-height:1.5;font-family:var(--sans);" data-i18n="lbl_ppm_nota">Estimación por cálculo electroquímico. Lectura real con DPD1 introducida diariamente.</div>
-    </div>
-    <div class="card" id="card-temp">
-      <div class="card-label" data-i18n="lbl_temp">Temp agua piscina</div>
-      <div class="card-value-row"><span class="card-value" id="val-temp">&#8212;</span><span class="card-unit">&#176;C</span></div>
-      <div class="bar-wrap"><div class="bar-fill" id="bar-temp"></div></div>
-    </div>
-  </div>
+  <div id="pools"></div>
   <p class="section-title" data-i18n="sec_ambiente">Clima actual</p>
   <div class="clima-grid">
     <div class="card">
@@ -1292,7 +1269,10 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
   <div class="res-indicator" id="res-indicator"></div>
 </main>
 <script>
-var API = 'https://control-piscinas.tailf7bca2.ts.net/api/piscina';
+var API_BASE  = 'https://control-piscinas.tailf7bca2.ts.net';
+var API_MULTI = API_BASE + '/api/piscinas';   /* nuevo: lista de piscinas activas */
+var API_OLD   = API_BASE + '/api/piscina';    /* antiguo: solo Piscina grande (respaldo) */
+var STALE_S   = 600;   /* red de seguridad: dato con mas de 10 min = 'falta de datos' */
 var LANGS = ['es','en','de','fr','it'];
 var langIdx = 0;
 var currentLang = 'es';
@@ -1301,6 +1281,11 @@ var I18N = {
   es: {
     title:         'Piscina Exterior',
     sec_agua:      'Parámetros del agua',
+    title_multi:   'Piscinas',
+    err_conn:      'Error de conexión',
+    no_data:       'Falta de datos',
+    no_pools:      'Sin piscinas activas',
+    lbl_manual:    'Medición manual',
     sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
@@ -1338,6 +1323,11 @@ var I18N = {
   en: {
     title:         'Outdoor Pool',
     sec_agua:      'Water parameters',
+    title_multi:   'Pools',
+    err_conn:      'Connection error',
+    no_data:       'No data',
+    no_pools:      'No active pools',
+    lbl_manual:    'Manual reading',
     sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
@@ -1375,6 +1365,11 @@ var I18N = {
   de: {
     title:         'Außenpool',
     sec_agua:      'Wasserparameter',
+    title_multi:   'Schwimmbäder',
+    err_conn:      'Verbindungsfehler',
+    no_data:       'Keine Daten',
+    no_pools:      'Keine aktiven Becken',
+    lbl_manual:    'Manuelle Messung',
     sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
@@ -1412,6 +1407,11 @@ var I18N = {
   fr: {
     title:         'Piscine Extérieure',
     sec_agua:      "Paramètres de l'eau",
+    title_multi:   'Piscines',
+    err_conn:      'Erreur de connexion',
+    no_data:       'Données manquantes',
+    no_pools:      'Aucune piscine active',
+    lbl_manual:    'Mesure manuelle',
     sec_ambiente:  'Météo actuelle',
     sec_condicion: 'Condition actuelle',
     sec_prevision: 'Prévisions 7 jours',
@@ -1449,6 +1449,11 @@ var I18N = {
   it: {
     title:         'Piscina Esterna',
     sec_agua:      "Parametri dell'acqua",
+    title_multi:   'Piscine',
+    err_conn:      'Errore di connessione',
+    no_data:       'Dati mancanti',
+    no_pools:      'Nessuna piscina attiva',
+    lbl_manual:    'Misura manuale',
     sec_ambiente:  'Meteo attuale',
     sec_condicion: 'Condizione attuale',
     sec_prevision: 'Previsioni 7 giorni',
@@ -1822,31 +1827,127 @@ function tvSafeValue(key, raw){
   if(raw > s.max) return s.fmtMax;
   return null;
 }
-function setCard(key,raw,fmt){
+function pel(kind,key,pid){ return document.getElementById(kind+'-'+key+'-'+pid); }
+function setCard(key,raw,fmt,pid){
   var safe = tvSafeValue(key, raw);
   if(safe !== null) fmt = safe;  /* sustituir display si TV y fuera de rango */
   var r=R[key],s=semaforo(raw,r);
   var display=isTvMode?'ok':s;
-  document.getElementById('card-'+key).className='card '+display+'-card';
-  var v=document.getElementById('val-'+key);
+  var c=pel('card',key,pid); if(!c) return;
+  c.className='card '+(key==='ppm'?'card-ppm ':'')+display+'-card';
+  var v=pel('val',key,pid);
   v.textContent=fmt; v.style.color=COLOR[display];
-  var b=document.getElementById('bar-'+key);
+  var b=pel('bar',key,pid);
   if(b){b.style.width=pct(raw,r)+'%';b.style.background=COLOR[display];}
-  var wrap=document.getElementById('bar-wrap-'+key);
+  var wrap=pel('bar-wrap',key,pid);
   if(wrap&&r.legalMin!=null){
     var pMin=pct(r.legalMin,r), pMax=pct(r.legalMax,r);
-    var lm=document.getElementById('legal-'+key);
+    var lm=pel('legal',key,pid);
     if(lm){
       lm.style.left=pMin+'%';
       lm.style.width=(pMax-pMin)+'%';
     }
   }
 }
-function alertCheck(d){
+/* Tarjeta sin dato real: guion y sin color de semaforo (nunca un valor inventado) */
+function setCardEmpty(key,pid){
+  var c=pel('card',key,pid); if(!c) return;
+  c.className='card '+(key==='ppm'?'card-ppm ':'')+'empty-card';
+  var v=pel('val',key,pid); v.textContent='—'; v.style.color='';
+  var b=pel('bar',key,pid); if(b){b.style.width='0%';}
+}
+var lastPools = [];
+var poolsKey  = '';
+function cleanId(id){ return String(id).replace(/[^a-zA-Z0-9_-]/g,'_'); }
+function poolHTML(p, multi){
+  var id=cleanId(p.id);
+  function card(key,lbl,unit,extra,bar){
+    return '<div class="card'+(key==='ppm'?' card-ppm':'')+'" id="card-'+key+'-'+id+'">'
+      +'<div class="card-label" data-i18n="'+lbl+'"></div>'
+      +'<div class="card-value-row"><span class="card-value" id="val-'+key+'-'+id+'">&#8212;</span><span class="card-unit">'+unit+'</span></div>'
+      +(bar?'<div class="bar-wrap" id="bar-wrap-'+key+'-'+id+'"><div class="legal-zone" id="legal-'+key+'-'+id+'"></div><div class="bar-fill" id="bar-'+key+'-'+id+'"></div></div>'
+           :'<div class="bar-wrap"><div class="bar-fill" id="bar-'+key+'-'+id+'"></div></div>')
+      +(extra||'')+'</div>';
+  }
+  var nota='<div style="font-size:0.58rem;color:var(--muted);margin-top:7px;line-height:1.5;font-family:var(--sans);" data-i18n="lbl_ppm_nota"></div>';
+  return '<section class="pool" data-pid="'+id+'">'
+    +'<p class="section-title pool-title">'
+      +(multi?'<span class="pool-name" id="name-'+id+'"></span>':'<span data-i18n="sec_agua"></span>')
+      +'<span class="pool-msg" id="msg-'+id+'"></span></p>'
+    +'<div class="grid-main">'
+      +card('ph','lbl_ph','pH','',true)
+      +card('orp','lbl_orp','mV','',true)
+      +card('ppm','lbl_ppm','mg/l',nota,true)
+      +card('temp','lbl_temp','&#176;C','',false)
+    +'</div></section>';
+}
+function ensurePools(list){
+  var box=document.getElementById('pools');
+  var key=list.map(function(p){return cleanId(p.id);}).join('|');
+  var multi=list.length>1;
+  if(key!==poolsKey){
+    poolsKey=key;
+    box.innerHTML=list.map(function(p){return poolHTML(p,multi);}).join('');
+    var n=Math.min(list.length,4);
+    box.className='n'+n+(multi?' multi':'');
+    var ti=document.querySelector('.header-title-main');
+    if(ti){ ti.setAttribute('data-i18n', multi?'title_multi':'title'); }
+    applyLang();
+  }
+  list.forEach(function(p){
+    var nm=document.getElementById('name-'+cleanId(p.id));
+    if(nm) nm.textContent=p.nombre||p.id;
+  });
+}
+function fmtMedido(iso){
+  var d=new Date(iso); if(isNaN(d.getTime())) return '';
+  var L=I18N[currentLang]||I18N.es;
+  var opts=L.clock12?{hour:'numeric',minute:'2-digit',hour12:true}:{hour:'2-digit',minute:'2-digit',hour12:false};
+  var hm=d.toLocaleTimeString(L.locale,opts);
+  if(d.toDateString()!==new Date().toDateString()){
+    return d.toLocaleDateString(L.locale,{day:'2-digit',month:'2-digit'})+' '+hm;
+  }
+  return hm;
+}
+function renderPools(list, errMode){
+  ensurePools(list);
+  lastPools=list;
+  list.forEach(function(p){
+    var id=cleanId(p.id);
+    var msg=document.getElementById('msg-'+id);
+    var manual=(p.origen==='manual');   /* lectura manual (DPD1) mientras no hay sensores */
+    var vals={ph:p.ph, orp:p.orp, ppm:p.ppm, temp:p.temp_agua};
+    var fmt={ph:function(v){return (+v).toFixed(2);}, orp:function(v){return String(Math.round(v));},
+             ppm:function(v){return (+v).toFixed(2);}, temp:function(v){return (+v).toFixed(1);}};
+    var stale=(!manual && p.edad_s!=null && p.edad_s>STALE_S);
+    var falta=false;
+    ['ph','orp','ppm','temp'].forEach(function(k){
+      var v=vals[k];
+      if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); if(!manual) falta=true; }
+      else { setCard(k,+v,fmt[k](+v),id); }
+    });
+    if(msg){
+      if(errMode){ msg.textContent=t('err_conn'); msg.className='pool-msg'; }
+      else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts); msg.className='pool-msg info'; }
+      else { msg.textContent=falta?t('no_data'):''; msg.className='pool-msg warn'; }
+    }
+  });
+}
+function renderNoPools(text){
+  poolsKey='__vacio__';
+  lastPools=[];
+  var box=document.getElementById('pools');
+  box.className='n0';
+  box.innerHTML='<div class="pool-empty">'+text+'</div>';
+}
+function alertCheck(list){
   if(isTvMode){document.getElementById('alert').style.display='none';return;}
-  var bad=(d.ph!=null&&semaforo(d.ph,R.ph)==='bad')||
-          (d.orp!=null&&semaforo(d.orp,R.orp)==='bad')||
-          (d.ppm!=null&&semaforo(d.ppm,R.ppm)==='bad');
+  var bad=false;
+  (list||[]).forEach(function(p){
+    if(p.ph!=null&&semaforo(p.ph,R.ph)==='bad') bad=true;
+    if(p.orp!=null&&semaforo(p.orp,R.orp)==='bad') bad=true;
+    if(p.ppm!=null&&semaforo(p.ppm,R.ppm)==='bad') bad=true;
+  });
   var alertEl = document.getElementById('alert');
   alertEl.textContent = t('alert_txt');
   alertEl.style.display=bad?'block':'none';
@@ -2209,20 +2310,66 @@ tickClock();
 setInterval(tickClock, 1000);
 var dot=document.getElementById('conn-dot');
 var banner=document.getElementById('error-banner');
+async function fetchJSON(url){
+  var res=await fetch(url,{cache:'no-store'});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  return res.json();
+}
+/* Respuesta antigua (/api/piscina) -> lista con una sola piscina.
+   La API antigua manda 0 cuando no hay dato: un pH/ORP/temp = 0 nunca es real. */
+function legacyToPools(d){
+  function z(v){ return (v==null||+v===0)?null:+v; }
+  var ph=z(d.ph), orp=z(d.orp), tmp=z(d.temp_agua);
+  var ppm=(d.ppm==null||(ph==null&&orp==null))?null:+d.ppm;
+  return [{id:'piscina_grande', nombre:'Piscina grande', ph:ph, orp:orp, ppm:ppm, temp_agua:tmp, edad_s:null}];
+}
+function showConnError(err){
+  dot.className='conn-dot danger';
+  dot.setAttribute('aria-label','Sin conexión');
+  if(!isTvMode) banner.classList.add('visible');
+  console.error('API error:',err);
+  if(lastPools.length) renderPools(lastPools, true);
+  else renderNoPools(t('err_conn'));
+}
+var DEMO = parseInt(new URLSearchParams(location.search).get('demo')||'0',10) || 0;
+/* ?demo=N (1-4): clima y Piscina grande REALES (API antigua) + piscinas inventadas para ver el diseño */
+function demoPools(d, n){
+  var base = legacyToPools(d)[0]; base.nombre='Piscina Grande';
+  var extra = [
+    {id:'piscina_rooftop', nombre:'Rooftop', origen:'manual', medido_ts:new Date(Date.now()-3600000).toISOString(), ph:7.42, orp:null, ppm:1.15, temp_agua:26.4, edad_s:null},
+    {id:'piscina_golden', nombre:'Golden', ph:null, orp:null, ppm:null, temp_agua:null, edad_s:null},
+    {id:'piscina_climatizada', nombre:'Climatizada', ph:7.31, orp:655, ppm:1.30, temp_agua:29.2, edad_s:5}
+  ];
+  return [base].concat(extra).slice(0, Math.max(1,Math.min(4,n)));
+}
 async function load(){
+  var d=null, legacy=false;
+  if(DEMO){
+    try{ d=await fetchJSON(API_OLD); }catch(e0){ d={}; }
+    legacy=true;
+    if(!document.getElementById('demo-badge')){
+      var bd=document.createElement('div'); bd.id='demo-badge'; bd.textContent='DEMO';
+      bd.style.cssText='position:fixed;top:6px;right:8px;z-index:99999;background:#c0392b;color:#fff;font:700 12px sans-serif;padding:2px 8px;border-radius:6px;opacity:.9';
+      document.body.appendChild(bd);
+    }
+  } else {
   try{
-    var res=await fetch(API,{cache:'no-store'});
-    if(!res.ok)throw new Error('HTTP '+res.status);
-    var d=await res.json();
+    d=await fetchJSON(API_MULTI);
+  }catch(e1){
+    try{ d=await fetchJSON(API_OLD); legacy=true; }
+    catch(e2){ showConnError(e2); return; }
+  }
+  }
+  try{
     banner.classList.remove('visible');
     dot.className='conn-dot ok';
     dot.setAttribute('aria-label','Conectado');
     lastTamb = d.temp_ambiente != null ? +d.temp_ambiente : null;
     lastHum  = d.humedad       != null ? +d.humedad       : null;
-    setCard('ph',  d.ph       !=null?d.ph       :0,(+(d.ph       ||0)).toFixed(2));
-    setCard('orp', d.orp      !=null?d.orp       :0,String(Math.round(d.orp||0)));
-    setCard('ppm', d.ppm      !=null?d.ppm       :0,(+(d.ppm      ||0)).toFixed(2));
-    setCard('temp',d.temp_agua!=null?d.temp_agua :0,(+(d.temp_agua||0)).toFixed(1));
+    var list = DEMO ? demoPools(d, DEMO) : (legacy ? legacyToPools(d) : (d.piscinas||[]));
+    if(!list.length){ renderNoPools(t('no_pools')); }
+    else { renderPools(list, false); }
+    alertCheck(list);
     var tamb=d.temp_ambiente!=null?d.temp_ambiente:null;
     var hum=d.humedad!=null?d.humedad:null;
     document.getElementById('val-tamb').textContent=tamb!=null?(+tamb).toFixed(1):'—';
@@ -2251,12 +2398,8 @@ async function load(){
     renderMeteo(d.meteo);
     var dias7 = (d.meteo && d.meteo.prevision7d) || [];
     renderPrev7(dias7);
-    alertCheck(d);
   }catch(err){
-    dot.className='conn-dot danger';
-    dot.setAttribute('aria-label','Sin conexión');
-    if(!isTvMode) banner.classList.add('visible');
-    console.error('API error:',err);
+    console.error('Render error:',err);
   }
 }
 load();
@@ -3482,6 +3625,68 @@ var LANG_ALIAS = {
 }
 #debug-weather button:hover{ background:#e8f0ec;border-color:#3d7a5a; }
 #debug-weather button.active{ background:#3d7a5a;color:#fff;border-color:#3d7a5a; }
+
+/* ══════════ MULTIPISCINA ══════════ */
+#pools.n1,#pools.n1 .pool{display:contents;}              /* 1 piscina: se comporta como antes */
+.pool{margin-bottom:6px;}
+.pool-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
+.pool-msg{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ff9a8f;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
+.pool-msg:empty{display:none;}
+.pool-msg.warn{color:#ffd166;}
+.pool-msg.info{color:#bfe3ff;}
+.card.empty-card{border-left-color:var(--border);}
+.card.empty-card .card-value{color:var(--muted)!important;}
+.pool-empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:1.1rem;}
+#pools.multi .card-ppm [data-i18n="lbl_ppm_nota"]{display:none!important;}
+#pools.multi .bar-wrap{display:none;}
+/* TV con varias piscinas: pantalla de alto fijo repartida por filas (todas las resoluciones).
+   Tamaños en vh/vw para que escalen igual en 720p, 1080p, 4K y vertical. */
+body.tv:has(#pools.multi){height:100vh !important;min-height:0 !important;overflow:hidden !important;}
+body.tv:has(#pools.multi) main{display:flex !important;flex-direction:column !important;flex:1 1 0 !important;min-height:0 !important;}
+body.tv #pools.multi{flex:1 1 0;display:flex;flex-direction:column;min-height:0;gap:.6vh;}
+body.tv #pools.multi .pool{flex:1 1 0;display:flex;flex-direction:column;min-height:0;margin:0;}
+body.tv #pools.multi .pool .grid-main{flex:1 1 0 !important;min-height:0;gap:1vh !important;grid-template-rows:1fr !important;align-items:stretch !important;}
+body.tv #pools.multi .section-title{margin:.3vh 0 .4vh !important;font-size:min(1.9vh,2vw) !important;}
+body.tv #pools.multi .pool-msg{font-size:min(1.9vh,2vw) !important;}
+body.tv #pools.n2{flex:1.4 1 0;}
+body.tv #pools.n3{flex:2.3 1 0;}
+body.tv #pools.n4{flex:3.3 1 0;}
+body.tv #pools.multi .grid-main .card{padding:.7vh 1.1vw !important;display:flex !important;flex-direction:column !important;justify-content:center !important;border-radius:1.2vh !important;}
+body.tv #pools.multi .card-label{font-size:min(1.6vh,1.5vw) !important;margin-bottom:0 !important;line-height:1.1 !important;}
+body.tv #pools.n2 .card-value{font-size:min(5.2vh,4.2vw) !important;}
+body.tv #pools.n3 .card-value{font-size:min(4vh,3.4vw) !important;}
+body.tv #pools.n4 .card-value{font-size:min(3.3vh,2.8vw) !important;}
+body.tv #pools.multi .card-unit{font-size:min(1.8vh,1.6vw) !important;}
+body.tv #pools.multi .bar-wrap{display:none !important;}
+/* clima y previsión ceden altura */
+body.tv:has(#pools.multi) .clima-grid{flex:1 1 0 !important;min-height:0 !important;gap:1vh !important;}
+body.tv:has(#pools.multi) #prev-24h{flex:1.2 1 0 !important;min-height:0 !important;display:flex !important;}
+body.tv:has(#pools.multi) .prev7-grid{flex:1 !important;width:100% !important;gap:.8vh 1vw !important;}
+body.tv:has(#pools.multi) .clima-grid .card{padding:.7vh 1.1vw !important;justify-content:center !important;}
+body.tv:has(#pools.multi) .clima-grid .card-value{font-size:min(4.4vh,4vw) !important;}
+body.tv:has(#pools.multi) .clima-grid .card-label{font-size:min(1.7vh,1.6vw) !important;}
+body.tv:has(#pools.multi) .meteo-card{padding:.7vh 1.1vw !important;min-height:0 !important;}
+body.tv:has(#pools.multi) #meteo-icon{font-size:min(5vh,5vw) !important;}
+body.tv:has(#pools.multi) .meteo-frase{font-size:min(2vh,1.9vw) !important;}
+body.tv:has(#pools.multi) .p7-icon{font-size:min(3.4vh,3.4vw) !important;margin:.2vh 0 !important;}
+body.tv:has(#pools.multi) .prev7-dia{padding:.6vh .4vw !important;display:flex !important;flex-direction:column !important;justify-content:center !important;}
+body.tv:has(#pools.multi) .p7-fecha{font-size:min(1.7vh,1.5vw) !important;}
+body.tv:has(#pools.multi) .p7-tmax{font-size:min(2.4vh,2.2vw) !important;}
+body.tv:has(#pools.multi) .p7-tmin{font-size:min(2vh,1.8vw) !important;}
+body.tv:has(#pools.multi) .p7-lluvia,body.tv:has(#pools.multi) .p7-viento{font-size:min(1.5vh,1.4vw) !important;}
+body.tv:has(#pools.multi) .section-title{margin:.5vh 0 .4vh !important;}
+body.tv:has(#pools.multi) .footer{display:none !important;}
+/* pantalla vertical: 4 tarjetas por fila también (el modo vertical las pone 2x2 y no cabe) */
+@media(orientation:portrait){
+  body.tv #pools.multi .grid-main{grid-template-columns:repeat(4,1fr) !important;}
+  body.tv #pools.n2 .card-value{font-size:min(5vh,5.2vw) !important;}
+  body.tv #pools.n3 .card-value{font-size:min(4vh,4.4vw) !important;}
+  body.tv #pools.n4 .card-value{font-size:min(3.3vh,3.8vw) !important;}
+  body.tv #pools.multi .card-label{font-size:min(1.6vh,2.1vw) !important;}
+  body.tv #pools.multi .card-unit{font-size:min(1.8vh,2.2vw) !important;}
+  body.tv #pools.multi .section-title,body.tv #pools.multi .pool-msg{font-size:min(1.9vh,2.8vw) !important;}
+  body.tv:has(#pools.multi) .prev7-grid{grid-template-columns:repeat(7,1fr) !important;}
+}
 </style>
 <div id="debug-weather">
   <span>☁ CLIMA</span>
