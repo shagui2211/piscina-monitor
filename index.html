@@ -1286,6 +1286,8 @@ var I18N = {
     no_data:       'Falta de datos',
     no_pools:      'Sin piscinas activas',
     lbl_manual:    'Medición manual',
+    pn_piscina_grande:       'Piscina Principal',
+    pn_piscina_climatizada:  'Climatizada',
     sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
@@ -1328,6 +1330,8 @@ var I18N = {
     no_data:       'No data',
     no_pools:      'No active pools',
     lbl_manual:    'Manual reading',
+    pn_piscina_grande:       'Main Pool',
+    pn_piscina_climatizada:  'Heated Pool',
     sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
@@ -1370,6 +1374,8 @@ var I18N = {
     no_data:       'Keine Daten',
     no_pools:      'Keine aktiven Becken',
     lbl_manual:    'Manuelle Messung',
+    pn_piscina_grande:       'Hauptbecken',
+    pn_piscina_climatizada:  'Beheiztes Becken',
     sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
@@ -1412,6 +1418,8 @@ var I18N = {
     no_data:       'Données manquantes',
     no_pools:      'Aucune piscine active',
     lbl_manual:    'Mesure manuelle',
+    pn_piscina_grande:       'Piscine principale',
+    pn_piscina_climatizada:  'Piscine chauffée',
     sec_ambiente:  'Météo actuelle',
     sec_condicion: 'Condition actuelle',
     sec_prevision: 'Prévisions 7 jours',
@@ -1454,6 +1462,8 @@ var I18N = {
     no_data:       'Dati mancanti',
     no_pools:      'Nessuna piscina attiva',
     lbl_manual:    'Misura manuale',
+    pn_piscina_grande:       'Piscina principale',
+    pn_piscina_climatizada:  'Piscina riscaldata',
     sec_ambiente:  'Meteo attuale',
     sec_condicion: 'Condizione attuale',
     sec_prevision: 'Previsioni 7 giorni',
@@ -1747,6 +1757,7 @@ function fmtHoraLang(horaStr){
 }
 function applyLang(){
   var L = I18N[currentLang] || I18N.es;
+  if(typeof refreshPoolNames==='function') refreshPoolNames();
   document.querySelectorAll('[data-i18n]').forEach(function(el){
     var key = el.getAttribute('data-i18n');
     if(L[key] !== undefined) el.textContent = L[key];
@@ -1859,6 +1870,17 @@ function setCardEmpty(key,pid){
 var lastPools = [];
 var poolsKey  = '';
 function cleanId(id){ return String(id).replace(/[^a-zA-Z0-9_-]/g,'_'); }
+/* nombre de la piscina en el idioma actual (por id); si no hay traduccion usa el nombre de la API */
+function poolName(p){
+  var L=I18N[currentLang]||I18N.es;
+  return L['pn_'+p.id] || p.nombre || p.id;
+}
+function refreshPoolNames(){
+  (lastPools||[]).forEach(function(p){
+    var nm=document.getElementById('name-'+cleanId(p.id));
+    if(nm) nm.textContent=poolName(p);
+  });
+}
 function poolHTML(p, multi){
   var id=cleanId(p.id);
   function card(key,lbl,unit,extra,bar){
@@ -1896,7 +1918,7 @@ function ensurePools(list){
   }
   list.forEach(function(p){
     var nm=document.getElementById('name-'+cleanId(p.id));
-    if(nm) nm.textContent=p.nombre||p.id;
+    if(nm) nm.textContent=poolName(p);
   });
 }
 function fmtMedido(iso){
@@ -2321,7 +2343,7 @@ function legacyToPools(d){
   function z(v){ return (v==null||+v===0)?null:+v; }
   var ph=z(d.ph), orp=z(d.orp), tmp=z(d.temp_agua);
   var ppm=(d.ppm==null||(ph==null&&orp==null))?null:+d.ppm;
-  return [{id:'piscina_grande', nombre:'Piscina grande', ph:ph, orp:orp, ppm:ppm, temp_agua:tmp, edad_s:null}];
+  return [{id:'piscina_grande', nombre:'Piscina Principal', ph:ph, orp:orp, ppm:ppm, temp_agua:tmp, edad_s:null}];
 }
 function showConnError(err){
   dot.className='conn-dot danger';
@@ -2334,7 +2356,7 @@ function showConnError(err){
 var DEMO = parseInt(new URLSearchParams(location.search).get('demo')||'0',10) || 0;
 /* ?demo=N (1-4): clima y Piscina grande REALES (API antigua) + piscinas inventadas para ver el diseño */
 function demoPools(d, n){
-  var base = legacyToPools(d)[0]; base.nombre='Piscina Grande';
+  var base = legacyToPools(d)[0]; base.nombre='Piscina Principal';
   var extra = [
     {id:'piscina_rooftop', nombre:'Rooftop', origen:'manual', medido_ts:new Date(Date.now()-3600000).toISOString(), ph:7.42, orp:null, ppm:1.15, temp_agua:26.4, edad_s:null},
     {id:'piscina_golden', nombre:'Golden', ph:null, orp:null, ppm:null, temp_agua:null, edad_s:null},
