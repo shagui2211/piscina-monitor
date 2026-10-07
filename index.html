@@ -2138,6 +2138,8 @@ function renderMeteo(m){
     if(codeNow === 45 || codeNow === 48)  rtCode = codeNow;       // niebla
     else if(codeNow !== null && codeNow >= 95) rtCode = codeNow;  // tormenta
     else if(codeNow !== null && ((codeNow >= 71 && codeNow <= 75) || codeNow === 77 || codeNow === 85)) rtCode = codeNow; // nieve / granizo
+    else if(codeNow !== null && ((codeNow >= 51 && codeNow <= 57) || (codeNow >= 61 && codeNow <= 67) || (codeNow >= 80 && codeNow <= 82)))
+                                rtCode = (codeNow===56||codeNow===57) ? 53 : ((codeNow===66||codeNow===67) ? 63 : codeNow);  // llovizna / lluvia / chubascos segun codigo WMO
     else if(llNow >= 1.0)       rtCode = 61;          // lluvia (mm reales)
     else if(llNow >= 0.1)       rtCode = 51;          // llovizna (mm reales)
     else if(nubes !== null)     rtCode = (nubes >= 70) ? 3 : (nubes >= 30 ? 2 : 0); // nublado / parcial / despejado
