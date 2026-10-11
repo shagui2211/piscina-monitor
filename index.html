@@ -2446,6 +2446,34 @@ async function load(){
 }
 load();
 setInterval(load, 15000);
+
+/* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
+(function(){
+  var BUILD_ID='bbf9ef6e7a15';
+  var CADA_MS=5*60*1000;
+  function recargar(nuevo){
+    try{
+      var ult=+(sessionStorage.getItem('rl_ts')||0);
+      if(Date.now()-ult<20*60*1000) return;   /* freno anti-bucle */
+      sessionStorage.setItem('rl_ts',String(Date.now()));
+    }catch(e){}
+    var l=location.href.split('#')[0].replace(/([?&])_v=[^&]*&?/,'$1').replace(/[?&]$/,'');
+    location.replace(l+(l.indexOf('?')<0?'?':'&')+'_v='+nuevo);
+  }
+  function comprobar(){
+    try{
+      if(location.protocol==='file:') return;
+      var u=location.href.split('#')[0].replace(/([?&])_v=[^&]*&?/,'$1').replace(/[?&]$/,'');
+      u+=(u.indexOf('?')<0?'?':'&')+'_cb='+Date.now();
+      fetch(u,{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(t){
+        var m=/var BUILD_ID='([0-9a-f]+)'/.exec(t);
+        if(m && m[1]!==BUILD_ID) recargar(m[1]);
+      }).catch(function(){});
+    }catch(e){}
+  }
+  setInterval(comprobar, CADA_MS+Math.floor(Math.random()*30000));
+})();
+
 /* ── Mapa de alias de idioma en la URL ── */
 var LANG_ALIAS = {
   esp:'es', es:'es',
@@ -3750,6 +3778,10 @@ body.tv:has(#pools.multi) .p7-tmin{font-size:min(2vh,1.8vw) !important;}
 body.tv:has(#pools.multi) .p7-lluvia,body.tv:has(#pools.multi) .p7-viento{font-size:min(1.5vh,1.4vw) !important;}
 body.tv:has(#pools.multi) .section-title{margin:.5vh 0 .4vh !important;}
 body.tv:has(#pools.multi) .footer{display:none !important;}
+/* TV horizontal ancha (>=1700px): el contenido ocupa todo el ancho, igual que la cabecera. 720p (dtv720) y vertical NO se tocan */
+@media (min-width:1700px) and (orientation:landscape){
+  body.tv:not(.dtv720) main{max-width:none !important;}
+}
 /* pantalla vertical: 4 tarjetas por fila también (el modo vertical las pone 2x2 y no cabe) */
 @media(orientation:portrait){
   body.tv #pools.multi .grid-main{grid-template-columns:repeat(4,1fr) !important;}
