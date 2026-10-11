@@ -3682,6 +3682,9 @@ body.wbg-rain #weather-bg::after{background:linear-gradient(180deg,rgba(96,110,1
 .pool-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
 .pool-msg{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ff9a8f;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
 .pool-msg:empty{display:none;}
+.clima-grid .card:has(#st-label){position:relative;}
+body.tv:has(#pools.multi) .clima-grid .card:has(#st-label){justify-content:center !important;padding:.7vh 1.1vw !important;}
+body.tv:has(#pools.multi) .clima-grid .card:has(#st-label) .card-st-label{position:absolute !important;left:1.1vw;bottom:.7vh;margin:0 !important;font-size:min(1.4vh,1.3vw) !important;line-height:1.1;}
 .card-split{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0;}
 .card-split .card{min-width:0;}
 .card-split .card-value{font-size:1.6rem !important;}
