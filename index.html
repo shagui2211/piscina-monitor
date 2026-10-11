@@ -1244,8 +1244,7 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
     </div>
     <div class="card">
       <div class="card-label" data-i18n="lbl_st">Sensaci&#243;n t&#233;rmica</div>
-      <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span></div>
-      <div class="card-st-label" id="st-label"></div>
+      <div class="card-value-row"><span class="card-value" id="val-st">&#8212;</span><span class="card-unit">&#176;C</span><span class="card-st-label" id="st-label"></span></div>
     </div>
     <div class="meteo-card">
       <div style="display:flex;align-items:center;gap:14px;">
@@ -3682,9 +3681,9 @@ body.wbg-rain #weather-bg::after{background:linear-gradient(180deg,rgba(96,110,1
 .pool-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
 .pool-msg{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ff9a8f;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
 .pool-msg:empty{display:none;}
-.clima-grid .card:has(#st-label){position:relative;}
+.clima-grid .card-value-row #st-label{margin:0 0 0 .9vw !important;align-self:baseline;white-space:nowrap;}
 body.tv:has(#pools.multi) .clima-grid .card:has(#st-label){justify-content:center !important;padding:.7vh 1.1vw !important;}
-body.tv:has(#pools.multi) .clima-grid .card:has(#st-label) .card-st-label{position:absolute !important;left:1.1vw;bottom:.7vh;margin:0 !important;font-size:min(1.4vh,1.3vw) !important;line-height:1.1;}
+body.tv:has(#pools.multi) .clima-grid .card-value-row #st-label{font-size:min(1.6vh,1.4vw) !important;margin:0 0 0 .9vw !important;}
 .card-split{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0;}
 .card-split .card{min-width:0;}
 .card-split .card-value{font-size:1.6rem !important;}
