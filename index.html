@@ -1894,10 +1894,19 @@ function poolName(p){
   var L=I18N[currentLang]||I18N.es;
   return L['pn_'+p.id] || p.nombre || p.id;
 }
+function poolMsgText(p){
+  if(p._mk==='err') return t('err_conn');
+  if(p._mk==='manual') return t('lbl_manual')+' · '+fmtMedido(p.medido_ts)+' · '+fmtHace(p.medido_ts);
+  if(p._mk==='nodata') return t('no_data');
+  return null;
+}
 function refreshPoolNames(){
   (lastPools||[]).forEach(function(p){
     var nm=document.getElementById('name-'+cleanId(p.id));
     if(nm) nm.textContent=poolName(p);
+    /* al cambiar de idioma, el aviso de la piscina (medicion manual / sin datos / error) se traduce al instante */
+    var msg=document.getElementById('msg-'+cleanId(p.id)), tx=poolMsgText(p);
+    if(msg && tx!==null) msg.textContent=tx;
   });
 }
 function poolHTML(p, multi){
@@ -1986,8 +1995,9 @@ function renderPools(list, errMode){
       else { ca.className='card empty-card'; av.textContent='\u2014'; av.style.color=''; }
     }
     if(msg){
+      p._mk = errMode ? 'err' : (manual ? 'manual' : (falta ? 'nodata' : ''));
       if(errMode){ msg.textContent=t('err_conn'); msg.className='pool-msg'; }
-      else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts)+' · '+fmtHace(p.medido_ts); msg.className='pool-msg '+(horasManual(p.medido_ts)>=24?'warn':'info'); }
+      else if(manual){ msg.textContent=poolMsgText(p); msg.className='pool-msg '+(horasManual(p.medido_ts)>=24?'warn':'info'); }
       else { msg.textContent=falta?t('no_data'):''; msg.className='pool-msg warn'; }
     }
   });
@@ -2468,7 +2478,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='fc900e222802';
+  var BUILD_ID='3cf36a0eddf0';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
