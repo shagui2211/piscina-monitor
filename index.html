@@ -1289,6 +1289,8 @@ var I18N = {
     pn_piscina_climatizada:  'Climatizada',
     lbl_sala:      'Sala',
     lbl_agua_s:    'Agua',
+    ago_h:         'hace {n} h',
+    ago_m:         'hace {n} min',
     sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
@@ -1335,6 +1337,8 @@ var I18N = {
     pn_piscina_climatizada:  'Heated Pool',
     lbl_sala:      'Room',
     lbl_agua_s:    'Water',
+    ago_h:         '{n} h ago',
+    ago_m:         '{n} min ago',
     sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
@@ -1381,6 +1385,8 @@ var I18N = {
     pn_piscina_climatizada:  'Beheiztes Becken',
     lbl_sala:      'Raum',
     lbl_agua_s:    'Wasser',
+    ago_h:         'vor {n} Std.',
+    ago_m:         'vor {n} Min.',
     sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
@@ -1427,6 +1433,8 @@ var I18N = {
     pn_piscina_climatizada:  'Piscine chauffée',
     lbl_sala:      'Salle',
     lbl_agua_s:    'Eau',
+    ago_h:         'il y a {n} h',
+    ago_m:         'il y a {n} min',
     sec_ambiente:  'Météo actuelle',
     sec_condicion: 'Condition actuelle',
     sec_prevision: 'Prévisions 7 jours',
@@ -1473,6 +1481,8 @@ var I18N = {
     pn_piscina_climatizada:  'Piscina riscaldata',
     lbl_sala:      'Sala',
     lbl_agua_s:    'Acqua',
+    ago_h:         '{n} h fa',
+    ago_m:         '{n} min fa',
     sec_ambiente:  'Meteo attuale',
     sec_condicion: 'Condizione attuale',
     sec_prevision: 'Previsioni 7 giorni',
@@ -1932,6 +1942,13 @@ function ensurePools(list){
     if(nm) nm.textContent=poolName(p);
   });
 }
+function fmtHace(iso){
+  var d=new Date(iso); if(isNaN(d.getTime())) return '';
+  var min=Math.max(0,Math.floor((Date.now()-d.getTime())/60000));
+  var L=I18N[currentLang]||I18N.es;
+  return min<60 ? L.ago_m.replace('{n}',String(min)) : L.ago_h.replace('{n}',String(Math.floor(min/60)));
+}
+function horasManual(iso){ var d=new Date(iso); return isNaN(d.getTime()) ? 0 : (Date.now()-d.getTime())/3600000; }
 function fmtMedido(iso){
   var d=new Date(iso); if(isNaN(d.getTime())) return '';
   var L=I18N[currentLang]||I18N.es;
@@ -1949,6 +1966,8 @@ function renderPools(list, errMode){
     var id=cleanId(p.id);
     var msg=document.getElementById('msg-'+id);
     var manual=(p.origen==='manual');   /* lectura manual (DPD1) mientras no hay sensores */
+    var secP=document.querySelector('.pool[data-pid="'+id+'"]');
+    if(secP) secP.classList.toggle('no-orp', manual);   /* sin EMEC no hay ORP: se oculta; con datos del EMEC vuelve sola */
     var vals={ph:p.ph, orp:p.orp, ppm:p.ppm, temp:p.temp_agua};
     var fmt={ph:function(v){return (+v).toFixed(2);}, orp:function(v){return String(Math.round(v));},
              ppm:function(v){return (+v).toFixed(2);}, temp:function(v){return (+v).toFixed(1);}};
@@ -1968,7 +1987,7 @@ function renderPools(list, errMode){
     }
     if(msg){
       if(errMode){ msg.textContent=t('err_conn'); msg.className='pool-msg'; }
-      else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts); msg.className='pool-msg info'; }
+      else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts)+' · '+fmtHace(p.medido_ts); msg.className='pool-msg '+(horasManual(p.medido_ts)>=24?'warn':'info'); }
       else { msg.textContent=falta?t('no_data'):''; msg.className='pool-msg warn'; }
     }
   });
@@ -2449,7 +2468,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='bbf9ef6e7a15';
+  var BUILD_ID='fc900e222802';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3712,6 +3731,12 @@ body.wbg-rain #weather-bg::after{background:linear-gradient(180deg,rgba(96,110,1
 .clima-grid .card-value-row #st-label{margin:0 0 0 .9vw !important;align-self:baseline;white-space:nowrap;}
 body.tv:has(#pools.multi) .clima-grid .card:has(#st-label){justify-content:center !important;padding:.7vh 1.1vw !important;}
 body.tv:has(#pools.multi) .clima-grid .card-value-row #st-label{font-size:min(1.6vh,1.4vw) !important;margin:0 0 0 .9vw !important;}
+/* piscina en modo manual: sin tarjeta ORP (3 tarjetas por fila) */
+.pool.no-orp [id^="card-orp-"]{display:none !important;}
+body.tv #pools.multi .pool.no-orp .grid-main [id^="card-orp-"]{display:none !important;}
+@media(min-width:901px){ .pool.no-orp .grid-main{grid-template-columns:repeat(3,1fr) !important;} }
+body.tv #pools.multi .pool.no-orp .grid-main{grid-template-columns:repeat(3,1fr) !important;}
+@media(orientation:portrait){ body.tv #pools.multi .pool.no-orp .grid-main{grid-template-columns:repeat(3,1fr) !important;} }
 .card-split{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0;}
 .card-split .card{min-width:0;}
 .card-split .card-value{font-size:1.6rem !important;}
