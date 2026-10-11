@@ -1288,6 +1288,7 @@ var I18N = {
     lbl_manual:    'Medición manual',
     pn_piscina_grande:       'Piscina Principal',
     pn_piscina_climatizada:  'Climatizada',
+    lbl_sala:      'Sala',
     sec_ambiente:  'Clima actual',
     sec_condicion: 'Condición actual',
     sec_prevision: 'Previsión 7 días',
@@ -1332,6 +1333,7 @@ var I18N = {
     lbl_manual:    'Manual reading',
     pn_piscina_grande:       'Main Pool',
     pn_piscina_climatizada:  'Heated Pool',
+    lbl_sala:      'Room',
     sec_ambiente:  'Current weather',
     sec_condicion: 'Current condition',
     sec_prevision: '7-day forecast',
@@ -1376,6 +1378,7 @@ var I18N = {
     lbl_manual:    'Manuelle Messung',
     pn_piscina_grande:       'Hauptbecken',
     pn_piscina_climatizada:  'Beheiztes Becken',
+    lbl_sala:      'Raum',
     sec_ambiente:  'Aktuelles Wetter',
     sec_condicion: 'Aktuelle Bedingung',
     sec_prevision: '7-Tage-Vorschau',
@@ -1420,6 +1423,7 @@ var I18N = {
     lbl_manual:    'Mesure manuelle',
     pn_piscina_grande:       'Piscine principale',
     pn_piscina_climatizada:  'Piscine chauffée',
+    lbl_sala:      'Salle',
     sec_ambiente:  'Météo actuelle',
     sec_condicion: 'Condition actuelle',
     sec_prevision: 'Prévisions 7 jours',
@@ -1464,6 +1468,7 @@ var I18N = {
     lbl_manual:    'Misura manuale',
     pn_piscina_grande:       'Piscina principale',
     pn_piscina_climatizada:  'Piscina riscaldata',
+    lbl_sala:      'Sala',
     sec_ambiente:  'Meteo attuale',
     sec_condicion: 'Condizione attuale',
     sec_prevision: 'Previsioni 7 giorni',
@@ -1894,7 +1899,9 @@ function poolHTML(p, multi){
   var nota='<div style="font-size:0.58rem;color:var(--muted);margin-top:7px;line-height:1.5;font-family:var(--sans);" data-i18n="lbl_ppm_nota"></div>';
   return '<section class="pool" data-pid="'+id+'">'
     +'<p class="section-title pool-title">'
+      +'<span class="pool-left">'
       +(multi?'<span class="pool-name" id="name-'+id+'"></span>':'<span data-i18n="sec_agua"></span>')
+      +'<span class="pool-amb" id="amb-'+id+'"></span></span>'
       +'<span class="pool-msg" id="msg-'+id+'"></span></p>'
     +'<div class="grid-main">'
       +card('ph','lbl_ph','pH','',true)
@@ -1948,6 +1955,11 @@ function renderPools(list, errMode){
       if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); if(!manual) falta=true; }
       else { setCard(k,+v,fmt[k](+v),id); }
     });
+    var amb=document.getElementById('amb-'+id);
+    if(amb){
+      var okAmb=(!errMode && p.temp_ambiente!=null && !isNaN(+p.temp_ambiente));
+      amb.textContent=okAmb ? (t('lbl_sala')+' '+(+p.temp_ambiente).toFixed(1)+' \u00b0C') : '';
+    }
     if(msg){
       if(errMode){ msg.textContent=t('err_conn'); msg.className='pool-msg'; }
       else if(manual){ msg.textContent=t('lbl_manual')+' · '+fmtMedido(p.medido_ts); msg.className='pool-msg info'; }
@@ -2362,7 +2374,7 @@ function demoPools(d, n){
   var extra = [
     {id:'piscina_rooftop', nombre:'Rooftop', origen:'manual', medido_ts:new Date(Date.now()-3600000).toISOString(), ph:7.42, orp:null, ppm:1.15, temp_agua:26.4, edad_s:null},
     {id:'piscina_golden', nombre:'Golden', ph:null, orp:null, ppm:null, temp_agua:null, edad_s:null},
-    {id:'piscina_climatizada', nombre:'Climatizada', ph:7.31, orp:655, ppm:1.30, temp_agua:29.2, edad_s:5}
+    {id:'piscina_climatizada', nombre:'Climatizada', ph:7.31, orp:655, ppm:1.30, temp_agua:29.2, temp_ambiente:28.5, edad_s:5}
   ];
   return [base].concat(extra).slice(0, Math.max(1,Math.min(4,n)));
 }
@@ -3663,6 +3675,9 @@ body.wbg-rain #weather-bg::after{background:linear-gradient(180deg,rgba(96,110,1
 .pool-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;}
 .pool-msg{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ff9a8f;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
 .pool-msg:empty{display:none;}
+.pool-left{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.pool-amb{font-weight:700;letter-spacing:.02em;text-transform:none;color:#ffe2a8;background:rgba(0,0,0,.45);padding:1px 10px;border-radius:9px;}
+.pool-amb:empty{display:none;}
 .pool-msg.warn{color:#ffd166;}
 .pool-msg.info{color:#bfe3ff;}
 .card.empty-card{border-left-color:var(--border);}
@@ -3678,7 +3693,7 @@ body.tv #pools.multi{flex:1 1 0;display:flex;flex-direction:column;min-height:0;
 body.tv #pools.multi .pool{flex:1 1 0;display:flex;flex-direction:column;min-height:0;margin:0;}
 body.tv #pools.multi .pool .grid-main{flex:1 1 0 !important;min-height:0;gap:1vh !important;grid-template-rows:1fr !important;align-items:stretch !important;}
 body.tv #pools.multi .section-title{margin:.3vh 0 .4vh !important;font-size:min(1.9vh,2vw) !important;}
-body.tv #pools.multi .pool-msg{font-size:min(1.9vh,2vw) !important;}
+body.tv #pools.multi .pool-msg,body.tv #pools.multi .pool-amb{font-size:min(1.9vh,2vw) !important;}
 body.tv #pools.n2{flex:1.4 1 0;}
 body.tv #pools.n3{flex:2.3 1 0;}
 body.tv #pools.n4{flex:3.3 1 0;}
@@ -3715,7 +3730,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   body.tv #pools.n4 .card-value{font-size:min(3.3vh,3.8vw) !important;}
   body.tv #pools.multi .card-label{font-size:min(1.6vh,2.1vw) !important;}
   body.tv #pools.multi .card-unit{font-size:min(1.8vh,2.2vw) !important;}
-  body.tv #pools.multi .section-title,body.tv #pools.multi .pool-msg{font-size:min(1.9vh,2.8vw) !important;}
+  body.tv #pools.multi .section-title,body.tv #pools.multi .pool-msg,body.tv #pools.multi .pool-amb{font-size:min(1.9vh,2.8vw) !important;}
   body.tv:has(#pools.multi) .prev7-grid{grid-template-columns:repeat(7,1fr) !important;}
 }
 </style>
