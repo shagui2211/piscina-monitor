@@ -2688,10 +2688,8 @@ var LANG_ALIAS = {
         });
       }
       p.push({ type:'flare', t:0 });
-      /* Unas pocas nubes blancas decorativas flotando suavemente */
-      p.push(mkClearCloud(0.10, 1.1, 0.18, 0.52));
-      p.push(mkClearCloud(0.25, 0.8, 0.24, 0.40));
-      p.push(mkClearCloud(0.14, 0.6, 0.30, 0.30));
+      /* Cielo despejado = sin nubes. (Antes se dibujaban 3 nubes decorativas
+         que contradecian el texto "Cielo despejado" y el icono de sol.) */
     }
     return p;
   }
