@@ -1258,6 +1258,28 @@ body.tema-on.tod-dawn #dawn-glow,body.tv.tema-on #dawn-glow,body.tema-on #dawn-g
 @keyframes tmRide{from{transform:translate3d(calc(var(--u)*-9),0,0)}to{transform:translate3d(calc(100vw + var(--u)*2),0,0)}}
 @keyframes tmBob{from{transform:translateY(0)}to{transform:translateY(-.4vh)}}
 @keyframes tmSpin{to{transform:rotate(360deg)}}
+
+/* White party */
+#tema-bg .tm-cf.p{width:calc(var(--u)*.9);height:calc(var(--u)*.55);border-radius:60% 0 60% 0;background:#fffdf8;box-shadow:0 0 0 1px rgba(196,160,90,.55),0 1px 3px rgba(120,90,30,.25);}
+body.tema-whiteparty #tema-bg .tm-bal{box-shadow:inset calc(var(--u)*-.35) calc(var(--u)*-.5) var(--u) rgba(150,110,40,.22),0 0 0 1px rgba(196,160,90,.5);}
+#tema-bg .tm-spark{animation:tmTw 2.2s ease-in-out infinite alternate;}
+
+body.tema-whiteparty header{background:linear-gradient(180deg,rgba(62,49,31,.72),rgba(42,33,22,.78)) !important;border-color:rgba(224,185,90,.6) !important;}
+body.tema-whiteparty header::after{background:linear-gradient(90deg,transparent,#e0b95a,transparent) !important;}
+body.tema-whiteparty .card,body.tema-whiteparty .meteo-card,body.tema-whiteparty .prev7-dia{background:linear-gradient(180deg,rgba(62,49,31,.68),rgba(40,32,21,.76)) !important;border-color:rgba(224,185,90,.55) !important;}
+body.tema-whiteparty .section-title{color:#4a3a1c !important;text-shadow:0 1px 0 rgba(255,255,255,.75) !important;}
+body.tema-whiteparty .footer,body.tema-whiteparty .lang-indicator,body.tema-whiteparty .res-indicator{color:#5a4a2c !important;border-top-color:rgba(90,70,30,.3) !important;}
+
+/* Triatlón (Challenge Peguera): nadadores, corredores y ciclistas */
+#tema-bg .tm-run{position:absolute;left:0;bottom:var(--b);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-run svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .38s ease-in-out infinite alternate;}
+#tema-bg .tm-run .la,#tema-bg .tm-run .lb{transform-box:fill-box;transform-origin:50% 0%;animation:tmLeg .38s ease-in-out infinite alternate;}
+#tema-bg .tm-run .lb{animation-direction:alternate-reverse;}
+@keyframes tmLeg{from{transform:rotate(-38deg)}to{transform:rotate(38deg)}}
+#tema-bg .tm-swim{position:absolute;left:0;top:var(--t);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-swim svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .9s ease-in-out infinite alternate;}
+#tema-bg .tm-swim .arm{transform-box:fill-box;transform-origin:0% 50%;animation:tmArm .9s linear infinite;}
+@keyframes tmArm{to{transform:rotate(360deg)}}
 </style>
 
 </head>
@@ -2546,7 +2568,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='4e8a5f59d8cf';
+  var BUILD_ID='430f8f0232f9';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4201,7 +4223,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   /* Calendario de reserva (si temas.json no se puede leer). Fechas AAAA-MM-DD, o MM-DD para que se repita cada año. */
   var CAL = { forzar:'', temas:[
     {tema:'oktoberfest', desde:'2026-10-14', hasta:'2026-10-14'},
-    {tema:'ciclismo',    desde:'2026-10-17', hasta:'2026-10-18'},
+    {tema:'triatlon',     desde:'2026-10-15', hasta:'2026-10-18'},
     {tema:'halloween',   desde:'2026-10-26', hasta:'2026-11-01'}
   ]};
   var cfg = CAL, actual = '';
@@ -4385,6 +4407,21 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
       '<circle cx="86" cy="9" r="6.5" fill="#e8b48a"/><path d="M79.5 8C80 2 90 0 93 8Z" fill="'+c2+'"/>'+
       '</svg>';
   }
+
+  function runner(c){
+    return '<svg viewBox="0 0 40 64"><circle cx="22" cy="7" r="6" fill="#e8b48a"/><path d="M16 5Q22 -2 28 5Z" fill="'+c+'"/>'+
+      '<path d="M20 14L17 36" stroke="'+c+'" stroke-width="9" stroke-linecap="round"/>'+
+      '<path d="M17 36L22 36" stroke="#14151a" stroke-width="7" stroke-linecap="round"/>'+
+      '<g class="la"><path d="M18 38L26 50L20 62" fill="none" stroke="#e8b48a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>'+
+      '<g class="lb"><path d="M18 38L10 50L14 62" fill="none" stroke="#c99a74" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>'+
+      '<path d="M21 18L30 26L34 20" fill="none" stroke="#e8b48a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+  function swimmer(c){
+    return '<svg viewBox="0 0 90 34"><path d="M0 28Q10 22 20 28T40 28T60 28T80 28T100 28" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="3"/>'+
+      '<ellipse cx="40" cy="22" rx="30" ry="7" fill="'+c+'" opacity=".95"/><circle cx="74" cy="19" r="7" fill="#f4f4f4"/><path d="M68 17Q74 9 80 17Z" fill="'+c+'"/>'+
+      '<g class="arm"><path d="M60 20L88 20" stroke="#e8b48a" stroke-width="5" stroke-linecap="round"/></g>'+
+      '<path d="M8 25L-4 22M8 28L-4 31" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>';
+  }
   function sceneCic(){
     var g=geo(), col=[['#ffd400','#8a6f00'],['#d6202a','#7a0d14'],['#ffffff','#8a8a8a'],['#14151a','#555']];
     var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
@@ -4401,13 +4438,14 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
       '<path d="M0 600 Q300 540 700 585 T1600 570 V680 H0Z" fill="#6f8f6a" opacity=".6"/>'+
       '<rect x="0" y="620" width="1600" height="110" fill="url(#tcSea)"/>'+
       '<g fill="#fff" opacity=".55"><rect x="140" y="650" width="70" height="3"/><rect x="460" y="690" width="110" height="3"/><rect x="860" y="660" width="90" height="3"/><rect x="1240" y="700" width="120" height="3"/></g>'+
+      '<g>'+dom('',Math.max(3,Math.round(6*g.W/1600)),function(i){var x=g.x0+(i+.5)*g.W/Math.max(3,Math.round(6*g.W/1600)); return '<line x1="'+x+'" y1="672" x2="'+x+'" y2="690" stroke="#fff" stroke-width="2"/><circle cx="'+x+'" cy="672" r="9" fill="#ff7a1a" stroke="#fff" stroke-width="2"/>';})+'</g>'+
       '<path d="M0 730 Q320 670 700 715 T1600 700 V900 H0Z" fill="url(#tcHill)"/>'+
       /* pinos */
       '<g fill="#3d6b34">'+dom('',Math.max(4,Math.round(9*g.W/1600)),function(i){var n=Math.max(4,Math.round(9*g.W/1600)), x=g.x0+(i+.5)*g.W/n+R(-20,20), h=R(70,120)*Math.max(.5,g.s);return '<rect x="'+(x-3)+'" y="'+(760-h*.4)+'" width="6" height="'+(h*.4)+'" fill="#5b3f26"/><ellipse cx="'+x+'" cy="'+(760-h*.55)+'" rx="'+(h*.42)+'" ry="'+(h*.3)+'"/>';})+'</g>'+
       /* arco de meta */
       '<g transform="translate('+(g.x1-350*g.s)+' '+(690+(1-g.s)*70)+') scale('+g.s+')"><rect x="0" y="0" width="14" height="210" fill="#222"/><rect x="286" y="0" width="14" height="210" fill="#222"/>'+
         '<rect x="-6" y="-4" width="312" height="70" rx="6" fill="#d6202a"/><rect x="-6" y="62" width="312" height="14" fill="url(#tcChk)"/>'+
-        '<text x="150" y="42" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-weight="700" font-size="34" fill="#fff" letter-spacing="3">META · CALVIÀ</text></g>'+
+        '<text x="150" y="42" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-weight="700" font-size="30" fill="#fff" textLength="270" lengthAdjust="spacingAndGlyphs">META · PEGUERA</text></g>'+
       bunting(g.x0-20,105,g.cx+20,100,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,'')+
       bunting(g.cx-20,100,g.x1+20,108,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,' b')+
       '</svg>';
@@ -4417,14 +4455,66 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
       var base=R(0,18), dur=(g?21:17);
       for(var i=0;i<6;i++){
         var j=jer[(i+g*3)%6];
-        d+='<div class="tm-cyc" style="--y:'+(1.4+(i%3)*1.5).toFixed(1)+'vh;--w:'+(7.4-(i%3)*.5).toFixed(1)+';--d:'+dur+'s;--dl:-'+(base+i*.9+(i%2?.4:0)).toFixed(1)+'s">'+cyclist(j[0],j[1])+'</div>';
+        d+='<div class="tm-cyc" style="--y:'+(0.5+(i%3)*1.1).toFixed(1)+'vh;--w:'+(7.4-(i%3)*.5).toFixed(1)+';--d:'+dur+'s;--dl:-'+(base+i*.9+(i%2?.4:0)).toFixed(1)+'s">'+cyclist(j[0],j[1])+'</div>';
       }
     }
+    var cols=['#d6202a','#1c6fc9','#ffd400','#2e9d4a','#ff7a1a'];
+    for(var s=0;s<4;s++) d+='<div class="tm-swim" style="--t:'+(71+(s%2)*3.2).toFixed(1)+'%;--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
+    for(var r=0;r<5;r++) d+='<div class="tm-run" style="--b:11.4vh;--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
     d+=dom('',8,function(i){var c=['#ffd400','#d6202a','#fff','#ffd400'][i%4]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-5,5).toFixed(1)+'vw"></b>';});
     return svg+d;
   }
 
-  var TEMAS = { oktoberfest:sceneOkt, halloween:sceneHal, ciclismo:sceneCic, challenge:sceneCic };
+
+  /* ── WHITE PARTY ── */
+  function lights(x1,y1,x2,y2,sag,n){
+    var cx=(x1+x2)/2, cy=(y1+y2)/2+2*sag, s='<g class="tm-sway b"><path d="M'+x1+' '+y1+' Q'+cx+' '+cy+' '+x2+' '+y2+'" fill="none" stroke="rgba(120,90,40,.55)" stroke-width="2.5"/>';
+    for(var i=0;i<n;i++){ var t=(i+.5)/n,u=1-t, px=u*u*x1+2*u*t*cx+t*t*x2, py=u*u*y1+2*u*t*cy+t*t*y2+10;
+      s+='<g class="tm-spark" style="animation-delay:-'+R(0,2).toFixed(1)+'s"><circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="26" fill="#ffe08a" opacity=".42"/><circle cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="9" fill="#fff6d0" stroke="#d4a43a" stroke-width="2"/></g>'; }
+    return s+'</g>';
+  }
+  function drape(x,w,flip){
+    var f=flip?-1:1, s='<g class="tm-sway'+(flip?' b':'')+'" transform="translate('+x+' 0)">';
+    s+='<path d="M0 0 H'+(f*w)+' C'+(f*w*1.05)+' 300 '+(f*w*.7)+' 600 '+(f*w*1.25)+' 900 H0Z" fill="url(#twD)" opacity=".92"/>';
+    for(var i=1;i<6;i++) s+='<path d="M'+(f*w*i/6)+' 0 C'+(f*w*(i/6+.05))+' 300 '+(f*w*(i/6-.05))+' 600 '+(f*w*(i/6+.12))+' 900" fill="none" stroke="rgba(196,160,90,.28)" stroke-width="3"/>';
+    return s+'</g>';
+  }
+  function palm(x,y,sc,flip){
+    var leaves='', a=[-80,-55,-30,-5,20,45,70];
+    a.forEach(function(d,i){ leaves+='<path d="M0 0 Q70 -50 160 -8 Q80 -26 0 0Z" fill="#e3d6bd" stroke="#cdbb97" stroke-width="1.5" transform="rotate('+d+') scale('+(.8+.25*((i*7)%3)/2)+')"/>'; });
+    return '<g transform="translate('+x+' '+y+') scale('+(flip?-sc:sc)+' '+sc+')"><path d="M0 220 C-10 140 12 70 0 0" fill="none" stroke="#cdbb97" stroke-width="16" stroke-linecap="round"/><g class="tm-sway b" style="transform-origin:0 0">'+leaves+'</g></g>';
+  }
+  function flute(x,y,s){
+    var b=''; for(var i=0;i<6;i++) b+='<circle class="tm-bub" cx="'+(46+(i%3)*10)+'" cy="'+(120-i*4)+'" r="'+(2+(i%2))+'" fill="#fffbe8" style="animation-delay:-'+(i*.55).toFixed(2)+'s"/>';
+    return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M20 20 H92 L80 150 Q56 172 32 150Z" fill="url(#twG)" stroke="#fffdf8" stroke-width="5"/>'+b+
+      '<path d="M26 22 H86" stroke="#fffdf8" stroke-width="6" stroke-linecap="round"/><rect x="52" y="160" width="8" height="70" fill="#f4ead2" stroke="#e0cf9e" stroke-width="2"/><ellipse cx="56" cy="236" rx="34" ry="8" fill="#f4ead2" stroke="#e0cf9e" stroke-width="2"/><rect x="30" y="34" width="8" height="100" rx="4" fill="rgba(255,255,255,.55)"/></g>';
+  }
+  function sceneWhite(){
+    var g=geo(), n=Math.max(7,Math.round(11*g.W/1600));
+    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="twSky" x2="0" y2="1"><stop offset="0" stop-color="#fffefb"/><stop offset=".55" stop-color="#f6ecd9"/><stop offset="1" stop-color="#e9d3a8"/></linearGradient>'+
+      '<radialGradient id="twSun"><stop offset="0" stop-color="#fff3c4" stop-opacity=".95"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>'+
+      '<linearGradient id="twD" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".35"/></linearGradient>'+
+      '<linearGradient id="twG" x2="0" y2="1"><stop offset="0" stop-color="#fff2b8" stop-opacity=".9"/><stop offset="1" stop-color="#e8bf5a" stop-opacity=".95"/></linearGradient>'+
+      '<linearGradient id="twSand" x2="0" y2="1"><stop offset="0" stop-color="#f7ecd2"/><stop offset="1" stop-color="#e6cf9f"/></linearGradient></defs>'+
+      '<rect width="1600" height="900" fill="url(#twSky)"/>'+
+      '<circle cx="'+(g.cx+60*g.s)+'" cy="620" r="'+(520*g.s)+'" fill="url(#twSun)"/>'+
+      '<circle cx="'+(g.cx+60*g.s)+'" cy="610" r="'+(70*g.s)+'" fill="#fffaf0" opacity=".95"/>'+
+      cloud(g.x0+g.W*.18,230,1.1*g.s,'')+cloud(g.x0+g.W*.7,180,.9*g.s,' b')+
+      '<path d="M0 700 Q400 660 800 690 T1600 680 V900 H0Z" fill="#f1e4c4" opacity=".8"/>'+
+      '<path d="M0 770 Q400 730 800 760 T1600 750 V900 H0Z" fill="url(#twSand)"/>'+
+      palm(g.x0+90*g.s,640,1.15*g.s,false)+palm(g.x1-90*g.s,650,1.05*g.s,true)+
+      drape(g.x0,Math.max(150,260*g.s),false)+drape(g.x1,Math.max(150,260*g.s),true)+
+      lights(g.x0+10,110,g.cx+20,105,70*g.s,n)+lights(g.cx-20,105,g.x1-10,112,70*g.s,n)+
+      flute(g.x0+g.W*.19,680+(1-g.m)*120,.8*g.m)+flute(g.x1-g.W*.19-112*.8*g.m,680+(1-g.m)*120,.8*g.m)+
+      dom('',Math.round(26*g.W/1600)+8,function(){return '<circle class="tm-spark" cx="'+R(g.x0+20,g.x1-20).toFixed(0)+'" cy="'+R(150,760).toFixed(0)+'" r="'+R(2,4.5).toFixed(1)+'" fill="#e0b95a" style="animation-delay:-'+R(0,2).toFixed(1)+'s;animation-duration:'+R(1.5,3.5).toFixed(1)+'s"/>';})+
+      '</svg>';
+    var d=dom('',8,function(i){var c=['#fffdf8','#f3e7c9','#fffdf8','#e8cf93'][i%4]; return '<i class="tm-bal" style="--x:'+R(2,94).toFixed(1)+'%;--c:'+c+';--d:'+R(32,50).toFixed(1)+'s;--dl:-'+R(0,40).toFixed(1)+'s"></i>';});
+    d+=dom('',26,function(){ return '<b class="tm-cf p" style="--x:'+R(0,100).toFixed(1)+'%;--c:#fff;--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,18).toFixed(1)+'s;--dx:'+R(-8,8).toFixed(1)+'vw"></b>';});
+    return svg+d;
+  }
+
+  var TEMAS = { whiteparty:sceneWhite, white:sceneWhite, oktoberfest:sceneOkt, halloween:sceneHal, triatlon:sceneCic, peguera:sceneCic, ciclismo:sceneCic, challenge:sceneCic };
 
   function aplicar(){
     var t = elegir(); if(!TEMAS[t]) t='';
