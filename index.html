@@ -1201,11 +1201,60 @@ body.wbg-snow #weather-bg::before{animation:photoSnow 24s ease-in-out infinite a
 /* Responsive: ajustar posición de la foto en móvil */
 @media(max-width:900px){#weather-bg{background-position:center 58%!important;}}
 </style>
+<style id="temas-temporada">
+/* ═══ TEMAS DE TEMPORADA (Oktoberfest, Halloween…) ═══
+   Se activan por fecha desde temas.json (o ?tema=nombre). Sustituyen la foto y el vídeo
+   del fondo; el clima (lluvia, nieve…) y las tarjetas siguen igual. */
+#tema-bg{display:none;}
+body.tema-on #tema-bg{display:block;position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none;}
+body.tema-on #weather-bg::before,body.tema-on #agua-video{display:none !important;}
+body.tema-on #weather-bg{filter:none !important;background:#10102a !important;}
+body.tema-on #tema-bg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
+#tema-bg .tm-sway{transform-box:fill-box;transform-origin:50% 0%;animation:tmSway 5.5s ease-in-out infinite alternate;}
+#tema-bg .tm-sway.b{animation-duration:7s;animation-delay:-2s;}
+@keyframes tmSway{from{transform:rotate(-.9deg)}to{transform:rotate(.9deg)}}
+#tema-bg .tm-cloud{animation:tmDrift 90s linear infinite;}
+#tema-bg .tm-cloud.b{animation-duration:130s;animation-delay:-60s;}
+@keyframes tmDrift{from{transform:translateX(-380px)}to{transform:translateX(1900px)}}
+/* globos */
+#tema-bg .tm-bal{position:absolute;bottom:-16vh;left:var(--x);width:4.6vw;height:5.8vw;border-radius:50% 50% 47% 47%;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75),rgba(255,255,255,0) 32%),var(--c);
+  box-shadow:inset -.35vw -.5vw 1vw rgba(0,0,40,.25);animation:tmRise var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-bal::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:5vw;background:rgba(255,255,255,.7);}
+@keyframes tmRise{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(1.6vw,-32vh,0)}50%{transform:translate3d(-1.2vw,-65vh,0)}75%{transform:translate3d(1.4vw,-98vh,0)}100%{transform:translate3d(0,-132vh,0)}}
+/* confeti */
+#tema-bg .tm-cf{position:absolute;top:-4vh;left:var(--x);width:.7vw;height:1.2vw;background:var(--c);opacity:.9;animation:tmFall var(--d) linear var(--dl) infinite;will-change:transform;}
+@keyframes tmFall{from{transform:translate3d(0,0,0) rotate(0)}to{transform:translate3d(var(--dx),110vh,0) rotate(720deg)}}
+/* burbujas de la cerveza */
+#tema-bg .tm-bub{animation:tmBub 3.2s ease-in infinite;}
+@keyframes tmBub{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-120px);opacity:0}}
+/* Halloween */
+#tema-bg .tm-flick{animation:tmFlick 3.4s steps(1,end) infinite;}
+#tema-bg .tm-flick.b{animation-duration:2.3s;animation-delay:-1s;}
+@keyframes tmFlick{0%{opacity:1}12%{opacity:.55}18%{opacity:1}55%{opacity:.8}62%{opacity:1}85%{opacity:.5}90%{opacity:1}}
+#tema-bg .tm-star{animation:tmTw 3s ease-in-out infinite alternate;}
+@keyframes tmTw{from{opacity:.25}to{opacity:1}}
+#tema-bg .tm-bat{position:absolute;left:0;top:var(--y);width:var(--w);animation:tmFly var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-bat svg{display:block;width:100%;height:auto;animation:tmFlap .28s ease-in-out infinite alternate;transform-origin:50% 40%;}
+@keyframes tmFly{0%{transform:translate3d(-14vw,0,0)}25%{transform:translate3d(20vw,-5vh,0)}50%{transform:translate3d(54vw,4vh,0)}75%{transform:translate3d(86vw,-4vh,0)}100%{transform:translate3d(116vw,3vh,0)}}
+@keyframes tmFlap{from{transform:scaleY(1)}to{transform:scaleY(.5)}}
+#tema-bg .tm-ghost{position:absolute;left:var(--x);top:var(--y);width:var(--w);opacity:.55;animation:tmFloat var(--d) ease-in-out var(--dl) infinite alternate;filter:drop-shadow(0 0 1.2vw rgba(200,255,220,.55));}
+@keyframes tmFloat{from{transform:translate3d(-2vw,1.5vh,0)}to{transform:translate3d(3vw,-3vh,0)}}
+#tema-bg .tm-fog{position:absolute;left:0;bottom:var(--b);width:200%;height:26vh;opacity:var(--o);
+  background:radial-gradient(ellipse 12% 45% at 10% 60%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 14% 40% at 32% 50%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 12% 48% at 55% 62%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 15% 40% at 78% 52%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 10% 44% at 95% 60%,rgba(215,195,240,.8),transparent 70%);
+  filter:blur(1.2vw);animation:tmFogMove var(--d) linear infinite;will-change:transform;}
+@keyframes tmFogMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+#tema-bg .tm-spider{position:absolute;left:var(--x);top:0;width:3vw;transform-origin:50% 0;animation:tmSwing 4.5s ease-in-out infinite alternate;}
+#tema-bg .tm-spider i{display:block;width:1px;height:var(--h);margin:0 auto;background:rgba(255,255,255,.55);}
+@keyframes tmSwing{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+body.tema-on.tod-dawn #dawn-glow,body.tv.tema-on #dawn-glow,body.tema-on #dawn-glow{display:none !important;}
+@media (prefers-reduced-motion:reduce){#tema-bg *{animation:none !important;}}
+</style>
 
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
-<div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+<div id="weather-bg" aria-hidden="true"><canvas id="weather-canvas"></canvas><video id="agua-video" src="pool_bg.mp4" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video><div id="tema-bg" aria-hidden="true"></div></div>
 <!-- OVERLAY AMANECER -->
 <div id="dawn-glow" aria-hidden="true"></div>
 <!-- OVERLAY SOL (llovizna/lluvia/tormenta) -->
@@ -2488,7 +2537,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='8b22c393a57a';
+  var BUILD_ID='d4e311f59964';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3247,10 +3296,10 @@ var LANG_ALIAS = {
           if(p.type==='clearcloud') drawCloud(p,dt);
         });
       } else {
-        drawSun();
+        if(!window.__tema) drawSun();
         particles.forEach(function(p){
-          if(p.type==='ray')        drawClearRay(p,dt);
-          if(p.type==='flare')      drawFlare(p,dt);
+          if(p.type==='ray' && !window.__tema)        drawClearRay(p,dt);
+          if(p.type==='flare' && !window.__tema)      drawFlare(p,dt);
           if(p.type==='clearcloud') drawCloud(p,dt);
         });
       }
@@ -4133,6 +4182,200 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   v.addEventListener('loadeddata', go);
   document.addEventListener('visibilitychange', function(){ if(!document.hidden) go(); });
   go();
+})();
+</script>
+<script>
+/* ═══ TEMAS DE TEMPORADA ═══
+   Fechas: archivo temas.json junto a index.html (se relee cada 15 min, sin recargar la página).
+   Prueba: ?tema=oktoberfest | ?tema=halloween | ?tema=ninguno  (pisa al calendario). */
+(function(){
+  /* Calendario de reserva (si temas.json no se puede leer). Fechas AAAA-MM-DD, o MM-DD para que se repita cada año. */
+  var CAL = { forzar:'', temas:[
+    {tema:'oktoberfest', desde:'2026-10-14', hasta:'2026-10-14'},
+    {tema:'halloween',   desde:'2026-10-26', hasta:'2026-11-01'}
+  ]};
+  var cfg = CAL, actual = '';
+  var $bg = document.getElementById('tema-bg');
+  if(!$bg) return;
+
+  function R(a,b){ return a + Math.random()*(b-a); }
+  function norm(s){
+    s = String(s||'').trim();
+    var m = /^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/.exec(s);          /* DD/MM/AAAA */
+    if(m) return m[3]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2);
+    m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s);                            /* AAAA-MM-DD */
+    if(m) return m[1]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2);
+    m = /^(\d{1,2})[\/.\-](\d{1,2})$/.exec(s);                              /* DD/MM  -> MM-DD */
+    if(m) return ('0'+m[2]).slice(-2)+'-'+('0'+m[1]).slice(-2);
+    m = /^(\d{1,2})-(\d{1,2})$/.exec(s);                                    /* MM-DD */
+    if(m) return ('0'+m[1]).slice(-2)+'-'+('0'+m[2]).slice(-2);
+    return '';
+  }
+  function hoy(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+  function dentro(h,a,b){
+    a = norm(a); b = norm(b||a); if(!a||!b) return false;
+    if(a.length===10 && b.length===10) return h>=a && h<=b;
+    var mh=h.slice(5); if(a.length===10) a=a.slice(5); if(b.length===10) b=b.slice(5);
+    return a<=b ? (mh>=a && mh<=b) : (mh>=a || mh<=b);
+  }
+  function elegir(){
+    var q = new URLSearchParams(location.search).get('tema');
+    if(q) return /^(ninguno|none|0|no)$/i.test(q) ? '' : q.toLowerCase();
+    var f = String(cfg.forzar||'').toLowerCase();
+    if(f) return /^(ninguno|none|0|no)$/.test(f) ? '' : f;
+    var h = hoy(), l = cfg.temas||[];
+    for(var i=0;i<l.length;i++){ if(l[i] && dentro(h,l[i].desde,l[i].hasta)) return String(l[i].tema||'').toLowerCase(); }
+    return '';
+  }
+
+  /* ── piezas comunes ── */
+  function bunting(x1,y1,x2,y2,sag,n,cols,len,w,cls){
+    var cx=(x1+x2)/2, cy=(y1+y2)/2+2*sag, s='<g class="tm-sway'+(cls||'')+'">';
+    s+='<path d="M'+x1+' '+y1+' Q'+cx+' '+cy+' '+x2+' '+y2+'" fill="none" stroke="rgba(30,20,10,.55)" stroke-width="3"/>';
+    for(var i=0;i<n;i++){
+      var t=(i+.5)/n, u=1-t;
+      var px=u*u*x1+2*u*t*cx+t*t*x2, py=u*u*y1+2*u*t*cy+t*t*y2;
+      var tx=2*u*(cx-x1)+2*t*(x2-cx), ty=2*u*(cy-y1)+2*t*(y2-y1), L=Math.sqrt(tx*tx+ty*ty); tx/=L; ty/=L;
+      var nx=-ty, ny=tx;
+      var c=cols[i%cols.length];
+      s+='<polygon points="'+(px-tx*w/2).toFixed(1)+','+(py-ty*w/2).toFixed(1)+' '+(px+tx*w/2).toFixed(1)+','+(py+ty*w/2).toFixed(1)+' '+(px+nx*len).toFixed(1)+','+(py+ny*len).toFixed(1)+'" fill="'+c[0]+'" stroke="'+(c[1]||'rgba(0,0,0,.25)')+'" stroke-width="2" stroke-linejoin="round"/>';
+    }
+    return s+'</g>';
+  }
+  function cloud(x,y,sc,cls){
+    return '<g class="tm-cloud'+(cls||'')+'" style="opacity:.92"><g transform="translate('+x+' '+y+') scale('+sc+')" fill="#fff">'+
+      '<ellipse cx="0" cy="0" rx="90" ry="30"/><ellipse cx="-45" cy="-18" rx="45" ry="30"/><ellipse cx="22" cy="-30" rx="55" ry="38"/><ellipse cx="68" cy="-8" rx="38" ry="24"/></g></g>';
+  }
+  function mug(x,y,s){
+    var b='';
+    for(var i=0;i<7;i++) b+='<circle class="tm-bub" cx="'+(22+i*13)+'" cy="'+(150-(i%3)*10)+'" r="'+(2.5+(i%3))+'" fill="#fff6c8" style="animation-delay:-'+(i*.45).toFixed(2)+'s"/>';
+    return '<g transform="translate('+x+' '+y+') scale('+s+')">'+
+      '<path d="M120 52 H146 Q168 52 168 80 V112 Q168 140 146 140 H118" fill="none" stroke="#d9e6ee" stroke-width="12" stroke-linecap="round"/>'+
+      '<path d="M120 52 H146 Q168 52 168 80 V112 Q168 140 146 140 H118" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round" transform="translate(0,-1)"/>'+
+      '<rect x="6" y="28" width="120" height="176" rx="16" fill="url(#tmBeer)" stroke="#e9f3f8" stroke-width="5"/>'+
+      b+
+      '<rect x="18" y="44" width="10" height="140" rx="5" fill="rgba(255,255,255,.35)"/>'+
+      '<g fill="#fffdf4" stroke="#efe7c6" stroke-width="2"><circle cx="24" cy="30" r="22"/><circle cx="52" cy="18" r="26"/><circle cx="84" cy="16" r="27"/><circle cx="112" cy="30" r="22"/><rect x="6" y="28" width="120" height="14"/></g>'+
+      '</g>';
+  }
+  function dom(cls,n,fn){ var s=''; for(var i=0;i<n;i++) s+=fn(i); return s; }
+
+  /* ── OKTOBERFEST ── */
+  function sceneOkt(){
+    var AZ='#1c6fc9', BL='#ffffff', col=[[AZ,'#0f4a8c'],[BL,'#7aa7d4']];
+    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="tmSky" x2="0" y2="1"><stop offset="0" stop-color="#4aa8ee"/><stop offset=".55" stop-color="#9fd4f7"/><stop offset="1" stop-color="#dff1fb"/></linearGradient>'+
+      '<linearGradient id="tmBeer" x2="0" y2="1"><stop offset="0" stop-color="#ffd34e" stop-opacity=".95"/><stop offset="1" stop-color="#e58a00" stop-opacity=".95"/></linearGradient>'+
+      '<linearGradient id="tmH1" x2="0" y2="1"><stop offset="0" stop-color="#7fcf62"/><stop offset="1" stop-color="#4d9f3e"/></linearGradient>'+
+      '<linearGradient id="tmH2" x2="0" y2="1"><stop offset="0" stop-color="#5eb44d"/><stop offset="1" stop-color="#36842f"/></linearGradient>'+
+      '<pattern id="tmRomb" width="80" height="60" patternUnits="userSpaceOnUse"><rect width="80" height="60" fill="#fff"/><path d="M40 0 L80 30 L40 60 L0 30Z" fill="'+AZ+'"/></pattern>'+
+      '</defs>'+
+      '<rect width="1600" height="900" fill="url(#tmSky)"/>'+
+      '<circle cx="1330" cy="170" r="210" fill="#fff6c9" opacity=".22"/><circle cx="1330" cy="170" r="70" fill="#fff3b0" opacity=".9"/>'+
+      cloud(220,200,1.1,'')+cloud(760,130,.8,' b')+cloud(1100,260,1,'')+
+      /* Alpes */
+      '<path d="M0 640 L170 470 L250 540 L390 380 L520 520 L610 460 L780 610 L900 500 L1030 560 L1180 420 L1320 560 L1450 480 L1600 600 V700 H0Z" fill="#8fb4d6"/>'+
+      '<path d="M390 380 L350 430 L385 420 L405 445 L430 418 L460 440 L420 392Z M1180 420 L1140 470 L1175 460 L1195 485 L1220 458 L1255 480 L1218 432Z M170 470 L140 508 L170 500 L190 520 L215 495Z" fill="#fff" opacity=".92"/>'+
+      '<path d="M0 700 Q260 600 560 650 T1100 640 T1600 660 V760 H0Z" fill="#6fa8d8" opacity=".55"/>'+
+      /* colinas */
+      '<path d="M0 690 Q300 600 640 665 T1250 650 T1600 690 V900 H0Z" fill="url(#tmH1)"/>'+
+      '<path d="M0 760 Q350 690 760 745 T1600 735 V900 H0Z" fill="url(#tmH2)"/>'+
+      /* carpa */
+      '<g transform="translate(1180 540)">'+
+        '<rect x="0" y="95" width="330" height="120" fill="#fff"/>'+
+        dom('',11,function(i){return '<rect x="'+(i*30)+'" y="95" width="15" height="120" fill="'+AZ+'"/>';})+
+        '<path d="M-14 100 L165 -2 L344 100Z" fill="#fff" stroke="#0f4a8c" stroke-width="3"/>'+
+        dom('',6,function(i){return '<path d="M165 -2 L'+(-14+i*60)+' 100 L'+(16+i*60)+' 100Z" fill="'+AZ+'" opacity="'+(i%2?0:1)+'"/>';})+
+        '<rect x="135" y="140" width="60" height="75" rx="6" fill="#6a3d1a"/>'+
+        '<line x1="165" y1="-2" x2="165" y2="-52" stroke="#5b3a1a" stroke-width="5"/><path d="M165 -52 L225 -38 L165 -24Z" fill="'+AZ+'"/>'+
+      '</g>'+
+      /* banda de rombos */
+      '<rect x="0" y="838" width="1600" height="62" fill="url(#tmRomb)"/><rect x="0" y="834" width="1600" height="7" fill="#0f4a8c"/>'+
+      mug(24,700,.85)+
+      '<g transform="translate(1600 0) scale(-1 1)">'+mug(24,700,.85)+'</g>'+
+      bunting(-20,105,820,100,60,16,col,52,40,'')+
+      bunting(780,100,1620,108,60,16,col,52,40,' b')+
+      '</svg>';
+    var d=dom('',9,function(i){var c=['#1c6fc9','#ffffff','#5db4f2','#ffffff','#1c6fc9','#ffd34e'][i%6]; return '<i class="tm-bal" style="--x:'+R(2,94).toFixed(1)+'%;--c:'+c+';--d:'+R(30,48).toFixed(1)+'s;--dl:-'+R(0,40).toFixed(1)+'s"></i>';});
+    d+=dom('',36,function(i){var c=['#1c6fc9','#fff','#5db4f2','#ffd34e','#fff'][i%5]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(9,17).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-6,6).toFixed(1)+'vw"></b>';});
+    return svg+d;
+  }
+
+  /* ── HALLOWEEN ── */
+  var BAT='<svg viewBox="0 0 100 50"><path fill="#07030f" d="M50 12C46 12 44 6 41 3C40 10 38 14 34 15C26 11 14 12 1 21C10 20 16 22 20 29C24 25 30 25 34 29C38 27 44 31 50 42C56 31 62 27 66 29C70 25 76 25 80 29C84 22 90 20 99 21C86 12 74 11 66 15C62 14 60 10 59 3C56 6 54 12 50 12Z"/></svg>';
+  var GHOST='<svg viewBox="0 0 80 100"><path fill="#f4f7ff" d="M8 100V40C8 15 24 2 40 2C56 2 72 15 72 40V100L62 90L51 100L40 90L29 100L18 90Z"/><ellipse cx="29" cy="40" rx="6" ry="9" fill="#1a1030"/><ellipse cx="51" cy="40" rx="6" ry="9" fill="#1a1030"/><ellipse cx="40" cy="62" rx="7" ry="10" fill="#1a1030"/></svg>';
+  function pumpkin(x,y,s,face){
+    return '<g transform="translate('+x+' '+y+') scale('+s+')">'+
+      '<ellipse cx="38" cy="60" rx="34" ry="40" fill="#d9600f"/><ellipse cx="82" cy="60" rx="34" ry="40" fill="#d9600f"/>'+
+      '<ellipse cx="60" cy="58" rx="40" ry="42" fill="#f07a1a"/><ellipse cx="60" cy="58" rx="22" ry="42" fill="#ff9b3a"/>'+
+      '<path d="M54 20 C54 8 60 4 66 0 L70 6 C66 10 66 16 68 22Z" fill="#4a6b1f"/>'+
+      '<g class="tm-flick'+(face?'':' b')+'" fill="#ffe27a" style="filter:drop-shadow(0 0 6px #ffb52e)">'+
+        '<polygon points="36,56 52,56 44,40"/><polygon points="68,56 84,56 76,40"/>'+
+        '<path d="M32 72 L44 80 L52 72 L60 82 L68 72 L76 80 L88 72 L84 88 Q60 104 36 88Z"/></g>'+
+      '</g>';
+  }
+  function sceneHal(){
+    var col=[['#ff7a1a','#7a3200'],['#2a123f','#5a2b80'],['#8cd33a','#3d6b0e']];
+    var stars=dom('',70,function(){return '<circle class="tm-star" cx="'+R(10,1590).toFixed(0)+'" cy="'+R(10,420).toFixed(0)+'" r="'+R(.8,2.2).toFixed(1)+'" fill="#fff" style="animation-delay:-'+R(0,3).toFixed(1)+'s;animation-duration:'+R(2,4.5).toFixed(1)+'s"/>';});
+    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="tmN" x2="0" y2="1"><stop offset="0" stop-color="#0d0724"/><stop offset=".5" stop-color="#2a1048"/><stop offset=".85" stop-color="#6b2354"/><stop offset="1" stop-color="#a8402f"/></linearGradient>'+
+      '<radialGradient id="tmMoon"><stop offset="0" stop-color="#fff0b8"/><stop offset=".7" stop-color="#ffd87a"/><stop offset="1" stop-color="#f6b955"/></radialGradient>'+
+      '<radialGradient id="tmGlow"><stop offset="0" stop-color="#ffcf70" stop-opacity=".5"/><stop offset="1" stop-color="#ffcf70" stop-opacity="0"/></radialGradient>'+
+      '</defs>'+
+      '<rect width="1600" height="900" fill="url(#tmN)"/>'+stars+
+      '<circle cx="1180" cy="250" r="360" fill="url(#tmGlow)"/>'+
+      '<circle cx="1180" cy="250" r="150" fill="url(#tmMoon)"/>'+
+      '<g fill="#e8b45e" opacity=".55"><circle cx="1130" cy="210" r="26"/><circle cx="1228" cy="290" r="20"/><circle cx="1150" cy="305" r="12"/><circle cx="1240" cy="195" r="10"/></g>'+
+      '<g transform="translate(1120 215) scale(.55)">'+BAT.replace('<svg viewBox="0 0 100 50">','<svg width="100" height="50" viewBox="0 0 100 50">')+'</g>'+
+      /* nubes oscuras */
+      '<g class="tm-cloud" opacity=".55" fill="#1a0c33"><ellipse cx="0" cy="330" rx="260" ry="28"/><ellipse cx="120" cy="318" rx="160" ry="20"/></g>'+
+      '<g class="tm-cloud b" opacity=".5" fill="#1a0c33"><ellipse cx="0" cy="190" rx="300" ry="24"/></g>'+
+      /* colina y casa */
+      '<path d="M0 760 Q220 650 520 700 T1000 720 T1600 690 V900 H0Z" fill="#0a0516"/>'+
+      '<g fill="#0a0516"><path d="M0 760 Q150 690 330 700 L330 560 L300 560 L300 470 L250 400 L200 470 L200 520 L150 520 L150 600 L100 600 L100 560 L60 560 L60 700Z"/>'+
+        '<path d="M130 600 L175 520 L220 600Z"/><rect x="236" y="338" width="28" height="70"/></g>'+
+      '<g fill="#ffb347">'+
+        '<rect class="tm-flick" x="224" y="478" width="24" height="34"/><rect class="tm-flick b" x="262" y="478" width="24" height="34"/>'+
+        '<rect class="tm-flick b" x="116" y="618" width="24" height="34"/><rect class="tm-flick" x="196" y="618" width="24" height="34"/>'+
+        '<rect class="tm-flick" x="246" y="560" width="22" height="30"/></g>'+
+      /* árbol seco */
+      '<g fill="none" stroke="#0a0516" stroke-linecap="round" stroke-width="22"><path d="M1480 760 C1470 680 1500 620 1475 540"/></g>'+
+      '<g fill="none" stroke="#0a0516" stroke-linecap="round" stroke-width="12"><path d="M1480 600 C1430 570 1400 520 1380 470"/><path d="M1478 560 C1530 520 1560 490 1580 430"/><path d="M1476 640 C1520 620 1550 600 1590 600"/><path d="M1400 520 C1380 510 1360 510 1340 480"/><path d="M1380 470 C1360 450 1350 420 1352 392"/></g>'+
+      /* lápidas */
+      '<g fill="#0a0516"><path d="M640 790 V740 Q640 715 665 715 Q690 715 690 740 V790Z"/><path d="M1020 780 V735 Q1020 712 1042 712 Q1064 712 1064 735 V780Z"/><path d="M1130 800 V762 Q1130 742 1150 742 Q1170 742 1170 762 V800Z"/><rect x="662" y="728" width="6" height="30" fill="#2a1048"/></g>'+
+      pumpkin(420,740,1.15,1)+pumpkin(820,775,.8,0)+pumpkin(1240,730,1.3,1)+pumpkin(1010,790,.62,0)+
+      bunting(-20,100,820,96,55,16,col,48,38,'')+
+      bunting(780,96,1620,104,55,16,col,48,38,' b')+
+      '</svg>';
+    var d=dom('',5,function(i){ return '<div class="tm-bat" style="--y:'+R(8,50).toFixed(0)+'%;--w:'+R(4,7).toFixed(1)+'vw;--d:'+R(13,22).toFixed(1)+'s;--dl:-'+R(0,20).toFixed(1)+'s">'+BAT+'</div>'; });
+    d+='<div class="tm-ghost" style="--x:12%;--y:46%;--w:5vw;--d:7s;--dl:-1s">'+GHOST+'</div><div class="tm-ghost" style="--x:70%;--y:58%;--w:3.6vw;--d:9s;--dl:-4s">'+GHOST+'</div>';
+    d+='<div class="tm-fog" style="--b:0;--o:.32;--d:70s"></div><div class="tm-fog" style="--b:6vh;--o:.2;--d:110s"></div>';
+    d+='<div class="tm-spider" style="--x:9%"><i style="--h:22vh"></i><svg viewBox="0 0 40 36"><g stroke="#0b0614" stroke-width="2" fill="none"><path d="M20 18 L4 6 M20 18 L2 16 M20 18 L4 30 M20 18 L12 34 M20 18 L36 6 M20 18 L38 16 M20 18 L36 30 M20 18 L28 34"/></g><ellipse cx="20" cy="20" rx="8" ry="9" fill="#0b0614"/><circle cx="20" cy="11" r="5" fill="#0b0614"/><circle cx="18" cy="10" r="1.3" fill="#ff3b3b"/><circle cx="22" cy="10" r="1.3" fill="#ff3b3b"/></svg></div>';
+    return svg+d;
+  }
+
+  var TEMAS = { oktoberfest:sceneOkt, halloween:sceneHal };
+
+  function aplicar(){
+    var t = elegir(); if(!TEMAS[t]) t='';
+    if(t===actual) return;
+    actual = t;
+    var b = document.body;
+    b.className = b.className.replace(/\btema-\S+/g,'').replace(/\s+/g,' ').trim();
+    if(!t){ $bg.innerHTML=''; window.__tema=''; return; }
+    $bg.innerHTML = TEMAS[t]();
+    b.classList.add('tema-on'); b.classList.add('tema-'+t);
+    window.__tema = t;
+  }
+  function leer(){
+    if(location.protocol==='file:') return;
+    fetch('temas.json?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ if(j && Array.isArray(j.temas)){ cfg=j; aplicar(); } })
+      .catch(function(){});
+  }
+  aplicar(); leer();
+  setInterval(leer, 15*60*1000);
+  setInterval(aplicar, 60*1000);   /* cambio de día sin recargar */
 })();
 </script>
 </body>
