@@ -1302,6 +1302,9 @@ body.tema-oktoberfest.tv:has(#pools.multi) main{padding-bottom:var(--tm-res) !im
 #tema-bg .tm-caus.b{animation-duration:8s;animation-direction:alternate-reverse;opacity:.7;}
 @keyframes tmCaus{from{transform:translateX(-26px)}to{transform:translateX(26px)}}
 body.tema-whiteparty.tv:has(#pools.multi) main{padding-bottom:var(--tm-res,21vh) !important;box-sizing:border-box !important;}
+
+/* Vista en navegador (sin ?tv=1): la pagina hace scroll; se reserva la franja al final para que, al llegar abajo, la decoracion/texto quede libre */
+body.tema-whiteparty:not(.tv) main,body.tema-oktoberfest:not(.tv) main{padding-bottom:calc(var(--tm-res,20vh) + 2vh) !important;box-sizing:border-box;}
 </style>
 
 </head>
@@ -2590,7 +2593,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='dd12c33b735e';
+  var BUILD_ID='7131aec7c33d';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
