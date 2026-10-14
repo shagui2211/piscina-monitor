@@ -1249,7 +1249,7 @@ body.tema-on #tema-bg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 @keyframes tmSwing{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
 body.tema-on.tod-dawn #dawn-glow,body.tv.tema-on #dawn-glow,body.tema-on #dawn-glow{display:none !important;}
 /* Ciclismo (Challenge Calvià) */
-#tema-bg .tm-road{position:absolute;left:0;right:0;bottom:0;height:10.5vh;background:linear-gradient(#4b4f57,#2f3238);border-top:.5vh solid #fff;}
+#tema-bg .tm-road{position:absolute;left:0;right:0;bottom:0;height:max(5vh,calc(var(--k)*94px - var(--c)));background:linear-gradient(#4b4f57,#2f3238);border-top:.5vh solid #fff;}
 #tema-bg .tm-road::before{content:"";position:absolute;left:0;right:0;top:48%;height:.7vh;background:repeating-linear-gradient(90deg,#ffd400 0 calc(var(--u)*4),transparent calc(var(--u)*4) calc(var(--u)*8));background-size:calc(var(--u)*8) 100%;animation:tmDash 1.1s linear infinite;}
 @keyframes tmDash{from{background-position:0 0}to{background-position:calc(var(--u)*-8) 0}}
 #tema-bg .tm-cyc{position:absolute;left:0;bottom:var(--y);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
@@ -2575,7 +2575,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='a1c888e8ddd7';
+  var BUILD_ID='e9642e5a4562';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4300,8 +4300,9 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   /* Zona visible del lienzo 1600x900 (se recorta con 'slice'): en vertical solo se ve el centro. */
   function geo(){
     var asp=(window.innerWidth||1920)/(window.innerHeight||1080), a=Math.min(asp,16/9);
-    var x0=800-450*a, x1=800+450*a, W=x1-x0;
-    return {asp:asp, x0:x0, x1:x1, W:W, cx:800, v:asp<1, k:asp<1?'v':'h',
+    var x0=800-450*a, x1=800+450*a, W=x1-x0, hh=(window.innerHeight||1080), ww=(window.innerWidth||1920);
+    var px=Math.max(ww/1600,hh/900), cr=Math.max(0,(900*px-hh)/2);
+    return {px:px, cr:cr, key:(asp<1?'v':'h')+Math.round(asp*8), asp:asp, x0:x0, x1:x1, W:W, cx:800, v:asp<1, k:asp<1?'v':'h',
             s:Math.max(.45,Math.min(1,W/1000)), m:Math.max(.55,Math.min(1,W/800))};
   }
   function dom(cls,n,fn){ var s=''; for(var i=0;i<n;i++) s+=fn(i); return s; }
@@ -4433,7 +4434,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   }
   function sceneCic(){
     var g=geo(), col=[['#ffd400','#8a6f00'],['#d6202a','#7a0d14'],['#ffffff','#8a8a8a'],['#14151a','#555']];
-    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
+    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
       '<linearGradient id="tcSky" x2="0" y2="1"><stop offset="0" stop-color="#3f9fe8"/><stop offset=".6" stop-color="#9ad3f5"/><stop offset="1" stop-color="#e6f4fb"/></linearGradient>'+
       '<linearGradient id="tcSea" x2="0" y2="1"><stop offset="0" stop-color="#1b8fc9"/><stop offset="1" stop-color="#0d6aa6"/></linearGradient>'+
       '<linearGradient id="tcMtn" x2="0" y2="1"><stop offset="0" stop-color="#7e9a82"/><stop offset="1" stop-color="#5d7c63"/></linearGradient>'+
@@ -4449,27 +4450,28 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
       '<g fill="#fff" opacity=".55"><rect x="140" y="650" width="70" height="3"/><rect x="460" y="690" width="110" height="3"/><rect x="860" y="660" width="90" height="3"/><rect x="1240" y="700" width="120" height="3"/></g>'+
       '<g>'+dom('',Math.max(3,Math.round(6*g.W/1600)),function(i){var x=g.x0+(i+.5)*g.W/Math.max(3,Math.round(6*g.W/1600)); return '<line x1="'+x+'" y1="705" x2="'+x+'" y2="723" stroke="#fff" stroke-width="2"/><circle cx="'+x+'" cy="705" r="9" fill="#ff7a1a" stroke="#fff" stroke-width="2"/>';})+'</g>'+
       '<path d="M0 800 Q320 760 700 790 T1600 780 V900 H0Z" fill="url(#tcHill)"/>'+
-      /* arco de meta */
-      '<g transform="translate('+(g.x1-350*g.s)+' '+(690+(1-g.s)*70)+') scale('+g.s+')"><rect x="0" y="0" width="14" height="210" fill="#222"/><rect x="286" y="0" width="14" height="210" fill="#222"/>'+
-        '<rect x="-6" y="-4" width="312" height="70" rx="6" fill="#d6202a"/><rect x="-6" y="62" width="312" height="14" fill="url(#tcChk)"/>'+
-        '<text x="150" y="42" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-weight="700" font-size="30" fill="#fff" textLength="270" lengthAdjust="spacingAndGlyphs">META · PEGUERA</text></g>'+
       bunting(g.x0-20,105,g.cx+20,100,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,'')+
       bunting(g.cx-20,100,g.x1+20,108,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,' b')+
       '</svg>';
-    var d='<div class="tm-road"></div>';
+    var ay=690+(1-g.s)*70, ph=(806-ay)/g.s;
+    var arco='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="tcChk2" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#fff"/><rect width="20" height="20" fill="#14151a"/><rect x="20" y="20" width="20" height="20" fill="#14151a"/></pattern></defs>'+
+      '<g transform="translate('+(g.x1-350*g.s)+' '+ay+') scale('+g.s+')"><rect x="0" y="0" width="14" height="'+ph+'" fill="#222"/><rect x="286" y="0" width="14" height="'+ph+'" fill="#222"/>'+
+      '<rect x="-6" y="-4" width="312" height="70" rx="6" fill="#d6202a"/><rect x="-6" y="62" width="312" height="14" fill="url(#tcChk2)"/>'+
+      '<text x="150" y="42" text-anchor="middle" font-family="Outfit,Arial,sans-serif" font-weight="700" font-size="30" fill="#fff" textLength="270" lengthAdjust="spacingAndGlyphs">META · PEGUERA</text></g></svg>';
+    var dd='', dc='<div class="tm-road"></div>';
     var jer=[['#ffd400','#d6202a'],['#d6202a','#ffffff'],['#1c6fc9','#ffffff'],['#ffffff','#d6202a'],['#2e9d4a','#ffd400'],['#ff7a1a','#14151a']];
-    for(var g=0;g<2;g++){
-      var base=R(0,18), dur=(g?21:17);
+    for(var gi=0;gi<2;gi++){
+      var base=R(0,18), dur=(gi?21:17);
       for(var i=0;i<6;i++){
-        var j=jer[(i+g*3)%6];
-        d+='<div class="tm-cyc" style="--y:'+(0.5+(i%3)*1.1).toFixed(1)+'vh;--w:'+(7.4-(i%3)*.5).toFixed(1)+';--d:'+dur+'s;--dl:-'+(base+i*.9+(i%2?.4:0)).toFixed(1)+'s">'+cyclist(j[0],j[1])+'</div>';
+        var jj=jer[(i+gi*3)%6];
+        dc+='<div class="tm-cyc" style="--y:max('+(0.4+(i%3)*.9).toFixed(1)+'vh,calc(var(--k)*'+(5+(i%3)*8)+'px - var(--c)));--w:'+(7.4-(i%3)*.5).toFixed(1)+';--d:'+dur+'s;--dl:-'+(base+i*.9+(i%2?.4:0)).toFixed(1)+'s">'+cyclist(jj[0],jj[1])+'</div>';
       }
     }
     var cols=['#d6202a','#1c6fc9','#ffd400','#2e9d4a','#ff7a1a'];
-    for(var s=0;s<4;s++) d+='<div class="tm-swim" style="--t:'+(78.4+(s%2)*2).toFixed(1)+'%;--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
-    for(var r=0;r<5;r++) d+='<div class="tm-run" style="--b:11.4vh;--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
-    d+=dom('',8,function(i){var c=['#ffd400','#d6202a','#fff','#ffd400'][i%4]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-5,5).toFixed(1)+'vw"></b>';});
-    return svg+d;
+    for(var s=0;s<4;s++) dd+='<div class="tm-swim" style="--t:calc(var(--k)*'+(715+(s%2)*16)+'px - var(--c));--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
+    for(var r=0;r<5;r++) dd+='<div class="tm-run" style="--b:calc(var(--k)*97px - var(--c));--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
+    dc+=dom('',8,function(i){var c=['#ffd400','#d6202a','#fff','#ffd400'][i%4]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-5,5).toFixed(1)+'vw"></b>';});
+    return svg+dd+arco+dc;
   }
 
 
@@ -4525,9 +4527,10 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
 
   function aplicar(){
     var t = elegir(); if(!TEMAS[t]) t='';
-    var key = t+'|'+geo().k;
+    var gg = geo(), key = t+'|'+gg.key;
     if(key===actual) return;
     actual = key;
+    $bg.style.setProperty('--k', gg.px.toFixed(4)); $bg.style.setProperty('--c', "0px");
     var b = document.body;
     b.className = b.className.replace(/\btema-\S+/g,'').replace(/\s+/g,' ').trim();
     if(!t){ $bg.innerHTML=''; window.__tema=''; return; }
