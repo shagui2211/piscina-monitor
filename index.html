@@ -2596,7 +2596,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='3dbf70599f75';
+  var BUILD_ID='4316d4566276';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4056,7 +4056,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
 
 
   /* ── fotogramas: MURCIÉLAGO (Halloween) ── */
-  function batSvg(w){ return '<svg width="52" height="44" viewBox="0 -6 40 34" xmlns="http://www.w3.org/2000/svg">'+
+  function batSvg(w){ return '<svg width="84" height="71" viewBox="0 -6 40 34" xmlns="http://www.w3.org/2000/svg">'+
     '<g stroke="#3a2a4a" stroke-width="1.2" stroke-linecap="round"><line x1="17.5" y1="22" x2="16.5" y2="25"/><line x1="22.5" y1="22" x2="23.5" y2="25"/></g>'+w+
     '<ellipse cx="20" cy="15.5" rx="5.6" ry="7.6" fill="#1d1128"/><circle cx="20" cy="7.4" r="5" fill="#241636"/>'+
     '<path d="M15.2 5.6 L14.6 -1.2 L19 3.2Z M24.8 5.6 L25.4 -1.2 L21 3.2Z" fill="#241636"/><path d="M16 4.6 L15.7 0.8 L18 3.2Z M24 4.6 L24.3 0.8 L22 3.2Z" fill="#6b3a5c" opacity=".7"/>'+
@@ -4068,7 +4068,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
     up:   batSvg('<path d="M14.6 11 Q5 6 1 -4.6 Q5.4 -2.2 8 -4.4 Q10.4 -1 14 1.6Z" fill="#150c20"/><path d="M25.4 11 Q35 6 39 -4.6 Q34.6 -2.2 32 -4.4 Q29.6 -1 26 1.6Z" fill="#150c20"/>')
   };
   var PARAM = {
-    bat: { w:52, h:44, feet:40, flap:85,  undAmp:9, undCyc:3.4, maxTilt:24, kp:1.1 },
+    bat: { w:84, h:71, feet:65, flap:85,  undAmp:9, undCyc:3.4, maxTilt:24, kp:1.1 },
     bird:{ w:30, h:34, feet:31, flap:95,  undAmp:7, undCyc:3.0, maxTilt:20, kp:1.0 },
     owl: { w:38, h:48, feet:44, flap:175, undAmp:3, undCyc:1.7, maxTilt:13, kp:0.6 }
   };
