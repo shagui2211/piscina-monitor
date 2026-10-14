@@ -3,6 +3,6 @@
   "temas": [
     { "tema": "oktoberfest", "desde": "2026-10-14", "hasta": "2026-10-14" },
     { "tema": "triatlon",    "desde": "2026-10-15", "hasta": "2026-10-18" },
-    { "tema": "halloween",   "desde": "2026-10-26", "hasta": "2026-11-01" }
+    { "tema": "halloween",   "desde": "2026-10-26", "hasta": "2026-10-31" }
   ]
 }
