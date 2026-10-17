@@ -1291,7 +1291,7 @@ body.tema-whiteparty .footer,body.tema-whiteparty .lang-indicator,body.tema-whit
 /* Oktoberfest: reserva una franja inferior para la decoracion (las tarjetas se comprimen) */
 body.tema-oktoberfest{--tm-res:18vh;}
 @media (orientation:portrait){body.tema-oktoberfest{--tm-res:19vh;}}
-body.tema-oktoberfest.tv:has(#pools.multi) main{padding-bottom:var(--tm-res) !important;box-sizing:border-box !important;}
+body.tema-oktoberfest.tv:has(#pools.multi) main,body.tema-whiteparty.tv:has(#pools.multi) main{padding-bottom:0 !important;box-sizing:border-box !important;max-width:none !important;transform:scale(var(--tm-k,1));transform-origin:0 0;width:calc(100% / var(--tm-k,1)) !important;}
 
 /* White party: hojas que se mecen, brillo del agua y reserva de franja inferior (calculada en JS) */
 #tema-bg .tm-pa{transform-box:fill-box;transform-origin:0% 0%;animation:tmPalm 7s ease-in-out infinite alternate;}
@@ -1301,7 +1301,6 @@ body.tema-oktoberfest.tv:has(#pools.multi) main{padding-bottom:var(--tm-res) !im
 #tema-bg .tm-caus{animation:tmCaus 6s ease-in-out infinite alternate;}
 #tema-bg .tm-caus.b{animation-duration:8s;animation-direction:alternate-reverse;opacity:.7;}
 @keyframes tmCaus{from{transform:translateX(-26px)}to{transform:translateX(26px)}}
-body.tema-whiteparty.tv:has(#pools.multi) main{padding-bottom:var(--tm-res,21vh) !important;box-sizing:border-box !important;}
 
 /* Vista en navegador (sin ?tv=1): la pagina hace scroll; se reserva la franja al final para que, al llegar abajo, la decoracion/texto quede libre */
 body.tema-whiteparty:not(.tv) main,body.tema-oktoberfest:not(.tv) main{padding-bottom:calc(var(--tm-res,20vh) + 2vh) !important;box-sizing:border-box;}
@@ -2596,7 +2595,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b51ef4294669';
+  var BUILD_ID='b35fd7b8cb06';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4538,7 +4537,8 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
   }
   function sceneWhite(){
     var g=geo(), cx=(g.x0+g.x1)/2, i, s=g.v?.55:Math.max(.6,g.s);
-    var top='M-800 752 L2400 716 L2400 822 L-800 860Z', water='M-800 860 L2400 822 L2400 900 L-800 900Z';
+    var o=g.v?0:40;   /* rotulo mas compacto en horizontal: el marmol baja para que la pantalla de datos tenga mas altura */
+     var top='M-800 '+(752+o)+' L2400 '+(716+o)+' L2400 '+(822+o)+' L-800 '+(860+o)+'Z', water='M-800 '+(860+o)+' L2400 '+(822+o)+' L2400 '+(900+o)+' L-800 '+(900+o)+'Z';
     var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
       '<linearGradient id="twBg" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eceff0"/></linearGradient>'+
       '<linearGradient id="twWl" x2="1" y2="0"><stop offset="0" stop-color="#e1e4e7"/><stop offset=".35" stop-color="#ffffff"/><stop offset="1" stop-color="#eceff0"/></linearGradient>'+
@@ -4553,24 +4553,24 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     /* sombras y hojas de palmera */
     svg+=wpFronds(g.x0-20,30,28,520*s,'#8a9399',.25,16,'tm-pa')+wpFronds(g.x0+50,-20,62,430*s,'#8a9399',.2,14,'tm-pa b');
     svg+=wpFronds(g.x0-10,0,22,420*s,'#2e7d3a',1,14,'tm-pa')+wpFronds(g.x0+20,-10,54,330*s,'#3c9248',1,12,'tm-pa b')+wpFronds(g.x0-30,60,-4,300*s,'#26692f',1,11,'tm-pa');
-    svg+=wpFronds(g.x1+40,716,-150,380*s,'#2e7d3a',1,13,'tm-pb')+wpFronds(g.x1+20,730,-118,340*s,'#3c9248',1,12,'tm-pb b')+wpFronds(g.x0-30,730,-22,300*s,'#2e7d3a',1,11,'tm-pb b');
+    svg+=wpFronds(g.x1+40,716+o,-150,380*s,'#2e7d3a',1,13,'tm-pb')+wpFronds(g.x1+20,730+o,-118,340*s,'#3c9248',1,12,'tm-pb b')+wpFronds(g.x0-30,730+o,-22,300*s,'#2e7d3a',1,11,'tm-pb b');
     /* borde de marmol + agua */
-    svg+='<path d="'+top+'" fill="url(#twMb)"/><path d="M-800 752 L2400 716" stroke="#e4c97a" stroke-width="4" fill="none"/>'+
-         '<path d="M-800 860 L2400 822" stroke="#bfc3c6" stroke-width="2" fill="none" opacity=".7"/>';
-    for(i=0;i<7;i++){ var vx=R(g.x0,g.x1), vy=770+R(0,50); svg+='<path d="M'+vx.toFixed(0)+' '+vy.toFixed(0)+' q40 -10 90 4 t90 -6" stroke="#c9ced2" stroke-width="1.5" fill="none" opacity=".55"/>'; }
+    svg+='<path d="'+top+'" fill="url(#twMb)"/><path d="M-800 '+(752+o)+' L2400 '+(716+o)+'" stroke="#e4c97a" stroke-width="4" fill="none"/>'+
+         '<path d="M-800 '+(860+o)+' L2400 '+(822+o)+'" stroke="#bfc3c6" stroke-width="2" fill="none" opacity=".7"/>';
+    for(i=0;i<7;i++){ var vx=R(g.x0,g.x1), vy=770+o+R(0,50); svg+='<path d="M'+vx.toFixed(0)+' '+vy.toFixed(0)+' q40 -10 90 4 t90 -6" stroke="#c9ced2" stroke-width="1.5" fill="none" opacity=".55"/>'; }
     svg+='<path d="'+water+'" fill="url(#twWa)"/><g clip-path="url(#twClip)">';
     for(var gi=0;gi<2;gi++){ svg+='<g class="tm-caus'+(gi?' b':'')+'">';
-      for(i=0;i<18;i++){ var x=R(g.x0-60,g.x1), y=R(840,895), L=R(70,170);
+      for(i=0;i<18;i++){ var x=R(g.x0-60,g.x1), y=R(840+o,895+o), L=R(70,170);
         svg+='<path d="M'+x.toFixed(0)+' '+y.toFixed(0)+' q'+(L*.25).toFixed(0)+' -9 '+(L*.5).toFixed(0)+' 0 t'+(L*.5).toFixed(0)+' 0" fill="none" stroke="#fff" stroke-width="'+R(2,4.5).toFixed(1)+'" stroke-linecap="round" opacity="'+R(.35,.8).toFixed(2)+'"/>'; }
-      for(i=0;i<8;i++) svg+='<ellipse cx="'+R(g.x0,g.x1).toFixed(0)+'" cy="'+R(845,895).toFixed(0)+'" rx="'+R(30,80).toFixed(0)+'" ry="'+R(7,16).toFixed(0)+'" fill="#eafffd" opacity="'+R(.15,.35).toFixed(2)+'"/>';
+      for(i=0;i<8;i++) svg+='<ellipse cx="'+R(g.x0,g.x1).toFixed(0)+'" cy="'+R(845+o,895+o).toFixed(0)+'" rx="'+R(30,80).toFixed(0)+'" ry="'+R(7,16).toFixed(0)+'" fill="#eafffd" opacity="'+R(.15,.35).toFixed(2)+'"/>';
       svg+='</g>'; }
     svg+='</g>';
     /* texto sobre el marmol */
     var fs=g.v?44:58, ff="'Josefin Sans','Montserrat',Inter,'DejaVu Sans',sans-serif";
     var tw=Math.min(640,g.W*.9);
-    svg+='<text x="'+cx+'" y="'+(g.v?788:792)+'" text-anchor="middle" fill="#14151a"><tspan font-family="'+ff+'" font-weight="700" font-size="'+fs+'" letter-spacing="'+(fs*.1).toFixed(1)+'">WHiTE</tspan><tspan dx="'+(fs*.45).toFixed(0)+'" font-family="Georgia,\'DejaVu Serif\',serif" font-style="italic" font-size="'+(fs*.72).toFixed(0)+'">Party</tspan></text>'+
-         '<rect x="'+(cx-40)+'" y="'+(g.v?798:803)+'" width="80" height="2.5" fill="#c9a24a"/>'+
-         '<text x="'+cx+'" y="'+(g.v?826:830)+'" text-anchor="middle" font-family="'+ff+'" font-weight="600" font-size="'+(g.v?15:19)+'" letter-spacing="2" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#2a2b30">DRUM DJ  ·  FINGER FOOD  ·  SANGRIA &amp; ICE ROSÉ</text>'+
+    svg+='<text x="'+cx+'" y="'+(g.v?788:792+o)+'" text-anchor="middle" fill="#14151a"><tspan font-family="'+ff+'" font-weight="700" font-size="'+fs+'" letter-spacing="'+(fs*.1).toFixed(1)+'">WHiTE</tspan><tspan dx="'+(fs*.45).toFixed(0)+'" font-family="Georgia,\'DejaVu Serif\',serif" font-style="italic" font-size="'+(fs*.72).toFixed(0)+'">Party</tspan></text>'+
+         '<rect x="'+(cx-40)+'" y="'+(g.v?798:803+o)+'" width="80" height="2.5" fill="#c9a24a"/>'+
+         '<text x="'+cx+'" y="'+(g.v?826:830+o)+'" text-anchor="middle" font-family="'+ff+'" font-weight="600" font-size="'+(g.v?15:19)+'" letter-spacing="2" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#2a2b30">DRUM DJ  ·  FINGER FOOD  ·  SANGRIA &amp; ICE ROSÉ</text>'+
          '</svg>';
     var d=dom('',5,function(i){var c=['#fffdf8','#f3e7c9','#fffdf8','#e8cf93'][i%4]; return '<i class="tm-bal" style="--x:'+R(2,94).toFixed(1)+'%;--c:'+c+';--d:'+R(32,50).toFixed(1)+'s;--dl:-'+R(0,40).toFixed(1)+'s"></i>';});
     d+=dom('',20,function(){ return '<b class="tm-cf p" style="--x:'+R(0,100).toFixed(1)+'%;--c:#fff;--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,18).toFixed(1)+'s;--dx:'+R(-8,8).toFixed(1)+'vw"></b>';});
@@ -4579,6 +4579,17 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
 
   var TEMAS = { whiteparty:sceneWhite, white:sceneWhite, oktoberfest:sceneOkt, halloween:sceneHal, triatlon:sceneCic, peguera:sceneCic, ciclismo:sceneCic, challenge:sceneCic };
 
+  /* Con varias piscinas el contenido ya ocupa casi toda la altura: en vez de reservar espacio (y que las tarjetas se pisen),
+     se dibuja a tamaño completo y se reduce con una escala para dejar libre la franja del rotulo (Oktoberfest / White Party). */
+  function ajustar(){
+    var b=document.body, m=document.querySelector('main');
+    b.style.removeProperty('--tm-k');
+    if(!m || !b.classList.contains('tv') || !(b.classList.contains('tema-whiteparty')||b.classList.contains('tema-oktoberfest')) || !document.querySelector('#pools.multi')) return;
+    var H=window.innerHeight||1080, r=m.getBoundingClientRect();
+    var vh=parseFloat(getComputedStyle(b).getPropertyValue('--tm-res'))||21;
+    var k=(H-H*vh/100-r.top)/Math.max(1,r.height);
+    b.style.setProperty('--tm-k',Math.max(.55,Math.min(1,k)).toFixed(3));
+  }
   function aplicar(){
     var t = elegir(); if(!TEMAS[t]) t='';
     var gg = geo(), key = t+'|'+gg.key;
@@ -4587,12 +4598,13 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     $bg.style.setProperty('--k', gg.px.toFixed(4)); $bg.style.setProperty('--c', "0px");
     var b = document.body;
     b.style.removeProperty('--tm-res');
-    if(t==='whiteparty'||t==='white') b.style.setProperty('--tm-res', (((900-722)*gg.px/(window.innerHeight||1080))*100+1.2).toFixed(1)+'vh');
+    if(t==='whiteparty'||t==='white') b.style.setProperty('--tm-res', (((900-722-(gg.v?0:40))*gg.px/(window.innerHeight||1080))*100+1.2).toFixed(1)+'vh');
     b.className = b.className.replace(/\btema-\S+/g,'').replace(/\s+/g,' ').trim();
-    if(!t){ $bg.innerHTML=''; window.__tema=''; return; }
+    if(!t){ $bg.innerHTML=''; window.__tema=''; ajustar(); return; }
     $bg.innerHTML = TEMAS[t]();
     b.classList.add('tema-on'); b.classList.add('tema-'+t);
     window.__tema = t;
+    ajustar();
   }
   /* Calendario: primero el de la Pi (/api/temas, editable desde Telegram con /tema); si no responde, temas.json de GitHub. */
   function leer(){
@@ -4608,9 +4620,10 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       .then(function(j){ if(!ok(j)) viaJson(); }).catch(viaJson);
   }
   aplicar(); leer();
-  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(aplicar,400); });
+  var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ aplicar(); ajustar(); },400); });
   setInterval(leer, 5*60*1000);
-  setInterval(aplicar, 60*1000);   /* cambio de día sin recargar */
+  setInterval(aplicar, 60*1000);
+  setInterval(ajustar, 2000);   /* las piscinas se pintan despues de cargar */   /* cambio de día sin recargar */
 })();
 </script>
 </body>
