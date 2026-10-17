@@ -1291,7 +1291,7 @@ body.tema-whiteparty .footer,body.tema-whiteparty .lang-indicator,body.tema-whit
 /* Oktoberfest: reserva una franja inferior para la decoracion (las tarjetas se comprimen) */
 body.tema-oktoberfest{--tm-res:18vh;}
 @media (orientation:portrait){body.tema-oktoberfest{--tm-res:19vh;}}
-body.tema-oktoberfest.tv:has(#pools.multi) main,body.tema-whiteparty.tv:has(#pools.multi) main{padding-bottom:0 !important;box-sizing:border-box !important;max-width:none !important;transform:scale(var(--tm-k,1));transform-origin:0 0;width:calc(100% / var(--tm-k,1)) !important;}
+body.tm-fit.tv:has(#pools.multi) main{padding-bottom:0 !important;box-sizing:border-box !important;max-width:none !important;transform:scale(var(--tm-k,1));transform-origin:0 0;width:calc(100% / var(--tm-k,1)) !important;}
 
 /* White party: hojas que se mecen, brillo del agua y reserva de franja inferior (calculada en JS) */
 #tema-bg .tm-pa{transform-box:fill-box;transform-origin:0% 0%;animation:tmPalm 7s ease-in-out infinite alternate;}
@@ -2595,7 +2595,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b35fd7b8cb06';
+  var BUILD_ID='d03c628e5cf9';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4478,7 +4478,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       bunting(g.x0-20,105,g.cx+20,100,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,'')+
       bunting(g.cx-20,100,g.x1+20,108,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,' b')+
       '</svg>';
-    var ay=690+(1-g.s)*70, ph=(806-ay)/g.s;
+    var ay=750+(1-g.s)*40, ph=(822-ay)/g.s;
     var arco='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="tcChk2" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#fff"/><rect width="20" height="20" fill="#14151a"/><rect x="20" y="20" width="20" height="20" fill="#14151a"/></pattern></defs>'+
       '<g transform="translate('+(g.x1-350*g.s)+' '+ay+') scale('+g.s+')"><rect x="0" y="0" width="14" height="'+ph+'" fill="#222"/><rect x="286" y="0" width="14" height="'+ph+'" fill="#222"/>'+
       '<rect x="-6" y="-4" width="312" height="70" rx="6" fill="#d6202a"/><rect x="-6" y="62" width="312" height="14" fill="url(#tcChk2)"/>'+
@@ -4493,7 +4493,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       }
     }
     var cols=['#d6202a','#1c6fc9','#ffd400','#2e9d4a','#ff7a1a'];
-    for(var s=0;s<4;s++) dd+='<div class="tm-swim" style="--t:calc(100% - var(--k)*'+(185-(s%2)*16)+'px);--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
+    for(var s=0;s<4;s++) dd+='<div class="tm-swim" style="--t:calc(100% - var(--k)*'+(132-(s%2)*14)+'px);--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
     for(var r=0;r<5;r++) dd+='<div class="tm-run" style="--b:calc(var(--k)*97px - var(--c));--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
     dc+=dom('',8,function(i){var c=['#ffd400','#d6202a','#fff','#ffd400'][i%4]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-5,5).toFixed(1)+'vw"></b>';});
     return svg+dd+arco+dc;
@@ -4583,10 +4583,13 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
      se dibuja a tamaño completo y se reduce con una escala para dejar libre la franja del rotulo (Oktoberfest / White Party). */
   function ajustar(){
     var b=document.body, m=document.querySelector('main');
-    b.style.removeProperty('--tm-k');
-    if(!m || !b.classList.contains('tv') || !(b.classList.contains('tema-whiteparty')||b.classList.contains('tema-oktoberfest')) || !document.querySelector('#pools.multi')) return;
+    b.style.removeProperty('--tm-k'); b.classList.remove('tm-fit');
+    var t=window.__tema||'', pv=window.innerHeight>window.innerWidth;
+    var vh=(t==='whiteparty'||t==='white') ? parseFloat(getComputedStyle(b).getPropertyValue('--tm-res')) :
+           (t==='oktoberfest' ? (pv?19:18) : ((t==='triatlon'||t==='peguera'||t==='ciclismo'||t==='challenge') ? (pv?15:19) : (t==='halloween' ? (pv?10:13) : 0)));
+    if(!m || !vh || !b.classList.contains('tv') || !document.querySelector('#pools.multi')) return;
+    b.classList.add('tm-fit');
     var H=window.innerHeight||1080, r=m.getBoundingClientRect();
-    var vh=parseFloat(getComputedStyle(b).getPropertyValue('--tm-res'))||21;
     var k=(H-H*vh/100-r.top)/Math.max(1,r.height);
     b.style.setProperty('--tm-k',Math.max(.55,Math.min(1,k)).toFixed(3));
   }
