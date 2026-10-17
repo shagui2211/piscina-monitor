@@ -2596,7 +2596,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='4316d4566276';
+  var BUILD_ID='b51ef4294669';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4264,9 +4264,9 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
 (function(){
   /* Calendario de reserva (si temas.json no se puede leer). Fechas AAAA-MM-DD, o MM-DD para que se repita cada año. */
   var CAL = { forzar:'', temas:[
-    {tema:'oktoberfest', desde:'2026-10-14', hasta:'2026-10-14'},
-    {tema:'triatlon',     desde:'2026-10-15', hasta:'2026-10-18'},
-    {tema:'halloween',   desde:'2026-10-26', hasta:'2026-11-01'}
+    {tema:'oktoberfest', desde:'2026-10-13', hasta:'2026-10-13'},
+    {tema:'triatlon',     desde:'2026-10-14', hasta:'2026-10-17'},
+    {tema:'halloween',   desde:'2026-10-26', hasta:'2026-10-31'}
   ]};
   var cfg = CAL, actual = '';
   var $bg = document.getElementById('tema-bg');
@@ -4594,15 +4594,22 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     b.classList.add('tema-on'); b.classList.add('tema-'+t);
     window.__tema = t;
   }
+  /* Calendario: primero el de la Pi (/api/temas, editable desde Telegram con /tema); si no responde, temas.json de GitHub. */
   function leer(){
     if(location.protocol==='file:') return;
-    fetch('temas.json?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(j){ if(j && Array.isArray(j.temas)){ cfg=j; aplicar(); } })
-      .catch(function(){});
+    function ok(j){ if(j && Array.isArray(j.temas)){ cfg=j; aplicar(); return true; } return false; }
+    function viaJson(){
+      fetch('temas.json?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
+        .then(ok).catch(function(){});
+    }
+    var base = (typeof API_BASE==='string') ? API_BASE : '';
+    if(!base){ viaJson(); return; }
+    fetch(base+'/api/temas?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ if(!ok(j)) viaJson(); }).catch(viaJson);
   }
   aplicar(); leer();
   var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(aplicar,400); });
-  setInterval(leer, 15*60*1000);
+  setInterval(leer, 5*60*1000);
   setInterval(aplicar, 60*1000);   /* cambio de día sin recargar */
 })();
 </script>
