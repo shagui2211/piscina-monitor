@@ -2595,7 +2595,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='d03c628e5cf9';
+  var BUILD_ID='e9f208d10860';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4291,13 +4291,16 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
     var mh=h.slice(5); if(a.length===10) a=a.slice(5); if(b.length===10) b=b.slice(5);
     return a<=b ? (mh>=a && mh<=b) : (mh>=a || mh<=b);
   }
+  function hora(){ var d=new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+  /* Hora de fin opcional ("hh":"HH:MM"): el ultimo dia del periodo el tema se apaga a esa hora y el siguiente entra a las 00:00. */
+  function acabado(t,h,hm){ var e=String(t.hh||''); return /^\d{2}:\d{2}$/.test(e) && h===String(t.hasta||t.desde||'') && hm>=e; }
   function elegir(){
     var q = new URLSearchParams(location.search).get('tema');
     if(q) return /^(ninguno|none|0|no)$/i.test(q) ? '' : q.toLowerCase();
     var f = String(cfg.forzar||'').toLowerCase();
     if(f) return /^(ninguno|none|0|no)$/.test(f) ? '' : f;
-    var h = hoy(), l = cfg.temas||[];
-    for(var i=0;i<l.length;i++){ if(l[i] && dentro(h,l[i].desde,l[i].hasta)) return String(l[i].tema||'').toLowerCase(); }
+    var h = hoy(), hm = hora(), l = cfg.temas||[];
+    for(var i=0;i<l.length;i++){ if(l[i] && dentro(h,l[i].desde,l[i].hasta) && !acabado(l[i],h,hm)) return String(l[i].tema||'').toLowerCase(); }
     return '';
   }
 
