@@ -2620,7 +2620,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b3a15dca9a6f';
+  var BUILD_ID='2e38b9215655';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4330,13 +4330,24 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
     if(o===du-1 && /^\d{2}:\d{2}$/.test(String(r.hh||'')) && hm>=r.hh) return false;
     return true;
   }
+  /* Periodo con fechas; si trae anual:true se repite cada anio el mismo dia y mes (el rango puede cruzar fin de anio) */
+  function perActivo(t,h,hm){
+    if(t.anual===true){
+      var d=String(t.desde||''), e=String(t.hasta||t.desde||'');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d) || !/^\d{4}-\d{2}-\d{2}$/.test(e) || h<d) return false;
+      var md=h.slice(5), a=d.slice(5), b=e.slice(5);
+      if(!(a<=b ? (md>=a && md<=b) : (md>=a || md<=b))) return false;
+      return !(/^\d{2}:\d{2}$/.test(String(t.hh||'')) && md===b && hm>=t.hh);
+    }
+    return dentro(h,t.desde,t.hasta) && !acabado(t,h,hm);
+  }
   function elegir(){
     var q = new URLSearchParams(location.search).get('tema');
     if(q) return /^(ninguno|none|0|no)$/i.test(q) ? '' : q.toLowerCase();
     var f = String(cfg.forzar||'').toLowerCase();
     if(f) return /^(ninguno|none|0|no)$/.test(f) ? '' : f;
     var h = hoy(), hm = hora(), l = cfg.temas||[];
-    for(var i=0;i<l.length;i++){ if(l[i] && dentro(h,l[i].desde,l[i].hasta) && !acabado(l[i],h,hm)) return String(l[i].tema||'').toLowerCase(); }
+    for(var i=0;i<l.length;i++){ if(l[i] && perActivo(l[i],h,hm)) return String(l[i].tema||'').toLowerCase(); }
     var dn = diaNum(h), s = cfg.semanal||[];
     for(var k=0;k<s.length;k++){ if(semActiva(s[k],h,dn,hm)) return String(s[k].tema||'').toLowerCase(); }
     return '';
