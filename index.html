@@ -3871,6 +3871,7 @@ var LANG_ALIAS = {
   border:1px solid #dfe5e2;border-radius:14px;
   padding:10px 16px;z-index:9999;
   display:none;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  max-width:96vw;max-height:60vh;overflow:auto;
   box-shadow:0 4px 20px rgba(0,0,0,0.10);
 }
 #debug-weather span{
@@ -4021,6 +4022,24 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   <button onclick="testHour(13)" data-hour="13">☀️ 13h</button>
   <button onclick="testHour(22)" data-hour="22">🌃 22h</button>
   <button onclick="testHour(-1)" data-hour="-1">↺ Real</button>
+  <span style="flex-basis:100%;height:0;margin:0"></span>
+  <span>🎨 TEMA</span>
+  <button onclick="testTema('oktoberfest')" data-tema="oktoberfest">🍺 Oktoberfest</button>
+  <button onclick="testTema('halloween')" data-tema="halloween">🎃 Halloween</button>
+  <button onclick="testTema('triatlon')" data-tema="triatlon">🏊 Triatlón</button>
+  <button onclick="testTema('fiestanacional')" data-tema="fiestanacional">🇪🇸 Fiesta nacional</button>
+  <button onclick="testTema('trabajador')" data-tema="trabajador">🛠 Trabajador</button>
+  <button onclick="testTema('camareras')" data-tema="camareras">🧹 Camareras</button>
+  <button onclick="testTema('italiannight')" data-tema="italiannight">🇮🇹 Italiana</button>
+  <button onclick="testTema('mallorcannight')" data-tema="mallorcannight">🌿 Mallorquina</button>
+  <button onclick="testTema('mexicannight')" data-tema="mexicannight">🌮 Mexicana</button>
+  <button onclick="testTema('spanishnight')" data-tema="spanishnight">💃 Española</button>
+  <button onclick="testTema('asiannight')" data-tema="asiannight">🏮 Asiática</button>
+  <button onclick="testTema('worldnight')" data-tema="worldnight">🌍 Sabores del mundo</button>
+  <button onclick="testTema('chefgala')" data-tema="chefgala">👨‍🍳 Gala chef</button>
+  <button onclick="testTema('whiteparty')" data-tema="whiteparty">🤍 White Party</button>
+  <button onclick="testTema('ninguno')" data-tema="ninguno">⊘ Sin tema</button>
+  <button onclick="testTema(null)" data-tema="">↺ Calendario</button>
 </div>
 <script>
 (function(){
@@ -4048,6 +4067,14 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
     var modeMap = {0:'clear',3:'clouds',45:'fog',51:'drizzle',61:'rain',95:'storm',71:'snow',77:'hail'};
     panel.querySelectorAll('button[data-mode]').forEach(function(btn){
       if(btn.getAttribute('data-mode') === modeMap[wmo]) btn.classList.add('active');
+    });
+  };
+  window._debugTema = null;
+  window.testTema = function(n){
+    window._debugTema = n || null;
+    if(window._aplicarTema) window._aplicarTema();
+    panel.querySelectorAll('button[data-tema]').forEach(function(btn){
+      btn.classList.toggle('active', (btn.getAttribute('data-tema')||null) === (n||null));
     });
   };
   window._debugHour = -1;
@@ -4365,6 +4392,7 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
     return dentro(h,t.desde,t.hasta) && !acabado(t,h,hm);
   }
   function elegir(){
+    var dbgT = window._debugTema; if(dbgT) return dbgT==='ninguno' ? '' : String(dbgT).toLowerCase();
     var q = new URLSearchParams(location.search).get('tema');
     if(q) return /^(ninguno|none|0|no)$/i.test(q) ? '' : q.toLowerCase();
     var f = String(cfg.forzar||'').toLowerCase();
@@ -4954,6 +4982,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       .then(function(j){ if(!ok(j)) viaJson(); }).catch(viaJson);
   }
   aplicar(); leer();
+  window._aplicarTema = aplicar;
   var rt; window.addEventListener('resize', function(){ clearTimeout(rt); rt=setTimeout(function(){ aplicar(); ajustar(); },400); });
   setInterval(leer, 5*60*1000);
   setInterval(aplicar, 60*1000);
