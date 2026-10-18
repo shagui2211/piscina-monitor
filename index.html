@@ -2618,7 +2618,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='f86b06b79716';
+  var BUILD_ID='bdffbdc641fb';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4321,11 +4321,11 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   function diaNum(s){ return Math.round(Date.UTC(+s.slice(0,4), +s.slice(5,7)-1, +s.slice(8,10))/864e5); }
   function semActiva(r,h,dn,hm){
     if(!r || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.desde||''))) return false;
-    var n = Math.max(1, Math.min(8, parseInt(r.cada,10)||1)), d0 = diaNum(r.desde);
-    if(dn<d0 || (dn-d0)%(7*n)) return false;
+    var n = 7*Math.max(1, Math.min(8, parseInt(r.cada,10)||1)), du = Math.max(1, Math.min(7, parseInt(r.dura,10)||1)), k = dn-diaNum(r.desde), o = k%n;
+    if(k<0 || o>=du) return false;
     if(r.hasta && h>String(r.hasta)) return false;
-    if(/^\d{2}:\d{2}$/.test(String(r.hd||'')) && hm<r.hd) return false;
-    if(/^\d{2}:\d{2}$/.test(String(r.hh||'')) && hm>=r.hh) return false;
+    if(o===0 && /^\d{2}:\d{2}$/.test(String(r.hd||'')) && hm<r.hd) return false;
+    if(o===du-1 && /^\d{2}:\d{2}$/.test(String(r.hh||'')) && hm>=r.hh) return false;
     return true;
   }
   function elegir(){
