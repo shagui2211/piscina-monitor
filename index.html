@@ -1282,14 +1282,14 @@ body.tema-whiteparty .section-title{color:#4a3a1c !important;text-shadow:0 1px 0
 body.tema-whiteparty .footer,body.tema-whiteparty .lang-indicator,body.tema-whiteparty .res-indicator{color:#5a4a2c !important;border-top-color:rgba(90,70,30,.3) !important;}
 
 /* Triatlón (Challenge Peguera): nadadores, corredores y ciclistas */
-#tema-bg .tm-run{position:absolute;left:0;bottom:var(--b);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-run svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .25s ease-in-out infinite alternate;}
-#tema-bg .tm-run .th{animation:tmThigh .5s ease-in-out infinite;}
-#tema-bg .tm-run .th.b{animation-delay:-.25s;}
-#tema-bg .tm-run .sh{animation:tmShin .5s ease-in-out infinite;}
-#tema-bg .tm-run .sh.b{animation-delay:-.25s;}
-#tema-bg .tm-run .ar{animation:tmArmR .5s ease-in-out infinite;}
-#tema-bg .tm-run .ar.a{animation-delay:-.25s;}
+.tm-run{position:absolute;left:0;bottom:var(--b);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
+.tm-run svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .25s ease-in-out infinite alternate;}
+.tm-run .th{animation:tmThigh .5s ease-in-out infinite;}
+.tm-run .th.b{animation-delay:-.25s;}
+.tm-run .sh{animation:tmShin .5s ease-in-out infinite;}
+.tm-run .sh.b{animation-delay:-.25s;}
+.tm-run .ar{animation:tmArmR .5s ease-in-out infinite;}
+.tm-run .ar.a{animation-delay:-.25s;}
 @keyframes tmThigh{0%,100%{transform:rotate(-48deg)}50%{transform:rotate(32deg)}}
 @keyframes tmShin{0%,100%{transform:rotate(8deg)}25%{transform:rotate(30deg)}50%{transform:rotate(78deg)}75%{transform:rotate(40deg)}}
 @keyframes tmArmR{0%,100%{transform:rotate(38deg)}50%{transform:rotate(-42deg)}}
@@ -4551,7 +4551,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       '<rect x="0" y="620" width="1600" height="190" fill="url(#tcSea)"/>'+
       '<g fill="#fff" opacity=".55"><rect x="140" y="650" width="70" height="3"/><rect x="460" y="690" width="110" height="3"/><rect x="860" y="660" width="90" height="3"/><rect x="1240" y="700" width="120" height="3"/></g>'+
       '<g>'+dom('',Math.max(3,Math.round(6*g.W/1600)),function(i){var x=g.x0+(i+.5)*g.W/Math.max(3,Math.round(6*g.W/1600)); return '<line x1="'+x+'" y1="705" x2="'+x+'" y2="723" stroke="#fff" stroke-width="2"/><circle cx="'+x+'" cy="705" r="9" fill="#ff7a1a" stroke="#fff" stroke-width="2"/>';})+'</g>'+
-      '<path d="M0 800 Q320 760 700 790 T1600 780 V900 H0Z" fill="url(#tcHill)"/>'+
+      '<path d="M0 765 Q320 726 700 754 T1600 744 V900 H0Z" fill="url(#tcHill)"/>'+
       bunting(g.x0-20,105,g.cx+20,100,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,'')+
       bunting(g.cx-20,100,g.x1+20,108,60*g.s,Math.max(6,Math.round(16*g.W/1600)),col,52*g.s+8,40*g.s+6,' b')+
       '</svg>';
@@ -4570,9 +4570,12 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       }
     }
     var cols=['#d6202a','#1c6fc9','#ffd400','#2e9d4a','#ff7a1a'];
-    for(var s=0;s<4;s++) dd+='<div class="tm-swim" style="--t:calc(100% - var(--k)*'+(132-(s%2)*14)+'px);--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
-    for(var r=0;r<5;r++) dd+='<div class="tm-run" style="--b:calc(var(--k)*97px - var(--c));--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
+    var swN=[247,222,200,235];
+    for(var s=0;s<4;s++) dd+='<div class="tm-swim" style="--t:calc(100% - var(--k)*'+swN[s]+'px);--w:'+(5.6-(s%2)*.4).toFixed(1)+';--d:44s;--dl:-'+(s*10+R(0,4)).toFixed(1)+'s">'+swimmer(cols[s%5])+'</div>';
+    var rr='';
+    for(var r=0;r<5;r++) rr+='<div class="tm-run" style="--b:calc(var(--k)*97px - var(--c));--w:'+(2.6).toFixed(1)+';--d:34s;--dl:-'+(r*6.5+R(0,2)).toFixed(1)+'s">'+runner(cols[(r+2)%5])+'</div>';
     dc+=dom('',8,function(i){var c=['#ffd400','#d6202a','#fff','#ffd400'][i%4]; return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:-'+R(0,16).toFixed(1)+'s;--dx:'+R(-5,5).toFixed(1)+'vw"></b>';});
+    window.__temaFg = rr;
     return svg+dd+arco+dc;
   }
 
@@ -4923,6 +4926,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     if(key===actual) return;
     actual = key;
     $bg.style.setProperty('--k', gg.px.toFixed(4)); $bg.style.setProperty('--c', "0px");
+    $fg.style.setProperty('--k', gg.px.toFixed(4)); $fg.style.setProperty('--c', "0px");
     var b = document.body;
     b.style.removeProperty('--tm-res');
     if(t==='whiteparty'||t==='white') b.style.setProperty('--tm-res', (((900-722-(gg.v?0:40))*gg.px/(window.innerHeight||1080))*100+1.2).toFixed(1)+'vh');
