@@ -2870,31 +2870,31 @@ var LANG_ALIAS = {
     return p;
   }
   function mkRain(heavy){
-    var p = [], n = heavy ? 180 : 110;
+    var p = [], n = heavy ? 330 : 230;
     for(var i = 0; i < n; i++){
       p.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        len: heavy ? 18+Math.random()*20 : 12+Math.random()*14,
+        len: heavy ? 26+Math.random()*26 : 18+Math.random()*18,
         speed: heavy ? 14+Math.random()*8 : 9+Math.random()*5,
         angle: 0.18 + Math.random()*0.08,
         alpha: heavy ? 0.75+Math.random()*0.20 : 0.70+Math.random()*0.25,
-        width: heavy ? 1.8+Math.random()*1.0 : 1.4+Math.random()*0.8,
+        width: heavy ? 2.4+Math.random()*1.2 : 2.0+Math.random()*1.0,
       });
     }
     return p;
   }
   function mkDrizzle(){
     var p = [];
-    for(var i = 0; i < 130; i++){
+    for(var i = 0; i < 210; i++){
       p.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        len: 8+Math.random()*9,
+        len: 12+Math.random()*11,
         speed: 4+Math.random()*3,
         angle: 0.08 + Math.random()*0.06,
         alpha: 0.65+Math.random()*0.25,
-        width: 1.2+Math.random()*0.6,
+        width: 1.7+Math.random()*0.8,
       });
     }
     return p;
@@ -3269,10 +3269,20 @@ var LANG_ALIAS = {
     });
   }
   function drawRainDrop(p, dt){
+    var oscuro = document.body.classList.contains('tv') || document.body.classList.contains('tod-night');
+    var esc = Math.max(1, canvas.height/1080);
     ctx.save();
-    ctx.strokeStyle='rgba(55,120,160,'+p.alpha+')';
-    ctx.lineWidth=p.width;
-    var dx=Math.sin(p.angle)*p.len, dy=Math.cos(p.angle)*p.len;
+    ctx.lineCap='round';
+    var dx=Math.sin(p.angle)*p.len*esc, dy=Math.cos(p.angle)*p.len*esc;
+    if(oscuro){
+      ctx.strokeStyle='rgba(170,205,235,'+(p.alpha*0.28)+')';
+      ctx.lineWidth=p.width*2.6*esc;
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+dx,p.y+dy); ctx.stroke();
+      ctx.strokeStyle='rgba(238,247,255,'+Math.min(1,p.alpha+0.15)+')';
+    } else {
+      ctx.strokeStyle='rgba(30,95,145,'+Math.min(1,p.alpha+0.15)+')';
+    }
+    ctx.lineWidth=p.width*esc;
     ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+dx,p.y+dy); ctx.stroke();
     ctx.restore();
     p.x+=Math.sin(p.angle)*p.speed*0.3*dt; p.y+=p.speed*dt;
