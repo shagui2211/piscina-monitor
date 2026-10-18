@@ -1310,6 +1310,8 @@ body.tema-halloween #critter .c-body{filter:drop-shadow(0 0 4px rgba(200,150,255
 
 /* ═══ Fiesta Nacional · Día del Trabajador · Semana de las camareras ═══ */
 #tema-bg .tm-fold{animation:tmFold 11s linear infinite;}
+#tema-bg .tm-wv{animation:tmWv 4.8s linear infinite;will-change:transform;}
+@keyframes tmWv{from{transform:translateX(-800px)}to{transform:translateX(0)}}
 @keyframes tmFold{from{transform:translateX(0)}to{transform:translateX(-1200px)}}
 #tema-bg .tm-gear,#tema-bg .tm-rays{animation:tmGear 60s linear infinite;transform-box:view-box;will-change:transform;}
 #tema-bg .tm-rays{animation-duration:260s;}
@@ -2618,7 +2620,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='bdffbdc641fb';
+  var BUILD_ID='c1a84b4a3f22';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4666,14 +4668,17 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
   /* ── FIESTA NACIONAL (12 de octubre): bandera ondeando, abanicos y rótulo ── */
   function sceneEsp(){
     var g=geo(), cx=(g.x0+g.x1)/2, xa=-400, xb=2000, i;
-    var A=wavePts(225,16,0,xa,xb), B=wavePts(675,16,0,xa,xb), top='M'+xa+',-400 L'+xb+',-400 L'+A.slice().reverse().join(' L')+'Z',
-        mid='M'+A.join(' L')+' L'+B.slice().reverse().join(' L')+'Z', bot='M'+B.join(' L')+' L'+xb+',1300 L'+xa+',1300Z';
+    /* Onda con periodo exacto de 800 u.: el grupo se desplaza 800 u. en bucle y la bandera ondea sin saltos */
+    function wv(y0,ph){ var p=[],x; for(x=-1600;x<=3200;x+=40) p.push(x+','+(y0+26*Math.sin(2*Math.PI*x/800+ph)+8*Math.sin(2*Math.PI*x/400+ph*2+1)).toFixed(1)); return p; }
+    xa=-1600; xb=3200;
+    var A=wv(225,0), B=wv(675,.7), top='M'+xa+',-500 L'+xb+',-500 L'+A.slice().reverse().join(' L')+'Z',
+        mid='M'+A.join(' L')+' L'+B.slice().reverse().join(' L')+'Z', bot='M'+B.join(' L')+' L'+xb+',1400 L'+xa+',1400Z';
     var tw=Math.min(700,g.W*.92), fs=g.v?36:50, ty=g.v?840:838;
     var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
       '<linearGradient id="teFold" x1="0" y1="0" x2=".25" y2=".06" spreadMethod="repeat"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".5" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>'+
       '<radialGradient id="teVig" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#2a0306" stop-opacity="0"/><stop offset="1" stop-color="#2a0306" stop-opacity=".55"/></radialGradient>'+
       '<linearGradient id="teGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#ffc400"/></linearGradient></defs>'+
-      '<path d="'+top+'" fill="#c60b1e"/><path d="'+mid+'" fill="#ffc400"/><path d="'+bot+'" fill="#c60b1e"/>'+
+      '<g class="tm-wv"><path d="'+top+'" fill="#c60b1e"/><path d="'+mid+'" fill="#ffc400"/><path d="'+bot+'" fill="#c60b1e"/></g>'+
       '<g class="tm-fold"><rect x="-1600" y="-200" width="4800" height="1400" fill="url(#teFold)"/></g>'+
       '<rect x="-800" y="-400" width="3200" height="1800" fill="url(#teVig)"/>'+
       bunting(g.x0-20,92,g.cx,118,50*g.s,Math.max(6,Math.round(11*g.W/1600)),[['#ffc400','#7a5a00'],['#ffffff','#9a9a9a'],['#c60b1e','#5a0610']],44*g.s+8,36*g.s+6)+
@@ -4786,165 +4791,68 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     d+=dom('',9,function(i){ return '<i class="tm-ht" style="--x:'+R(2,96).toFixed(1)+'%;--w:'+R(1.6,3).toFixed(1)+';--d:'+R(20,36).toFixed(1)+'s;--dl:-'+R(0,36).toFixed(1)+'s"></i>'; });
     return svg+d;
   }
-  /* ═══ CENAS TEMÁTICAS (textos en inglés): ITALIAN NIGHT · MALLORCAN NIGHT · MEXICAN NIGHT ═══ */
-  /* Rótulo común: calcula el tamaño de letra para que quepa y devuelve {fs, tw} */
-  function rot2(g,len,maxFs){ var fs=Math.min(maxFs,(g.W*.9-110)/(.66*len)); return {fs:fs, tw:fs*.66*len+110}; }
-  function txt2(cx,y,fs,len,k,fill,wt,extra){
-    return '<text x="'+cx+'" y="'+y+'" text-anchor="middle" font-family="'+FF2+'" font-weight="'+(wt||700)+'" font-size="'+fs.toFixed(1)+'" letter-spacing="2" textLength="'+(fs*k*len).toFixed(0)+'" lengthAdjust="spacing" fill="'+fill+'"'+(extra||'')+'>';
+  /* ═══ CENAS TEMÁTICAS · estilo sobrio (fondo negro, trazo fino verde y oro como la cartelería del restaurante; textos en inglés) ═══ */
+  var CE={
+    ita:  {L:'ITALIAN NIGHT',        ac:'#3fbf6a', ic:'ita'},
+    mex:  {L:'MEXICAN NIGHT',        ac:'#e0508a', ic:'mex'},
+    mall: {L:'MALLORCAN NIGHT',      ac:'#4aa3e0', ic:'mall'},
+    spa:  {L:'SPANISH NIGHT',        ac:'#e8643c', ic:'spa'},
+    asia: {L:'ASIAN NIGHT',          ac:'#e04545', ic:'asia'},
+    world:{L:'FLAVORS OF THE WORLD', ac:'#35c4bd', ic:'world'},
+    gala: {L:"CHEF'S GALA",          ac:'#e8c84a', ic:'gala', S:'SUNDAY GALA DINNER'}
+  };
+  /* Iconos de línea (caja ~ ±90): trazo verde + pincelada dorada, como en la carta */
+  function ico(k,x,y,s){
+    var P={
+      asia:'<path d="M-62 -6 H62 Q58 48 0 56 Q-58 48 -62 -6Z"/><path d="M-62 -6 Q0 14 62 -6"/><path d="M-24 60 H24"/><path d="M-6 -8 L52 -74 M8 -8 L66 -62"/><path d="M-42 -8 Q-32 -32 -16 -16 Q-8 -36 8 -18 Q16 -30 26 -14"/><path d="M-34 -52 q-8 -10 0 -20 q8 -10 0 -20"/>',
+      mex:'<path d="M-84 22 Q-88 -4 -40 -8 Q0 -14 40 -8 Q88 -4 84 22 Q60 40 0 42 Q-60 40 -84 22Z"/><path d="M-36 -8 Q-34 -64 0 -66 Q34 -64 36 -8"/><path d="M-35 -22 Q0 -14 35 -22"/><path d="M50 -52 Q88 -46 84 -4 Q80 24 62 36"/><path d="M50 -52 Q54 -66 66 -64"/>',
+      mall:'<path d="M-24 62 L-15 -8 H15 L24 62Z"/><path d="M-19 -8 L0 -32 L19 -8"/><path d="M0 -20 L-50 -72 M0 -20 L50 -72 M0 -20 L-50 30 M0 -20 L50 30"/><path d="M-7 62 V42 Q0 34 7 42 V62"/><path d="M-86 62 H86"/>',
+      spa:'<ellipse cx="0" cy="12" rx="72" ry="34"/><ellipse cx="0" cy="12" rx="54" ry="24"/><path d="M-72 10 H-90 M72 10 H90"/><path d="M-26 8 a14 14 0 0 1 28 0Z"/><path d="M8 20 q10 -14 24 -6 M-34 22 q8 6 18 2 M22 4 l8 -4"/><path d="M-26 -34 q-8 -10 0 -20 q8 -10 0 -20 M10 -34 q-8 -10 0 -20 q8 -10 0 -20"/>',
+      ita:'<ellipse cx="0" cy="34" rx="76" ry="26"/><path d="M-42 28 Q-34 -18 0 -20 Q34 -18 42 28"/><path d="M-28 12 Q0 -4 28 12 M-20 -2 Q0 -14 20 -2"/><path d="M62 -62 V-26 M54 -62 V-30 M70 -62 V-30 M52 -30 Q62 -12 72 -30 M62 -14 V52"/><path d="M-44 -22 Q-30 -48 -12 -34 Q-26 -14 -44 -22Z"/>',
+      world:'<circle cx="0" cy="-2" r="60"/><ellipse cx="0" cy="-2" rx="26" ry="60"/><path d="M0 -62 V58 M-60 -2 H60 M-52 -30 H52 M-52 26 H52"/><path d="M-34 70 H34 M0 58 V70"/>',
+      gala:'<path d="M-38 34 V8 C-72 8 -72 -42 -34 -42 C-30 -76 24 -76 30 -44 C66 -46 68 8 40 8 V34Z"/><path d="M-38 20 H40"/><path d="M-74 52 Q-40 70 -8 54 M-60 46 q-2 -12 8 -16 M-30 54 q0 -12 10 -14"/>'
+    };
+    return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-88 14 A88 88 0 0 0 36 80 M62 70 A88 88 0 0 0 90 24" fill="none" stroke="#e8c84a" stroke-width="9" stroke-linecap="round" opacity=".78"/>'+
+      '<g fill="none" stroke="#7fd05c" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">'+P[k]+'</g></g>';
   }
-  function confeti2(cols,nb,nc){
-    var d=dom('',nb,function(i){ return '<i class="tm-bal" style="--x:'+R(2,94).toFixed(1)+'%;--c:'+cols[i%cols.length]+';--d:'+R(28,46).toFixed(1)+'s;--dl:-'+R(0,40).toFixed(1)+'s"></i>'; });
-    return d+dom('',nc,function(i){ return '<b class="tm-cf" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+cols[i%cols.length]+';--d:'+R(9,17).toFixed(1)+'s;--dl:-'+R(0,17).toFixed(1)+'s;--dx:'+R(-8,8).toFixed(1)+'vw"></b>'; });
-  }
-
-  /* ── ITALIAN NIGHT ── */
-  function pizza(cx,cy,r){
-    var o='<g class="tm-gear" style="transform-origin:'+cx+'px '+cy+'px;animation-duration:150s"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#e3a447" stroke="#a96a1c" stroke-width="3"/><circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.87)+'" fill="#d63a2a"/>', i, a;
-    for(i=0;i<7;i++){ a=i*51.4; o+='<ellipse cx="'+(cx+r*.46*Math.cos(a*Math.PI/180)).toFixed(1)+'" cy="'+(cy+r*.46*Math.sin(a*Math.PI/180)).toFixed(1)+'" rx="'+(r*.3)+'" ry="'+(r*.2)+'" fill="#f8dc82" transform="rotate('+(a+40)+' '+(cx+r*.46*Math.cos(a*Math.PI/180)).toFixed(1)+' '+(cy+r*.46*Math.sin(a*Math.PI/180)).toFixed(1)+')"/>'; }
-    for(i=0;i<8;i++){ a=i*45+20; o+='<circle cx="'+(cx+r*.56*Math.cos(a*Math.PI/180)).toFixed(1)+'" cy="'+(cy+r*.56*Math.sin(a*Math.PI/180)).toFixed(1)+'" r="'+(r*.11)+'" fill="#b0221b" stroke="#7a1410" stroke-width="1.5"/>'; }
-    for(i=0;i<4;i++){ a=i*90+60; o+='<ellipse cx="'+(cx+r*.22*Math.cos(a*Math.PI/180)).toFixed(1)+'" cy="'+(cy+r*.22*Math.sin(a*Math.PI/180)).toFixed(1)+'" rx="'+(r*.11)+'" ry="'+(r*.055)+'" fill="#2e8a3e" transform="rotate('+(a*1.5)+' '+(cx+r*.22*Math.cos(a*Math.PI/180)).toFixed(1)+' '+(cy+r*.22*Math.sin(a*Math.PI/180)).toFixed(1)+')"/>'; }
-    for(i=0;i<8;i++){ a=i*45*Math.PI/180; o+='<path d="M'+cx+' '+cy+' L'+(cx+r*Math.cos(a)).toFixed(1)+' '+(cy+r*Math.sin(a)).toFixed(1)+'" stroke="rgba(110,50,10,.45)" stroke-width="2"/>'; }
-    return o+'</g>';
-  }
-  function wine(x,y,s){
-    return '<g transform="translate('+x+' '+y+') scale('+s+')"><ellipse cx="20" cy="2" rx="70" ry="6" fill="#000" opacity=".2"/>'+
-      '<rect x="-14" y="-96" width="28" height="96" rx="9" fill="#1f3d2b" stroke="#0e2218" stroke-width="2"/><rect x="-6" y="-134" width="12" height="42" rx="3" fill="#1f3d2b" stroke="#0e2218" stroke-width="2"/><rect x="-7" y="-140" width="14" height="9" rx="2" fill="#8a1230"/>'+
-      '<rect x="-14" y="-70" width="28" height="34" fill="#f4ecd6"/><circle cx="0" cy="-53" r="7" fill="#ce2b37"/><rect x="-10" y="-90" width="5" height="70" rx="2" fill="#fff" opacity=".18"/>'+
-      '<g transform="translate(58 0)"><path d="M-22 -86 Q-24 -42 0 -38 Q24 -42 22 -86Z" fill="rgba(255,255,255,.22)" stroke="#e8eef0" stroke-width="2.5"/><path d="M-21 -66 Q-22 -42 0 -38 Q22 -42 21 -66Z" fill="#8a1230"/><rect x="-2" y="-40" width="4" height="36" fill="#e8eef0"/><ellipse cx="0" cy="-3" rx="20" ry="5" fill="#e8eef0"/></g></g>';
-  }
-  function cypress(x,y,h,w){ return '<path d="M'+x+' '+y+' Q'+(x-w)+' '+(y-h*.45)+' '+x+' '+(y-h)+' Q'+(x+w)+' '+(y-h*.45)+' '+x+' '+y+'Z" fill="#16241a"/>'; }
-  function sceneIta(){
-    var g=geo(), cx=(g.x0+g.x1)/2, L='ITALIAN NIGHT', q=rot2(g,L.length,g.v?26:38), py=g.v?796:806, ph=g.v?72:92, tw=q.tw;
+  function cena(k){
+    var C=CE[k], g=geo(), cx=(g.x0+g.x1)/2, L=C.L, S=C.S||'THEMED DINNER', sc=g.v?.4:.54, i, sp='',
+        fs=Math.max(16,Math.min(g.v?34:46,(g.W*.94-2*(104*sc+24))/(.74*L.length),2*((g.x1-g.x0)/2-6-176*sc-22)/(.74*L.length))), tw=fs*.74*L.length, ty=g.v?846:838,
+        ix=tw/2+84*sc+22, sw=17*.7*S.length, hy=ty-fs-20;
+    for(i=0;i<16;i++) sp+=sparkle(R(g.x0+30,g.x1-30),R(150,700),R(4,8),i%3?'#f4dd8a':'#bff5ea',R(0,3));
     var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
-      '<linearGradient id="tiBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0d1c"/><stop offset=".45" stop-color="#7d2a22"/><stop offset=".8" stop-color="#e49a45"/><stop offset="1" stop-color="#f3c26a"/></linearGradient>'+
-      '<radialGradient id="tiSun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffe3a0" stop-opacity=".75"/><stop offset="1" stop-color="#ffe3a0" stop-opacity="0"/></radialGradient>'+
-      '<pattern id="tiGing" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#fffaf0"/><rect width="40" height="20" fill="#d9302f" opacity=".5"/><rect width="20" height="40" fill="#d9302f" opacity=".5"/></pattern></defs>'+
-      '<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tiBg)"/><circle cx="800" cy="700" r="520" fill="url(#tiSun)"/>'+
-      '<path d="M-400 740 Q150 660 650 730 T1700 700 T2400 750 L2400 1000 L-400 1000Z" fill="#6b4a22" opacity=".55"/><path d="M-400 790 Q300 730 900 790 T2400 780 L2400 1000 L-400 1000Z" fill="#2b2412"/>'+
-      cypress(g.x0+(g.v?26:70),850,230,26)+cypress(g.x0+(g.v?58:116),850,170,20)+cypress(g.x1-(g.v?26:70),850,230,26)+cypress(g.x1-(g.v?58:116),850,170,20)+
-      lights(g.x0-20,56,g.cx,84,34*g.s,Math.max(5,Math.round(9*g.W/1600)))+lights(g.cx,84,g.x1+20,56,34*g.s,Math.max(5,Math.round(9*g.W/1600)))+
-      bunting(g.x0-20,98,g.cx,122,48*g.s,Math.max(6,Math.round(11*g.W/1600)),[['#009246','#04562a'],['#ffffff','#9a9a9a'],['#ce2b37','#6a111a']],42*g.s+8,34*g.s+6)+
-      bunting(g.cx,122,g.x1+20,98,48*g.s,Math.max(6,Math.round(11*g.W/1600)),[['#ce2b37','#6a111a'],['#ffffff','#9a9a9a'],['#009246','#04562a']],42*g.s+8,34*g.s+6,' b')+
-      '<rect x="-800" y="846" width="3200" height="200" fill="url(#tiGing)"/><rect x="-800" y="846" width="3200" height="5" fill="#000" opacity=".25"/>'+
-      pizza(g.x0+(g.v?46:96),(g.v?858:850),g.v?62:84)+wine(g.x1-(g.v?92:150),858,g.v?.72:.95)+
-      '<rect x="'+(cx-tw/2)+'" y="'+(py-ph/2)+'" width="'+tw+'" height="'+ph+'" rx="8" fill="#8a5a2b" stroke="#4a2e10" stroke-width="3"/><rect x="'+(cx-tw/2+9)+'" y="'+(py-ph/2+9)+'" width="'+(tw-18)+'" height="'+(ph-18)+'" rx="4" fill="#1e3a2c"/>'+
-      '<rect x="'+(cx-tw/2+9)+'" y="'+(py+ph/2-15)+'" width="'+((tw-18)/3)+'" height="6" fill="#009246"/><rect x="'+(cx-tw/2+9+(tw-18)/3)+'" y="'+(py+ph/2-15)+'" width="'+((tw-18)/3)+'" height="6" fill="#fff"/><rect x="'+(cx-tw/2+9+(tw-18)*2/3)+'" y="'+(py+ph/2-15)+'" width="'+((tw-18)/3)+'" height="6" fill="#ce2b37"/>'+
-      txt2(cx,py-ph*.0,q.fs,L.length,.66,'#f6f2e4',700)+L+'</text>'+txt2(cx,py+ph*.3,q.fs*.44,13,.7,'#f0c26a',600)+'THEMED DINNER</text></svg>';
-    return svg+confeti2(['#009246','#ffffff','#ce2b37'],7,30);
+      '<radialGradient id="ceG" cx=".5" cy="1" r=".6"><stop offset="0" stop-color="'+C.ac+'" stop-opacity=".30"/><stop offset="1" stop-color="'+C.ac+'" stop-opacity="0"/></radialGradient>'+
+      '<radialGradient id="ceT" cx=".5" cy="0" r=".7"><stop offset="0" stop-color="#9be8dc" stop-opacity=".10"/><stop offset="1" stop-color="#9be8dc" stop-opacity="0"/></radialGradient>'+
+      '<linearGradient id="ceBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#090e11"/><stop offset="1" stop-color="#030506"/></linearGradient>'+
+      '<linearGradient id="ceCone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a0" stop-opacity=".16"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></linearGradient></defs>'+
+      '<rect x="-800" y="-400" width="3200" height="1800" fill="url(#ceBg)"/><rect x="-800" y="-400" width="3200" height="1800" fill="url(#ceT)"/><ellipse cx="800" cy="920" rx="900" ry="300" fill="url(#ceG)"/>'+
+      (k==='gala'?'<path d="M'+(g.x0+40)+' -20 L'+(cx-60)+' 880 L'+(cx-340)+' 880Z M'+(g.x1-40)+' -20 L'+(cx+60)+' 880 L'+(cx+340)+' 880Z" fill="url(#ceCone)"/>':'')+
+      sp+
+      '<path d="M'+(g.x0+56)+' '+hy+' H'+(cx-46)+' M'+(cx+46)+' '+hy+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width="1.6" opacity=".85"/>'+
+      '<path d="M'+(g.x0+56)+' '+(hy+6)+' H'+(cx-46)+' M'+(cx+46)+' '+(hy+6)+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width=".8" opacity=".55"/>'+
+      '<path d="M'+(cx-14)+' '+(hy+3)+' l14 -12 l14 12 l-14 12Z" fill="none" stroke="#e8c84a" stroke-width="2"/><circle cx="'+cx+'" cy="'+(hy+3)+'" r="3.2" fill="'+C.ac+'"/>'+
+      ico(C.ic,cx-ix,ty-12,sc)+ico(C.ic,cx+ix,ty-12,sc)+
+      '<text x="'+cx+'" y="'+ty+'" text-anchor="middle" font-family="'+FF2+'" font-weight="600" font-size="'+fs.toFixed(1)+'" letter-spacing="3" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#98e6da">'+L+'</text>'+
+      '<text x="'+cx+'" y="'+(ty+34)+'" text-anchor="middle" font-family="'+FF2+'" font-weight="500" font-size="17" letter-spacing="2" textLength="'+sw.toFixed(0)+'" lengthAdjust="spacing" fill="#d9e6e1">'+S+'</text>'+
+      [0,1,2].map(function(j){ return '<circle cx="'+(cx-sw/2-22-j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/><circle cx="'+(cx+sw/2+22+j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/>'; }).join('')+
+      '</svg>';
+    return svg+dom('',7,function(){ return '<i class="tm-ember" style="--x:'+R(2,98).toFixed(1)+'%;--s:'+R(.35,.7).toFixed(2)+';--d:'+R(16,28).toFixed(1)+'s;--dl:-'+R(0,28).toFixed(1)+'s"></i>'; });
   }
+  function sceneIta(){ return cena('ita'); }
+  function sceneMex(){ return cena('mex'); }
+  function sceneMall(){ return cena('mall'); }
+  function sceneSpa(){ return cena('spa'); }
+  function sceneAsia(){ return cena('asia'); }
+  function sceneWorld(){ return cena('world'); }
+  function sceneGala(){ return cena('gala'); }
 
-  /* ── MALLORCAN NIGHT ── */
-  function mill(x,y,s,dur,rev){
-    var hx=x, hy=y-122*s, o='<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M-36 0 L-22 -112 L22 -112 L36 0Z" fill="#efe6d2" stroke="#8f7f5a" stroke-width="2.5"/><path d="M-30 -110 L0 -150 L30 -110Z" fill="#9a4a2a" stroke="#5a2a14" stroke-width="2.5"/><path d="M-9 0 V-30 Q0 -40 9 -30 V0Z" fill="#6b4a2a"/><rect x="-6" y="-80" width="12" height="16" rx="6" fill="#6b4a2a"/></g>', k, bl='';
-    for(k=0;k<4;k++) bl+='<g transform="rotate('+(k*90+15)+' '+hx+' '+hy+')"><rect x="'+(hx-3*s)+'" y="'+(hy-132*s)+'" width="'+(6*s)+'" height="'+(132*s)+'" fill="#6b4a2a"/><rect x="'+(hx-17*s)+'" y="'+(hy-126*s)+'" width="'+(34*s)+'" height="'+(78*s)+'" fill="#f4efe0" stroke="#6b4a2a" stroke-width="'+(2*s)+'"/><path d="M'+(hx-17*s)+' '+(hy-100*s)+' H'+(hx+17*s)+' M'+(hx-17*s)+' '+(hy-74*s)+' H'+(hx+17*s)+' M'+hx+' '+(hy-126*s)+' V'+(hy-48*s)+'" stroke="#6b4a2a" stroke-width="'+(1.6*s)+'"/></g>';
-    return o+'<g class="tm-gear'+(rev?' r':'')+'" style="transform-origin:'+hx+'px '+hy+'px;animation-duration:'+dur+'s">'+bl+'<circle cx="'+hx+'" cy="'+hy+'" r="'+(7*s)+'" fill="#5a2a14"/></g>';
-  }
-  function bloom(x,y,r){
-    var o='<g>', i; for(i=0;i<5;i++) o+='<ellipse cx="'+x+'" cy="'+(y-r*.62)+'" rx="'+(r*.42)+'" ry="'+(r*.62)+'" fill="#fff2f5" stroke="#f1b2c3" stroke-width="1.4" transform="rotate('+(i*72)+' '+x+' '+y+')"/>';
-    return o+'<circle cx="'+x+'" cy="'+y+'" r="'+(r*.26)+'" fill="#e5688a"/><circle cx="'+x+'" cy="'+y+'" r="'+(r*.1)+'" fill="#ffd27a"/></g>';
-  }
-  function almond(x,y,dir,sc){   /* rama de almendro desde una esquina superior */
-    var d=dir, o='<g class="tm-sway'+(d<0?' b':'')+'"><path d="M'+x+' '+y+' Q'+(x+d*150*sc)+' '+(y+30*sc)+' '+(x+d*300*sc)+' '+(y+120*sc)+' M'+(x+d*120*sc)+' '+(y+22*sc)+' Q'+(x+d*190*sc)+' '+(y+110*sc)+' '+(x+d*210*sc)+' '+(y+190*sc)+' M'+(x+d*230*sc)+' '+(y+70*sc)+' Q'+(x+d*300*sc)+' '+(y+60*sc)+' '+(x+d*360*sc)+' '+(y+90*sc)+'" fill="none" stroke="#5a3a2a" stroke-width="'+(7*sc)+'" stroke-linecap="round"/>', i,
-        P=[[.12,.05],[.3,.2],[.5,.38],[.7,.6],[.9,.82],[.55,.2],[.4,.45],[.8,.42],[1.02,1.0],[.62,.98],[.7,.35],[.28,.52]];
-    for(i=0;i<P.length;i++) o+=bloom(x+d*P[i][0]*300*sc+d*(i%3)*6*sc,y+P[i][1]*160*sc+(i%2)*8*sc,16*sc);
-    return o+'</g>';
-  }
-  function ensaimada(cx,cy,r){
-    var o='<ellipse cx="'+cx+'" cy="'+(cy+r*.82)+'" rx="'+(r*1.1)+'" ry="'+(r*.12)+'" fill="#000" opacity=".2"/><ellipse cx="'+cx+'" cy="'+cy+'" rx="'+r+'" ry="'+(r*.82)+'" fill="#e8b868" stroke="#b9801a" stroke-width="3"/>', i;
-    for(i=0;i<3;i++) o+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+(r*(.86-i*.2))+'" ry="'+(r*(.68-i*.17))+'" fill="none" stroke="#f6dca0" stroke-width="'+(r*.13)+'"/>';
-    for(i=0;i<22;i++){ var a=i*2.4; o+='<circle cx="'+(cx+r*.8*Math.cos(a)*(.25+(i%5)/6)).toFixed(1)+'" cy="'+(cy+r*.62*Math.sin(a)*(.25+(i%5)/6)).toFixed(1)+'" r="'+(r*.05)+'" fill="#fffdf8" opacity=".95"/>'; }
-    return o+'<circle cx="'+cx+'" cy="'+cy+'" r="'+(r*.09)+'" fill="#d8a24a"/>';
-  }
-  function sceneMall(){
-    var g=geo(), cx=(g.x0+g.x1)/2, L='MALLORCAN NIGHT', q=rot2(g,L.length,g.v?26:38), py=g.v?796:804, ph=g.v?72:92, tw=q.tw, sc=g.v?.6:Math.max(.7,g.s), i, rf='';
-    for(i=0;i<9;i++) rf+='<rect x="'+(800+(i%2?1:-1)*(10+i*24))+'" y="'+(742+i*13)+'" width="'+(70-i*5)+'" height="3" rx="1.5" fill="#ffe3a0" opacity=".5"/>';
-    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
-      '<linearGradient id="tmBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b2447"/><stop offset=".45" stop-color="#1d5b8c"/><stop offset=".72" stop-color="#f4a259"/><stop offset=".73" stop-color="#2b86b8"/><stop offset="1" stop-color="#0b3558"/></linearGradient>'+
-      '<radialGradient id="tmSun" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff0b8" stop-opacity=".9"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient>'+
-      '<pattern id="tmLleng" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#f7f0de"/>'+
-        '<path d="M15 -4 C24 10 30 22 30 36 C30 52 22 58 15 58 C8 58 0 52 0 36 C0 22 6 10 15 -4Z" fill="#1f4f9a"/><path d="M15 12 C19 20 21 28 21 38 C21 47 19 51 15 51 C11 51 9 47 9 38 C9 28 11 20 15 12Z" fill="#f7f0de" opacity=".9"/>'+
-        '<g id="tmLl2"><path d="M45 26 C54 40 60 52 60 66 C60 82 52 88 45 88 C38 88 30 82 30 66 C30 52 36 40 45 26Z" fill="#c8312b"/><path d="M45 42 C49 50 51 58 51 68 C51 77 49 81 45 81 C41 81 39 77 39 68 C39 58 41 50 45 42Z" fill="#f7f0de" opacity=".9"/></g><use href="#tmLl2" transform="translate(0 -60)"/>'+
-        '<circle cx="15" cy="58" r="2.5" fill="#e0a020"/><circle cx="45" cy="28" r="2.5" fill="#e0a020"/></pattern></defs>'+
-      '<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tmBg)"/><circle cx="800" cy="650" r="300" fill="url(#tmSun)"/><circle cx="800" cy="650" r="74" fill="#ffe3a0"/>'+
-      '<rect x="-800" y="650" width="3200" height="500" fill="#2b86b8"/><rect x="-800" y="650" width="3200" height="500" fill="url(#tmBg)" opacity="0"/>'+rf+
-      '<path d="M-400 780 Q300 700 800 770 T2400 760 L2400 1000 L-400 1000Z" fill="#b98a4a" opacity=".5"/>'+
-      mill(g.x0+(g.v?54:120),836,g.v?.7:1.0,46,false)+mill(g.x1-(g.v?54:120),836,g.v?.7:1.0,52,true)+
-      almond(g.x0-10,-8,1,sc)+almond(g.x1+10,-8,-1,sc)+
-      bunting(g.x0+(g.v?150:320),92,g.cx,114,44*g.s,Math.max(5,Math.round(8*g.W/1600)),[['#1f4f9a','#0e2a5a'],['#f7f0de','#9a8a6a'],['#c8312b','#6a1410'],['#e0a020','#7a5a10']],38*g.s+8,32*g.s+6)+
-      bunting(g.cx,114,g.x1-(g.v?150:320),92,44*g.s,Math.max(5,Math.round(8*g.W/1600)),[['#c8312b','#6a1410'],['#f7f0de','#9a8a6a'],['#1f4f9a','#0e2a5a'],['#e0a020','#7a5a10']],38*g.s+8,32*g.s+6,' b')+
-      '<rect x="-800" y="850" width="3200" height="200" fill="url(#tmLleng)"/><rect x="-800" y="846" width="3200" height="7" fill="#1f4f9a"/>'+
-      ensaimada(g.x1-(g.v?60:150),(g.v?812:806),g.v?46:64)+
-      '<rect x="'+(cx-tw/2)+'" y="'+(py-ph/2)+'" width="'+tw+'" height="'+ph+'" rx="12" fill="#fff8e6" stroke="#1f4f9a" stroke-width="4"/><rect x="'+(cx-tw/2+8)+'" y="'+(py-ph/2+8)+'" width="'+(tw-16)+'" height="'+(ph-16)+'" rx="7" fill="none" stroke="#c8312b" stroke-width="1.6"/>'+
-      txt2(cx,py-ph*.0,q.fs,L.length,.66,'#1f4f9a',700)+L+'</text>'+txt2(cx,py+ph*.3,q.fs*.44,13,.7,'#c8312b',600)+'THEMED DINNER</text></svg>';
-    var d=dom('',26,function(i){ return '<b class="tm-cf pk" style="--x:'+R(0,100).toFixed(1)+'%;--c:'+['#fff2f5','#f7b9c9','#ffffff'][i%3]+';--d:'+R(10,19).toFixed(1)+'s;--dl:-'+R(0,19).toFixed(1)+'s;--dx:'+R(-10,10).toFixed(1)+'vw"></b>'; });
-    return svg+d+confeti2(['#c8312b','#1f4f9a','#e0a020'],5,12);
-  }
-
-  /* ── MEXICAN NIGHT ── */
-  function picado(x1,y1,x2,y2,sag,n,cols,w,h,cls){
-    var cx=(x1+x2)/2, cy=(y1+y2)/2+2*sag, o='<g class="tm-sway'+(cls||'')+'"><path d="M'+x1+' '+y1+' Q'+cx+' '+cy+' '+x2+' '+y2+'" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="2.5"/>', i, t, u, px, py, c, f, k;
-    for(i=0;i<n;i++){
-      t=(i+.5)/n; u=1-t; px=u*u*x1+2*u*t*cx+t*t*x2; py=u*u*y1+2*u*t*cy+t*t*y2; c=cols[i%cols.length]; f='';
-      for(k=0;k<5;k++) f+=' L'+(px+w/2-(k+.5)*w/5).toFixed(1)+' '+(py+h).toFixed(1)+' L'+(px+w/2-(k+1)*w/5).toFixed(1)+' '+(py+h-9).toFixed(1);
-      o+='<path d="M'+(px-w/2).toFixed(1)+' '+py.toFixed(1)+' L'+(px+w/2).toFixed(1)+' '+py.toFixed(1)+' L'+(px+w/2).toFixed(1)+' '+(py+h-9).toFixed(1)+f+' Z" fill="'+c+'" opacity=".95" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>'+
-        '<circle cx="'+px.toFixed(1)+'" cy="'+(py+h*.38).toFixed(1)+'" r="'+(w*.14)+'" fill="rgba(25,5,45,.5)"/><path d="M'+(px-w*.3).toFixed(1)+' '+(py+h*.38).toFixed(1)+' l'+(w*.07)+' -'+(w*.07)+' l'+(w*.07)+' '+(w*.07)+' l-'+(w*.07)+' '+(w*.07)+'Z M'+(px+w*.16).toFixed(1)+' '+(py+h*.38).toFixed(1)+' l'+(w*.07)+' -'+(w*.07)+' l'+(w*.07)+' '+(w*.07)+' l-'+(w*.07)+' '+(w*.07)+'Z" fill="rgba(25,5,45,.5)"/>'+
-        '<rect x="'+(px-w*.38).toFixed(1)+'" y="'+(py+6).toFixed(1)+'" width="'+(w*.76)+'" height="5" fill="rgba(25,5,45,.35)"/>';
-    }
-    return o+'</g>';
-  }
-  function sombrero(x,y,s){
-    return '<g transform="translate('+x+' '+y+') scale('+s+')"><ellipse cx="0" cy="4" rx="104" ry="12" fill="#000" opacity=".22"/>'+
-      '<ellipse cx="0" cy="-8" rx="100" ry="22" fill="#d9a441" stroke="#8a5a14" stroke-width="3"/><ellipse cx="0" cy="-14" rx="100" ry="19" fill="#e9b956" stroke="#8a5a14" stroke-width="2"/><ellipse cx="0" cy="-14" rx="96" ry="15" fill="none" stroke="#c8312b" stroke-width="4"/>'+
-      '<path d="M-40 -16 Q-36 -76 -14 -88 Q0 -96 14 -88 Q36 -76 40 -16 Q0 -2 -40 -16Z" fill="#e9b956" stroke="#8a5a14" stroke-width="3"/>'+
-      '<path d="M-40 -18 Q0 -4 40 -18 L39 -34 Q0 -20 -39 -34Z" fill="#c8312b" stroke="#7a1a14" stroke-width="2"/><path d="M-38 -26 Q0 -12 38 -26" fill="none" stroke="#ffd23a" stroke-width="3" stroke-dasharray="6 5"/></g>';
-  }
-  function cactus(x,y,s,flip){
-    var f=flip?-1:1;
-    return '<g transform="translate('+x+' '+y+') scale('+(s*f)+' '+s+')"><rect x="-17" y="-150" width="34" height="150" rx="17" fill="#2f8f4a" stroke="#175a2c" stroke-width="3"/>'+
-      '<path d="M-17 -70 H-38 Q-52 -70 -52 -84 V-112 Q-52 -122 -42 -122 Q-32 -122 -32 -112 V-90 Q-32 -86 -26 -86 H-17Z" fill="#2f8f4a" stroke="#175a2c" stroke-width="3"/>'+
-      '<path d="M17 -52 H38 Q50 -52 50 -64 V-90 Q50 -100 41 -100 Q32 -100 32 -90 V-72 Q32 -68 26 -68 H17Z" fill="#2f8f4a" stroke="#175a2c" stroke-width="3"/>'+
-      '<path d="M0 -140 V-10 M-9 -130 V-20 M9 -130 V-20" stroke="#1d6b36" stroke-width="2" fill="none"/><circle cx="0" cy="-152" r="9" fill="#ff5c8a"/><circle cx="0" cy="-152" r="3.5" fill="#ffd23a"/></g>';
-  }
-  function marigold(x,y,r){
-    var o='<g>', i; for(i=0;i<12;i++) o+='<ellipse cx="'+x+'" cy="'+(y-r*.62)+'" rx="'+(r*.26)+'" ry="'+(r*.42)+'" fill="'+(i%2?'#ff9d1a':'#ffb84a')+'" stroke="#c86a00" stroke-width="1" transform="rotate('+(i*30)+' '+x+' '+y+')"/>';
-    return o+'<circle cx="'+x+'" cy="'+y+'" r="'+(r*.28)+'" fill="#e07a00"/></g>';
-  }
-  function pinata(x,top,len,R2){
-    var cy=top+len+R2, cols=['#ff5c8a','#ffd23a','#1fb0a8','#8a3fb5','#ff9a1f','#4aa8ff','#7ac943'], o='<g class="tm-pin" style="transform-origin:'+x+'px '+top+'px"><path d="M'+x+' '+top+' V'+(cy-R2)+'" stroke="#e8d8b8" stroke-width="3"/>', i, a0, a1, am, r0=R2*.56;
-    for(i=0;i<7;i++){ a0=(i-.5)*2*Math.PI/7-Math.PI/2; a1=(i+.5)*2*Math.PI/7-Math.PI/2; am=i*2*Math.PI/7-Math.PI/2;
-      o+='<polygon points="'+x+','+cy+' '+(x+r0*Math.cos(a0)).toFixed(1)+','+(cy+r0*Math.sin(a0)).toFixed(1)+' '+(x+R2*Math.cos(am)).toFixed(1)+','+(cy+R2*Math.sin(am)).toFixed(1)+' '+(x+r0*Math.cos(a1)).toFixed(1)+','+(cy+r0*Math.sin(a1)).toFixed(1)+'" fill="'+cols[i]+'" stroke="rgba(0,0,0,.3)" stroke-width="2" stroke-linejoin="round"/>';
-      o+='<path d="M'+(x+R2*.98*Math.cos(am)).toFixed(1)+' '+(cy+R2*.98*Math.sin(am)).toFixed(1)+' l'+(Math.cos(am+.3)*10).toFixed(1)+' '+(Math.sin(am+.3)*10).toFixed(1)+' M'+(x+R2*.98*Math.cos(am)).toFixed(1)+' '+(cy+R2*.98*Math.sin(am)).toFixed(1)+' l'+(Math.cos(am-.3)*10).toFixed(1)+' '+(Math.sin(am-.3)*10).toFixed(1)+'" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>'; }
-    return o+'<circle cx="'+x+'" cy="'+cy+'" r="'+(r0*.55)+'" fill="#ffd23a" stroke="rgba(0,0,0,.3)" stroke-width="2"/></g>';
-  }
-  function sceneMex(){
-    var g=geo(), cx=(g.x0+g.x1)/2, L='MEXICAN NIGHT', q=rot2(g,L.length,g.v?26:38), py=g.v?796:804, ph=g.v?72:92, tw=q.tw, i, st='', sy=846;
-    var SC=['#d92b4b','#f7efe0','#ff9a1f','#f7efe0','#1fb0a8','#f7efe0','#8a3fb5'], SH=[10,5,12,5,10,5,11];
-    for(i=0;i<SC.length;i++){ st+='<rect x="-800" y="'+sy+'" width="3200" height="'+SH[i]+'" fill="'+SC[i]+'"/>'; sy+=SH[i]; }
-    var cols=['#ff5c8a','#ff9a1f','#1fb0a8','#ffd23a','#8a3fb5','#7ac943'], sp='';
-    for(i=0;i<14;i++) sp+=sparkle(R(g.x0+20,g.x1-20),R(160,640),R(6,13),i%2?'#fff':'#ffd27a',R(0,3));
-    var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs>'+
-      '<linearGradient id="txBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#170c3a"/><stop offset=".42" stop-color="#4f1e6c"/><stop offset=".76" stop-color="#e2663a"/><stop offset="1" stop-color="#f6a640"/></linearGradient>'+
-      '<pattern id="txZig" width="44" height="58" patternUnits="userSpaceOnUse"><polyline points="0,29 11,17 22,29 33,41 44,29" fill="none" stroke="#ffd23a" stroke-width="3.5"/></pattern></defs>'+
-      '<rect x="-800" y="-400" width="3200" height="1800" fill="url(#txBg)"/>'+sp+
-      '<path d="M-400 770 L120 690 L260 700 L420 760 L700 740 L900 770 L1200 720 L1330 700 L1480 740 L2400 760 L2400 1000 L-400 1000Z" fill="#2a0f3e" opacity=".9"/>'+
-      picado(g.x0-20,84,g.cx,108,34*g.s,Math.max(5,Math.round(9*g.W/1600)),cols,56*g.s+14,44*g.s+10)+picado(g.cx,108,g.x1+20,84,34*g.s,Math.max(5,Math.round(9*g.W/1600)),cols.slice().reverse(),56*g.s+14,44*g.s+10,' b')+
-      pinata(g.x1-(g.v?44:38),-30,(g.v?200:300),g.v?34:38)+
-      cactus(g.x0+(g.v?30:80),846,g.v?.85:1.2,false)+cactus(g.x1-(g.v?30:80),846,g.v?.7:1.0,true)+
-      sombrero(g.x0+(g.v?112:210),(g.v?850:848),g.v?.6:.85)+
-      marigold(g.x1-(g.v?112:230),826,g.v?18:24)+marigold(g.x1-(g.v?92:200),836,g.v?14:19)+marigold(g.x1-(g.v?126:262),838,g.v?12:16)+
-      st+'<rect x="-800" y="846" width="3200" height="58" fill="url(#txZig)" opacity=".8"/>'+
-      '<rect x="'+(cx-tw/2)+'" y="'+(py-ph/2)+'" width="'+tw+'" height="'+ph+'" rx="10" fill="#3a1450" stroke="#ffb800" stroke-width="4"/><rect x="'+(cx-tw/2+8)+'" y="'+(py-ph/2+8)+'" width="'+(tw-16)+'" height="'+(ph-16)+'" rx="6" fill="none" stroke="#ff5c8a" stroke-width="1.8" stroke-dasharray="7 6"/>'+
-      txt2(cx,py-ph*.0,q.fs,L.length,.66,'#fff5d6',700)+L+'</text>'+txt2(cx,py+ph*.3,q.fs*.44,13,.7,'#ffb84a',600)+'THEMED DINNER</text></svg>';
-    return svg+confeti2(['#ff5c8a','#ffd23a','#1fb0a8','#ff9a1f','#8a3fb5','#ffffff'],8,34);
-  }
-
-  var TEMAS = { fiestanacional:sceneEsp, nacional:sceneEsp, hispanidad:sceneEsp, '12octubre':sceneEsp, italiannight:sceneIta, italiana:sceneIta, italian:sceneIta, mallorcannight:sceneMall, mallorquina:sceneMall, mallorcan:sceneMall, mexicannight:sceneMex, mexicana:sceneMex, mexican:sceneMex, trabajador:sceneTrab, '1mayo':sceneTrab, diadeltrabajo:sceneTrab, camareras:sceneCam, housekeepers:sceneCam, semanacamareras:sceneCam, whiteparty:sceneWhite, white:sceneWhite, oktoberfest:sceneOkt, halloween:sceneHal, triatlon:sceneCic, peguera:sceneCic, ciclismo:sceneCic, challenge:sceneCic };
+  var TEMAS = { fiestanacional:sceneEsp, nacional:sceneEsp, hispanidad:sceneEsp, '12octubre':sceneEsp, italiannight:sceneIta, italiana:sceneIta, italian:sceneIta, mallorcannight:sceneMall, mallorquina:sceneMall, mallorcan:sceneMall, mexicannight:sceneMex, mexicana:sceneMex, mexican:sceneMex, spanishnight:sceneSpa, espanola:sceneSpa, spanish:sceneSpa, asiannight:sceneAsia, asiatica:sceneAsia, asian:sceneAsia, worldnight:sceneWorld, mundo:sceneWorld, world:sceneWorld, saboresdelmundo:sceneWorld, flavorsoftheworld:sceneWorld, chefgala:sceneGala, galachef:sceneGala, chefsgala:sceneGala, gala:sceneGala, trabajador:sceneTrab, '1mayo':sceneTrab, diadeltrabajo:sceneTrab, camareras:sceneCam, housekeepers:sceneCam, semanacamareras:sceneCam, whiteparty:sceneWhite, white:sceneWhite, oktoberfest:sceneOkt, halloween:sceneHal, triatlon:sceneCic, peguera:sceneCic, ciclismo:sceneCic, challenge:sceneCic };
 
   /* Con varias piscinas el contenido ya ocupa casi toda la altura: en vez de reservar espacio (y que las tarjetas se pisen),
      se dibuja a tamaño completo y se reduce con una escala para dejar libre la franja del rotulo (Oktoberfest / White Party). */
   /* Altura (unidades del lienzo 1600x900) de la franja inferior que ocupa el rotulo de cada tema nuevo */
-  var ST={fiestanacional:128, trabajador:132, camareras:150, italiannight:140, mallorcannight:140, mexicannight:140};
-  var ALIAS={nacional:'fiestanacional', hispanidad:'fiestanacional', '12octubre':'fiestanacional', '1mayo':'trabajador', diadeltrabajo:'trabajador', housekeepers:'camareras', italiana:'italiannight', italian:'italiannight', mallorquina:'mallorcannight', mallorcan:'mallorcannight', mexicana:'mexicannight', mexican:'mexicannight', semanacamareras:'camareras'};
+  var ST={fiestanacional:128, trabajador:132, camareras:150, italiannight:140, mallorcannight:140, mexicannight:140, spanishnight:140, asiannight:140, worldnight:140, chefgala:140};
+  var ALIAS={nacional:'fiestanacional', hispanidad:'fiestanacional', '12octubre':'fiestanacional', '1mayo':'trabajador', diadeltrabajo:'trabajador', housekeepers:'camareras', italiana:'italiannight', italian:'italiannight', mallorquina:'mallorcannight', mallorcan:'mallorcannight', mexicana:'mexicannight', mexican:'mexicannight', espanola:'spanishnight', spanish:'spanishnight', asiatica:'asiannight', asian:'asiannight', mundo:'worldnight', world:'worldnight', saboresdelmundo:'worldnight', flavorsoftheworld:'worldnight', galachef:'chefgala', chefsgala:'chefgala', gala:'chefgala', semanacamareras:'camareras'};
   function stripVh(t){ return ST[t] ? Math.min(24, ST[t]*geo().px/(window.innerHeight||1080)*100+.8) : 0; }
   function ajustar(){
     var b=document.body, m=document.querySelector('main');
