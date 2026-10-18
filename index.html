@@ -1240,6 +1240,17 @@ body.tema-on #tema-bg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 @keyframes tmFlap{from{transform:scaleY(1)}to{transform:scaleY(.5)}}
 #tema-bg .tm-ghost{position:absolute;left:var(--x);top:var(--y);width:calc(var(--u)*var(--w));opacity:.55;animation:tmFloat var(--d) ease-in-out var(--dl) infinite alternate;filter:drop-shadow(0 0 var(--u) rgba(200,255,220,.55));}
 @keyframes tmFloat{from{transform:translate3d(-2vw,1.5vh,0)}to{transform:translate3d(3vw,-3vh,0)}}
+/* Fantasmas que cruzan la pantalla (detras: #tema-bg, delante de las tarjetas: #tema-fg) */
+#tema-fg{display:none;}
+body.tema-on #tema-fg{--u:max(1vw,1.5vh);display:block;position:fixed !important;inset:0;z-index:60 !important;overflow:hidden;pointer-events:none;}
+.tm-gpass{position:absolute;left:0;top:var(--y);width:calc(var(--u)*var(--w));opacity:var(--o);animation:tmGhostPass var(--d) linear var(--dl) infinite;will-change:transform;filter:drop-shadow(0 0 var(--u) rgba(200,255,220,.5));}
+.tm-gpass.r{animation-name:tmGhostPassR;}
+.tm-gpass svg{display:block;width:100%;height:auto;animation:tmGhostBob 3.4s ease-in-out infinite alternate;}
+.tm-gpass.r svg{transform:scaleX(-1);animation-name:tmGhostBobR;}
+@keyframes tmGhostPass{from{transform:translate3d(calc(var(--u)*-8),0,0)}to{transform:translate3d(calc(100vw + var(--u)*2),0,0)}}
+@keyframes tmGhostPassR{from{transform:translate3d(calc(100vw + var(--u)*2),0,0)}to{transform:translate3d(calc(var(--u)*-8),0,0)}}
+@keyframes tmGhostBob{from{transform:translateY(-2vh) rotate(-4deg)}to{transform:translateY(2vh) rotate(4deg)}}
+@keyframes tmGhostBobR{from{transform:scaleX(-1) translateY(-2vh) rotate(-4deg)}to{transform:scaleX(-1) translateY(2vh) rotate(4deg)}}
 #tema-bg .tm-fog{position:absolute;left:0;bottom:var(--b);width:200%;height:26vh;opacity:var(--o);
   background:radial-gradient(ellipse 12% 45% at 10% 60%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 14% 40% at 32% 50%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 12% 48% at 55% 62%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 15% 40% at 78% 52%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 10% 44% at 95% 60%,rgba(215,195,240,.8),transparent 70%);
   filter:blur(var(--u));animation:tmFogMove var(--d) linear infinite;will-change:transform;}
@@ -4305,6 +4316,8 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   var cfg = CAL, actual = '';
   var $bg = document.getElementById('tema-bg');
   if(!$bg) return;
+  var $fg = document.getElementById('tema-fg');
+  if(!$fg){ $fg = document.createElement('div'); $fg.id = 'tema-fg'; $fg.setAttribute('aria-hidden','true'); document.body.appendChild($fg); }
 
   function R(a,b){ return a + Math.random()*(b-a); }
   function norm(s){
@@ -4482,7 +4495,9 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
       bunting(g.cx-20,96,g.x1+20,104,55*g.s,Math.max(6,Math.round(16*g.W/1600)),col,48*g.s+8,38*g.s+6,' b')+
       '</svg>';
     var d=dom('',5,function(i){ return '<div class="tm-bat" style="--y:'+R(8,50).toFixed(0)+'%;--w:'+R(4,7).toFixed(1)+';--d:'+R(13,22).toFixed(1)+'s;--dl:-'+R(0,20).toFixed(1)+'s">'+BAT+'</div>'; });
-    d+='<div class="tm-ghost" style="--x:12%;--y:46%;--w:5;--d:7s;--dl:-1s">'+GHOST+'</div><div class="tm-ghost" style="--x:70%;--y:58%;--w:3.6;--d:9s;--dl:-4s">'+GHOST+'</div>';
+    var gp=function(r,y,w,dd,dl,o){ return '<div class="tm-gpass'+(r?' r':'')+'" style="--y:'+y.toFixed(0)+'%;--w:'+w+';--d:'+dd+'s;--dl:-'+dl+'s;--o:'+o+'">'+GHOST+'</div>'; };
+    d+=gp(0,R(30,45),5,34,6,.5)+gp(1,R(52,66),3.6,46,20,.45)+gp(0,R(16,26),2.8,58,35,.4);
+    window.__temaFg=gp(1,R(20,38),7,40,12,.34)+gp(0,R(46,62),5.5,52,30,.3)+gp(1,R(68,80),4,64,45,.28);
     d+='<div class="tm-fog" style="--b:0;--o:.32;--d:70s"></div><div class="tm-fog" style="--b:6vh;--o:.2;--d:110s"></div>';
     d+='<div class="tm-spider" style="--x:9%"><i style="--h:22vh"></i><svg viewBox="0 0 40 36"><g stroke="#0b0614" stroke-width="2" fill="none"><path d="M20 18 L4 6 M20 18 L2 16 M20 18 L4 30 M20 18 L12 34 M20 18 L36 6 M20 18 L38 16 M20 18 L36 30 M20 18 L28 34"/></g><ellipse cx="20" cy="20" rx="8" ry="9" fill="#0b0614"/><circle cx="20" cy="11" r="5" fill="#0b0614"/><circle cx="18" cy="10" r="1.3" fill="#ff3b3b"/><circle cx="22" cy="10" r="1.3" fill="#ff3b3b"/></svg></div>';
     return svg+d;
@@ -4913,8 +4928,10 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
     if(t==='whiteparty'||t==='white') b.style.setProperty('--tm-res', (((900-722-(gg.v?0:40))*gg.px/(window.innerHeight||1080))*100+1.2).toFixed(1)+'vh');
     b.className = b.className.replace(/\btema-\S+/g,'').replace(/\btm-strip\b/g,'').replace(/\s+/g,' ').trim();
     if(ST[t]){ b.style.setProperty('--tm-res', stripVh(t).toFixed(1)+'vh'); b.classList.add('tm-strip'); }
-    if(!t){ $bg.innerHTML=''; window.__tema=''; ajustar(); return; }
+    if(!t){ $bg.innerHTML=''; $fg.innerHTML=''; window.__tema=''; ajustar(); return; }
+    window.__temaFg = '';
     $bg.innerHTML = TEMAS[t]();
+    $fg.innerHTML = window.__temaFg || '';
     b.classList.add('tema-on'); b.classList.add('tema-'+t);
     window.__tema = t;
     ajustar();
