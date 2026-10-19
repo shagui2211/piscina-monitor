@@ -2340,6 +2340,8 @@ function renderMeteo(m){
     else if(codeNow !== null && ((codeNow >= 71 && codeNow <= 75) || codeNow === 77 || codeNow === 85)) rtCode = codeNow; // nieve / granizo
     else if(codeNow !== null && ((codeNow >= 51 && codeNow <= 57) || (codeNow >= 61 && codeNow <= 67) || (codeNow >= 80 && codeNow <= 82)))
                                 rtCode = (codeNow===56||codeNow===57) ? 53 : ((codeNow===66||codeNow===67) ? 63 : codeNow);  // llovizna / lluvia / chubascos segun codigo WMO
+    // LLOVIZNA-MM: lluvia/chubasco de intensidad ligera o moderada con menos de 1 mm -> llovizna (el codigo WMO no dice cuanto cae)
+    if(rtCode >= 61 && rtCode !== 65 && rtCode !== 67 && rtCode !== 82 && rtCode <= 82 && llNow < 1.0) rtCode = 51;
     else if(llNow >= 1.0)       rtCode = 61;          // lluvia (mm reales)
     else if(llNow >= 0.1)       rtCode = 51;          // llovizna (mm reales)
     else if(nubes !== null)     rtCode = (nubes >= 70) ? 3 : (nubes >= 30 ? 2 : 0); // nublado / parcial / despejado
@@ -2631,7 +2633,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='7c3e90a41d5b';
+  var BUILD_ID='a52f81c9e6d3';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
