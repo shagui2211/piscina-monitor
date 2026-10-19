@@ -2633,7 +2633,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='a52f81c9e6d3';
+  var BUILD_ID='8a5b331c3b88';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3489,19 +3489,20 @@ var LANG_ALIAS = {
   function mkRainSplash(els){
     if(!els.length) return;
     var card = els[Math.floor(Math.random()*els.length)].getBoundingClientRect();
+    var dk = document.body.classList.contains('tv') || document.body.classList.contains('tod-night'), cl = dk ? '205,238,252' : '25,90,140';
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*4;
-    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:7+Math.random()*5, life:1.0, decay:0.045, color:'74,140,170' });
-    var n = 3 + Math.floor(Math.random()*3);
+    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:13+Math.random()*10, life:1.0, decay:0.032, color:cl });
+    var n = 6 + Math.floor(Math.random()*4);
     for(var i=0;i<n;i++){
       var dir = (Math.random()>0.5 ? 1 : -1);
       particles.push({
         type:'bead', x:x, y:y,
-        vx: dir*(1.2+Math.random()*2.5),
-        vy: -(0.8+Math.random()*1.4),
-        r: 1.2+Math.random()*1.2,
-        life:1.0, decay:0.05+Math.random()*0.03,
-        color:'74,140,170',
+        vx: dir*(1.4+Math.random()*3.2),
+        vy: -(1.6+Math.random()*2.2),
+        r: 1.8+Math.random()*1.6,
+        life:1.0, decay:0.032+Math.random()*0.02,
+        color:cl,
       });
     }
   }
@@ -3795,14 +3796,14 @@ var LANG_ALIAS = {
       if(p.type==='ring'){
         p.r += (p.maxR-p.r)*0.18;
         sx.save();
-        sx.strokeStyle='rgba('+p.color+','+( p.life*0.75 )+')';
-        sx.lineWidth=1.0;
+        sx.strokeStyle='rgba('+p.color+','+Math.min(1,p.life*1.15)+')';
+        sx.lineWidth=1.8;
         sx.beginPath(); sx.ellipse(p.x,p.y,p.r,p.r*0.35,0,0,Math.PI*2); sx.stroke();
         sx.restore();
       } else if(p.type==='bead'){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.12;
         sx.save();
-        sx.fillStyle='rgba('+p.color+','+( p.life*0.88 )+')';
+        sx.fillStyle='rgba('+p.color+','+Math.min(1,p.life*1.1)+')';
         sx.beginPath(); sx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); sx.fill();
         sx.restore();
       } else if(p.type==='flake'){
@@ -3835,9 +3836,9 @@ var LANG_ALIAS = {
     requestAnimationFrame(loop);
   }
   function getSpawnInterval(){
-    if(currentMode==='storm')   return 28;
-    if(currentMode==='rain')    return 45;
-    if(currentMode==='drizzle') return 100;
+    if(currentMode==='storm')   return 16;
+    if(currentMode==='rain')    return 24;
+    if(currentMode==='drizzle') return 65;
     if(currentMode==='hail')    return 55;
     if(currentMode==='snow')    return 42;
     return 9999;
@@ -4901,7 +4902,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
   }
   function cena(k){
     var C=CE[k], g=geo(), cx=(g.x0+g.x1)/2, L=C.L, S=C.S||'THEMED DINNER', sc=g.v?.34:.68, i, sp='',
-        fs=Math.max(16,Math.min(g.v?34:46,(g.W*.94-2*(112*sc+24))/(.74*L.length),2*((g.x1-g.x0)/2-6-190*sc-22)/(.74*L.length))), tw=fs*.74*L.length, ty=g.v?846:838,
+        fs=Math.max(16,Math.min(g.v?34:46,(g.W*.94-2*(112*sc+24))/(.74*L.length),2*((g.x1-g.x0)/2-6-190*sc-22)/(.74*L.length))), tw=fs*.74*L.length, ty=g.v?812:802,
         ix=tw/2+100*sc+26, sw=17*.7*S.length, hy=ty-fs-20;
     for(i=0;i<16;i++) sp+=sparkle(R(g.x0+30,g.x1-30),R(150,700),R(4,8),i%3?'#f4dd8a':'#bff5ea',R(0,3));
     var svg='<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg"><defs><filter id="ceCh" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".06" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter>'+
@@ -4935,7 +4936,7 @@ var OKT_V="<g class=\"tm-sway\"><g transform=\"translate(450,1335)\"><path d=\"M
   /* Con varias piscinas el contenido ya ocupa casi toda la altura: en vez de reservar espacio (y que las tarjetas se pisen),
      se dibuja a tamaño completo y se reduce con una escala para dejar libre la franja del rotulo (Oktoberfest / White Party). */
   /* Altura (unidades del lienzo 1600x900) de la franja inferior que ocupa el rotulo de cada tema nuevo */
-  var ST={fiestanacional:128, trabajador:132, camareras:150, italiannight:140, mallorcannight:140, mexicannight:140, spanishnight:140, asiannight:140, worldnight:140, chefgala:140};
+  var ST={fiestanacional:128, trabajador:132, camareras:150, italiannight:176, mallorcannight:176, mexicannight:176, spanishnight:176, asiannight:176, worldnight:176, chefgala:176};
   var ALIAS={nacional:'fiestanacional', hispanidad:'fiestanacional', '12octubre':'fiestanacional', '1mayo':'trabajador', diadeltrabajo:'trabajador', housekeepers:'camareras', italiana:'italiannight', italian:'italiannight', mallorquina:'mallorcannight', mallorcan:'mallorcannight', mexicana:'mexicannight', mexican:'mexicannight', espanola:'spanishnight', spanish:'spanishnight', asiatica:'asiannight', asian:'asiannight', mundo:'worldnight', world:'worldnight', saboresdelmundo:'worldnight', flavorsoftheworld:'worldnight', galachef:'chefgala', chefsgala:'chefgala', gala:'chefgala', semanacamareras:'camareras'};
   function stripVh(t){ return ST[t] ? Math.min(24, ST[t]*geo().px/(window.innerHeight||1080)*100+.8) : 0; }
   function ajustar(){
