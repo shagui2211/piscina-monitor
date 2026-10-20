@@ -2633,7 +2633,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='8a5b331c3b88';
+  var BUILD_ID='013d43832555';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3492,16 +3492,15 @@ var LANG_ALIAS = {
     var dk = document.body.classList.contains('tv') || document.body.classList.contains('tod-night'), cl = dk ? '205,238,252' : '25,90,140';
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*4;
-    particles.push({ type:'ring', x:x, y:y, r:0.5, maxR:13+Math.random()*10, life:1.0, decay:0.032, color:cl });
-    var n = 6 + Math.floor(Math.random()*4);
+        var n = 4 + Math.floor(Math.random()*4);
     for(var i=0;i<n;i++){
       var dir = (Math.random()>0.5 ? 1 : -1);
       particles.push({
         type:'bead', x:x, y:y,
-        vx: dir*(1.4+Math.random()*3.2),
-        vy: -(1.6+Math.random()*2.2),
-        r: 1.8+Math.random()*1.6,
-        life:1.0, decay:0.032+Math.random()*0.02,
+        vx: dir*(0.4+Math.random()*2.4),
+        vy: -(1.2+Math.random()*2.6),
+        r: 0.9+Math.random()*1.9,
+        life:1.0, decay:0.03+Math.random()*0.03,
         color:cl,
       });
     }
