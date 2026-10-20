@@ -2633,7 +2633,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='013d43832555';
+  var BUILD_ID='52a60b3001df';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3488,7 +3488,7 @@ var LANG_ALIAS = {
   }
   function mkRainSplash(els){
     if(!els.length) return;
-    var card = els[Math.floor(Math.random()*els.length)].getBoundingClientRect();
+    var el_ = els[Math.floor(Math.random()*els.length)], card = el_.getBoundingClientRect();
     var dk = document.body.classList.contains('tv') || document.body.classList.contains('tod-night'), cl = dk ? '205,238,252' : '25,90,140';
     var x = card.left + Math.random()*card.width;
     var y = card.top + Math.random()*4;
@@ -3504,6 +3504,9 @@ var LANG_ALIAS = {
         color:cl,
       });
     }
+    var nr = 0; for(var k=0;k<particles.length;k++) if(particles[k].type==='run') nr++;
+    var pr = currentMode==='storm' ? 0.5 : (currentMode==='rain' ? 0.32 : 0.12);
+    if(nr<42 && Math.random()<pr) particles.push({ type:'run', el:el_, fx:(x-card.left)/Math.max(1,card.width), y:2, v:0.2, vmax:1.1+Math.random()*1.5, w:1.1+Math.random()*1.1, stick:Math.floor(Math.random()*12), tr:[], life:1, decay:0.0002, color:cl });
   }
   /* ── MONTONES DE NIEVE ── */
   var snowPiles  = [];
@@ -3799,6 +3802,27 @@ var LANG_ALIAS = {
         sx.lineWidth=1.8;
         sx.beginPath(); sx.ellipse(p.x,p.y,p.r,p.r*0.35,0,0,Math.PI*2); sx.stroke();
         sx.restore();
+      } else if(p.type==='run'){
+        var re_ = p.el.getBoundingClientRect();
+        if(!p.el.isConnected || re_.width<=0){ p.life=0; return false; }
+        p.life = 1;
+        if(p.stick>0){ p.stick--; } else {
+          p.v += 0.035 + Math.random()*0.03; if(p.v>p.vmax) p.v=p.vmax;
+          p.y += p.v;
+          if(Math.random()<0.012){ p.stick = 8+Math.floor(Math.random()*30); p.v = 0.15; }
+        }
+        var rx = re_.left + p.fx*re_.width, ry = re_.top + p.y;
+        p.tr.push(ry); if(p.tr.length>46) p.tr.shift();
+        var t0 = p.tr[0], gr = sx.createLinearGradient(0,t0,0,ry);
+        gr.addColorStop(0,'rgba('+p.color+',0)'); gr.addColorStop(1,'rgba('+p.color+',0.55)');
+        sx.save(); sx.strokeStyle=gr; sx.lineWidth=p.w*0.8; sx.lineCap='round';
+        sx.beginPath(); sx.moveTo(rx,t0); sx.lineTo(rx,ry); sx.stroke();
+        sx.fillStyle='rgba('+p.color+',0.9)'; sx.beginPath(); sx.ellipse(rx,ry,p.w*0.95,p.w*1.35,0,0,Math.PI*2); sx.fill();
+        sx.restore();
+        if(p.y >= re_.height-1){
+          for(var q=0;q<1+Math.floor(Math.random()*2);q++) particles.push({ type:'bead', x:rx+(Math.random()-0.5)*3, y:re_.bottom, vx:(Math.random()-0.5)*0.4, vy:0.4+Math.random()*0.8, r:p.w*0.8+Math.random()*0.6, life:1.0, decay:0.02+Math.random()*0.015, color:p.color });
+          p.life=0; return false;
+        }
       } else if(p.type==='bead'){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.12;
         sx.save();
