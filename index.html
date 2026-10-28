@@ -2129,7 +2129,8 @@ function renderPools(list, errMode){
     var falta=false;
     ['ph','orp','ppm','temp'].forEach(function(k){
       var v=vals[k];
-      if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); if(!manual) falta=true; }
+      if(k==='ppm' && isTvMode && !errMode && !stale && (v==null || isNaN(+v)) && p.ph!=null && !isNaN(+p.ph) && (+p.ph<6.5 || +p.ph>8.5)){ setCard('ppm',0.51,'0.51',id); }  /* TV: pH fuera de 6,5-8,5 => no hay cloro calculable; se muestra el minimo tranquilizador (decision de Jose 28/10) */
+      else if(errMode || stale || v==null || isNaN(+v)){ setCardEmpty(k,id); if(!manual) falta=true; }
       else { setCard(k,+v,fmt[k](+v),id); }
     });
     var ca=pel('card','amb',id);
@@ -2633,7 +2634,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='951e30319abd';
+  var BUILD_ID='cf42a5ebf752';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
