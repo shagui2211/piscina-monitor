@@ -27,11 +27,17 @@
     },
     {
      "t": "icono",
-     "n": "disco",
-     "x": 50,
-     "y": 8,
+     "n": "fantasma",
+     "x": 17,
+     "y": 77,
      "s": 1.1,
-     "anim": "giro"
+     "anim": "flotar",
+     "dalc": 48,
+     "dest": 14,
+     "dvel": 2.8,
+     "c1": "#f4f7ff",
+     "c2": "#1a1030",
+     "espejo": false
     },
     {
      "t": "banderines",
@@ -123,26 +129,29 @@
     {
      "t": "icono",
      "n": "palmera",
-     "x": 7.8,
-     "y": 79.6,
+     "x": 8.2,
+     "y": 84.8,
      "s": 2,
      "anim": ""
     },
     {
      "t": "icono",
      "n": "sombrilla",
-     "x": 91.7,
-     "y": 82.1,
+     "x": 91.3,
+     "y": 86.5,
      "s": 1.5,
-     "anim": "balanceo"
+     "anim": "",
+     "rot": -16
     },
     {
      "t": "icono",
      "n": "cocktail",
-     "x": 21.1,
-     "y": 87.8,
+     "x": 28.7,
+     "y": 89.2,
      "s": 1,
-     "anim": "pulso"
+     "anim": "pulso",
+     "c1": "#ff7a3d",
+     "c2": "#d9e6ee"
     },
     {
      "t": "banderines",
@@ -157,6 +166,29 @@
       "#ffd23f",
       "#ffffff",
       "#2ec4b6"
+     ]
+    },
+    {
+     "t": "icono",
+     "n": "concha",
+     "x": 68.9,
+     "y": 91.5,
+     "s": 1,
+     "anim": "",
+     "c1": "#ffb89c",
+     "c2": "#d9785a",
+     "rot": -55,
+     "espejo": false
+    },
+    {
+     "t": "lluvia",
+     "tipo": "confeti",
+     "cant": 20,
+     "cols": [
+      "#ffffff",
+      "#ffd23f",
+      "#ff4f8b",
+      "#4aa3e0"
      ]
     }
    ],
