@@ -1211,35 +1211,35 @@ body.tema-on #tema-bg{--u:max(1vw,1.5vh);display:block;position:absolute;inset:0
 body.tema-on #weather-bg::before,body.tema-on #agua-video{display:none !important;}
 body.tema-on #weather-bg{filter:none !important;background:#10102a !important;}
 body.tema-on #tema-bg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
-#tema-bg .tm-sway{transform-box:fill-box;transform-origin:50% 0%;animation:tmSway 5.5s ease-in-out infinite alternate;}
-#tema-bg .tm-sway.b{animation-duration:7s;animation-delay:-2s;}
+#tema-bg .tm-sway,#tema-fg .tm-sway{transform-box:fill-box;transform-origin:50% 0%;animation:tmSway 5.5s ease-in-out infinite alternate;}
+#tema-bg .tm-sway.b,#tema-fg .tm-sway.b{animation-duration:7s;animation-delay:-2s;}
 @keyframes tmSway{from{transform:rotate(-.9deg)}to{transform:rotate(.9deg)}}
-#tema-bg .tm-cloud{animation:tmDrift 90s linear infinite;}
-#tema-bg .tm-cloud.b{animation-duration:130s;animation-delay:-60s;}
+#tema-bg .tm-cloud,#tema-fg .tm-cloud{animation:tmDrift 90s linear infinite;}
+#tema-bg .tm-cloud.b,#tema-fg .tm-cloud.b{animation-duration:130s;animation-delay:-60s;}
 @keyframes tmDrift{from{transform:translateX(-380px)}to{transform:translateX(1900px)}}
 /* globos */
-#tema-bg .tm-bal{position:absolute;bottom:-16vh;left:var(--x);width:calc(var(--u)*4.6);height:calc(var(--u)*5.8);border-radius:50% 50% 47% 47%;
+#tema-bg .tm-bal,#tema-fg .tm-bal{position:absolute;bottom:-16vh;left:var(--x);width:calc(var(--u)*4.6);height:calc(var(--u)*5.8);border-radius:50% 50% 47% 47%;
   background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.75),rgba(255,255,255,0) 32%),var(--c);
   box-shadow:inset calc(var(--u)*-.35) calc(var(--u)*-.5) var(--u) rgba(0,0,40,.25);animation:tmRise var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-bal::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:calc(var(--u)*5);background:rgba(255,255,255,.7);}
+#tema-bg .tm-bal::after,#tema-fg .tm-bal::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:calc(var(--u)*5);background:rgba(255,255,255,.7);}
 @keyframes tmRise{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(calc(var(--u)*1.6),-32vh,0)}50%{transform:translate3d(calc(var(--u)*-1.2),-65vh,0)}75%{transform:translate3d(calc(var(--u)*1.4),-98vh,0)}100%{transform:translate3d(0,-132vh,0)}}
 /* confeti */
-#tema-bg .tm-cf{position:absolute;top:-4vh;left:var(--x);width:calc(var(--u)*.7);height:calc(var(--u)*1.2);background:var(--c);opacity:.9;animation:tmFall var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-cf,#tema-fg .tm-cf{position:absolute;top:-4vh;left:var(--x);width:calc(var(--u)*.7);height:calc(var(--u)*1.2);background:var(--c);opacity:.9;animation:tmFall var(--d) linear var(--dl) infinite;will-change:transform;}
 @keyframes tmFall{from{transform:translate3d(0,0,0) rotate(0)}to{transform:translate3d(var(--dx),110vh,0) rotate(720deg)}}
 /* burbujas de la cerveza */
-#tema-bg .tm-bub{animation:tmBub 3.2s ease-in infinite;}
+#tema-bg .tm-bub,#tema-fg .tm-bub{animation:tmBub 3.2s ease-in infinite;}
 @keyframes tmBub{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-120px);opacity:0}}
 /* Halloween */
-#tema-bg .tm-flick{animation:tmFlick 3.4s steps(1,end) infinite;}
-#tema-bg .tm-flick.b{animation-duration:2.3s;animation-delay:-1s;}
+#tema-bg .tm-flick,#tema-fg .tm-flick{animation:tmFlick 3.4s steps(1,end) infinite;}
+#tema-bg .tm-flick.b,#tema-fg .tm-flick.b{animation-duration:2.3s;animation-delay:-1s;}
 @keyframes tmFlick{0%{opacity:1}12%{opacity:.55}18%{opacity:1}55%{opacity:.8}62%{opacity:1}85%{opacity:.5}90%{opacity:1}}
-#tema-bg .tm-star{animation:tmTw 3s ease-in-out infinite alternate;}
+#tema-bg .tm-star,#tema-fg .tm-star{animation:tmTw 3s ease-in-out infinite alternate;}
 @keyframes tmTw{from{opacity:.25}to{opacity:1}}
-#tema-bg .tm-bat{position:absolute;left:0;top:var(--y);width:calc(var(--u)*var(--w));animation:tmFly var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-bat svg{display:block;width:100%;height:auto;animation:tmFlap .28s ease-in-out infinite alternate;transform-origin:50% 40%;}
+#tema-bg .tm-bat,#tema-fg .tm-bat{position:absolute;left:0;top:var(--y);width:calc(var(--u)*var(--w));animation:tmFly var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-bat svg,#tema-fg .tm-bat svg{display:block;width:100%;height:auto;animation:tmFlap .28s ease-in-out infinite alternate;transform-origin:50% 40%;}
 @keyframes tmFly{0%{transform:translate3d(calc(var(--u)*-9),0,0)}25%{transform:translate3d(20vw,-5vh,0)}50%{transform:translate3d(54vw,4vh,0)}75%{transform:translate3d(86vw,-4vh,0)}100%{transform:translate3d(calc(100vw + var(--u)*2),3vh,0)}}
 @keyframes tmFlap{from{transform:scaleY(1)}to{transform:scaleY(.5)}}
-#tema-bg .tm-ghost{position:absolute;left:var(--x);top:var(--y);width:calc(var(--u)*var(--w));opacity:.55;animation:tmFloat var(--d) ease-in-out var(--dl) infinite alternate;filter:drop-shadow(0 0 var(--u) rgba(200,255,220,.55));}
+#tema-bg .tm-ghost,#tema-fg .tm-ghost{position:absolute;left:var(--x);top:var(--y);width:calc(var(--u)*var(--w));opacity:.55;animation:tmFloat var(--d) ease-in-out var(--dl) infinite alternate;filter:drop-shadow(0 0 var(--u) rgba(200,255,220,.55));}
 @keyframes tmFloat{from{transform:translate3d(-2vw,1.5vh,0)}to{transform:translate3d(3vw,-3vh,0)}}
 /* Fantasmas que cruzan la pantalla (detras: #tema-bg, delante de las tarjetas: #tema-fg) */
 #tema-fg{display:none;}
@@ -1252,29 +1252,29 @@ body.tema-on #tema-fg{--u:max(1vw,1.5vh);display:block;position:fixed !important
 @keyframes tmGhostPassR{from{transform:translate3d(calc(100vw + var(--u)*2),0,0)}to{transform:translate3d(calc(var(--u)*-8),0,0)}}
 @keyframes tmGhostBob{from{transform:translateY(-2vh) rotate(-4deg)}to{transform:translateY(2vh) rotate(4deg)}}
 @keyframes tmGhostBobR{from{transform:scaleX(-1) translateY(-2vh) rotate(-4deg)}to{transform:scaleX(-1) translateY(2vh) rotate(4deg)}}
-#tema-bg .tm-fog{position:absolute;left:0;bottom:var(--b);width:200%;height:26vh;opacity:var(--o);
+#tema-bg .tm-fog,#tema-fg .tm-fog{position:absolute;left:0;bottom:var(--b);width:200%;height:26vh;opacity:var(--o);
   background:radial-gradient(ellipse 12% 45% at 10% 60%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 14% 40% at 32% 50%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 12% 48% at 55% 62%,rgba(215,195,240,.8),transparent 70%),radial-gradient(ellipse 15% 40% at 78% 52%,rgba(215,195,240,.7),transparent 70%),radial-gradient(ellipse 10% 44% at 95% 60%,rgba(215,195,240,.8),transparent 70%);
   filter:blur(var(--u));animation:tmFogMove var(--d) linear infinite;will-change:transform;}
 @keyframes tmFogMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-#tema-bg .tm-spider{position:absolute;left:var(--x);top:0;width:calc(var(--u)*3);transform-origin:50% 0;animation:tmSwing 4.5s ease-in-out infinite alternate;}
-#tema-bg .tm-spider i{display:block;width:1px;height:var(--h);margin:0 auto;background:rgba(255,255,255,.55);}
+#tema-bg .tm-spider,#tema-fg .tm-spider{position:absolute;left:var(--x);top:0;width:calc(var(--u)*3);transform-origin:50% 0;animation:tmSwing 4.5s ease-in-out infinite alternate;}
+#tema-bg .tm-spider i,#tema-fg .tm-spider i{display:block;width:1px;height:var(--h);margin:0 auto;background:rgba(255,255,255,.55);}
 @keyframes tmSwing{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
 body.tema-on.tod-dawn #dawn-glow,body.tv.tema-on #dawn-glow,body.tema-on #dawn-glow{display:none !important;}
 /* Ciclismo (Challenge Calvià) */
-#tema-bg .tm-road{position:absolute;left:0;right:0;bottom:0;height:max(5vh,calc(var(--k)*94px - var(--c)));background:linear-gradient(#4b4f57,#2f3238);border-top:.5vh solid #fff;}
-#tema-bg .tm-road::before{content:"";position:absolute;left:0;right:0;top:48%;height:.7vh;background:repeating-linear-gradient(90deg,#ffd400 0 calc(var(--u)*4),transparent calc(var(--u)*4) calc(var(--u)*8));background-size:calc(var(--u)*8) 100%;animation:tmDash 1.1s linear infinite;}
+#tema-bg .tm-road,#tema-fg .tm-road{position:absolute;left:0;right:0;bottom:0;height:max(5vh,calc(var(--k)*94px - var(--c)));background:linear-gradient(#4b4f57,#2f3238);border-top:.5vh solid #fff;}
+#tema-bg .tm-road::before,#tema-fg .tm-road::before{content:"";position:absolute;left:0;right:0;top:48%;height:.7vh;background:repeating-linear-gradient(90deg,#ffd400 0 calc(var(--u)*4),transparent calc(var(--u)*4) calc(var(--u)*8));background-size:calc(var(--u)*8) 100%;animation:tmDash 1.1s linear infinite;}
 @keyframes tmDash{from{background-position:0 0}to{background-position:calc(var(--u)*-8) 0}}
-#tema-bg .tm-cyc{position:absolute;left:0;bottom:var(--y);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-cyc svg{display:block;width:100%;height:auto;animation:tmBob .5s ease-in-out infinite alternate;}
-#tema-bg .tm-cyc .wh{transform-box:fill-box;transform-origin:50% 50%;animation:tmSpin .35s linear infinite;}
+#tema-bg .tm-cyc,#tema-fg .tm-cyc{position:absolute;left:0;bottom:var(--y);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-cyc svg,#tema-fg .tm-cyc svg{display:block;width:100%;height:auto;animation:tmBob .5s ease-in-out infinite alternate;}
+#tema-bg .tm-cyc .wh,#tema-fg .tm-cyc .wh{transform-box:fill-box;transform-origin:50% 50%;animation:tmSpin .35s linear infinite;}
 @keyframes tmRide{from{transform:translate3d(calc(var(--u)*-9),0,0)}to{transform:translate3d(calc(100vw + var(--u)*2),0,0)}}
 @keyframes tmBob{from{transform:translateY(0)}to{transform:translateY(-.4vh)}}
 @keyframes tmSpin{to{transform:rotate(360deg)}}
 
 /* White party */
-#tema-bg .tm-cf.p{width:calc(var(--u)*.9);height:calc(var(--u)*.55);border-radius:60% 0 60% 0;background:#fffdf8;box-shadow:0 0 0 1px rgba(196,160,90,.55),0 1px 3px rgba(120,90,30,.25);}
+#tema-bg .tm-cf.p,#tema-fg .tm-cf.p{width:calc(var(--u)*.9);height:calc(var(--u)*.55);border-radius:60% 0 60% 0;background:#fffdf8;box-shadow:0 0 0 1px rgba(196,160,90,.55),0 1px 3px rgba(120,90,30,.25);}
 body.tema-whiteparty #tema-bg .tm-bal{box-shadow:inset calc(var(--u)*-.35) calc(var(--u)*-.5) var(--u) rgba(150,110,40,.22),0 0 0 1px rgba(196,160,90,.5);}
-#tema-bg .tm-spark{animation:tmTw 2.2s ease-in-out infinite alternate;}
+#tema-bg .tm-spark,#tema-fg .tm-spark{animation:tmTw 2.2s ease-in-out infinite alternate;}
 
 body.tema-whiteparty header{background:linear-gradient(180deg,rgba(62,49,31,.72),rgba(42,33,22,.78)) !important;border-color:rgba(224,185,90,.6) !important;}
 body.tema-whiteparty header::after{background:linear-gradient(90deg,transparent,#e0b95a,transparent) !important;}
@@ -1294,10 +1294,10 @@ body.tema-whiteparty .footer,body.tema-whiteparty .lang-indicator,body.tema-whit
 @keyframes tmThigh{0%,100%{transform:rotate(-48deg)}50%{transform:rotate(32deg)}}
 @keyframes tmShin{0%,100%{transform:rotate(8deg)}25%{transform:rotate(30deg)}50%{transform:rotate(78deg)}75%{transform:rotate(40deg)}}
 @keyframes tmArmR{0%,100%{transform:rotate(38deg)}50%{transform:rotate(-42deg)}}
-#tema-bg .tm-swim{position:absolute;left:0;top:var(--t);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-swim svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .9s ease-in-out infinite alternate;}
-#tema-bg .tm-swim .arm{animation:tmArm .9s linear infinite;}
-#tema-bg .tm-swim .arm.b{animation-delay:-.45s;}
+#tema-bg .tm-swim,#tema-fg .tm-swim{position:absolute;left:0;top:var(--t);width:calc(var(--u)*var(--w));animation:tmRide var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-swim svg,#tema-fg .tm-swim svg{display:block;width:100%;height:auto;overflow:visible;animation:tmBob .9s ease-in-out infinite alternate;}
+#tema-bg .tm-swim .arm,#tema-fg .tm-swim .arm{animation:tmArm .9s linear infinite;}
+#tema-bg .tm-swim .arm.b,#tema-fg .tm-swim .arm.b{animation-delay:-.45s;}
 @keyframes tmArm{to{transform:rotate(360deg)}}
 
 /* Oktoberfest: reserva una franja inferior para la decoracion (las tarjetas se comprimen) */
@@ -1306,12 +1306,12 @@ body.tema-oktoberfest{--tm-res:18vh;}
 body.tm-fit.tv:has(#pools.multi) main{padding-bottom:0 !important;box-sizing:border-box !important;max-width:none !important;transform:scale(var(--tm-k,1));transform-origin:0 0;width:calc(100% / var(--tm-k,1)) !important;}
 
 /* White party: hojas que se mecen, brillo del agua y reserva de franja inferior (calculada en JS) */
-#tema-bg .tm-pa{transform-box:fill-box;transform-origin:0% 0%;animation:tmPalm 7s ease-in-out infinite alternate;}
-#tema-bg .tm-pb{transform-box:fill-box;transform-origin:100% 100%;animation:tmPalm 8s ease-in-out infinite alternate;}
-#tema-bg .tm-pa.b,#tema-bg .tm-pb.b{animation-duration:9.5s;animation-delay:-3s;}
+#tema-bg .tm-pa,#tema-fg .tm-pa{transform-box:fill-box;transform-origin:0% 0%;animation:tmPalm 7s ease-in-out infinite alternate;}
+#tema-bg .tm-pb,#tema-fg .tm-pb{transform-box:fill-box;transform-origin:100% 100%;animation:tmPalm 8s ease-in-out infinite alternate;}
+#tema-bg .tm-pa.b,#tema-bg .tm-pb.b,#tema-fg .tm-pa.b,#tema-fg .tm-pb.b{animation-duration:9.5s;animation-delay:-3s;}
 @keyframes tmPalm{from{transform:rotate(-1.6deg)}to{transform:rotate(1.6deg)}}
-#tema-bg .tm-caus{animation:tmCaus 6s ease-in-out infinite alternate;}
-#tema-bg .tm-caus.b{animation-duration:8s;animation-direction:alternate-reverse;opacity:.7;}
+#tema-bg .tm-caus,#tema-fg .tm-caus{animation:tmCaus 6s ease-in-out infinite alternate;}
+#tema-bg .tm-caus.b,#tema-fg .tm-caus.b{animation-duration:8s;animation-direction:alternate-reverse;opacity:.7;}
 @keyframes tmCaus{from{transform:translateX(-26px)}to{transform:translateX(26px)}}
 
 /* Vista en navegador (sin ?tv=1): la pagina hace scroll; se reserva la franja al final para que, al llegar abajo, la decoracion/texto quede libre */
@@ -1321,45 +1321,46 @@ body.tema-whiteparty:not(.tv) main,body.tema-oktoberfest:not(.tv) main{padding-b
 body.tema-halloween #critter .c-body{filter:drop-shadow(0 0 4px rgba(200,150,255,.85)) drop-shadow(0 2px 3px rgba(0,0,0,.6));}
 
 /* ═══ Fiesta Nacional · Día del Trabajador · Semana de las camareras ═══ */
-#tema-bg .tm-fold{animation:tmFold 11s linear infinite;}
-#tema-bg .tm-wv{animation:tmWv 4.8s linear infinite;will-change:transform;}
+#tema-bg .tm-fold,#tema-fg .tm-fold{animation:tmFold 11s linear infinite;}
+#tema-bg .tm-wv,#tema-fg .tm-wv{animation:tmWv 4.8s linear infinite;will-change:transform;}
 @keyframes tmWv{from{transform:translateX(-800px)}to{transform:translateX(0)}}
 @keyframes tmFold{from{transform:translateX(0)}to{transform:translateX(-1200px)}}
-#tema-bg .tm-gear,#tema-bg .tm-rays{animation:tmGear 60s linear infinite;transform-box:view-box;will-change:transform;}
-#tema-bg .tm-rays{animation-duration:260s;}
-#tema-bg .tm-gear.r{animation-direction:reverse;}
+#tema-bg .tm-gear,#tema-bg .tm-rays,#tema-fg .tm-gear,#tema-fg .tm-rays{animation:tmGear 60s linear infinite;transform-box:view-box;will-change:transform;}
+#tema-bg .tm-rays,#tema-fg .tm-rays{animation-duration:260s;}
+#tema-bg .tm-gear.r,#tema-fg .tm-gear.r{animation-direction:reverse;}
 @keyframes tmGear{to{transform:rotate(360deg)}}
-#tema-bg .tm-ember{position:absolute;bottom:-3vh;left:var(--x);width:calc(var(--u)*var(--s)*1.2);height:calc(var(--u)*var(--s)*1.2);border-radius:50%;
+#tema-bg .tm-ember,#tema-fg .tm-ember{position:absolute;bottom:-3vh;left:var(--x);width:calc(var(--u)*var(--s)*1.2);height:calc(var(--u)*var(--s)*1.2);border-radius:50%;
   background:radial-gradient(circle,#fff6c8 0,#ffc84a 45%,rgba(255,200,74,0) 72%);animation:tmEmber var(--d) linear var(--dl) infinite;will-change:transform;}
 @keyframes tmEmber{0%{transform:translate3d(0,0,0);opacity:0}10%{opacity:.95}100%{transform:translate3d(calc(var(--u)*3),-108vh,0);opacity:0}}
-#tema-bg .tm-sb{position:absolute;bottom:-12vh;left:var(--x);width:calc(var(--u)*var(--w));height:calc(var(--u)*var(--w));border-radius:50%;
+#tema-bg .tm-sb,#tema-fg .tm-sb{position:absolute;bottom:-12vh;left:var(--x);width:calc(var(--u)*var(--w));height:calc(var(--u)*var(--w));border-radius:50%;
   background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,.1) 9% 62%,rgba(150,240,235,.4) 100%);border:1px solid rgba(255,255,255,.55);
   animation:tmRise var(--d) linear var(--dl) infinite;will-change:transform;}
-#tema-bg .tm-ht{position:absolute;bottom:-10vh;left:var(--x);width:calc(var(--u)*var(--w));height:calc(var(--u)*var(--w)*.92);opacity:.8;
+#tema-bg .tm-ht,#tema-fg .tm-ht{position:absolute;bottom:-10vh;left:var(--x);width:calc(var(--u)*var(--w));height:calc(var(--u)*var(--w)*.92);opacity:.8;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 22'%3E%3Cpath fill='%23ff8f9d' stroke='%23ffffff' stroke-width='.8' d='M12 21C4 14 1 10 1 6.5A5.5 5.5 0 0 1 12 4.5 5.5 5.5 0 0 1 23 6.5C23 10 20 14 12 21Z'/%3E%3C/svg%3E") center/contain no-repeat;
   animation:tmRise var(--d) linear var(--dl) infinite;will-change:transform;}
 /* vista en navegador (sin ?tv=1): deja libre la franja inferior al hacer scroll */
 body.tm-strip:not(.tv) main{padding-bottom:calc(var(--tm-res,16vh) + 2vh) !important;box-sizing:border-box;}
 /* Cenas tematicas */
-#tema-bg .tm-pin{animation:tmPin 3.8s ease-in-out infinite alternate;transform-box:view-box;}
+#tema-bg .tm-pin,#tema-fg .tm-pin{animation:tmPin 3.8s ease-in-out infinite alternate;transform-box:view-box;}
 @keyframes tmPin{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
-#tema-bg .tm-cf.pk{width:calc(var(--u)*1);height:calc(var(--u)*.62);border-radius:60% 0 60% 0;box-shadow:0 0 0 1px rgba(214,120,150,.45);}
+#tema-bg .tm-cf.pk,#tema-fg .tm-cf.pk{width:calc(var(--u)*1);height:calc(var(--u)*.62);border-radius:60% 0 60% 0;box-shadow:0 0 0 1px rgba(214,120,150,.45);}
 </style>
 <style id="tm-custom-css">
 /* Temas personalizados (editor): animaciones de las piezas */
-#tema-bg .tc-balanceo{transform-box:fill-box;transform-origin:50% 0%;animation:tcBal var(--d,5s) ease-in-out var(--dl,0s) infinite alternate;}
+#tema-bg .tc-balanceo,#tema-fg .tc-balanceo{transform-box:fill-box;transform-origin:50% 0%;animation:tcBal var(--d,5s) ease-in-out var(--dl,0s) infinite alternate;}
 @keyframes tcBal{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
-#tema-bg .tc-flotar{animation:tcFlot var(--d,4s) ease-in-out var(--dl,0s) infinite alternate;}
+#tema-bg .tc-flotar,#tema-fg .tc-flotar{animation:tcFlot var(--d,4s) ease-in-out var(--dl,0s) infinite alternate;}
 @keyframes tcFlot{from{transform:translateY(-14px)}to{transform:translateY(14px)}}
-#tema-bg .tc-pulso{transform-box:fill-box;transform-origin:50% 50%;animation:tcPul var(--d,3s) ease-in-out var(--dl,0s) infinite alternate;}
+#tema-bg .tc-pulso,#tema-fg .tc-pulso{transform-box:fill-box;transform-origin:50% 50%;animation:tcPul var(--d,3s) ease-in-out var(--dl,0s) infinite alternate;}
 @keyframes tcPul{from{transform:scale(.94)}to{transform:scale(1.1)}}
-#tema-bg .tc-giro{transform-box:fill-box;transform-origin:50% 50%;animation:tcGiro 26s linear infinite;}
+#tema-bg .tc-giro,#tema-fg .tc-giro{transform-box:fill-box;transform-origin:50% 50%;animation:tcGiro 26s linear infinite;}
 @keyframes tcGiro{to{transform:rotate(360deg)}}
-#tema-bg .tc-parpadeo{animation:tmTw var(--d,2.4s) ease-in-out var(--dl,0s) infinite alternate;}
-#tema-bg .tc-latido{transform-box:fill-box;transform-origin:50% 50%;animation:tcLat 1.8s ease-in-out var(--dl,0s) infinite;}
+#tema-bg .tc-parpadeo,#tema-fg .tc-parpadeo{animation:tmTw var(--d,2.4s) ease-in-out var(--dl,0s) infinite alternate;}
+#tema-bg .tc-latido,#tema-fg .tc-latido{transform-box:fill-box;transform-origin:50% 50%;animation:tcLat 1.8s ease-in-out var(--dl,0s) infinite;}
 @keyframes tcLat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.09)}60%{transform:scale(1)}}
-#tema-bg .tc-dest{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:tcDest var(--d,2.4s) ease-in-out var(--dl,0s) infinite;}
+#tema-bg .tc-dest,#tema-fg .tc-dest{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:tcDest var(--d,2.4s) ease-in-out var(--dl,0s) infinite;}
 @keyframes tcDest{0%,100%{transform:scale(0) rotate(0deg);opacity:0}45%,55%{transform:scale(1) rotate(45deg);opacity:1}}
+body.tema-on #tema-fg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 </style>
 
 </head>
@@ -2651,7 +2652,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='eee0200353a3';
+  var BUILD_ID='40957873ec4c';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5099,14 +5100,17 @@ var TMC_ICONOS = (function(){
     var g=geo(), F=sp.fondo||{}, P=sp.piezas||[], RO=sp.rotulo||{}, m=g.m, i, out='', dom_='', fo=tcFondo(F,g);
     var X=function(p){ return g.x0+g.W*tcN(p,50)/100; }, Y=function(p){ return 900*tcN(p,50)/100; };
     out+=fo.fill+tcSuelo(sp.suelo||{},g);
+    var outF='', domF='', pc, pd, out0, dom0, opp;
     for(i=0;i<P.length;i++){
       var p=P[i]||{}, t=p.t, a=tcAnim(p.anim,i);
+      out0=out; dom0=dom_; out=''; dom_='';
+      do{
       if(t==='icono'){
-        var def=TMC_ICONOS.lista[p.n]; if(!def) continue;
+        var def=TMC_ICONOS.lista[p.n]; if(!def) break;
         var s=tcN(p.s,1)*1.1*m, ex=p.espejo?-1:1;
         out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+(s*ex).toFixed(3)+' '+s.toFixed(3)+')"><g class="'+a.c+'"'+a.s+'>'+def[3](tcC(p.c1,def[1]),tcC(p.c2,def[2]))+(p.n==='disco'?tcDestellos(p):'')+'</g></g>';
       } else if(t==='imagen'){
-        var src=tcImg(p.src); if(!src) continue;
+        var src=tcImg(p.src); if(!src) break;
         var wd=tcN(p.s,1)*200*m, ar=Math.max(.1,Math.min(10,tcN(p.ar,1))), ht=wd/ar, exi=p.espejo?-1:1, opi=Math.max(0,Math.min(1,tcN(p.op,1)));
         out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+exi+' 1)"><g class="'+a.c+'"'+a.s+'><image href="'+src+'" x="'+(-wd/2).toFixed(1)+'" y="'+(-ht/2).toFixed(1)+'" width="'+wd.toFixed(1)+'" height="'+ht.toFixed(1)+'" preserveAspectRatio="xMidYMid meet" opacity="'+opi+'"/></g></g>';
       } else if(t==='banderines' || t==='luces'){
@@ -5122,7 +5126,7 @@ var TMC_ICONOS = (function(){
         }
       } else if(t==='texto'){
         var fs=tcN(p.s,1)*52*m, fm=p.fuente||'serif', txt=tcT(p.txt);
-        if(!txt) continue;
+        if(!txt) break;
         var bd=tcC(p.borde,'');
         out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+')"><g class="'+a.c+'"'+a.s+'><text text-anchor="middle" dominant-baseline="middle" font-family="'+(TC_FUENTES[fm]||TC_FUENTES.serif)+'" font-weight="700"'+(fm==='cursiva'?' font-style="italic"':'')+' font-size="'+fs.toFixed(1)+'" fill="'+tcC(p.c,'#ffffff')+'"'+(bd?' stroke="'+bd+'" stroke-width="'+(fs*.09).toFixed(1)+'" paint-order="stroke" stroke-linejoin="round"':'')+'>'+txt+'</text></g></g>';
       } else if(t==='estrellas'){
@@ -5134,7 +5138,14 @@ var TMC_ICONOS = (function(){
       } else if(t==='lluvia'){
         dom_+=tcLluvia(p);
       }
+      }while(0);
+      /* transparencia de la pieza y capa: detras o delante de las tarjetas */
+      opp=Math.max(0,Math.min(1,tcN(p.op,1))); pc=out; pd=dom_;
+      if(opp<1 && t!=='imagen'){ if(pc) pc='<g opacity="'+opp+'">'+pc+'</g>'; if(pd) pd='<div style="position:absolute;inset:0;opacity:'+opp+'">'+pd+'</div>'; }
+      out=out0; dom_=dom0;
+      if(p.delante){ outF+=pc; domF+=pd; } else { out+=pc; dom_+=pd; }
     }
+    window.__temaFg=(outF||domF)?'<svg class="tm-art" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'+outF+'</svg>'+domF:'';
     if(RO.txt){
       var al=Math.max(70,Math.min(260,tcN(RO.alto,130))), cx2=(g.x0+g.x1)/2, fam=RO.fuente||'serif', tx=tcT(RO.txt), sub=tcT(RO.sub||''), L=Math.max(4,String(RO.txt).length);
       var fs2=Math.min(al*(sub?.42:.55), g.W*.92/(L*.62)), ty=900-al+(sub?al*.52:al*.6), cfb=tcC(RO.cfondo,'');

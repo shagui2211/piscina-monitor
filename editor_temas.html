@@ -295,6 +295,8 @@ function editaPieza(p){
   } else if(p.t==='nubes'){
     k.push(fld(p,'y','num',{lbl:'Altura %',min:0,max:80,def:15}),fld(p,'cant','num',{lbl:'Cantidad',min:1,max:8,def:3}),fld(p,'s','num',{lbl:'Tamaño',min:.3,max:2.5,step:.05,def:1}));
   }
+  if(p.t!=='imagen') k.push(fld(p,'op','num',{lbl:'Transparencia (opacidad)',min:0,max:1,step:.05,def:1}));
+  k.push(fld(p,'delante','chk',{lbl:'Capa',txt:' por encima de las tarjetas'}));
   k.forEach(function(e){ if(e) b.appendChild(e); }); return b;
 }
 
