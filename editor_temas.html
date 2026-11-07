@@ -157,7 +157,7 @@ var PLANT = {
   piezas:[{t:'icono',n:'sol',x:92,y:14,s:1.6,anim:'giro'},{t:'nubes',y:12,cant:3,s:1},{t:'icono',n:'palmera',x:5,y:70,s:2,anim:'balanceo'},{t:'icono',n:'sombrilla',x:94,y:78,s:1.5,anim:''},{t:'icono',n:'cocktail',x:15,y:90,s:1,anim:'flotar'},{t:'banderines',y:6,de:0,a:100,n:16,caida:50,largo:46,cols:['#ff5a5a','#ffd23f','#ffffff','#2ec4b6']}],
   rotulo:{txt:'Beach Party',c:'#ffffff',borde:'#0e6f8f',fuente:'sans',alto:110},tarjetas:'claras',titulos:'auto'},
  fiesta:{nombre:'Fiesta',fondo:{c1:'#2a1055',c2:'#8f2e9e',dir:'v',patron:'puntos',cp:'#ffffff',op:.08},suelo:{tipo:'ninguno'},
-  piezas:[{t:'banderines',y:6,de:0,a:100,n:18,caida:55,largo:50,cols:['#ffd23f','#ff4f8b','#4aa3e0','#6bdc7a']},{t:'icono',n:'disco',x:50,y:8,s:1.1,anim:'giro'},{t:'icono',n:'fuegos',x:6,y:40,s:1.4,anim:'pulso'},{t:'icono',n:'fuegos',x:95,y:50,s:1.2,anim:'pulso'},{t:'lluvia',tipo:'confeti',cant:36,cols:['#ffd23f','#ff4f8b','#4aa3e0','#ffffff']},{t:'lluvia',tipo:'globos',cant:7,cols:['#ff4f8b','#4aa3e0','#ffd23f']}],
+  piezas:[{t:'banderines',y:6,de:0,a:100,n:18,caida:55,largo:50,cols:['#ffd23f','#ff4f8b','#4aa3e0','#6bdc7a']},{t:'icono',n:'disco',x:50,y:8,s:1.1,anim:'giro',dest:10},{t:'icono',n:'fuegos',x:6,y:40,s:1.4,anim:'pulso'},{t:'icono',n:'fuegos',x:95,y:50,s:1.2,anim:'pulso'},{t:'lluvia',tipo:'confeti',cant:36,cols:['#ffd23f','#ff4f8b','#4aa3e0','#ffffff']},{t:'lluvia',tipo:'globos',cant:7,cols:['#ff4f8b','#4aa3e0','#ffd23f']}],
   rotulo:{txt:'¡Fiesta!',c:'#ffffff',borde:'#2a1055',fuente:'cursiva',alto:110},tarjetas:'oscuras',titulos:'claro'}
 };
 function nuevoVacio(nombre){ return {nombre:nombre||'Mi tema',fondo:{c1:'#14305c',c2:'#4aa3e0',dir:'v',patron:'ninguno',cp:'#ffffff',op:.12},suelo:{tipo:'ninguno',alto:90},piezas:[{t:'banderines',y:6,de:0,a:100,n:16,caida:55,largo:50,cols:['#e8433f','#ffffff']}],rotulo:{txt:'',alto:120,c:'#ffffff',fuente:'serif'},tarjetas:'normal',titulos:'auto',fechas:[],semanal:[]}; }
@@ -273,9 +273,10 @@ function editaPieza(p){
   var b=h('div',{style:'border-top:1px dashed var(--bd);margin-top:8px;padding-top:6px'}), k=[];
   var pos=function(){ return [fld(p,'x','num',{lbl:'Posición ←→ %',min:-10,max:110,step:.5,def:50}),fld(p,'y','num',{lbl:'Posición ↑↓ %',min:-10,max:110,step:.5,def:50})]; };
   if(p.t==='icono'){
-    var pk=h('div',{cls:'pk'}); Object.keys(IC).forEach(function(n){ var d=IC[n]; var dv=h('div',{title:d[0],class:n===p.n?'sel':'',onclick:function(){ p.n=n; p.c1=d[1]; p.c2=d[2]; touch(); rehacer(); }}); dv.innerHTML='<svg viewBox="-55 -55 110 110">'+d[3](d[1],d[2])+'</svg>'; pk.appendChild(dv); });
+    var pk=h('div',{cls:'pk'}); Object.keys(IC).forEach(function(n){ var d=IC[n]; var dv=h('div',{title:d[0],class:n===p.n?'sel':'',onclick:function(){ p.n=n; p.c1=d[1]; p.c2=d[2]; if(n==='disco'&&p.dest==null) p.dest=10; touch(); rehacer(); }}); dv.innerHTML='<svg viewBox="-55 -55 110 110">'+d[3](d[1],d[2])+'</svg>'; pk.appendChild(dv); });
     k.push(pk); k=k.concat(pos());
     k.push(fld(p,'s','num',{lbl:'Tamaño',min:.3,max:5,step:.05,def:1}),fld(p,'rot','num',{lbl:'Giro °',min:-180,max:180,def:0}),fld(p,'espejo','chk',{lbl:'Espejo',txt:' voltear'}),fld(p,'c1','color',{lbl:'Color 1',def:IC[p.n]?IC[p.n][1]:'#ffffff'}),fld(p,'c2','color',{lbl:'Color 2',def:IC[p.n]?IC[p.n][2]:'#ffffff'}),fld(p,'anim','sel',{lbl:'Movimiento',def:'',o:ANIM}));
+    if(p.n==='disco') k.push(h('div',{style:'margin-top:6px;font-weight:600',txt:'Destellos'}),fld(p,'dest','num',{lbl:'Cantidad',min:0,max:40,step:1,def:0}),fld(p,'dalc','num',{lbl:'Alcance',min:5,max:150,step:1,def:45}),fld(p,'dtam','num',{lbl:'Tamaño',min:.3,max:4,step:.1,def:1}),fld(p,'dvel','num',{lbl:'Velocidad',min:.2,max:4,step:.1,def:1}),fld(p,'dcol','color',{lbl:'Color',def:'#ffffff'}));
   } else if(p.t==='imagen'){
     k.push(selImg(p,'src',600,260,function(r){ p.ar=r.ar; })); k=k.concat(pos());
     k.push(fld(p,'s','num',{lbl:'Tamaño',min:.2,max:8,step:.05,def:1}),fld(p,'rot','num',{lbl:'Giro °',min:-180,max:180,def:0}),fld(p,'op','num',{lbl:'Opacidad',min:0,max:1,step:.05,def:1}),fld(p,'espejo','chk',{lbl:'Espejo',txt:' voltear'}),fld(p,'anim','sel',{lbl:'Movimiento',def:'',o:ANIM}));

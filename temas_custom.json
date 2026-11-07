@@ -6,10 +6,12 @@
     "c1": "#2a1055",
     "c2": "#8f2e9e",
     "dir": "v",
-    "patron": "puntos",
+    "patron": "ninguno",
     "cp": "#ffffff",
     "op": 0.08,
-    "vineta": true
+    "vineta": false,
+    "ajuste": "cubrir",
+    "opimg": 1
    },
    "suelo": {
     "tipo": "ninguno"
@@ -260,174 +262,6 @@
     "alto": 120
    },
    "tarjetas": "normal",
-   "titulos": "claro",
-   "fechas": [],
-   "semanal": []
-  },
-  "x_fiesta_en_la_playa_2": {
-   "nombre": "Fiesta en la playa",
-   "fondo": {
-    "c1": "#27b5e8",
-    "c2": "#bdeaf6",
-    "dir": "v",
-    "patron": "ninguno",
-    "vineta": false
-   },
-   "suelo": {
-    "tipo": "arena",
-    "alto": 100
-   },
-   "piezas": [
-    {
-     "t": "icono",
-     "n": "sol",
-     "x": 92,
-     "y": 14,
-     "s": 1.6,
-     "anim": "giro"
-    },
-    {
-     "t": "nubes",
-     "y": 12,
-     "cant": 3,
-     "s": 1
-    },
-    {
-     "t": "icono",
-     "n": "palmera",
-     "x": 5,
-     "y": 70,
-     "s": 2,
-     "anim": "balanceo"
-    },
-    {
-     "t": "icono",
-     "n": "sombrilla",
-     "x": 94,
-     "y": 78,
-     "s": 1.5,
-     "anim": ""
-    },
-    {
-     "t": "icono",
-     "n": "cocktail",
-     "x": 15,
-     "y": 90,
-     "s": 1,
-     "anim": "flotar"
-    },
-    {
-     "t": "banderines",
-     "y": 6,
-     "de": 0,
-     "a": 100,
-     "n": 16,
-     "caida": 50,
-     "largo": 46,
-     "cols": [
-      "#ff5a5a",
-      "#ffd23f",
-      "#ffffff",
-      "#2ec4b6"
-     ]
-    }
-   ],
-   "rotulo": {
-    "txt": "Beach Party",
-    "c": "#ffffff",
-    "borde": "#0e6f8f",
-    "fuente": "sans",
-    "alto": 110
-   },
-   "tarjetas": "claras",
-   "titulos": "auto",
-   "fechas": [],
-   "semanal": []
-  },
-  "x_fiesta_2": {
-   "nombre": "Fiesta",
-   "fondo": {
-    "c1": "#2a1055",
-    "c2": "#8f2e9e",
-    "dir": "v",
-    "patron": "puntos",
-    "cp": "#ffffff",
-    "op": 0.08,
-    "vineta": true
-   },
-   "suelo": {
-    "tipo": "ninguno"
-   },
-   "piezas": [
-    {
-     "t": "banderines",
-     "y": 6,
-     "de": 0,
-     "a": 100,
-     "n": 18,
-     "caida": 55,
-     "largo": 50,
-     "cols": [
-      "#ffd23f",
-      "#ff4f8b",
-      "#4aa3e0",
-      "#6bdc7a"
-     ]
-    },
-    {
-     "t": "icono",
-     "n": "disco",
-     "x": 50,
-     "y": 8,
-     "s": 1.1,
-     "anim": "giro"
-    },
-    {
-     "t": "icono",
-     "n": "fuegos",
-     "x": 6,
-     "y": 40,
-     "s": 1.4,
-     "anim": "pulso"
-    },
-    {
-     "t": "icono",
-     "n": "fuegos",
-     "x": 95,
-     "y": 50,
-     "s": 1.2,
-     "anim": "pulso"
-    },
-    {
-     "t": "lluvia",
-     "tipo": "confeti",
-     "cant": 36,
-     "cols": [
-      "#ffd23f",
-      "#ff4f8b",
-      "#4aa3e0",
-      "#ffffff"
-     ]
-    },
-    {
-     "t": "lluvia",
-     "tipo": "globos",
-     "cant": 7,
-     "cols": [
-      "#ff4f8b",
-      "#4aa3e0",
-      "#ffd23f"
-     ]
-    }
-   ],
-   "rotulo": {
-    "txt": "¡Fiesta!",
-    "c": "#ffffff",
-    "borde": "#2a1055",
-    "fuente": "cursiva",
-    "alto": 110
-   },
-   "tarjetas": "oscuras",
    "titulos": "claro",
    "fechas": [],
    "semanal": []

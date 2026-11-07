@@ -1358,6 +1358,8 @@ body.tm-strip:not(.tv) main{padding-bottom:calc(var(--tm-res,16vh) + 2vh) !impor
 #tema-bg .tc-parpadeo{animation:tmTw var(--d,2.4s) ease-in-out var(--dl,0s) infinite alternate;}
 #tema-bg .tc-latido{transform-box:fill-box;transform-origin:50% 50%;animation:tcLat 1.8s ease-in-out var(--dl,0s) infinite;}
 @keyframes tcLat{0%,100%{transform:scale(1)}15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.09)}60%{transform:scale(1)}}
+#tema-bg .tc-dest{transform-box:fill-box;transform-origin:50% 50%;opacity:0;animation:tcDest var(--d,2.4s) ease-in-out var(--dl,0s) infinite;}
+@keyframes tcDest{0%,100%{transform:scale(0) rotate(0deg);opacity:0}45%,55%{transform:scale(1) rotate(45deg);opacity:1}}
 </style>
 
 </head>
@@ -2649,7 +2651,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='4bb05fda934c';
+  var BUILD_ID='eee0200353a3';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5083,6 +5085,16 @@ var TMC_ICONOS = (function(){
       return '<b class="tm-cf" style="--x:'+x+'%;--c:'+c+';--d:'+R(9,17).toFixed(1)+'s;--dl:'+dl+';--dx:'+R(-6,6).toFixed(1)+'vw"></b>';
     });
   }
+  /* destellos de la bola de discoteca: estrellitas de 4 puntas que brillan alrededor (posiciones fijas, sin azar) */
+  function tcDestellos(p){
+    var n=Math.max(0,Math.min(40,Math.round(tcN(p.dest,0)))), o='', i, ang, fr, rr, r, d, c=tcC(p.dcol,'#ffffff'), tam=Math.max(.3,Math.min(4,tcN(p.dtam,1)))*7, alc=Math.max(5,Math.min(150,tcN(p.dalc,45))), vel=Math.max(.2,Math.min(4,tcN(p.dvel,1)));
+    for(i=0;i<n;i++){
+      ang=i*2.399963; fr=((i*37)%100)/100; rr=14+fr*alc; r=tam*(.6+((i*53)%100)/100*.8);
+      d='M0 -'+r.toFixed(1)+' Q0 0 '+r.toFixed(1)+' 0 Q0 0 0 '+r.toFixed(1)+' Q0 0 -'+r.toFixed(1)+' 0 Q0 0 0 -'+r.toFixed(1);
+      o+='<g transform="translate('+(Math.cos(ang)*rr).toFixed(1)+' '+(-4+Math.sin(ang)*rr).toFixed(1)+')"><path class="tc-dest" d="'+d+'" fill="'+c+'" style="--d:'+(2.4/vel*(.8+((i*29)%100)/250)).toFixed(2)+'s;--dl:-'+(((i*0.37)%3)/vel).toFixed(2)+'s"/></g>';
+    }
+    return o;
+  }
   function sceneCustom(sp){
     var g=geo(), F=sp.fondo||{}, P=sp.piezas||[], RO=sp.rotulo||{}, m=g.m, i, out='', dom_='', fo=tcFondo(F,g);
     var X=function(p){ return g.x0+g.W*tcN(p,50)/100; }, Y=function(p){ return 900*tcN(p,50)/100; };
@@ -5092,7 +5104,7 @@ var TMC_ICONOS = (function(){
       if(t==='icono'){
         var def=TMC_ICONOS.lista[p.n]; if(!def) continue;
         var s=tcN(p.s,1)*1.1*m, ex=p.espejo?-1:1;
-        out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+(s*ex).toFixed(3)+' '+s.toFixed(3)+')"><g class="'+a.c+'"'+a.s+'>'+def[3](tcC(p.c1,def[1]),tcC(p.c2,def[2]))+'</g></g>';
+        out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+(s*ex).toFixed(3)+' '+s.toFixed(3)+')"><g class="'+a.c+'"'+a.s+'>'+def[3](tcC(p.c1,def[1]),tcC(p.c2,def[2]))+(p.n==='disco'?tcDestellos(p):'')+'</g></g>';
       } else if(t==='imagen'){
         var src=tcImg(p.src); if(!src) continue;
         var wd=tcN(p.s,1)*200*m, ar=Math.max(.1,Math.min(10,tcN(p.ar,1))), ht=wd/ar, exi=p.espejo?-1:1, opi=Math.max(0,Math.min(1,tcN(p.op,1)));
