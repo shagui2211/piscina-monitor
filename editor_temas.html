@@ -86,11 +86,12 @@ summary::before{content:"▸ ";color:var(--mu)}details[open]>summary::before{con
       <label><input type="checkbox" id="chDemo" checked> Datos de ejemplo</label>
       <label><input type="checkbox" id="chGuias" checked> Asas para arrastrar</label>
       <label><input type="checkbox" id="chSin"> Ver sin tema</label>
+      <label>Ver tema de la TV <select id="selInt"><option value="">— mis temas —</option><option value="oktoberfest">Oktoberfest</option><option value="halloween">Halloween</option><option value="triatlon">Triatlón (Challenge Peguera)</option><option value="whiteparty">White Party</option><option value="fiestanacional">Fiesta Nacional</option><option value="trabajador">Día del Trabajador</option><option value="camareras">Semana de las camareras</option><option value="italiannight">Cena italiana</option><option value="mallorcannight">Cena mallorquina</option><option value="mexicannight">Cena mexicana</option><option value="spanishnight">Cena española</option><option value="asiannight">Cena asiática</option><option value="worldnight">Sabores del mundo</option><option value="chefgala">Gala Chef</option></select></label>
       <label>Página TV <input type="text" id="tUrl" value="index.html" style="width:150px"></label>
       <span id="esc" style="color:var(--mu);font-size:12px"></span>
     </div>
     <div id="stage"><div id="wrap"><iframe id="fr"></iframe><div id="ov"></div></div></div>
-    <div id="info">Arrastra las asas verdes sobre la vista previa para mover las piezas. Las tarjetas de las piscinas se dibujan encima del fondo: coloca las piezas en las zonas libres (bordes, arriba y abajo).</div>
+    <div id="info">«Ver tema de la TV» enseña los temas ya hechos (solo para mirarlos). Arrastra las asas verdes sobre la vista previa para mover las piezas de tus temas. Las tarjetas de las piscinas se dibujan encima del fondo: coloca las piezas en las zonas libres (bordes, arriba y abajo).</div>
   </div>
 </main>
 <script>
@@ -163,8 +164,8 @@ function slug(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[
 function idLibre(base){ var id='x_'+slug(base), n=2; base=id; while(DATA.temas[id]){ id=base+'_'+(n++); } return id; }
 
 /* ── cambios ── */
-function touch(sinRehacer){ dirty=true; try{ localStorage.setItem('tm_editor_borrador',JSON.stringify(DATA)); }catch(e){} clearTimeout(tmr); tmr=setTimeout(enviar,90); if(!sinRehacer) pintaAsas(); }
-function enviar(){ var f=$('fr').contentWindow; if(!f||!listo) return; if($('chSin').checked) f.postMessage({tmSin:1},'*'); else if(T()) f.postMessage({tmSpec:clone(T())},'*'); }
+function touch(sinRehacer){ if($('selInt').value){ $('selInt').value=''; } dirty=true; try{ localStorage.setItem('tm_editor_borrador',JSON.stringify(DATA)); }catch(e){} clearTimeout(tmr); tmr=setTimeout(enviar,90); if(!sinRehacer) pintaAsas(); }
+function enviar(){ var f=$('fr').contentWindow; if(!f||!listo) return; if($('selInt').value) f.postMessage({tmInt:$('selInt').value},'*'); else if($('chSin').checked) f.postMessage({tmSin:1},'*'); else if(T()) f.postMessage({tmSpec:clone(T())},'*'); }
 
 /* ── controles ── */
 function fld(o,k,tipo,op){
@@ -287,7 +288,7 @@ function cargaFrame(){ listo=false; var u=($('tUrl').value||'index.html'), q='tv
 $('fr').addEventListener('load',function(){ setTimeout(function(){ listo=true; enviar(); },700); });
 window.addEventListener('message',function(e){ if(e.data&&e.data.tmListo){ listo=true; enviar(); } });
 function pintaAsas(){
-  var ov=$('ov'); ov.innerHTML=''; var t=T(); if(!t||!$('chGuias').checked||$('chSin').checked) return;
+  var ov=$('ov'); ov.innerHTML=''; var t=T(); if(!t||!$('chGuias').checked||$('chSin').checked||$('selInt').value) return;
   var g=geoPrev();
   (t.piezas||[]).forEach(function(p,i){ if(p.t!=='icono'&&p.t!=='texto') return;
     var cx=g.x0+g.W*(p.x==null?50:p.x)/100, cy=900*(p.y==null?50:p.y)/100, sx=(cx-800)*g.px+g.w/2, sy=(cy-450)*g.px+g.h/2;
@@ -301,7 +302,7 @@ function pintaAsas(){
 
 /* ── lista de temas, archivos ── */
 function listaTemas(){ var s=$('selTema'); s.innerHTML=''; var ks=Object.keys(DATA.temas); if(!ks.length) s.appendChild(h('option',{value:'',txt:'(ninguno)'})); ks.forEach(function(k){ var o=h('option',{value:k,txt:(DATA.temas[k].nombre||k)+'  ·  '+k}); if(k===curId) o.selected=true; s.appendChild(o); }); }
-function elige(id){ curId=id; selP=-1; listaTemas(); rehacer(); enviar(); pintaAsas(); }
+function elige(id){ $('selInt').value=''; curId=id; selP=-1; listaTemas(); rehacer(); enviar(); pintaAsas(); }
 $('selTema').onchange=function(){ elige($('selTema').value); };
 $('bNuevo').onclick=function(){ var n=prompt('Nombre del tema nuevo:','Mi tema'); if(!n) return; var id=idLibre(n); DATA.temas[id]=nuevoVacio(n); touch(); elige(id); };
 $('bDup').onclick=function(){ if(!T()) return; var c=clone(T()); c.nombre=(c.nombre||curId)+' (copia)'; var id=idLibre(c.nombre); DATA.temas[id]=c; touch(); elige(id); };
@@ -312,7 +313,7 @@ $('bAbrir').onclick=function(){ $('fAbrir').click(); };
 $('fAbrir').onchange=function(){ var f=$('fAbrir').files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ try{ var j=JSON.parse(r.result), m=(j&&j.temas&&!Array.isArray(j.temas))?j.temas:j; if(!m||typeof m!=='object') throw 0; DATA={temas:m}; var ks=Object.keys(m); touch(); elige(ks[0]||''); }catch(e){ alert('No es un archivo de temas válido.'); } }; r.readAsText(f); $('fAbrir').value=''; };
 $('bDesc').onclick=function(){ var txt=JSON.stringify(DATA,null,1), bl=new Blob([txt],{type:'application/json'}), a=h('a',{href:URL.createObjectURL(bl),download:'temas_custom.json'}); document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500); dirty=false; };
 $('selRes').onchange=function(){ var v=$('selRes').value.split('x'); RES=[+v[0],+v[1]]; ajustaEscala(); };
-$('chDemo').onchange=cargaFrame; $('tUrl').onchange=cargaFrame; $('chGuias').onchange=pintaAsas; $('chSin').onchange=enviar;
+$('chDemo').onchange=cargaFrame; $('tUrl').onchange=cargaFrame; $('chGuias').onchange=pintaAsas; $('chSin').onchange=enviar; $('selInt').onchange=function(){ enviar(); pintaAsas(); };
 window.addEventListener('resize',ajustaEscala);
 window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(); e.returnValue=''; } });
 

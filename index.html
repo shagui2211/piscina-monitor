@@ -2649,7 +2649,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='f75b90bad558';
+  var BUILD_ID='5dae4f76aa9a';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5178,6 +5178,7 @@ var TMC_ICONOS = (function(){
       var d=e.data; if(!d || typeof d!=='object') return;
       if(d.tmSpec){ tcReg1('__vista',d.tmSpec); window._debugTema='__vista'; actual=''; aplicar(); }
       else if(d.tmSin){ window._debugTema='ninguno'; actual=''; aplicar(); }
+      else if(d.tmInt && /^[a-z0-9_]{2,30}$/.test(d.tmInt)){ window._debugTema=d.tmInt; actual=''; aplicar(); }
     });
     try{ parent.postMessage({tmListo:1},'*'); }catch(_){}
   }
