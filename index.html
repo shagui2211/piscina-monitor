@@ -2649,7 +2649,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='5dae4f76aa9a';
+  var BUILD_ID='4bb05fda934c';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5041,6 +5041,8 @@ var TMC_ICONOS = (function(){
     if(!ok[k]) return {c:'',s:''};
     return {c:ok[k], s:' style="--d:'+(3+((i*1.7)%3.5)).toFixed(1)+'s;--dl:-'+((i*1.3)%4).toFixed(1)+'s"'};
   }
+  /* imagenes propias: solo data:image base64 o una ruta relativa del repositorio (sin esquemas ni ..) */
+  function tcImg(v){ v=String(v||''); if(/^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+\/=]+$/.test(v)) return v; if(/^[\w\-][\w\-.\/]*\.(png|jpe?g|webp|gif|svg)$/i.test(v) && v.indexOf('..')<0) return v; return ''; }
   function tcFondo(F,g){
     var c1=tcC(F.c1,'#1c3d6e'), c2=tcC(F.c2,'#4aa3e0'), c3=tcC(F.c3,''), dir=F.dir||'v', defs, fill;
     var st='<stop offset="0" stop-color="'+c1+'"/>'+(c3?'<stop offset=".5" stop-color="'+c3+'"/>':'')+'<stop offset="1" stop-color="'+c2+'"/>';
@@ -5053,7 +5055,8 @@ var TMC_ICONOS = (function(){
     else if(pt==='cuadros') pat='<pattern id="tcPat" width="120" height="120" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="'+pc+'" opacity="'+op+'"/><rect x="60" y="60" width="60" height="60" fill="'+pc+'" opacity="'+op+'"/></pattern>';
     else if(pt==='estrellitas') pat='<pattern id="tcPat" width="170" height="170" patternUnits="userSpaceOnUse"><polygon transform="translate(40 40)" points="0,-14 4,-4 14,-4 6,3 9,13 0,7 -9,13 -6,3 -14,-4 -4,-4" fill="'+pc+'" opacity="'+op+'"/><polygon transform="translate(125 118) scale(.7)" points="0,-14 4,-4 14,-4 6,3 9,13 0,7 -9,13 -6,3 -14,-4 -4,-4" fill="'+pc+'" opacity="'+op+'"/></pattern>';
     var vg = F.vineta===false ? '' : '<radialGradient id="tcVg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>';
-    fill='<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcBg)"/>'+(pat?'<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcPat)"/>':'')+(vg?'<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcVg)"/>':'');
+    var bi=tcImg(F.img), bim=bi?'<image href="'+bi+'" x="'+g.x0.toFixed(1)+'" y="0" width="'+g.W.toFixed(1)+'" height="900" preserveAspectRatio="xMidYMid '+(F.ajuste==='ajustar'?'meet':'slice')+'" opacity="'+Math.max(0,Math.min(1,tcN(F.opimg,1)))+'"/>':'';
+    fill='<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcBg)"/>'+(pat?'<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcPat)"/>':'')+bim+(vg?'<rect x="-800" y="-400" width="3200" height="1800" fill="url(#tcVg)"/>':'');
     return {defs:defs+pat+vg, fill:fill};
   }
   function tcSuelo(S,g){
@@ -5090,6 +5093,10 @@ var TMC_ICONOS = (function(){
         var def=TMC_ICONOS.lista[p.n]; if(!def) continue;
         var s=tcN(p.s,1)*1.1*m, ex=p.espejo?-1:1;
         out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+(s*ex).toFixed(3)+' '+s.toFixed(3)+')"><g class="'+a.c+'"'+a.s+'>'+def[3](tcC(p.c1,def[1]),tcC(p.c2,def[2]))+'</g></g>';
+      } else if(t==='imagen'){
+        var src=tcImg(p.src); if(!src) continue;
+        var wd=tcN(p.s,1)*200*m, ar=Math.max(.1,Math.min(10,tcN(p.ar,1))), ht=wd/ar, exi=p.espejo?-1:1, opi=Math.max(0,Math.min(1,tcN(p.op,1)));
+        out+='<g transform="translate('+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+exi+' 1)"><g class="'+a.c+'"'+a.s+'><image href="'+src+'" x="'+(-wd/2).toFixed(1)+'" y="'+(-ht/2).toFixed(1)+'" width="'+wd.toFixed(1)+'" height="'+ht.toFixed(1)+'" preserveAspectRatio="xMidYMid meet" opacity="'+opi+'"/></g></g>';
       } else if(t==='banderines' || t==='luces'){
         var de=tcN(p.de,0), aa=tcN(p.a,100), x1=X(de)-(de<=0?20:0), x2=X(aa)+(aa>=100?20:0), y=Y(p.y), sag=tcN(p.caida,60)*g.s, n=Math.max(3,Math.round(tcN(p.n,16)*g.W/1600*(aa-de)/100));
         if(t==='banderines'){
