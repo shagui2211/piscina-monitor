@@ -231,8 +231,8 @@
      "y": 5,
      "de": 0,
      "a": 100,
-     "n": 22,
-     "caida": 50,
+     "n": 19,
+     "caida": 93,
      "cols": [
       "#ffd23f",
       "#ff4f8b",
@@ -243,24 +243,25 @@
     {
      "t": "icono",
      "n": "abeto",
-     "x": 6,
-     "y": 60,
+     "x": 12.9,
+     "y": 87.1,
      "s": 1.7,
-     "anim": "balanceo"
+     "anim": "latido"
     },
     {
      "t": "icono",
      "n": "muneco",
-     "x": 95,
-     "y": 64,
+     "x": 93.8,
+     "y": 89.3,
      "s": 1.5,
-     "anim": "flotar"
+     "anim": "",
+     "rot": -3
     },
     {
      "t": "icono",
      "n": "campana",
-     "x": 35.7,
-     "y": 91.4,
+     "x": 34.7,
+     "y": 86,
      "s": 0.9,
      "anim": "balanceo"
     },
@@ -276,10 +277,10 @@
     {
      "t": "icono",
      "n": "regalo",
-     "x": 64.6,
-     "y": 89.2,
+     "x": 60.9,
+     "y": 87.8,
      "s": 1,
-     "anim": "latido",
+     "anim": "balanceo",
      "c1": "#e8433f",
      "c2": "#ffd23f"
     }
@@ -291,7 +292,7 @@
     "csub": "#33507a",
     "borde": "#ffffff",
     "fuente": "cursiva",
-    "alto": 120
+    "alto": 101
    },
    "tarjetas": "normal",
    "titulos": "claro",
