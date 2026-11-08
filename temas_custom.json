@@ -27,17 +27,18 @@
     },
     {
      "t": "icono",
-     "n": "fantasma",
-     "x": 17,
-     "y": 77,
+     "n": "nota",
+     "x": 65.2,
+     "y": 11.6,
      "s": 1.1,
-     "anim": "flotar",
+     "anim": "balanceo",
      "dalc": 48,
      "dest": 14,
      "dvel": 2.8,
-     "c1": "#f4f7ff",
-     "c2": "#1a1030",
-     "espejo": false
+     "c1": "#7a5cff",
+     "c2": "#4b2fd1",
+     "espejo": false,
+     "delante": true
     },
     {
      "t": "banderines",
@@ -84,6 +85,29 @@
       "#4aa3e0",
       "#ffd23f"
      ]
+    },
+    {
+     "t": "icono",
+     "n": "sombrerofiesta",
+     "x": 80.6,
+     "y": 90.9,
+     "s": 1,
+     "anim": "latido",
+     "c1": "#ff4f8b",
+     "c2": "#ffd23f",
+     "rot": 26,
+     "delante": true
+    },
+    {
+     "t": "icono",
+     "n": "fuegos",
+     "x": 23.4,
+     "y": 90.7,
+     "s": 1,
+     "anim": "giro",
+     "c1": "#f34e87",
+     "c2": "#d7b33a",
+     "delante": true
     }
    ],
    "rotulo": {
@@ -91,7 +115,7 @@
     "c": "#ffffff",
     "borde": "#2a1055",
     "fuente": "cursiva",
-    "alto": 128
+    "alto": 90
    },
    "tarjetas": "normal",
    "titulos": "auto",
@@ -129,19 +153,22 @@
     {
      "t": "icono",
      "n": "palmera",
-     "x": 8.2,
-     "y": 84.8,
+     "x": 11.9,
+     "y": 88.5,
      "s": 2,
-     "anim": ""
+     "anim": "",
+     "delante": true,
+     "op": 0.55
     },
     {
      "t": "icono",
      "n": "sombrilla",
-     "x": 91.3,
-     "y": 86.5,
+     "x": 91,
+     "y": 92.2,
      "s": 1.5,
      "anim": "",
-     "rot": -16
+     "rot": -16,
+     "delante": true
     },
     {
      "t": "icono",
@@ -199,8 +226,8 @@
     "fuente": "sans",
     "alto": 110
    },
-   "tarjetas": "claras",
-   "titulos": "auto",
+   "tarjetas": "normal",
+   "titulos": "claro",
    "fechas": [],
    "semanal": []
   },
@@ -243,27 +270,30 @@
     {
      "t": "icono",
      "n": "abeto",
-     "x": 12.9,
-     "y": 87.1,
+     "x": 13.7,
+     "y": 88.5,
      "s": 1.7,
-     "anim": "latido"
+     "anim": "latido",
+     "delante": true
     },
     {
      "t": "icono",
      "n": "muneco",
-     "x": 93.8,
-     "y": 89.3,
+     "x": 92.1,
+     "y": 90.2,
      "s": 1.5,
      "anim": "",
-     "rot": -3
+     "rot": -3,
+     "delante": true
     },
     {
      "t": "icono",
      "n": "campana",
-     "x": 34.7,
-     "y": 86,
+     "x": 68.4,
+     "y": 89.4,
      "s": 0.9,
-     "anim": "balanceo"
+     "anim": "balanceo",
+     "delante": true
     },
     {
      "t": "lluvia",
@@ -277,12 +307,14 @@
     {
      "t": "icono",
      "n": "regalo",
-     "x": 60.9,
-     "y": 87.8,
+     "x": 35.5,
+     "y": 89.1,
      "s": 1,
-     "anim": "balanceo",
+     "anim": "flotar",
      "c1": "#e8433f",
-     "c2": "#ffd23f"
+     "c2": "#ffd23f",
+     "delante": false,
+     "rot": -19
     }
    ],
    "rotulo": {
