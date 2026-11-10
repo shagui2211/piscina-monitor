@@ -187,7 +187,7 @@ function slug(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[
 function idLibre(base){ var id='x_'+slug(base), n=2; base=id; while(DATA.temas[id]){ id=base+'_'+(n++); } return id; }
 
 /* ── cambios ── */
-function touch(sinRehacer){ if($('selInt').value){ $('selInt').value=''; } dirty=true; try{ var n=Math.round(JSON.stringify(DATA).length/1024), el=$('kbtot'); el.textContent='Archivo: '+n+' KB'+(n>1500?' · demasiado grande: reduce las imágenes':''); el.style.color=n>1500?'var(--wa)':'var(--mu)'; }catch(x){} try{ localStorage.setItem('tm_editor_borrador',JSON.stringify(DATA)); }catch(e){} clearTimeout(tmr); tmr=setTimeout(enviar,90); if(!sinRehacer) pintaAsas(); }
+function touch(sinRehacer){ if($('selInt').value){ $('selInt').value=''; } dirty=true; try{ var n=Math.round(JSON.stringify(DATA).length/1024), el=$('kbtot'); el.textContent='Archivo: '+n+' KB'+(n>1500?' · demasiado grande: reduce las imágenes':''); el.style.color=n>1500?'var(--wa)':'var(--mu)'; }catch(x){} try{ localStorage.setItem('tm_editor_borrador_park',JSON.stringify(DATA)); }catch(e){} clearTimeout(tmr); tmr=setTimeout(enviar,90); if(!sinRehacer) pintaAsas(); }
 function enviar(){ var f=$('fr').contentWindow; if(!f||!listo) return; if($('selInt').value) f.postMessage({tmInt:$('selInt').value},'*'); else if($('chSin').checked) f.postMessage({tmSin:1},'*'); else if(T()) f.postMessage({tmSpec:clone(T())},'*'); }
 
 /* ── controles ── */
@@ -369,7 +369,7 @@ window.addEventListener('beforeunload',function(e){ if(dirty){ e.preventDefault(
 /* ── arranque: lee temas_custom.json si existe; si no, el borrador guardado en este navegador ── */
 function arranca(j){
   var m=j&&(j.temas&&!Array.isArray(j.temas)?j.temas:j); if(m&&typeof m==='object'&&Object.keys(m).length) DATA={temas:m};
-  else { try{ var b=JSON.parse(localStorage.getItem('tm_editor_borrador')||'null'); if(b&&b.temas&&Object.keys(b.temas).length) DATA=b; }catch(e){} }
+  else { try{ var b=JSON.parse(localStorage.getItem('tm_editor_borrador_park')||'null'); if(b&&b.temas&&Object.keys(b.temas).length) DATA=b; }catch(e){} }
   var ks=Object.keys(DATA.temas); curId=ks[0]||''; listaTemas(); rehacer(); ajustaEscala(); cargaFrame();
 }
 if(location.protocol==='file:') arranca(null);
