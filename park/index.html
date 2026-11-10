@@ -8,7 +8,7 @@
 <meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content="Panel de monitorización en tiempo real — parámetros del agua y clima de la piscina exterior"/>
-<title>Piscina Exterior</title>
+<title>Piscinas Valentin Grand Park</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -1363,6 +1363,11 @@ body.tm-strip:not(.tv) main{padding-bottom:calc(var(--tm-res,16vh) + 2vh) !impor
 body.tema-on #tema-fg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 </style>
 
+<style>/* PARK: logo vertical (3 lineas), mas alto que el de Somni */
+body.tv .logo{width:auto !important;max-height:none !important;}
+body.tv #hotel-logo{width:auto !important;height:68px;max-height:68px !important;}
+body.tv.dtv720 #hotel-logo{height:42px;max-height:42px !important;}
+@media (max-height:760px){body.tv #hotel-logo{height:42px;max-height:42px !important;}}</style>
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
@@ -1378,9 +1383,9 @@ body.tema-on #tema-fg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 <div id="fog-overlay" aria-hidden="true"><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div><div class="fog-band"></div></div>
 <header>
   <div class="header-left">
-    <div class="logo"><img id="hotel-logo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" style="visibility:hidden"</div>
+    <div class="logo"><img id="hotel-logo" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" style="visibility:hidden"></div>
     <div>
-      <div class="header-title-main" data-i18n="title">Piscina Exterior</div>
+      <div class="header-title-main" data-i18n="title">Piscinas</div>
     </div>
   </div>
   <div class="status-pill">
@@ -1441,7 +1446,7 @@ var currentLang = 'es';
 var isTvMode = false;
 var I18N = {
   es: {
-    title:         'Piscina Exterior',
+    title:         'Piscinas',
     sec_agua:      'Parámetros del agua',
     title_multi:   'Piscinas',
     err_conn:      'Error de conexión',
@@ -1489,7 +1494,7 @@ var I18N = {
     meteo_calculando_min_pl: '{n} min restantes',
   },
   en: {
-    title:         'Outdoor Pool',
+    title:         'Pools',
     sec_agua:      'Water parameters',
     title_multi:   'Pools',
     err_conn:      'Connection error',
@@ -1537,7 +1542,7 @@ var I18N = {
     meteo_calculando_min_pl: '{n} min remaining',
   },
   de: {
-    title:         'Außenpool',
+    title:         'Schwimmbäder',
     sec_agua:      'Wasserparameter',
     title_multi:   'Schwimmbäder',
     err_conn:      'Verbindungsfehler',
@@ -1585,7 +1590,7 @@ var I18N = {
     meteo_calculando_min_pl: 'noch {n} Min.',
   },
   fr: {
-    title:         'Piscine Extérieure',
+    title:         'Piscines',
     sec_agua:      "Paramètres de l'eau",
     title_multi:   'Piscines',
     err_conn:      'Erreur de connexion',
@@ -1633,7 +1638,7 @@ var I18N = {
     meteo_calculando_min_pl: '{n} min restantes',
   },
   it: {
-    title:         'Piscina Esterna',
+    title:         'Piscine',
     sec_agua:      "Parametri dell'acqua",
     title_multi:   'Piscine',
     err_conn:      'Errore di connessione',
@@ -2653,7 +2658,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='c05c56b5eb79';
+  var BUILD_ID='2d796ea608f4';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
