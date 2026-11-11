@@ -310,8 +310,8 @@ function editaPieza(p){
     if(p.t==='banderines') k.push(fld(p,'largo','num',{lbl:'Tamaño bandera',min:20,max:110,def:50}));
     k.push(colores(p,'cols',p.t==='luces'?['#ffd23f','#ff4f8b','#4aa3e0','#6bdc7a']:['#e8433f','#ffffff']));
   } else if(p.t==='lluvia'){
-    k.push(fld(p,'tipo','sel',{lbl:'Tipo',def:'confeti',o:[['confeti','Confeti'],['globos','Globos que suben'],['copos','Copos de nieve'],['petalos','Pétalos'],['corazones','Corazones'],['burbujas','Burbujas'],['brasas','Brasas / chispas']]}),fld(p,'cant','num',{lbl:'Cantidad',min:3,max:80,def:30}));
-    if(!/corazones|burbujas|brasas/.test(p.tipo||'confeti')) k.push(colores(p,'cols',['#ffffff','#ffd23f','#ff4f8b','#4aa3e0']));
+    k.push(fld(p,'tipo','sel',{lbl:'Tipo',def:'confeti',o:[['confeti','Confeti'],['globos','Globos que suben'],['copos','Copos de nieve'],['petalos','Pétalos'],['corazones','Corazones'],['burbujas','Burbujas'],['brasas','Brasas / chispas'],['hojas','Hojas de otoño']]}),fld(p,'cant','num',{lbl:'Cantidad',min:3,max:80,def:30}));
+    if(!/corazones|burbujas|brasas/.test(p.tipo||'confeti')) k.push(colores(p,'cols',p.tipo==='hojas'?['#d9731a','#b5451b','#e8a317','#8a4b1e','#c0392b']:['#ffffff','#ffd23f','#ff4f8b','#4aa3e0']));
   } else if(p.t==='estrellas'){
     k.push(fld(p,'cant','num',{lbl:'Cantidad',min:5,max:200,def:60}),fld(p,'ymax','num',{lbl:'Hasta altura %',min:5,max:100,def:50}),fld(p,'c','color',{lbl:'Color',def:'#ffffff'}));
   } else if(p.t==='nubes'){
