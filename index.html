@@ -1226,6 +1226,12 @@ body.tema-on #tema-bg .tm-art{position:absolute;inset:0;width:100%;height:100%;}
 /* confeti */
 #tema-bg .tm-cf,#tema-fg .tm-cf{position:absolute;top:-4vh;left:var(--x);width:calc(var(--u)*.7);height:calc(var(--u)*1.2);background:var(--c);opacity:.9;animation:tmFall var(--d) linear var(--dl) infinite;will-change:transform;}
 @keyframes tmFall{from{transform:translate3d(0,0,0) rotate(0)}to{transform:translate3d(var(--dx),110vh,0) rotate(720deg)}}
+/* HOJAS de otono: caen balanceandose y girando */
+#tema-bg .tm-lf,#tema-fg .tm-lf{position:absolute;top:-8vh;left:var(--x);width:calc(var(--u)*var(--s));height:calc(var(--u)*var(--s)*1.25);animation:tmLfFall var(--d) linear var(--dl) infinite;will-change:transform;}
+#tema-bg .tm-lf svg,#tema-fg .tm-lf svg{display:block;width:100%;height:100%;overflow:visible;animation:tmLfSpin var(--r) ease-in-out var(--dl) infinite alternate;transform-origin:50% 50%;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28));}
+@keyframes tmLfFall{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(calc(var(--dx)*.55),28vh,0)}50%{transform:translate3d(calc(var(--dx)*.1),56vh,0)}75%{transform:translate3d(calc(var(--dx)*.9),84vh,0)}100%{transform:translate3d(var(--dx),116vh,0)}}
+@keyframes tmLfSpin{0%{transform:rotate(-55deg) scaleX(1)}35%{transform:rotate(-10deg) scaleX(.35)}70%{transform:rotate(35deg) scaleX(.9)}100%{transform:rotate(70deg) scaleX(.45)}}
+
 /* burbujas de la cerveza */
 #tema-bg .tm-bub,#tema-fg .tm-bub{animation:tmBub 3.2s ease-in infinite;}
 @keyframes tmBub{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-120px);opacity:0}}
@@ -2652,7 +2658,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='40957873ec4c';
+  var BUILD_ID='47131afa42b2';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5074,11 +5080,12 @@ var TMC_ICONOS = (function(){
   }
   /* partículas que caen o suben (DOM, detrás de las tarjetas) */
   function tcLluvia(p){
-    var tipo=p.tipo||'confeti', n=Math.max(1,Math.min(80,Math.round(tcN(p.cant,30)))), cols=tcCols(p.cols,['#ffffff','#ffd23f','#ff4f8b','#4aa3e0']), o='';
+    var tipo=p.tipo||'confeti', n=Math.max(1,Math.min(80,Math.round(tcN(p.cant,30)))), cols=tcCols(p.cols,(tipo==='hojas')?['#d9731a','#b5451b','#e8a317','#8a4b1e','#c0392b']:['#ffffff','#ffd23f','#ff4f8b','#4aa3e0']), o='';
     return dom('',n,function(i){
       var c=cols[i%cols.length], x=R(1,97).toFixed(1), dl='-'+R(0,30).toFixed(1)+'s';
       if(tipo==='globos')   return '<i class="tm-bal" style="--x:'+x+'%;--c:'+c+';--d:'+R(30,48).toFixed(1)+'s;--dl:'+dl+'"></i>';
       if(tipo==='copos')    { var s=R(.6,1.3).toFixed(2); return '<b class="tm-cf" style="--x:'+x+'%;--c:'+c+';--d:'+R(11,20).toFixed(1)+'s;--dl:'+dl+';--dx:'+R(-5,5).toFixed(1)+'vw;width:calc(var(--u)*'+s+');height:calc(var(--u)*'+s+');border-radius:50%;opacity:.92"></b>'; }
+      if(tipo==='hojas')    { var TCL=['M12 1 C16 5 15 8 19 9 C17 12 19 15 21 17 C17 18 15 17 14 20 C13 23 13 25 12.5 29 L11.5 29 C11 25 11 23 10 20 C9 17 7 18 3 17 C5 15 7 12 5 9 C9 8 8 5 12 1Z','M12 1 L14.2 6.5 L18 4.8 L17 10 L22 9.5 L18.5 13.5 L21 16.5 L15.5 17 L16 20 L12.8 19 L12.5 29 L11.5 29 L11.2 19 L8 20 L8.5 17 L3 16.5 L5.5 13.5 L2 9.5 L7 10 L6 4.8 L9.8 6.5Z','M12 1 C19 7 20 16 12.5 27 L11.5 27 C4 16 5 7 12 1Z'], f=Math.floor(R(0,3)); return '<i class="tm-lf" style="--x:'+x+'%;--s:'+R(1.5,2.7).toFixed(2)+';--d:'+R(13,24).toFixed(1)+'s;--dl:'+dl+';--dx:'+R(-14,14).toFixed(1)+'vw;--r:'+R(2.4,4.6).toFixed(1)+'s"><svg viewBox="0 0 24 30" aria-hidden="true"><path d="'+TCL[f]+'" fill="'+c+'"/><path d="M12 4 V30" stroke="rgba(0,0,0,.3)" stroke-width="1" fill="none"/></svg></i>'; }
       if(tipo==='petalos')  return '<b class="tm-cf pk" style="--x:'+x+'%;--c:'+c+';--d:'+R(10,18).toFixed(1)+'s;--dl:'+dl+';--dx:'+R(-8,8).toFixed(1)+'vw"></b>';
       if(tipo==='corazones')return '<i class="tm-ht" style="--x:'+x+'%;--w:'+R(1.6,3.2).toFixed(1)+';--d:'+R(20,36).toFixed(1)+'s;--dl:'+dl+'"></i>';
       if(tipo==='burbujas') return '<i class="tm-sb" style="--x:'+x+'%;--w:'+R(2.2,5.5).toFixed(1)+';--d:'+R(16,30).toFixed(1)+'s;--dl:'+dl+'"></i>';
