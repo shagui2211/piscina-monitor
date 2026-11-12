@@ -1460,6 +1460,9 @@ var I18N = {
     no_data:       'Falta de datos',
     no_pools:      'Sin piscinas activas',
     lbl_manual:    'Medición manual',
+    cierre_temp:   'Cerrada por temporada',
+    cierre_mant:   'Cerrada por trabajos de mantenimiento',
+    cierre_mant_sub: 'Disculpen las molestias',
     pn_piscina_grande:       'Piscina Principal',
     pn_piscina_climatizada:  'Climatizada',
     lbl_sala:      'Sala',
@@ -1508,6 +1511,9 @@ var I18N = {
     no_data:       'No data',
     no_pools:      'No active pools',
     lbl_manual:    'Manual reading',
+    cierre_temp:   'Closed for the season',
+    cierre_mant:   'Closed for maintenance work',
+    cierre_mant_sub: 'We apologise for any inconvenience',
     pn_piscina_grande:       'Main Pool',
     pn_piscina_climatizada:  'Heated Pool',
     lbl_sala:      'Room',
@@ -1556,6 +1562,9 @@ var I18N = {
     no_data:       'Keine Daten',
     no_pools:      'Keine aktiven Becken',
     lbl_manual:    'Manuelle Messung',
+    cierre_temp:   'Saisonbedingt geschlossen',
+    cierre_mant:   'Wegen Wartungsarbeiten geschlossen',
+    cierre_mant_sub: 'Wir bitten um Ihr Verständnis',
     pn_piscina_grande:       'Hauptbecken',
     pn_piscina_climatizada:  'Beheiztes Becken',
     lbl_sala:      'Raum',
@@ -1604,6 +1613,9 @@ var I18N = {
     no_data:       'Données manquantes',
     no_pools:      'Aucune piscine active',
     lbl_manual:    'Mesure manuelle',
+    cierre_temp:   'Fermée pour la saison',
+    cierre_mant:   'Fermée pour travaux de maintenance',
+    cierre_mant_sub: 'Veuillez nous excuser pour la gêne occasionnée',
     pn_piscina_grande:       'Piscine principale',
     pn_piscina_climatizada:  'Piscine chauffée',
     lbl_sala:      'Salle',
@@ -1652,6 +1664,9 @@ var I18N = {
     no_data:       'Dati mancanti',
     no_pools:      'Nessuna piscina attiva',
     lbl_manual:    'Misura manuale',
+    cierre_temp:   'Chiusa per la stagione',
+    cierre_mant:   'Chiusa per lavori di manutenzione',
+    cierre_mant_sub: 'Ci scusiamo per il disagio',
     pn_piscina_grande:       'Piscina principale',
     pn_piscina_climatizada:  'Piscina riscaldata',
     lbl_sala:      'Sala',
@@ -2082,6 +2097,7 @@ function refreshPoolNames(){
     /* al cambiar de idioma, el aviso de la piscina (medicion manual / sin datos / error) se traduce al instante */
     var msg=document.getElementById('msg-'+cleanId(p.id)), tx=poolMsgText(p);
     if(msg && tx!==null) msg.textContent=tx;
+    if(p._cierre) pintaCierre(p);
   });
 }
 function poolHTML(p, multi){
@@ -2106,7 +2122,9 @@ function poolHTML(p, multi){
       +(p.climatizada
          ? '<div class="card-split">'+card('temp','lbl_agua_s','&#176;C','',false)+card('amb','lbl_sala','&#176;C','',false)+'</div>'
          : card('temp','lbl_temp','&#176;C','',false))
-    +'</div></section>';
+    +'</div>'
+    +'<div class="pool-cierre" id="cierre-'+id+'"><div class="pc-t"></div><div class="pc-s"></div></div>'
+    +'</section>';
 }
 function ensurePools(list){
   var box=document.getElementById('pools');
@@ -2143,12 +2161,23 @@ function fmtMedido(iso){
   }
   return hm;
 }
+function pintaCierre(p){
+  var cb=document.getElementById('cierre-'+cleanId(p.id)); if(!cb||!p._cierre) return;
+  var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s');
+  ct.textContent=t(p._cierre==='temporada'?'cierre_temp':'cierre_mant');
+  cs.textContent=(p._cierre==='mantenimiento') ? t('cierre_mant_sub') : '';
+}
 function renderPools(list, errMode){
   ensurePools(list);
   lastPools=list;
   list.forEach(function(p){
     var id=cleanId(p.id);
     var msg=document.getElementById('msg-'+id);
+    /* CIERRE (rt277): temporada / mantenimiento = cartel sin lecturas. La cerrada tecnica no llega marcada: sigue con lecturas manuales */
+    var cierre=(p.cierre==='temporada'||p.cierre==='mantenimiento')?p.cierre:'';
+    p._cierre=cierre;
+    var secC=document.querySelector('.pool[data-pid="'+id+'"]'); if(secC) secC.classList.toggle('is-closed',!!cierre);
+    if(cierre){ pintaCierre(p); if(msg){ msg.textContent=''; msg.className='pool-msg'; } p._mk=''; return; }
     var manual=(p.origen==='manual');   /* lectura manual (DPD1) mientras no hay sensores */
     var secP=document.querySelector('.pool[data-pid="'+id+'"]');
     if(secP) secP.classList.toggle('no-orp', manual);   /* sin EMEC no hay ORP: se oculta; con datos del EMEC vuelve sola */
@@ -2624,6 +2653,7 @@ async function load(){
     lastTamb = d.temp_ambiente != null ? +d.temp_ambiente : null;
     lastHum  = d.humedad       != null ? +d.humedad       : null;
     var list = DEMO ? demoPools(d, DEMO) : (legacy ? legacyToPools(d) : (d.piscinas||[]).filter(function(p){ return p.tipo!=='aljibe'; }));   /* PARK: en las TV solo piscinas */
+    try{ var _qs=new URLSearchParams(location.search), _cq=_qs.get('cierre'); if(_cq && list.length){ var _lp=list[list.length-1]; _lp.cierre=_cq; } }catch(_e){}   /* prueba del cartel de cierre */
     if(!list.length){ renderNoPools(t('no_pools')); }
     else { renderPools(list, false); }
     alertCheck(list);
@@ -2665,7 +2695,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b5ca8d5ce118';
+  var BUILD_ID='1d945c184355';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -3997,6 +4027,20 @@ body.tv #pools.n4 .card-split .card-value{font-size:min(2.5vh,2.1vw) !important;
 .card.empty-card{border-left-color:var(--border);}
 .card.empty-card .card-value{color:var(--muted)!important;}
 .pool-empty{padding:26px 10px;text-align:center;color:var(--muted);font-size:1.1rem;}
+/* cartel de cierre (temporada / mantenimiento) */
+.pool-cierre{display:none;}
+.pool.is-closed .grid-main{display:none !important;}
+.pool.is-closed .pool-cierre{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35em;text-align:center;padding:26px 16px;border:1px dashed rgba(255,255,255,.4);border-radius:14px;background:rgba(0,0,0,.32);color:#fff;}
+.pc-t{font-size:1.6rem;font-weight:700;letter-spacing:.02em;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+.pc-s{font-size:1.05rem;opacity:.88;}
+.pc-s:empty{display:none;}
+body.tv #pools.multi .pool.is-closed .pool-cierre{flex:1 1 0;min-height:0;padding:.6vh 1.2vw;border-radius:1.2vh;}
+body.tv #pools.multi .pool.is-closed .pool-cierre{flex-direction:row;gap:.7em;}
+body.tv #pools.multi .pc-t{font-size:min(3.2vh,2.8vw);}
+body.tv #pools.multi .pc-s{font-size:min(2.4vh,2vw);}
+body.tv #pools.multi .pc-s:not(:empty)::before{content:'\00b7';margin-right:.7em;}
+body.tv #pools.n1 .pc-t{font-size:min(6vh,5vw);}
+body.tv #pools.n1 .pc-s{font-size:min(3vh,2.4vw);}
 #pools.multi .card-ppm [data-i18n="lbl_ppm_nota"]{display:none!important;}
 #pools.multi .bar-wrap{display:none;}
 /* TV con varias piscinas: pantalla de alto fijo repartida por filas (todas las resoluciones).
