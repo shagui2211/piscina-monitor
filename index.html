@@ -1455,7 +1455,6 @@ var I18N = {
     no_pools:      'Sin piscinas activas',
     lbl_manual:    'Medición manual',
     cierre_temp:   'Cerrada por temporada',
-    cierre_temp_sub: 'Reabre en primavera',
     cierre_mant:   'Uso restringido por trabajos de mantenimiento',
     pn_piscina_grande:       'Piscina Principal',
     pn_piscina_climatizada:  'Climatizada',
@@ -1506,7 +1505,6 @@ var I18N = {
     no_pools:      'No active pools',
     lbl_manual:    'Manual reading',
     cierre_temp:   'Closed for the season',
-    cierre_temp_sub: 'Reopens in spring',
     cierre_mant:   'Use restricted due to maintenance work',
     pn_piscina_grande:       'Main Pool',
     pn_piscina_climatizada:  'Heated Pool',
@@ -1557,7 +1555,6 @@ var I18N = {
     no_pools:      'Keine aktiven Becken',
     lbl_manual:    'Manuelle Messung',
     cierre_temp:   'Saisonbedingt geschlossen',
-    cierre_temp_sub: 'Wiedereröffnung im Frühling',
     cierre_mant:   'Nutzung wegen Wartungsarbeiten eingeschränkt',
     pn_piscina_grande:       'Hauptbecken',
     pn_piscina_climatizada:  'Beheiztes Becken',
@@ -1608,7 +1605,6 @@ var I18N = {
     no_pools:      'Aucune piscine active',
     lbl_manual:    'Mesure manuelle',
     cierre_temp:   'Fermée pour la saison',
-    cierre_temp_sub: 'Réouverture au printemps',
     cierre_mant:   'Utilisation restreinte pour travaux de maintenance',
     pn_piscina_grande:       'Piscine principale',
     pn_piscina_climatizada:  'Piscine chauffée',
@@ -1659,7 +1655,6 @@ var I18N = {
     no_pools:      'Nessuna piscina attiva',
     lbl_manual:    'Misura manuale',
     cierre_temp:   'Chiusa per la stagione',
-    cierre_temp_sub: 'Riapre in primavera',
     cierre_mant:   'Uso limitato per lavori di manutenzione',
     pn_piscina_grande:       'Piscina principale',
     pn_piscina_climatizada:  'Piscina riscaldata',
@@ -2159,7 +2154,7 @@ function pintaCierre(p){
   var cb=document.getElementById('cierre-'+cleanId(p.id)); if(!cb||!p._cierre) return;
   var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s');
   ct.textContent=t(p._cierre==='temporada'?'cierre_temp':'cierre_mant');
-  cs.textContent=p.cierre_texto ? String(p.cierre_texto) : (p._cierre==='temporada' ? t('cierre_temp_sub') : '');
+  cs.textContent='';
 }
 function renderPools(list, errMode){
   ensurePools(list);
@@ -2647,7 +2642,7 @@ async function load(){
     lastTamb = d.temp_ambiente != null ? +d.temp_ambiente : null;
     lastHum  = d.humedad       != null ? +d.humedad       : null;
     var list = DEMO ? demoPools(d, DEMO) : (legacy ? legacyToPools(d) : (d.piscinas||[]));
-    try{ var _qs=new URLSearchParams(location.search), _cq=_qs.get('cierre'); if(_cq && list.length){ var _lp=list[list.length-1]; _lp.cierre=_cq; if(_qs.get('cierre_texto')) _lp.cierre_texto=_qs.get('cierre_texto'); } }catch(_e){}   /* prueba del cartel de cierre */
+    try{ var _qs=new URLSearchParams(location.search), _cq=_qs.get('cierre'); if(_cq && list.length){ var _lp=list[list.length-1]; _lp.cierre=_cq; } }catch(_e){}   /* prueba del cartel de cierre */
     if(!list.length){ renderNoPools(t('no_pools')); }
     else { renderPools(list, false); }
     alertCheck(list);
@@ -2688,7 +2683,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='97cc9d7aa32c';
+  var BUILD_ID='28063822c72d';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
