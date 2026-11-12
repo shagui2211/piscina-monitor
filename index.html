@@ -1455,7 +1455,8 @@ var I18N = {
     no_pools:      'Sin piscinas activas',
     lbl_manual:    'Medición manual',
     cierre_temp:   'Cerrada por temporada',
-    cierre_mant:   'Uso restringido por trabajos de mantenimiento',
+    cierre_mant:   'Cerrada por trabajos de mantenimiento',
+    cierre_mant_sub: 'Disculpen las molestias',
     pn_piscina_grande:       'Piscina Principal',
     pn_piscina_climatizada:  'Climatizada',
     lbl_sala:      'Sala',
@@ -1505,7 +1506,8 @@ var I18N = {
     no_pools:      'No active pools',
     lbl_manual:    'Manual reading',
     cierre_temp:   'Closed for the season',
-    cierre_mant:   'Use restricted due to maintenance work',
+    cierre_mant:   'Closed for maintenance work',
+    cierre_mant_sub: 'We apologise for any inconvenience',
     pn_piscina_grande:       'Main Pool',
     pn_piscina_climatizada:  'Heated Pool',
     lbl_sala:      'Room',
@@ -1555,7 +1557,8 @@ var I18N = {
     no_pools:      'Keine aktiven Becken',
     lbl_manual:    'Manuelle Messung',
     cierre_temp:   'Saisonbedingt geschlossen',
-    cierre_mant:   'Nutzung wegen Wartungsarbeiten eingeschränkt',
+    cierre_mant:   'Wegen Wartungsarbeiten geschlossen',
+    cierre_mant_sub: 'Wir bitten um Ihr Verständnis',
     pn_piscina_grande:       'Hauptbecken',
     pn_piscina_climatizada:  'Beheiztes Becken',
     lbl_sala:      'Raum',
@@ -1605,7 +1608,8 @@ var I18N = {
     no_pools:      'Aucune piscine active',
     lbl_manual:    'Mesure manuelle',
     cierre_temp:   'Fermée pour la saison',
-    cierre_mant:   'Utilisation restreinte pour travaux de maintenance',
+    cierre_mant:   'Fermée pour travaux de maintenance',
+    cierre_mant_sub: 'Veuillez nous excuser pour la gêne occasionnée',
     pn_piscina_grande:       'Piscine principale',
     pn_piscina_climatizada:  'Piscine chauffée',
     lbl_sala:      'Salle',
@@ -1655,7 +1659,8 @@ var I18N = {
     no_pools:      'Nessuna piscina attiva',
     lbl_manual:    'Misura manuale',
     cierre_temp:   'Chiusa per la stagione',
-    cierre_mant:   'Uso limitato per lavori di manutenzione',
+    cierre_mant:   'Chiusa per lavori di manutenzione',
+    cierre_mant_sub: 'Ci scusiamo per il disagio',
     pn_piscina_grande:       'Piscina principale',
     pn_piscina_climatizada:  'Piscina riscaldata',
     lbl_sala:      'Sala',
@@ -2154,7 +2159,7 @@ function pintaCierre(p){
   var cb=document.getElementById('cierre-'+cleanId(p.id)); if(!cb||!p._cierre) return;
   var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s');
   ct.textContent=t(p._cierre==='temporada'?'cierre_temp':'cierre_mant');
-  cs.textContent='';
+  cs.textContent=(p._cierre==='mantenimiento') ? t('cierre_mant_sub') : '';
 }
 function renderPools(list, errMode){
   ensurePools(list);
@@ -2683,7 +2688,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='28063822c72d';
+  var BUILD_ID='9a6731392283';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
