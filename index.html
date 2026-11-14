@@ -4116,6 +4116,20 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   body.tv #pools.cols2 .card-split{gap:.3vw !important;}
   body.tv #pools.cols2 .card-split .card-value{font-size:min(2.3vh,1.4vw) !important;}
 }
+
+/* 5 a 8 piscinas (vertical): una columna, letra mas pequena para que quepan las 8 filas */
+@media(orientation:portrait){
+  body.tv #pools.cols2{flex:6 1 0;}
+  body.tv #pools.cols2 .grid-main{gap:1vw !important;}
+  body.tv #pools.cols2 .grid-main .card{padding:.3vh 1.2vw !important;}
+  body.tv #pools.cols2 .card-value{font-size:min(2.6vh,4.6vw) !important;}
+  body.tv #pools.cols2 .card-label{font-size:min(1.05vh,1.38vw) !important;letter-spacing:0 !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;line-height:1.1 !important;}
+  body.tv #pools.cols2 .card-unit{font-size:min(1.3vh,1.8vw) !important;}
+  body.tv #pools.cols2 .section-title,body.tv #pools.cols2 .pool-msg{font-size:min(1.5vh,2.3vw) !important;margin:.1vh 0 .2vh !important;}
+  body.tv #pools.cols2 .card-split .card-value{font-size:min(1.7vh,2.7vw) !important;}
+  body.tv #pools.cols2 .card-split .card-unit{font-size:min(1vh,1.4vw) !important;}
+  body.tv #pools.cols2 .card-split{gap:.6vw !important;}
+}
 </style>
 <div id="debug-weather">
   <span>☁ CLIMA</span>
