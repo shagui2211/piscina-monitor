@@ -2128,7 +2128,8 @@ function ensurePools(list){
     poolsKey=key;
     box.innerHTML=list.map(function(p){return poolHTML(p,multi);}).join('');
     var n=Math.min(list.length,4);
-    box.className='n'+n+(multi?' multi':'');
+    box.className='n'+n+(multi?' multi':'')+(list.length>4?' cols2':'');   /* 5 a 8 piscinas en 2 columnas */
+    box.style.setProperty('--filas', Math.ceil(list.length/2));
     var ti=document.querySelector('.header-title-main');
     if(ti){ ti.setAttribute('data-i18n', multi?'title_multi':'title'); }
     applyLang();
@@ -4101,6 +4102,19 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   body.tv:has(#pools.multi) .p7-tmax{font-size:min(3vh,3.2vw) !important;}
   body.tv:has(#pools.multi) .p7-tmin{font-size:min(2.5vh,2.7vw) !important;}
   body.tv:has(#pools.multi) .p7-lluvia,body.tv:has(#pools.multi) .p7-viento{font-size:min(1.7vh,1.9vw) !important;}
+}
+/* 5 a 8 piscinas (horizontal): dos columnas, hasta 4 filas por columna */
+@media(orientation:landscape){
+  body.tv #pools.cols2{flex:4.6 1 0;display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(var(--filas,4),minmax(0,1fr));column-gap:1.6vw;row-gap:.4vh;}
+  body.tv #pools.cols2 .pool{min-width:0;}
+  body.tv #pools.cols2 .grid-main{gap:.6vw !important;}
+  body.tv #pools.cols2 .grid-main .card{padding:.4vh .6vw !important;}
+  body.tv #pools.cols2 .card-value{font-size:min(3vh,1.9vw) !important;}
+  body.tv #pools.cols2 .card-label{font-size:min(1.3vh,.9vw) !important;}
+  body.tv #pools.cols2 .card-unit{font-size:min(1.3vh,.9vw) !important;}
+  body.tv #pools.cols2 .section-title,body.tv #pools.cols2 .pool-msg{font-size:min(1.5vh,1.1vw) !important;margin:.1vh 0 .2vh !important;}
+  body.tv #pools.cols2 .card-split{gap:.3vw !important;}
+  body.tv #pools.cols2 .card-split .card-value{font-size:min(2.3vh,1.4vw) !important;}
 }
 </style>
 <div id="debug-weather">
