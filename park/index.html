@@ -2734,7 +2734,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='211a7c303499';
+  var BUILD_ID='34140f5bd9b5';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4473,6 +4473,13 @@ body.tv:has(#pools.multi) .footer{display:none !important;}
   function schedule(ms){ clearTimeout(schedTimer); schedTimer = setTimeout(tryStart, ms); }
   function tryStart(){
     if(state !== 'idle'){ schedule(8000); return; }
+    /* PARK-VISITA: ?visita=no|pajaro|buho (URL) o valor de la Pi (window.__visitaCfg) */
+    var vq = (new URLSearchParams(location.search).get('visita') || window.__visitaCfg || '').toLowerCase();
+    if(vq){
+      if(vq==='no'){ schedule(60000); return; }
+      var esNoche = (window.__tema==='halloween') || isNight();
+      if((vq==='pajaro' && esNoche) || (vq==='buho' && !esNoche)){ schedule(60000); return; }
+    }
     if(!modeOK()){ schedule(8000); return; }
     if(!isTv && document.hidden){ schedule(8000); return; }
     startVisit();
@@ -5369,7 +5376,7 @@ var TMC_ICONOS = (function(){
   /* Calendario: primero el de la Pi (/api/temas, editable desde Telegram con /tema); si no responde, temas.json de GitHub. */
   function leer(){
     if(location.protocol==='file:') return;
-    function ok(j){ if(j && Array.isArray(j.temas)){ cfg=j; aplicar(); return true; } return false; }
+    function ok(j){ if(j && Array.isArray(j.temas)){ cfg=j; window.__visitaCfg=String(j.visita||''); /*PARK-VISITA-CFG*/ aplicar(); return true; } return false; }
     function viaJson(){
       fetch('temas.json?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
         .then(ok).catch(function(){});
