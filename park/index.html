@@ -2734,7 +2734,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='5a6ef0375e44';
+  var BUILD_ID='211a7c303499';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5386,6 +5386,41 @@ var TMC_ICONOS = (function(){
   setInterval(tcLeer, 5*60*1000);
   setInterval(aplicar, 60*1000);
   setInterval(ajustar, 2000);   /* las piscinas se pintan despues de cargar */   /* cambio de día sin recargar */
+})();
+</script>
+<script>/* PARK-AJUSTE: la letra se reduce lo justo cuando un texto (segun el idioma) no cabe en su tarjeta */
+(function(){
+  var SEL='.clima-grid .card-label,.p7-fecha,.p7-lluvia,.p7-viento,.meteo-frase,#meteo-tend,#pools .card-label,#pools .pool-msg';
+  var CONT='.card,.prev7-dia,.meteo-card';
+  function fuera(el,c){
+    var r=document.createRange(); r.selectNodeContents(el); var t=r.getBoundingClientRect(), b=c.getBoundingClientRect();
+    if(!t.width||!b.width) return false;
+    return t.left<b.left+3||t.right>b.right-3||t.top<b.top-1||t.bottom>b.bottom+1;   /* 3 px de margen a los lados */
+  }
+  function fitEl(el){
+    var c=el.closest(CONT); if(!c||el.offsetParent===null) return;
+    el.style.removeProperty('font-size');
+    if(!fuera(el,c)) return;
+    var fs=parseFloat(getComputedStyle(el).fontSize), min=fs*0.55, i=0;
+    while(fuera(el,c)&&fs>min&&i++<14){ fs*=0.93; el.style.setProperty('font-size',fs.toFixed(2)+'px','important'); }
+  }
+  function una(el){ return el.offsetHeight<=parseFloat(getComputedStyle(el).fontSize)*1.7; }
+  function fitCierre(cb){
+    var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s'); if(!ct||cb.offsetParent===null) return;
+    ct.style.removeProperty('font-size'); if(cs) cs.style.removeProperty('font-size');
+    var f1=parseFloat(getComputedStyle(ct).fontSize), f2=cs?parseFloat(getComputedStyle(cs).fontSize):0, k=1, i=0;
+    function mal(){ return cb.scrollWidth>cb.clientWidth+1||cb.scrollHeight>cb.clientHeight+1||!una(ct)||(cs&&cs.textContent&&!una(cs)); }
+    while(mal()&&k>0.5&&i++<16){ k*=0.94; ct.style.setProperty('font-size',(f1*k).toFixed(2)+'px','important'); if(cs) cs.style.setProperty('font-size',(f2*k).toFixed(2)+'px','important'); }
+  }
+  function todo(){
+    try{ document.querySelectorAll(SEL).forEach(fitEl); document.querySelectorAll('.pool-cierre').forEach(fitCierre); }catch(e){}
+  }
+  var tm=null; function pide(){ clearTimeout(tm); tm=setTimeout(todo,120); }
+  function arranca(){
+    try{ new MutationObserver(pide).observe(document.body,{childList:true,subtree:true,characterData:true}); }catch(e){}
+    window.addEventListener('resize',pide); pide(); setTimeout(todo,1500);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',arranca); else arranca();
 })();
 </script>
 </body>
