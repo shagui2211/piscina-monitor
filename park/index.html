@@ -1381,6 +1381,18 @@ body.tv #pools.cols2 .section-title,body.tv #pools.cols2 .pool-msg{margin-top:0 
 @media(orientation:portrait){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,3vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.45vh,2.5vw) !important;padding:0 8px !important;} }
 @media(orientation:landscape){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,1.25vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.4vh,1vw) !important;padding:0 8px !important;} }
 </style>
+<style>/* PARK-CLIMA: vertical con varias piscinas: la tarjeta del tiempo gana ancho (2fr) y letra compacta; frase y tendencia a 2 lineas maximo, sin recorte */
+@media(orientation:portrait){
+  html body.tv:has(#pools.multi) .clima-grid{grid-template-columns:1fr 1fr 1fr 2fr !important;}
+  html body.tv:has(#pools.multi) .clima-grid .card-value{font-size:min(3.8vh,4.6vw) !important;}
+  html body.tv:has(#pools.multi) .meteo-card{padding:.8vh 1.4vw !important;overflow:visible !important;}
+  html body.tv:has(#pools.multi) #meteo-icon{font-size:min(3.6vh,4.6vw) !important;}
+  html body.tv:has(#pools.multi) .meteo-card > div{gap:1vw !important;}
+  html body.tv:has(#pools.multi) .meteo-frase{font-size:min(1.5vh,2vw) !important;line-height:1.2 !important;margin-bottom:.3vh !important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  html body.tv:has(#pools.multi) .meteo-sub,html body.tv:has(#pools.multi) #meteo-tend span{font-size:min(1.2vh,1.6vw) !important;line-height:1.25 !important;margin-top:0 !important;}
+  html body.tv:has(#pools.multi) #meteo-tend{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+}
+</style>
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
@@ -2722,7 +2734,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='634d5aa43daf';
+  var BUILD_ID='5a6ef0375e44';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
