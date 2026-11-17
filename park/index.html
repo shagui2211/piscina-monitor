@@ -1369,10 +1369,11 @@ body.tv .logo{width:auto !important;max-height:none !important;}
 body.tv #hotel-logo{width:auto !important;height:68px;max-height:68px !important;}
 body.tv.dtv720 #hotel-logo{height:42px;max-height:42px !important;}
 @media (max-height:760px){body.tv #hotel-logo{height:42px;max-height:42px !important;}}</style>
-<style>/* PARK-TITULOS: nombre de cada piscina mas grande y con mas contraste (modo TV, 5 o mas piscinas) */
-body.tv #pools.cols2 .pool-name{color:#fff !important;font-weight:800 !important;letter-spacing:.04em !important;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 10px rgba(0,0,0,.8) !important;background:rgba(0,28,56,.62);padding:1px 12px;border-radius:9px;}
-@media(orientation:portrait){ body.tv #pools.cols2 .pool-name{font-size:min(2.15vh,3.7vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.7vh,2.9vw) !important;} }
-@media(orientation:landscape){ body.tv #pools.cols2 .pool-name{font-size:min(2.1vh,1.5vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.6vh,1.15vw) !important;} }
+<style>/* PARK-TITULOS: nombre de piscina compacto (mas altura para las tarjetas) y con contraste (modo TV, 5 o mas piscinas) */
+body.tv #pools.cols2 .pool-name{color:#fff !important;font-weight:800 !important;letter-spacing:.03em !important;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 8px rgba(0,0,0,.8) !important;background:rgba(0,28,56,.55);padding:0 9px;border-radius:7px;line-height:1.15;}
+body.tv #pools.cols2 .section-title,body.tv #pools.cols2 .pool-msg{margin-top:0 !important;margin-bottom:.1vh !important;}
+@media(orientation:portrait){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,3vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.45vh,2.5vw) !important;padding:0 8px !important;} }
+@media(orientation:landscape){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,1.25vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.4vh,1vw) !important;padding:0 8px !important;} }
 </style>
 </head>
 <body>
@@ -2685,7 +2686,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='32636022519f';
+  var BUILD_ID='01024c39140c';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
