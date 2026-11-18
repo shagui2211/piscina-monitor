@@ -2168,6 +2168,8 @@ function pintaCierre(p){
   ct.textContent=t(p._cierre==='temporada'?'cierre_temp':'cierre_mant');
   cs.textContent=(p._cierre==='mantenimiento') ? t('cierre_mant_sub') : '';
 }
+/* ORP oculto en las TV (Jose, 18/11): solo pH, cloro y temperatura. ?orp=1 lo vuelve a mostrar */
+var ORP_ON = /[?&]orp=1/.test(location.search);
 function renderPools(list, errMode){
   ensurePools(list);
   lastPools=list;
@@ -2181,7 +2183,7 @@ function renderPools(list, errMode){
     if(cierre){ pintaCierre(p); if(msg){ msg.textContent=''; msg.className='pool-msg'; } p._mk=''; return; }
     var manual=(p.origen==='manual');   /* lectura manual (DPD1) mientras no hay sensores */
     var secP=document.querySelector('.pool[data-pid="'+id+'"]');
-    if(secP) secP.classList.toggle('no-orp', manual);   /* sin EMEC no hay ORP: se oculta; con datos del EMEC vuelve sola */
+    if(secP) secP.classList.toggle('no-orp', manual || !ORP_ON);   /* sin EMEC no hay ORP: se oculta; con datos del EMEC vuelve sola */
     var vals={ph:p.ph, orp:p.orp, ppm:p.ppm, temp:p.temp_agua};
     var fmt={ph:function(v){return (+v).toFixed(2);}, orp:function(v){return String(Math.round(v));},
              ppm:function(v){return (+v).toFixed(2);}, temp:function(v){return (+v).toFixed(1);}};
@@ -2696,7 +2698,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='023a5eeed5a6';
+  var BUILD_ID='914a5bd0d871';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5418,6 +5420,47 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
  #d2.many .cl{font-size:1.5vh}#d2.many .cl s{font-size:1.2vh}
 }
 @media (orientation:landscape){#d2.many .r{grid-template-columns:1fr 1fr}#d2.many .bd{grid-template-columns:1fr}#d2.many .bvs{grid-template-columns:1fr 1fr}#d2.many .cl{grid-column:1}}
+
+/* v21: columna izquierda alineada en paneles */
+#d2.many .bv em{display:none}
+#d2 .cw,#d2 .fcl{background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border-radius:2vh;border:0}
+#d2 .cw{flex:1;margin-top:2.4vh;margin-bottom:1.4vh;padding:2vh 1.6vw;gap:1.6vw}
+#d2 .cw .ic{justify-content:flex-start;width:11vh;height:11vh}
+#d2 .cw .tp{font-size:10vh}
+#d2 .cw .tx{font-size:2.2vh;margin-top:.6vh}
+#d2 .cw .ex{font-size:1.8vh}
+#d2 .fcl{margin-top:0;padding:1.6vh 1vw}
+@media (orientation:portrait){
+ #d2 .cw{flex:none;margin:1.4vh 0 0;padding:1.4vh 3vw}#d2 .cw .ic{width:8vh;height:8vh}#d2 .cw .tp{font-size:6.4vh}
+ #d2 .fcl{margin-top:1.2vh;padding:1.2vh 2vw}
+ #d2.many .cw{margin-top:.6vh;padding:.8vh 3vw}#d2.many .cw .ic{width:5.4vh;height:5.4vh}#d2.many .cw .tp{font-size:4.6vh}
+ #d2.many .fcl{margin-top:.6vh;padding:.7vh 2vw}
+}
+/* v22: columna izquierda SIN tarjetas (zona libre para textos de temas): todo alineado a la izquierda */
+#d2 .cw,#d2 .fcl{background:none !important;border-radius:0;padding-left:0;padding-right:0}
+#d2 .cw{flex:none;margin:3.4vh 0 0;padding-top:0;padding-bottom:0}
+#d2 .cw .ic{width:10vh;height:10vh;justify-content:flex-start}
+#d2 .cw .tp{font-size:9vh}
+#d2 .fcl{margin-top:auto;border-top:1px solid rgba(255,255,255,.25);padding-top:1.4vh;padding-bottom:0}
+#d2 .clk{margin-left:-.4vw}
+@media (orientation:portrait){
+ #d2 .cw{margin:1.2vh 0 0;padding:0}#d2 .cw .ic{width:7vh;height:7vh}#d2 .cw .tp{font-size:6vh}#d2 .cw .tx{font-size:1.9vh}#d2 .cw .ex{font-size:1.6vh}#d2 .fcl{margin-top:1.2vh;padding:1.2vh 0 0}
+ #d2.many .cw{margin-top:.6vh}#d2.many .cw .ic{width:5vh;height:5vh}#d2.many .cw .tp{font-size:4.6vh}#d2.many .cw .tx{font-size:1.6vh}#d2.many .fcl{margin-top:.6vh;padding:.7vh 0 0}
+}
+/* v23: horizontal = logo/reloj/fecha centrados, tiempo actual pegado a la prevision; vertical = tiempo a la izquierda y zona libre a la derecha */
+@media (orientation:landscape){
+ #d2 .l img.lg{align-self:center}
+ #d2 .clk{margin-left:0;text-align:center}
+ #d2 .dd{text-align:center}
+ #d2 .cw{margin:auto 0 0;justify-content:center;text-align:left}
+ #d2 .fcl{margin-top:2vh}
+}
+@media (orientation:portrait){
+ #d2 .l{grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto}
+ #d2 .cw{grid-column:1;grid-row:3;margin:1.2vh 0 0;align-self:start}
+ #d2 .cw .tx{max-width:38vw}
+ #d2 .fcl{grid-column:1/-1;grid-row:4}
+}
 </style>
 <div id="d2" aria-hidden="true"></div>
 <script>
