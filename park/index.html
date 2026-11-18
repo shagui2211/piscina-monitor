@@ -2698,7 +2698,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='914a5bd0d871';
+  var BUILD_ID='2c97993f6b07';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5461,6 +5461,25 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
  #d2 .cw .tx{max-width:38vw}
  #d2 .fcl{grid-column:1/-1;grid-row:4}
 }
+/* v24: horizontal: nombre y aviso arriba, valores debajo (como en Park), textos mas grandes */
+@media (orientation:landscape){
+ #d2:not(.many) .bd{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:1.2vh;align-content:center;padding:1.6vh 1.8vw}
+ #d2:not(.many) .bn{display:flex;align-items:baseline;gap:1.6vw;flex-wrap:wrap}
+ #d2:not(.many) .bn h2{font-size:3.2vh}
+ #d2:not(.many) .bn i{font-size:1.9vh;margin:0}
+ #d2:not(.many) .bv b{font-size:6vh}
+ #d2:not(.many) .bv small{font-size:2vh}
+ #d2:not(.many) .bv span{font-size:1.8vh;margin-top:.2vh}
+ #d2:not(.many) .bv em{font-size:1.6vh}
+ #d2:not(.many) .cl{grid-column:1;font-size:3vh;align-self:start}
+ #d2:not(.many) .cl s{font-size:2vh}
+}
+/* v25: cartel de cierre mas grande */
+#d2 .bd.closed{align-content:center}
+#d2 .bd.closed .cl{font-size:4.6vh;line-height:1.15;align-self:center}
+#d2 .bd.closed .cl s{font-size:2.4vh;margin-top:.6vh}
+@media (orientation:portrait){#d2 .bd.closed .cl{font-size:3.6vh}#d2 .bd.closed .cl s{font-size:2vh}#d2.many .bd.closed .cl{font-size:2.5vh}#d2.many .bd.closed .cl s{font-size:1.5vh}}
+@media (orientation:landscape){#d2.many .bd.closed .cl{font-size:3vh}}
 </style>
 <div id="d2" aria-hidden="true"></div>
 <script>
