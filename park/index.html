@@ -2696,7 +2696,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='4fc89b2ff5f6';
+  var BUILD_ID='023a5eeed5a6';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5363,6 +5363,7 @@ body.d2.d2.d2.d2 > header, body.d2.d2.d2.d2 > main, body.d2.d2.d2.d2 > .alert{di
 #d2{display:none;}
 body > #d2{position:fixed !important;inset:0;z-index:5 !important;}
 body.d2 > #d2{display:grid;}
+body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:auto !important;bottom:2vh !important;left:50% !important;transform:translateX(-50%) !important;}
 #d2, #d2 *{box-sizing:border-box;margin:0;font-family:"Helvetica Neue",Arial,"Liberation Sans",sans-serif;}
 #d2{color:#fff;grid-template-columns:1fr 1.7fr;padding:3vh 2.4vw;gap:2.4vw;background:linear-gradient(90deg,rgba(2,20,38,.80) 0,rgba(2,20,38,.5) 42%,rgba(2,20,38,.18) 100%);}
 #d2 small{font-weight:500;opacity:.8}
