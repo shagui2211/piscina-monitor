@@ -1375,24 +1375,6 @@ body.tv .logo{width:auto !important;max-height:none !important;}
 body.tv #hotel-logo{width:auto !important;height:68px;max-height:68px !important;}
 body.tv.dtv720 #hotel-logo{height:42px;max-height:42px !important;}
 @media (max-height:760px){body.tv #hotel-logo{height:42px;max-height:42px !important;}}</style>
-<style>/* PARK-TITULOS: nombre de piscina compacto (mas altura para las tarjetas) y con contraste (modo TV, 5 o mas piscinas) */
-body.tv #pools.cols2 .pool-name{color:#fff !important;font-weight:800 !important;letter-spacing:.03em !important;text-shadow:0 1px 3px rgba(0,0,0,.95),0 0 8px rgba(0,0,0,.8) !important;background:rgba(0,28,56,.55);padding:0 9px;border-radius:7px;line-height:1.15;}
-body.tv #pools.cols2 .section-title,body.tv #pools.cols2 .pool-msg{margin-top:0 !important;margin-bottom:.1vh !important;}
-@media(orientation:portrait){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,3vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.45vh,2.5vw) !important;padding:0 8px !important;} }
-@media(orientation:landscape){ body.tv #pools.cols2 .pool-name{font-size:min(1.75vh,1.25vw) !important;} body.tv #pools.cols2 .pool-msg{font-size:min(1.4vh,1vw) !important;padding:0 8px !important;} }
-</style>
-<style>/* PARK-CLIMA: vertical con varias piscinas: la tarjeta del tiempo gana ancho (2fr) y letra compacta; frase y tendencia a 2 lineas maximo, sin recorte */
-@media(orientation:portrait){
-  html body.tv:has(#pools.multi) .clima-grid{grid-template-columns:1fr 1fr 1fr 2fr !important;}
-  html body.tv:has(#pools.multi) .clima-grid .card-value{font-size:min(3.8vh,4.6vw) !important;}
-  html body.tv:has(#pools.multi) .meteo-card{padding:.8vh 1.4vw !important;overflow:visible !important;}
-  html body.tv:has(#pools.multi) #meteo-icon{font-size:min(3.6vh,4.6vw) !important;}
-  html body.tv:has(#pools.multi) .meteo-card > div{gap:1vw !important;}
-  html body.tv:has(#pools.multi) .meteo-frase{font-size:min(1.5vh,2vw) !important;line-height:1.2 !important;margin-bottom:.3vh !important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  html body.tv:has(#pools.multi) .meteo-sub,html body.tv:has(#pools.multi) #meteo-tend span{font-size:min(1.2vh,1.6vw) !important;line-height:1.25 !important;margin-top:0 !important;}
-  html body.tv:has(#pools.multi) #meteo-tend{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-}
-</style>
 </head>
 <body>
 <!-- FONDO METEOROLÓGICO -->
@@ -1481,14 +1463,8 @@ var I18N = {
     cierre_temp:   'Cerrada por temporada',
     cierre_mant:   'Cerrada por trabajos de mantenimiento',
     cierre_mant_sub: 'Disculpen las molestias',
-    cierre_temp_m: 'Cerrado por temporada',
-    cierre_mant_m: 'Cerrado por trabajos de mantenimiento',
     pn_piscina_grande:       'Piscina Principal',
     pn_piscina_climatizada:  'Climatizada',
-    pn_piscina_park_barsalon: 'Bar Salón',
-    pn_piscina_park_infantilclub: 'Club Infantil',
-    pn_piscina_park_adultosclub: 'Club Adultos',
-    pn_piscina_park_climatizada: 'Climatizada',
     lbl_sala:      'Sala',
     lbl_agua_s:    'Agua',
     ago_h:         'hace {n} h',
@@ -1538,14 +1514,8 @@ var I18N = {
     cierre_temp:   'Closed for the season',
     cierre_mant:   'Closed for maintenance work',
     cierre_mant_sub: 'We apologise for any inconvenience',
-    cierre_temp_m: 'Closed for the season',
-    cierre_mant_m: 'Closed for maintenance work',
     pn_piscina_grande:       'Main Pool',
     pn_piscina_climatizada:  'Heated Pool',
-    pn_piscina_park_barsalon: 'Lounge Bar',
-    pn_piscina_park_infantilclub: 'Kids Club',
-    pn_piscina_park_adultosclub: 'Adults Club',
-    pn_piscina_park_climatizada: 'Heated Pool',
     lbl_sala:      'Room',
     lbl_agua_s:    'Water',
     ago_h:         '{n} h ago',
@@ -1595,14 +1565,8 @@ var I18N = {
     cierre_temp:   'Saisonbedingt geschlossen',
     cierre_mant:   'Wegen Wartungsarbeiten geschlossen',
     cierre_mant_sub: 'Wir bitten um Ihr Verständnis',
-    cierre_temp_m: 'Saisonbedingt geschlossen',
-    cierre_mant_m: 'Wegen Wartungsarbeiten geschlossen',
     pn_piscina_grande:       'Hauptbecken',
     pn_piscina_climatizada:  'Beheiztes Becken',
-    pn_piscina_park_barsalon: 'Salon-Bar',
-    pn_piscina_park_infantilclub: 'Kinderclub',
-    pn_piscina_park_adultosclub: 'Erwachsenenclub',
-    pn_piscina_park_climatizada: 'Hallenbad',
     lbl_sala:      'Raum',
     lbl_agua_s:    'Wasser',
     ago_h:         'vor {n} Std.',
@@ -1652,14 +1616,8 @@ var I18N = {
     cierre_temp:   'Fermée pour la saison',
     cierre_mant:   'Fermée pour travaux de maintenance',
     cierre_mant_sub: 'Veuillez nous excuser pour la gêne occasionnée',
-    cierre_temp_m: 'Fermé pour la saison',
-    cierre_mant_m: 'Fermé pour travaux de maintenance',
     pn_piscina_grande:       'Piscine principale',
     pn_piscina_climatizada:  'Piscine chauffée',
-    pn_piscina_park_barsalon: 'Bar Salon',
-    pn_piscina_park_infantilclub: 'Club Enfants',
-    pn_piscina_park_adultosclub: 'Club Adultes',
-    pn_piscina_park_climatizada: 'Piscine chauffée',
     lbl_sala:      'Salle',
     lbl_agua_s:    'Eau',
     ago_h:         'il y a {n} h',
@@ -1709,14 +1667,8 @@ var I18N = {
     cierre_temp:   'Chiusa per la stagione',
     cierre_mant:   'Chiusa per lavori di manutenzione',
     cierre_mant_sub: 'Ci scusiamo per il disagio',
-    cierre_temp_m: 'Chiuso per la stagione',
-    cierre_mant_m: 'Chiuso per lavori di manutenzione',
     pn_piscina_grande:       'Piscina principale',
     pn_piscina_climatizada:  'Piscina riscaldata',
-    pn_piscina_park_barsalon: 'Bar Salone',
-    pn_piscina_park_infantilclub: 'Club Bambini',
-    pn_piscina_park_adultosclub: 'Club Adulti',
-    pn_piscina_park_climatizada: 'Piscina riscaldata',
     lbl_sala:      'Sala',
     lbl_agua_s:    'Acqua',
     ago_h:         '{n} h fa',
@@ -2213,8 +2165,7 @@ function fmtMedido(iso){
 function pintaCierre(p){
   var cb=document.getElementById('cierre-'+cleanId(p.id)); if(!cb||!p._cierre) return;
   var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s');
-  var _m=/(jacuzzi)/i.test(String(p.id||'')+' '+String(p.nombre||'')).toString()==='true';   /* GENERO-CIERRE: nombre masculino -> texto en masculino */
-  ct.textContent=t((p._cierre==='temporada'?'cierre_temp':'cierre_mant')+(_m?'_m':''));
+  ct.textContent=t(p._cierre==='temporada'?'cierre_temp':'cierre_mant');
   cs.textContent=(p._cierre==='mantenimiento') ? t('cierre_mant_sub') : '';
 }
 function renderPools(list, errMode){
@@ -2745,7 +2696,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='c93a2c308d0f';
+  var BUILD_ID='4fc89b2ff5f6';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5406,40 +5357,149 @@ var TMC_ICONOS = (function(){
   setInterval(ajustar, 2000);   /* las piscinas se pintan despues de cargar */   /* cambio de día sin recargar */
 })();
 </script>
-<script>/* PARK-AJUSTE: la letra se reduce lo justo cuando un texto (segun el idioma) no cabe en su tarjeta */
+<!-- DISENO-2 (rt: diseno alternativo "carteleria"): se activa con ?diseno=2 ; sin parametro se ve el diseno 1 (el de siempre) -->
+<style id="d2-css">
+body.d2.d2.d2.d2 > header, body.d2.d2.d2.d2 > main, body.d2.d2.d2.d2 > .alert{display:none !important;}
+#d2{display:none;}
+body > #d2{position:fixed !important;inset:0;z-index:5 !important;}
+body.d2 > #d2{display:grid;}
+#d2, #d2 *{box-sizing:border-box;margin:0;font-family:"Helvetica Neue",Arial,"Liberation Sans",sans-serif;}
+#d2{color:#fff;grid-template-columns:1fr 1.7fr;padding:3vh 2.4vw;gap:2.4vw;background:linear-gradient(90deg,rgba(2,20,38,.80) 0,rgba(2,20,38,.5) 42%,rgba(2,20,38,.18) 100%);}
+#d2 small{font-weight:500;opacity:.8}
+#d2 .l{display:flex;flex-direction:column;min-height:0}
+#d2 img.pk{filter:brightness(0) invert(1)}
+#d2 .l img.lg{height:7.6vh;align-self:flex-start;object-fit:contain;max-width:100%}
+#d2 .clk{font-size:12vh;font-weight:300;line-height:1;margin-top:3vh;font-variant-numeric:tabular-nums}
+#d2 .dd{font-size:2.4vh;opacity:.85;margin-top:.8vh}
+#d2 .cw{display:flex;align-items:center;gap:1.4vw;margin-top:4vh}
+#d2 .cw .ic{font-size:9vh;line-height:1;height:10vh;width:10vh;flex:none;display:flex;align-items:center;justify-content:center}
+#d2 .ic img{width:100%;height:100%;object-fit:contain}
+#d2 .cw .tp{font-size:8vh;font-weight:600;line-height:1}
+#d2 .cw .tx{font-size:2vh;opacity:.9}
+#d2 .cw .ex{font-size:1.8vh;opacity:.8;margin-top:.5vh}
+#d2 .fcl{margin-top:auto;display:grid;grid-template-columns:repeat(7,1fr);gap:.4vw;border-top:1px solid rgba(255,255,255,.25);padding-top:1.4vh}
+#d2 .d{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.2vh}
+#d2 .df{font-size:1.5vh;font-weight:700;text-transform:uppercase}
+#d2 .di{font-size:3vh;height:4.2vh;display:flex;align-items:center}#d2 .di img{height:100%;width:auto}
+#d2 .dt{font-size:1.8vh}#d2 .dt span{opacity:.65;margin-left:.2vw}
+#d2 .dl{font-size:1.3vh;opacity:.8;min-height:1.5vh}
+#d2 .r{display:grid;grid-auto-flow:row;grid-template-columns:1fr;gap:1.4vh;min-height:0;align-content:stretch;grid-auto-rows:1fr}
+#d2 .bd{background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border-left:.7vh solid #3ddc97;border-radius:0 2vh 2vh 0;padding:1.4vh 1.6vw;display:grid;grid-template-columns:10vw 1fr;gap:1vw;align-items:center;min-height:0;overflow:hidden}
+#d2 .bd.warn{border-color:#ffc247}#d2 .bd.bad{border-color:#ff5d5d}#d2 .bd.na,#d2 .bd.closed{border-color:#8a9aa8}
+#d2 .bn h2{font-size:2.4vh;font-weight:700;line-height:1.15}
+#d2 .bn i{display:block;font-style:normal;font-size:1.4vh;color:#8fd0ff;margin-top:.4vh}#d2 .bn i.warn{color:#ffd78a}
+#d2 .bvs{display:grid;gap:1vw}#d2 .bvs.n4{grid-template-columns:repeat(4,1fr)}#d2 .bvs.n3{grid-template-columns:repeat(3,1fr)}#d2 .bvs.n2{grid-template-columns:repeat(2,1fr)}
+#d2 .bv{display:flex;flex-direction:column;min-width:0}
+#d2 .bv b{font-size:5vh;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;display:inline}
+#d2 .bv small{font-size:1.7vh;margin-left:.3vw}
+#d2 .bv span{font-size:1.5vh;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-top:.3vh;order:2}#d2 .bv b,#d2 .bv small{order:1}#d2 .bv em{order:3}
+#d2 .bv.warn b{color:#ffd166}#d2 .bv.bad b{color:#ff7a7a}#d2 .bv.empty b{opacity:.45}
+#d2 .bv em{font-style:normal;font-size:1.4vh;opacity:.8}
+#d2 .cl{grid-column:2;font-size:2.4vh;font-weight:600;text-align:left;line-height:1.25}#d2 .cl s{display:block;text-decoration:none;font-size:1.6vh;font-weight:400;opacity:.8;margin-top:.3vh}
+#d2 .vacio{font-size:2.4vh;opacity:.85;align-self:center}
+@media (orientation:portrait){
+ #d2{grid-template-columns:1fr;grid-template-rows:auto 1fr;padding:2.4vh 3vw;gap:1.4vh;background:linear-gradient(180deg,rgba(2,20,38,.8),rgba(2,20,38,.35) 55%,rgba(2,20,38,.7))}
+ #d2 .l{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;column-gap:2vw}
+ #d2 .l img.lg{grid-column:1;height:6vh}
+ #d2 .clk{grid-column:2;grid-row:1/3;font-size:8vh;margin-top:0;text-align:right}
+ #d2 .dd{grid-column:2;text-align:right;font-size:1.8vh}
+ #d2 .cw{grid-column:1/-1;margin-top:1.6vh}#d2 .cw .ic{height:7vh;width:7vh}#d2 .cw .tp{font-size:6vh}
+ #d2 .fcl{grid-column:1/-1;margin-top:1.4vh}
+ #d2 .bd{grid-template-columns:1fr;gap:.4vh;padding:1vh 2vw}#d2 .cl{grid-column:1}
+ #d2 .bn{display:flex;justify-content:space-between;align-items:baseline;gap:1vw}#d2 .bn h2{font-size:2vh}#d2 .bn i{margin:0;font-size:1.3vh}
+ #d2 .bv b{font-size:3.6vh}#d2 .bv small{font-size:1.2vh}#d2 .bv span{font-size:1.2vh}
+ #d2.many .clk{font-size:6vh}#d2.many .dd{font-size:1.5vh}#d2.many .cw{margin-top:.4vh;gap:1.4vw}#d2.many .cw .ic{height:5vh;width:5vh}#d2.many .cw .tp{font-size:4.6vh}#d2.many .cw .tx{font-size:1.6vh}#d2.many .cw .ex{font-size:1.4vh;margin-top:.2vh}#d2.many .l img.lg{height:5vh}#d2.many .fcl{margin-top:.6vh;padding-top:.6vh}#d2.many .di{height:3vh}#d2.many .df{font-size:1.3vh}#d2.many .dt{font-size:1.5vh}#d2.many .dl{font-size:1.1vh;min-height:1.2vh}#d2.many .bv em{display:inline;margin-left:.4vw}#d2.many .bv b{font-size:2.4vh}
+ #d2.many .r{grid-template-columns:1fr 1fr;gap:1vh 1.6vw}
+ #d2.many .bd{border-radius:0 1.4vh 1.4vh 0;padding:.6vh 1.4vw}#d2.many .bn i{font-size:.95vh;line-height:1.15}
+ #d2.many .bn{flex-direction:column;gap:0}#d2.many .bn h2{font-size:1.7vh}
+ #d2.many .bvs,#d2.many .bvs.n3,#d2.many .bvs.n4{grid-template-columns:1fr 1fr;gap:.2vh 1vw}
+ #d2.many .bv{display:block}#d2.many .bv span{display:block;margin:0;font-size:1vh;line-height:1.1;letter-spacing:.04em}#d2.many .bv b{font-size:2.3vh;line-height:1.15}#d2.many .bv small{font-size:1.1vh}#d2.many .bv em{font-size:1vh}#d2.many .bvs,#d2.many .bvs.n3,#d2.many .bvs.n4{gap:.5vh 1vw}
+ #d2.many .cl{font-size:1.5vh}#d2.many .cl s{font-size:1.2vh}
+}
+@media (orientation:landscape){#d2.many .r{grid-template-columns:1fr 1fr}#d2.many .bd{grid-template-columns:1fr}#d2.many .bvs{grid-template-columns:1fr 1fr}#d2.many .cl{grid-column:1}}
+</style>
+<div id="d2" aria-hidden="true"></div>
+<script>
 (function(){
-  var SEL='.clima-grid .card-label,.p7-fecha,.p7-lluvia,.p7-viento,.meteo-frase,#meteo-tend,#pools .card-label,#pools .pool-msg';
-  var CONT='.card,.prev7-dia,.meteo-card';
-  function fuera(el,c){
-    var r=document.createRange(); r.selectNodeContents(el); var t=r.getBoundingClientRect(), b=c.getBoundingClientRect();
-    if(!t.width||!b.width) return false;
-    return t.left<b.left+3||t.right>b.right-3||t.top<b.top-1||t.bottom>b.bottom+1;   /* 3 px de margen a los lados */
+  var q=new URLSearchParams(location.search);
+  var dz=String(q.get('diseno')||window.__disenoCfg||'1');
+  if(dz!=='2') return;                       /* diseno 1 (por defecto): no se toca nada */
+  document.body.classList.add('d2');
+  function ocultar(){ ['body > header','body > main','body > .alert'].forEach(function(sel){ var e=document.querySelector(sel); if(e) e.style.setProperty('display','none','important'); }); }
+  ocultar();
+  var root=document.getElementById('d2'), last='';
+  var SH={ppm:{es:'Cloro',en:'Chlorine',de:'Chlor',fr:'Chlore',it:'Cloro'},
+          temp:{es:'Agua',en:'Water',de:'Wasser',fr:'Eau',it:'Acqua'},
+          amb:{es:'Sala',en:'Room',de:'Raum',fr:'Salle',it:'Sala'}};
+  var UN={ph:'',orp:'mV',ppm:'mg/l',temp:'°C'};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function $(s,c){return (c||document).querySelector(s);}
+  function txt(s,c){var e=$(s,c);return e?e.textContent.trim():'';}
+  function lg(k){return (SH[k]&&SH[k][currentLang])||(SH[k]&&SH[k].es)||k;}
+  function poolsHTML(){
+    var out='', n=0, any=false;
+    var secs=document.querySelectorAll('#pools .pool');
+    secs.forEach(function(sec){
+      var id=sec.getAttribute('data-pid'); n++;
+      var nm=$('.pool-name',sec); var name=nm?nm.textContent.trim():txt('.header-title-main');
+      var msgEl=$('.pool-msg',sec), msg=msgEl?msgEl.textContent.trim():'';
+      var msgWarn=msgEl&&/warn/.test(msgEl.className);
+      if(sec.classList.contains('is-closed')){
+        out+='<section class="bd closed"><div class="bn"><h2>'+esc(name)+'</h2></div><div class="cl">'+esc(txt('.pc-t',sec))+(txt('.pc-s',sec)?'<s>'+esc(txt('.pc-s',sec))+'</s>':'')+'</div></section>';
+        return;
+      }
+      var keys=['ph','orp','ppm','temp'], vals='', cnt=0, worst='ok', vacias=0;
+      keys.forEach(function(k){
+        if(k==='orp' && sec.classList.contains('no-orp')) return;
+        var c=document.getElementById('card-'+k+'-'+id), v=document.getElementById('val-'+k+'-'+id);
+        if(!c||!v) return;
+        var cls=c.className, st='ok';
+        if(/empty-card/.test(cls)){st='empty';vacias++;}
+        else if(/bad-card/.test(cls)){st='bad';worst='bad';}
+        else if(/warn-card/.test(cls)){st='warn';if(worst!=='bad')worst='warn';}
+        var lab=(k==='ph')?'pH':(k==='orp')?'ORP':lg(k);
+        var extra='';
+        if(k==='temp'){var av=document.getElementById('val-amb-'+id), ac=document.getElementById('card-amb-'+id);
+          if(av && ac && !/empty-card/.test(ac.className)) extra='<em>'+esc(lg('amb'))+' '+esc(av.textContent.trim())+'°</em>';}
+        vals+='<div class="bv '+st+'"><span>'+esc(lab)+'</span><b>'+esc(v.textContent.trim())+'</b>'+(UN[k]?'<small>'+UN[k]+'</small>':'')+extra+'</div>'; cnt++;
+      });
+      if(vacias===cnt) worst='na';
+      out+='<section class="bd '+worst+'"><div class="bn"><h2>'+esc(name)+'</h2>'+(msg?'<i class="'+(msgWarn?'warn':'')+'">'+esc(msg)+'</i>':'')+'</div><div class="bvs n'+cnt+'">'+vals+'</div></section>';
+    });
+    if(!n){ var pe=$('#pools .pool-empty'); out='<div class="vacio">'+esc(pe?pe.textContent:'')+'</div>'; }
+    return {html:out,n:n};
   }
-  function fitEl(el){
-    var c=el.closest(CONT); if(!c||el.offsetParent===null) return;
-    el.style.removeProperty('font-size');
-    if(!fuera(el,c)) return;
-    var fs=parseFloat(getComputedStyle(el).fontSize), min=fs*0.55, i=0;
-    while(fuera(el,c)&&fs>min&&i++<14){ fs*=0.93; el.style.setProperty('font-size',fs.toFixed(2)+'px','important'); }
+  function leftHTML(){
+    var L=I18N[currentLang]||I18N.es, now=new Date();
+    var topt=L.clock12?{hour:'numeric',minute:'2-digit',hour12:true}:{hour:'2-digit',minute:'2-digit',hour12:false};
+    var hora=now.toLocaleTimeString(L.locale,topt);
+    var fecha=now.toLocaleDateString(L.locale,{weekday:'long',day:'numeric',month:'long'});
+    var logo=$('header .logo img'); var ls=logo?logo.getAttribute('src'):'';
+    var tamb=txt('#val-tamb'), hum=txt('#val-hum'), st=txt('#val-st');
+    var ic=$('#meteo-icon'), icH=ic?ic.innerHTML:'';
+    var fr=txt('#meteo-frase');
+    var ex=[]; if(hum && hum!=='—') ex.push('💧 '+hum+' %'); if(st && st!=='—') ex.push(esc(t('lbl_st'))+' '+st+'°');
+    var fc='';
+    document.querySelectorAll('#prev-24h .prev7-dia').forEach(function(d){
+      var f=txt('.p7-fecha',d).split(' ')[0], i=$('.p7-icon',d), mx=txt('.p7-tmax',d), mn=txt('.p7-tmin',d), ll=txt('.p7-lluvia',d).split(' ')[0];
+      fc+='<div class="d"><div class="df">'+esc(f)+'</div><div class="di">'+(i?i.innerHTML:'')+'</div><div class="dt"><b>'+esc(mx)+'</b><span>'+esc(mn)+'</span></div><div class="dl">'+esc(ll)+'</div></div>';
+    });
+    return '<div class="l">'+(ls?'<img class="lg'+((logo&&logo.id==='hotel-logo')?' pk':'')+'" src="'+ls+'" alt="">':'')+'<div class="clk">'+esc(hora)+'</div><div class="dd">'+esc(fecha)+'</div>'
+      +'<div class="cw"><div class="ic">'+icH+'</div><div><div class="tp">'+(tamb&&tamb!=='—'?esc(tamb)+'°':'—')+'</div><div class="tx">'+esc(fr)+'</div><div class="ex">'+ex.join(' · ')+'</div></div></div>'
+      +'<div class="fcl">'+fc+'</div></div>';
   }
-  function una(el){ return el.offsetHeight<=parseFloat(getComputedStyle(el).fontSize)*1.7; }
-  function fitCierre(cb){
-    var ct=cb.querySelector('.pc-t'), cs=cb.querySelector('.pc-s'); if(!ct||cb.offsetParent===null) return;
-    ct.style.removeProperty('font-size'); if(cs) cs.style.removeProperty('font-size');
-    var f1=parseFloat(getComputedStyle(ct).fontSize), f2=cs?parseFloat(getComputedStyle(cs).fontSize):0, k=1, i=0;
-    function mal(){ return cb.scrollWidth>cb.clientWidth+1||cb.scrollHeight>cb.clientHeight+1||!una(ct)||(cs&&cs.textContent&&!una(cs)); }
-    while(mal()&&k>0.5&&i++<16){ k*=0.94; ct.style.setProperty('font-size',(f1*k).toFixed(2)+'px','important'); if(cs) cs.style.setProperty('font-size',(f2*k).toFixed(2)+'px','important'); }
+  function render(){
+    try{
+      ocultar();
+      var p=poolsHTML();
+      var h=leftHTML()+'<div class="r">'+p.html+'</div>';
+      root.classList.toggle('many', p.n>4);
+      if(h!==last){ root.innerHTML=h; last=h; }
+    }catch(e){ console.error('d2',e); }
   }
-  function todo(){
-    try{ document.querySelectorAll(SEL).forEach(fitEl); document.querySelectorAll('.pool-cierre').forEach(fitCierre); }catch(e){}
-  }
-  var tm=null; function pide(){ clearTimeout(tm); tm=setTimeout(todo,120); }
-  function arranca(){
-    try{ new MutationObserver(pide).observe(document.body,{childList:true,subtree:true,characterData:true}); }catch(e){}
-    window.addEventListener('resize',pide); pide(); setTimeout(todo,1500);
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',arranca); else arranca();
+  render(); setInterval(render,1000);
 })();
 </script>
+
 </body>
 </html>
