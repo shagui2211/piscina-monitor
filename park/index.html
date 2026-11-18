@@ -2743,7 +2743,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='9322b7cb0167';
+  var BUILD_ID='f5cf09bb7340';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -4832,6 +4832,11 @@ function PL(g,p,ox,oy,base,inner,a){
 function dibInner(t){ return t.replace(/^<g transform="[^"]*">/,'').replace(/<\/g>$/,''); }
 var CE_FILTER="<defs><filter id=\"ceCh\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".06\" numOctaves=\"2\" seed=\"4\" result=\"n\"/><feDisplacementMap in=\"SourceGraphic\" in2=\"n\" scale=\"2.4\"/></filter></defs>";
 
+/* mueve un bloque ya dibujado en su sitio natural (cx,ty): x,y = nueva posicion en %, s tamano, rot giro, espejo */
+function MV(g,p,defY,inner){
+  var cx=(g.x0+g.x1)/2, ty=900*defY/100, s=tcN(p.s,1), sx=p.espejo?-s:s, X=g.x0+g.W*tcN(p.x,50)/100, Y=900*tcN(p.y,defY)/100;
+  return '<g transform="translate('+X.toFixed(1)+' '+Y.toFixed(1)+') rotate('+tcN(p.rot,0)+') scale('+sx.toFixed(3)+' '+s.toFixed(3)+') translate('+(-cx).toFixed(1)+' '+(-ty).toFixed(1)+')">'+inner+'</g>';
+}
 /* ── Oktoberfest ── */
 dibReg('okt_casas',{f:function(g,p){
   var cw=g.v?900:1600, f=(g.v?g.W/900:g.W/1600)*(g.v?.8:.75); if(!g.v&&g.asp>16/9) f=(16/9)/g.asp*.75; f*=tcN(p.s,1);
@@ -4933,11 +4938,11 @@ dibReg('wp_marmol',{f:function(g,p){
   return {svg:svg};
 }});
 dibReg('wp_titulo',{f:function(g,p){
-  var o=g.v?0:40, cx=(g.x0+g.x1)/2, fs=(g.v?44:58)*tcN(p.s,1), ff=FF2, tw=Math.min(640,g.W*.9), Y=900*tcN(p.y,g.v?87.5:(792+o)/9)/100;
+  var o=g.v?0:40, cx=(g.x0+g.x1)/2, fs=(g.v?44:58), ff=FF2, tw=Math.min(640,g.W*.9), dY0=g.v?87.5:(792+o)/9, Y=900*dY0/100;
   var t1=tcT(p.txt==null?'WHiTE':p.txt), t2=tcT(p.txt2==null?'Party':p.txt2), t3=tcT(p.sub==null?'DRUM DJ  ·  FINGER FOOD  ·  SANGRIA & ICE ROSÉ':p.sub);
-  return {svg:'<text x="'+cx+'" y="'+Y+'" text-anchor="middle" fill="#14151a"><tspan font-family="'+ff+'" font-weight="700" font-size="'+fs+'" letter-spacing="'+(fs*.1).toFixed(1)+'">'+t1+'</tspan><tspan dx="'+(fs*.45).toFixed(0)+'" font-family="Georgia,\'DejaVu Serif\',serif" font-style="italic" font-size="'+(fs*.72).toFixed(0)+'">'+t2+'</tspan></text>'+
+  return {svg:MV(g,p,dY0,'<text x="'+cx+'" y="'+Y+'" text-anchor="middle" fill="#14151a"><tspan font-family="'+ff+'" font-weight="700" font-size="'+fs+'" letter-spacing="'+(fs*.1).toFixed(1)+'">'+t1+'</tspan><tspan dx="'+(fs*.45).toFixed(0)+'" font-family="Georgia,\'DejaVu Serif\',serif" font-style="italic" font-size="'+(fs*.72).toFixed(0)+'">'+t2+'</tspan></text>'+
     '<rect x="'+(cx-40)+'" y="'+(Y+10.5)+'" width="80" height="2.5" fill="#c9a24a"/>'+
-    '<text x="'+cx+'" y="'+(Y+38)+'" text-anchor="middle" font-family="'+ff+'" font-weight="600" font-size="'+(g.v?15:19)+'" letter-spacing="2" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#2a2b30">'+t3+'</text>'};
+    '<text x="'+cx+'" y="'+(Y+38)+'" text-anchor="middle" font-family="'+ff+'" font-weight="600" font-size="'+(g.v?15:19)+'" letter-spacing="2" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#2a2b30">'+t3+'</text>')};
 }});
 /* ── Fiesta nacional ── */
 dibReg('esp_bandera',{f:function(g,p){
@@ -4953,11 +4958,11 @@ dibReg('esp_bandera',{f:function(g,p){
 }});
 dibReg('abanico',{f:function(g,p,i,a){ return {svg:PL(g,p,0,0,1,fan(0,0,1,0,tcC(p.c1,'#fff3c4'),tcC(p.c2,'#ffc400'),tcC(p.c3,'#7a0a14')),a)}; }});
 dibReg('esp_titulo',{f:function(g,p){
-  var cx=(g.x0+g.x1)/2, fs=(g.v?36:50)*tcN(p.s,1), ty=900*tcN(p.y,g.v?93.3:93.1)/100, t1=tcT(p.txt==null?'FIESTA NACIONAL':p.txt), t2=tcT(p.sub==null?'12  DE  OCTUBRE':p.sub), tw=fs*.66*Math.max(4,String(p.txt==null?'FIESTA NACIONAL':p.txt).length);
-  return {svg:'<defs>'+'<linearGradient id="teGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#ffc400"/></linearGradient></defs>'+
+  var cx=(g.x0+g.x1)/2, fs=(g.v?36:50), dY0=g.v?93.3:93.1, ty=900*dY0/100, t1=tcT(p.txt==null?'FIESTA NACIONAL':p.txt), t2=tcT(p.sub==null?'12  DE  OCTUBRE':p.sub), tw=fs*.66*Math.max(4,String(p.txt==null?'FIESTA NACIONAL':p.txt).length);
+  return {svg:'<defs>'+'<linearGradient id="teGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a8"/><stop offset="1" stop-color="#ffc400"/></linearGradient></defs>'+MV(g,p,dY0,
     '<text x="'+cx+'" y="'+(ty-fs*.95)+'" text-anchor="middle" font-family="'+FF2+'" font-weight="600" font-size="'+Math.round(fs*.42)+'" letter-spacing="6" fill="#ffe9a8">'+t2+'</text>'+
     '<text x="'+cx+'" y="'+ty+'" text-anchor="middle" font-family="'+FF2+'" font-weight="700" font-size="'+fs+'" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="url(#teGold)" stroke="#6a0610" stroke-width="2.2" paint-order="stroke">'+t1+'</text>'+
-    '<rect x="'+(cx-tw*.42)+'" y="'+(ty+fs*.28)+'" width="'+(tw*.84)+'" height="3" fill="#ffd23a" opacity=".9"/>'};
+    '<rect x="'+(cx-tw*.42)+'" y="'+(ty+fs*.28)+'" width="'+(tw*.84)+'" height="3" fill="#ffd23a" opacity=".9"/>')};
 }});
 /* ── Día del trabajador ── */
 dibReg('trab_fondo',{f:function(g,p){ return {svg:'<defs>'+'<radialGradient id="ttBg" cx=".5" cy=".85" r="1.05"><stop offset="0" stop-color="#b3202c"/><stop offset=".6" stop-color="#7d121b"/><stop offset="1" stop-color="#3d070c"/></radialGradient>'+'</defs>'+'<rect x="-800" y="-400" width="3200" height="1800" fill="url(#ttBg)"/>'}; }});
@@ -5012,13 +5017,13 @@ dibReg('cena_titulo',{f:function(g,p){
   var         fs=Math.max(16,Math.min(g.v?34:46,(g.W*.94-2*(112*sc+24))/(.74*L.length),2*((g.x1-g.x0)/2-6-190*sc-22)/(.74*L.length))), tw=fs*.74*L.length, ty=g.v?812:802,
         ix=tw/2+100*sc+26, sw=17*.7*S.length, hy=ty-fs-20;
   var Lt=tcT(L), St=tcT(S);
-  return {svg:CE_FILTER+'<path d="M'+(g.x0+56)+' '+hy+' H'+(cx-46)+' M'+(cx+46)+' '+hy+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width="1.6" opacity=".85"/>'+
+  return {svg:CE_FILTER+MV(g,p,ty/9,'<path d="M'+(g.x0+56)+' '+hy+' H'+(cx-46)+' M'+(cx+46)+' '+hy+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width="1.6" opacity=".85"/>'+
 '<path d="M'+(g.x0+56)+' '+(hy+6)+' H'+(cx-46)+' M'+(cx+46)+' '+(hy+6)+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width=".8" opacity=".55"/>'+
 '<path d="M'+(cx-14)+' '+(hy+3)+' l14 -12 l14 12 l-14 12Z" fill="none" stroke="#e8c84a" stroke-width="2"/><circle cx="'+cx+'" cy="'+(hy+3)+'" r="3.2" fill="'+C.ac+'"/>'+
 ico(C.ic,cx-ix,ty-10,sc)+ico(C.ic,cx+ix,ty-10,sc)+
 '<text x="'+cx+'" y="'+ty+'" text-anchor="middle" font-family="'+FF2+'" font-weight="600" font-size="'+fs.toFixed(1)+'" letter-spacing="3" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#98e6da">'+Lt+'</text>'+
 '<text x="'+cx+'" y="'+(ty+34)+'" text-anchor="middle" font-family="'+FF2+'" font-weight="500" font-size="17" letter-spacing="2" textLength="'+sw.toFixed(0)+'" lengthAdjust="spacing" fill="#d9e6e1">'+St+'</text>'+
-[0,1,2].map(function(j){ return '<circle cx="'+(cx-sw/2-22-j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/><circle cx="'+(cx+sw/2+22+j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/>'; }).join('')};
+[0,1,2].map(function(j){ return '<circle cx="'+(cx-sw/2-22-j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/><circle cx="'+(cx+sw/2+22+j*13)+'" cy="'+(ty+29)+'" r="2.6" fill="'+C.ac+'"/>'; }).join(''))};
 }});
 dibReg('cena_icono',{f:function(g,p,i,a){ var C={ic:p.ic||'ita'}; return {svg:CE_FILTER+PL(g,p,0,0,g.v?.34:.6,ico(C.ic,0,0,1),a)}; }});
 
