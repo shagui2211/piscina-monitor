@@ -2691,7 +2691,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='185e9867735f';
+  var BUILD_ID='30c3042699c2';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5337,7 +5337,7 @@ var TMC_ICONOS = (function(){
   /* Calendario: primero el de la Pi (/api/temas, editable desde Telegram con /tema); si no responde, temas.json de GitHub. */
   function leer(){
     if(location.protocol==='file:') return;
-    function ok(j){ if(j && Array.isArray(j.temas)){ cfg=j; window.__visitaCfg=String(j.visita||''); /*PARK-VISITA-CFG*/ aplicar(); return true; } return false; }
+    function ok(j){ if(j && Array.isArray(j.temas)){ cfg=j; window.__visitaCfg=String(j.visita||''); /*PARK-VISITA-CFG*/ window.__disenoCfg=String(j.diseno||'1'); try{ localStorage.setItem('tv_diseno_cfg', window.__disenoCfg); }catch(e){} /*DISENO-CFG*/ aplicar(); return true; } return false; }
     function viaJson(){
       fetch('temas.json?_='+Date.now(),{cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; })
         .then(ok).catch(function(){});
@@ -5488,11 +5488,11 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
 <script>
 (function(){
   var q=new URLSearchParams(location.search);
-  var dz=String(q.get('diseno')||window.__disenoCfg||'1');
-  if(dz!=='2') return;                       /* diseno 1 (por defecto): no se toca nada */
-  document.body.classList.add('d2');
-  function ocultar(){ ['body > header','body > main','body > .alert'].forEach(function(sel){ var e=document.querySelector(sel); if(e) e.style.setProperty('display','none','important'); }); }
-  ocultar();
+  /* prioridad: 1) ?diseno=1|2 en la URL  2) valor de la Pi (/api/temas -> "diseno", window.__disenoCfg; se recuerda en localStorage para no parpadear al recargar)  3) diseno 1 */
+  try{ if(!window.__disenoCfg) window.__disenoCfg = localStorage.getItem('tv_diseno_cfg') || ''; }catch(e){}
+  function modo2(){ var u=q.get('diseno'); return String(u||window.__disenoCfg||'1')==='2'; }
+  var SEL=['body > header','body > main','body > .alert'];
+  function ocultar(on){ SEL.forEach(function(sel){ var e=document.querySelector(sel); if(!e) return; if(on) e.style.setProperty('display','none','important'); else e.style.removeProperty('display'); }); }
   var root=document.getElementById('d2'), last='';
   var SH={ppm:{es:'Cloro',en:'Chlorine',de:'Chlor',fr:'Chlore',it:'Cloro'},
           temp:{es:'Agua',en:'Water',de:'Wasser',fr:'Eau',it:'Acqua'},
@@ -5556,7 +5556,10 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
   }
   function render(){
     try{
-      ocultar();
+      var on=modo2();
+      if(document.body.classList.contains('d2')!==on){ document.body.classList.toggle('d2',on); last=''; }
+      ocultar(on);
+      if(!on) return;
       var p=poolsHTML();
       var h=leftHTML()+'<div class="r">'+p.html+'</div>';
       root.classList.toggle('many', p.n>4);
