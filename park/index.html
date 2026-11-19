@@ -2743,7 +2743,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b6820179d8fb';
+  var BUILD_ID='cf1eb2dc56a1';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5031,10 +5031,10 @@ dibReg('cena_fondo',{f:function(g,p){
 dibReg('cena_titulo',{f:function(g,p){
   var C={L:String(p.txt==null?'ITALIAN NIGHT':p.txt), S:String(p.sub==null?'THEMED DINNER':p.sub), ic:p.ic||'ita', ac:tcC(p.ac,'#3fbf6a')}, cx=(g.x0+g.x1)/2, L=C.L, S=C.S, sc=g.v?.34:.68, i, sp='';
   var         fs=Math.max(16,Math.min(g.v?34:46,(g.W*.94-2*(112*sc+24))/(.74*L.length),2*((g.x1-g.x0)/2-6-190*sc-22)/(.74*L.length))), tw=fs*.74*L.length, ty=g.v?812:802,
-        ix=tw/2+100*sc+26, sw=17*.7*S.length, hy=ty-fs-20;
+        ix=tw/2+100*sc+26, sw=17*.7*S.length, hy=ty-fs-20, lw=Math.max(ix+50*sc, sw/2+62, tw/2+24)+10;
   var Lt=tcT(L), St=tcT(S);
-  return {svg:CE_FILTER+MV(g,p,ty/9,'<path d="M'+(g.x0+56)+' '+hy+' H'+(cx-46)+' M'+(cx+46)+' '+hy+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width="1.6" opacity=".85"/>'+
-'<path d="M'+(g.x0+56)+' '+(hy+6)+' H'+(cx-46)+' M'+(cx+46)+' '+(hy+6)+' H'+(g.x1-56)+'" stroke="#c9a94a" stroke-width=".8" opacity=".55"/>'+
+  return {svg:CE_FILTER+MV(g,p,ty/9,'<path d="M'+(cx-lw)+' '+hy+' H'+(cx-46)+' M'+(cx+46)+' '+hy+' H'+(cx+lw)+'" stroke="#c9a94a" stroke-width="1.6" opacity=".85"/>'+
+'<path d="M'+(cx-lw)+' '+(hy+6)+' H'+(cx-46)+' M'+(cx+46)+' '+(hy+6)+' H'+(cx+lw)+'" stroke="#c9a94a" stroke-width=".8" opacity=".55"/>'+
 '<path d="M'+(cx-14)+' '+(hy+3)+' l14 -12 l14 12 l-14 12Z" fill="none" stroke="#e8c84a" stroke-width="2"/><circle cx="'+cx+'" cy="'+(hy+3)+'" r="3.2" fill="'+C.ac+'"/>'+
 ico(C.ic,cx-ix,ty-10,sc)+ico(C.ic,cx+ix,ty-10,sc)+
 '<text x="'+cx+'" y="'+ty+'" text-anchor="middle" font-family="'+FF2+'" font-weight="600" font-size="'+fs.toFixed(1)+'" letter-spacing="3" textLength="'+tw.toFixed(0)+'" lengthAdjust="spacing" fill="#98e6da">'+Lt+'</text>'+
