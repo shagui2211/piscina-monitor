@@ -2743,7 +2743,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='af6d255158e8';
+  var BUILD_ID='b6820179d8fb';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5417,7 +5417,7 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
  /* alto fijo del tiempo actual: si el texto cambia (calculando clima...) no se mueve nada de lo de abajo */
  #d2 .cw > div:last-child{min-width:0;flex:1}
  #d2 .cw .tx{height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
- #d2 .cw .tp{height:1.05em;overflow:hidden}
+ #d2 .cw .tp{height:1.05em;overflow:visible}
  #d2 .bd{grid-template-columns:1fr;gap:.4vh;padding:1vh 2vw}#d2 .cl{grid-column:1}
  #d2 .bn{display:flex;justify-content:space-between;align-items:baseline;gap:1vw}#d2 .bn h2{font-size:2vh}#d2 .bn i{margin:0;font-size:1.3vh}
  #d2 .bv b{font-size:3.6vh}#d2 .bv small{font-size:1.2vh}#d2 .bv span{font-size:1.2vh}
@@ -5515,7 +5515,7 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
  #d2 .cw{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto auto;column-gap:2vw;row-gap:.5vh;align-items:center;width:46%;justify-self:start}
  #d2 .cw .icc,#d2 .cw .cwt{display:contents}
  #d2 .cw .ic{grid-column:1;grid-row:1;width:7.5vh;height:7.5vh}
- #d2 .cw .tp{grid-column:2;grid-row:1;height:auto;font-size:6.4vh;line-height:1}
+ #d2 .cw .tp{grid-column:2;grid-row:1;height:auto;font-size:6.4vh;line-height:1.2;overflow:visible}
  #d2 .cw .tx{grid-column:1 / -1;grid-row:2;height:auto;font-size:2vh;margin:.4vh 0 0;-webkit-line-clamp:2}
  #d2 .cw .ex{grid-column:1 / -1;grid-row:3;min-height:0;font-size:1.8vh;margin:0;display:block;text-align:center}
 }
