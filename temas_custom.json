@@ -2297,8 +2297,8 @@
     {
      "t": "icono",
      "n": "fuegos",
-     "x": 95,
-     "y": 50,
+     "x": 94.6,
+     "y": 18.4,
      "s": 1.2,
      "anim": "pulso"
     },
@@ -2378,13 +2378,24 @@
     {
      "t": "icono",
      "n": "fuegos",
-     "x": 23.4,
-     "y": 90.7,
+     "x": 18,
+     "y": 91.9,
      "s": 1,
      "anim": "giro",
      "c1": "#f34e87",
      "c2": "#d7b33a",
      "delante": true
+    },
+    {
+     "t": "texto",
+     "txt": "¡Fin de temporada!",
+     "x": 51.9,
+     "y": 93.8,
+     "s": 1,
+     "c": "#ffffff",
+     "borde": "#000000",
+     "fuente": "cursiva",
+     "anim": ""
     }
    ],
    "rotulo": {
@@ -2393,8 +2404,8 @@
     "borde": "#2a1055",
     "fuente": "cursiva",
     "alto": 90,
-    "x": 71.7,
-    "y": 24.9
+    "x": -2.4,
+    "y": 106.2
    },
    "tarjetas": "normal",
    "titulos": "auto",
@@ -5115,10 +5126,10 @@
     {
      "t": "icono",
      "n": "nota",
-     "x": 5.4,
-     "y": 44.7,
+     "x": 19.1,
+     "y": 56.6,
      "s": 1.4,
-     "anim": "giro",
+     "anim": "latido",
      "c1": "#7a5cff",
      "c2": "#4b2fd1"
     },
@@ -5146,8 +5157,8 @@
     {
      "t": "icono",
      "n": "sombrerofiesta",
-     "x": 32.9,
-     "y": 38.3,
+     "x": 34.4,
+     "y": 32,
      "s": 1,
      "anim": "latido",
      "c1": "#ff4f8b",
@@ -5158,13 +5169,24 @@
     {
      "t": "icono",
      "n": "fuegos",
-     "x": 14.8,
-     "y": 58,
+     "x": 5.5,
+     "y": 32,
      "s": 1,
      "anim": "giro",
      "c1": "#f34e87",
      "c2": "#d7b33a",
      "delante": true
+    },
+    {
+     "t": "texto",
+     "txt": "¡Fin de temporada!",
+     "x": 19.1,
+     "y": 41.3,
+     "s": 1,
+     "c": "#ffffff",
+     "borde": "#000000",
+     "fuente": "cursiva",
+     "anim": ""
     }
    ],
    "rotulo": {
@@ -5173,8 +5195,8 @@
     "borde": "#2a1055",
     "fuente": "cursiva",
     "alto": 90,
-    "x": 20.5,
-    "y": 44.8
+    "x": -10,
+    "y": 15.9
    },
    "tarjetas": "normal",
    "titulos": "auto",
@@ -5211,8 +5233,8 @@
     {
      "t": "icono",
      "n": "nota",
-     "x": 51.1,
-     "y": 27.1,
+     "x": 51.8,
+     "y": 31.8,
      "s": 1.1,
      "anim": "balanceo",
      "dalc": 48,
@@ -5272,8 +5294,8 @@
     {
      "t": "icono",
      "n": "sombrerofiesta",
-     "x": 32.9,
-     "y": 38.3,
+     "x": 90.9,
+     "y": 16.8,
      "s": 1,
      "anim": "latido",
      "c1": "#ff4f8b",
@@ -5291,6 +5313,17 @@
      "c1": "#f34e87",
      "c2": "#d7b33a",
      "delante": true
+    },
+    {
+     "t": "texto",
+     "txt": "¡Fin de temporada!",
+     "x": 71.5,
+     "y": 24,
+     "s": 0.75,
+     "c": "#ffffff",
+     "borde": "#000000",
+     "fuente": "serif",
+     "anim": ""
     }
    ],
    "rotulo": {
@@ -5299,8 +5332,8 @@
     "borde": "#2a1055",
     "fuente": "cursiva",
     "alto": 90,
-    "x": 73.7,
-    "y": 24.1
+    "x": 23.8,
+    "y": 105.3
    },
    "tarjetas": "normal",
    "titulos": "auto",
@@ -5639,6 +5672,278 @@
    "semanal": [],
    "pantalla": "h",
    "diseno": "2"
+  },
+  "x_fiesta_h": {
+   "nombre": "Fiesta",
+   "fondo": {
+    "c1": "#2a1055",
+    "c2": "#8f2e9e",
+    "dir": "v",
+    "patron": "ninguno",
+    "cp": "#ffffff",
+    "op": 0.08,
+    "vineta": false,
+    "ajuste": "cubrir",
+    "opimg": 1
+   },
+   "suelo": {
+    "tipo": "ninguno"
+   },
+   "piezas": [
+    {
+     "t": "icono",
+     "n": "fuegos",
+     "x": 94.6,
+     "y": 18.4,
+     "s": 1.2,
+     "anim": "pulso"
+    },
+    {
+     "t": "icono",
+     "n": "nota",
+     "x": 65.2,
+     "y": 11.6,
+     "s": 1.1,
+     "anim": "balanceo",
+     "dalc": 48,
+     "dest": 14,
+     "dvel": 2.8,
+     "c1": "#7a5cff",
+     "c2": "#4b2fd1",
+     "espejo": false,
+     "delante": true
+    },
+    {
+     "t": "banderines",
+     "y": 6,
+     "de": 0,
+     "a": 100,
+     "n": 18,
+     "caida": 55,
+     "largo": 50,
+     "cols": [
+      "#ffd23f",
+      "#ff4f8b",
+      "#4aa3e0",
+      "#6bdc7a"
+     ]
+    },
+    {
+     "t": "icono",
+     "n": "nota",
+     "x": 4,
+     "y": 40,
+     "s": 1.4,
+     "anim": "giro",
+     "c1": "#7a5cff",
+     "c2": "#4b2fd1"
+    },
+    {
+     "t": "lluvia",
+     "tipo": "confeti",
+     "cant": 31,
+     "cols": [
+      "#ffd23f",
+      "#ff4f8b",
+      "#4aa3e0",
+      "#ffffff"
+     ]
+    },
+    {
+     "t": "lluvia",
+     "tipo": "globos",
+     "cant": 7,
+     "cols": [
+      "#ff4f8b",
+      "#4aa3e0",
+      "#ffd23f"
+     ]
+    },
+    {
+     "t": "icono",
+     "n": "sombrerofiesta",
+     "x": 80.6,
+     "y": 90.9,
+     "s": 1,
+     "anim": "latido",
+     "c1": "#ff4f8b",
+     "c2": "#ffd23f",
+     "rot": 26,
+     "delante": true
+    },
+    {
+     "t": "icono",
+     "n": "fuegos",
+     "x": 18,
+     "y": 91.9,
+     "s": 1,
+     "anim": "giro",
+     "c1": "#f34e87",
+     "c2": "#d7b33a",
+     "delante": true
+    },
+    {
+     "t": "texto",
+     "txt": "¡Fin de temporada!",
+     "x": 51.9,
+     "y": 93.8,
+     "s": 1,
+     "c": "#ffffff",
+     "borde": "#000000",
+     "fuente": "cursiva",
+     "anim": ""
+    }
+   ],
+   "rotulo": {
+    "txt": "¡Fiesta!",
+    "c": "#ffffff",
+    "borde": "#2a1055",
+    "fuente": "cursiva",
+    "alto": 90,
+    "x": -2.4,
+    "y": 106.2
+   },
+   "tarjetas": "normal",
+   "titulos": "auto",
+   "fechas": [],
+   "semanal": [],
+   "pantalla": "h"
+  },
+  "x_fiesta_v": {
+   "nombre": "Fiesta",
+   "fondo": {
+    "c1": "#2a1055",
+    "c2": "#8f2e9e",
+    "dir": "v",
+    "patron": "ninguno",
+    "cp": "#ffffff",
+    "op": 0.08,
+    "vineta": false,
+    "ajuste": "cubrir",
+    "opimg": 1
+   },
+   "suelo": {
+    "tipo": "ninguno"
+   },
+   "piezas": [
+    {
+     "t": "icono",
+     "n": "fuegos",
+     "x": 94.6,
+     "y": 18.4,
+     "s": 1.2,
+     "anim": "pulso"
+    },
+    {
+     "t": "icono",
+     "n": "nota",
+     "x": 65.2,
+     "y": 11.6,
+     "s": 1.1,
+     "anim": "balanceo",
+     "dalc": 48,
+     "dest": 14,
+     "dvel": 2.8,
+     "c1": "#7a5cff",
+     "c2": "#4b2fd1",
+     "espejo": false,
+     "delante": true
+    },
+    {
+     "t": "banderines",
+     "y": 6,
+     "de": 0,
+     "a": 100,
+     "n": 18,
+     "caida": 55,
+     "largo": 50,
+     "cols": [
+      "#ffd23f",
+      "#ff4f8b",
+      "#4aa3e0",
+      "#6bdc7a"
+     ]
+    },
+    {
+     "t": "icono",
+     "n": "nota",
+     "x": 4,
+     "y": 40,
+     "s": 1.4,
+     "anim": "giro",
+     "c1": "#7a5cff",
+     "c2": "#4b2fd1"
+    },
+    {
+     "t": "lluvia",
+     "tipo": "confeti",
+     "cant": 31,
+     "cols": [
+      "#ffd23f",
+      "#ff4f8b",
+      "#4aa3e0",
+      "#ffffff"
+     ]
+    },
+    {
+     "t": "lluvia",
+     "tipo": "globos",
+     "cant": 7,
+     "cols": [
+      "#ff4f8b",
+      "#4aa3e0",
+      "#ffd23f"
+     ]
+    },
+    {
+     "t": "icono",
+     "n": "sombrerofiesta",
+     "x": 90.7,
+     "y": 94.2,
+     "s": 1,
+     "anim": "latido",
+     "c1": "#ff4f8b",
+     "c2": "#ffd23f",
+     "rot": 26,
+     "delante": true
+    },
+    {
+     "t": "icono",
+     "n": "fuegos",
+     "x": 13,
+     "y": 94.9,
+     "s": 1,
+     "anim": "giro",
+     "c1": "#f34e87",
+     "c2": "#d7b33a",
+     "delante": true
+    },
+    {
+     "t": "texto",
+     "txt": "¡Fin de temporada!",
+     "x": 52.5,
+     "y": 95.2,
+     "s": 1,
+     "c": "#ffffff",
+     "borde": "#000000",
+     "fuente": "cursiva",
+     "anim": ""
+    }
+   ],
+   "rotulo": {
+    "txt": "¡Fiesta!",
+    "c": "#ffffff",
+    "borde": "#2a1055",
+    "fuente": "cursiva",
+    "alto": 90,
+    "x": -2.4,
+    "y": 106.2
+   },
+   "tarjetas": "normal",
+   "titulos": "auto",
+   "fechas": [],
+   "semanal": [],
+   "pantalla": "v"
   }
  }
 }
