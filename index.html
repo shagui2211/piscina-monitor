@@ -2698,7 +2698,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='073392c72191';
+  var BUILD_ID='9445024b987e';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5271,13 +5271,15 @@ var TMC_ICONOS = (function(){
     var t = elegir(); t = ALIAS[t]||t;
     var pvt = window.innerHeight>window.innerWidth, ori = pvt?'v':'h';
     if(t!=='__vista'){
-      /* un tema (p.ej. 'white') puede tener un diseno por pantalla: white_h (horizontal) y white_v (vertical); se coge el de esta pantalla */
+      /* un tema (p.ej. 'white') puede tener un diseno por pantalla (white_h, white_v) y otro para las tarjetas nuevas (white_h2, white_v2); se coge el de esta pantalla */
+      var d2=false; try{ d2 = String((new URLSearchParams(location.search)).get('diseno') || window.__disenoCfg || localStorage.getItem('tv_diseno_cfg') || '1')==='2'; }catch(e){}
       var q=t; if(!TEMAS[q] && LEGADO[q]) q=LEGADO[q];                  /* tema fijo antiguo -> tema base */
-      var mm=/^(.+)_(h|v)$/.exec(q); if(mm && CUS[q] && CUS[q].pantalla===mm[2]) q=mm[1];   /* id de un diseno -> su tema */
-      var qo=q+'_'+ori;
-      if(TEMAS[qo] && CUS[qo] && CUS[qo].pantalla===ori) t=qo;
-      else if(TEMAS[q] && (!CUS[q] || !CUS[q].pantalla || CUS[q].pantalla===ori)) t=q;
-      else t='';                                                         /* no hay diseno para esta orientacion */
+      var mm=/^(.+)_(h|v)(2?)$/.exec(q); if(mm && CUS[q] && CUS[q].pantalla===mm[2] && (mm[3]==='2')===(CUS[q].diseno==='2')) q=mm[1];   /* id de un diseno -> su tema */
+      var c1=q+'_'+ori, c2=c1+'2';
+      if(d2 && TEMAS[c2] && CUS[c2] && CUS[c2].pantalla===ori && CUS[c2].diseno==='2') t=c2;
+      else if(TEMAS[c1] && CUS[c1] && CUS[c1].pantalla===ori && CUS[c1].diseno!=='2') t=c1;
+      else if(TEMAS[q] && (!CUS[q] || (!CUS[q].pantalla && CUS[q].diseno!=='2') || (CUS[q].pantalla===ori && CUS[q].diseno!=='2'))) t=q;
+      else t='';                                                         /* no hay diseno para esta pantalla */
     }
     if(!TEMAS[t]) t='';
     var gg = geo(), key = t+'|'+gg.key;
