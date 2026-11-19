@@ -114,7 +114,7 @@ button,select,input[type=text],input[type=number]{min-height:34px}
       <span id="esc" style="color:var(--mu);font-size:12px"></span>
     </div>
     <div id="stage"><div id="wrap"><iframe id="fr"></iframe><div id="ov"></div></div></div>
-    <div id="info">Todos los temas (también los de serie) son editables: elige uno, cámbialo y guárdalo con el mismo nombre para que mande sobre el de serie. Cada tema tiene un diseño para pantalla horizontal y otro para vertical (elige cuál en «Diseño»); la TV usa el de su pantalla. Arrastra las asas verdes sobre la vista previa para mover las piezas y el texto inferior. Las tarjetas de las piscinas se dibujan encima del fondo: coloca las piezas en las zonas libres (bordes, arriba y abajo).</div>
+    <div id="info">Todos los temas (también los de serie) son editables: elige uno, cámbialo y guárdalo con el mismo nombre para que mande sobre el de serie. Cada tema puede tener un diseño para pantalla horizontal y otro para vertical, y otros para las tarjetas nuevas (elige cuál en «Diseño»); la TV usa el que le corresponde. Arrastra las asas verdes sobre la vista previa para mover las piezas y el texto inferior. Las tarjetas de las piscinas se dibujan encima del fondo: coloca las piezas en las zonas libres (bordes, arriba y abajo).</div>
   </div>
 </main>
 <script>
@@ -185,11 +185,12 @@ var PLANT = {
 function nuevoVacio(nombre){ return {nombre:nombre||'Mi tema',fondo:{c1:'#14305c',c2:'#4aa3e0',dir:'v',patron:'ninguno',cp:'#ffffff',op:.12},suelo:{tipo:'ninguno',alto:90},piezas:[{t:'banderines',y:6,de:0,a:100,n:16,caida:55,largo:50,cols:['#e8433f','#ffffff']}],rotulo:{txt:'',alto:120,c:'#ffffff',fuente:'serif'},tarjetas:'normal',titulos:'auto',fechas:[],semanal:[]}; }
 function slug(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,30)||'tema'; }
 /* un tema puede tener un diseno por pantalla: <id>_h (horizontal) y <id>_v (vertical); sin sufijo = vale para las dos */
-function baseDe(k){ var t=DATA.temas[k], m=/^(.+)_(h|v)$/.exec(k); return (m&&t&&t.pantalla===m[2])?m[1]:k; }
-function ranura(k){ var t=DATA.temas[k]; return (t&&(t.pantalla==='h'||t.pantalla==='v'))?t.pantalla:'u'; }
+function baseDe(k){ var t=DATA.temas[k], m=/^(.+)_(h|v)(2?)$/.exec(k); return (m&&t&&t.pantalla===m[2]&&(m[3]==='2')===(t.diseno==='2'))?m[1]:k; }
+function ranura(k){ var t=DATA.temas[k]; return (t&&(t.pantalla==='h'||t.pantalla==='v'))?t.pantalla+(t.diseno==='2'?'2':''):'u'; }
+var RAN={h:'Horizontal · tarjetas originales',v:'Vertical · tarjetas originales',h2:'Horizontal · tarjetas nuevas (diseño 2)',v2:'Vertical · tarjetas nuevas (diseño 2)',u:'Único: vale para todas las pantallas'};
 function grupos(){ var G={}; Object.keys(DATA.temas).forEach(function(k){ var b=baseDe(k), g=G[b]||(G[b]={base:b,k:[]}); g[ranura(k)]=k; g.k.push(k); }); return G; }
 function limpia(n){ return String(n||'').replace(/\s*\((horizontal|vertical)\)\s*$/i,''); }
-function claveGrupo(b,pref){ var g=grupos()[b]; if(!g) return b; return g[pref]||g.u||g.h||g.v; }
+function claveGrupo(b,pref){ var g=grupos()[b]; if(!g) return b; return g[pref]||g[pref[0]]||g.u||g.h||g.v||g.h2||g.v2; }
 function idLibre(base){ var id='x_'+slug(base), n=2; base=id; var G=grupos(); while(G[id]||DATA.temas[id]){ id=base+'_'+(n++); } return id; }
 var avisoDis='';
 
@@ -232,14 +233,15 @@ function rehacer(){ var s=$('side'), sc=s.scrollTop; s.innerHTML=''; var t=T(); 
   var bs=baseDe(curId), G=grupos()[bs]||{}, rr=ranura(curId);
   var idIn=h('input',{type:'text',value:bs}); idIn.onchange=function(){ var n=slug(idIn.value), gr=grupos(); if(!/^[a-z0-9_]{2,40}$/.test(n)||(n!==bs&&(gr[n]||DATA.temas[n]))){ idIn.value=bs; return; } var cur2=curId; G.k.forEach(function(k){ var nk=(k===bs)?n:n+k.slice(bs.length); DATA.temas[nk]=DATA.temas[k]; if(nk!==k) delete DATA.temas[k]; if(k===cur2) curId=nk; }); listaTemas(); touch(); rehacer(); };
   var nIn=h('input',{type:'text',value:limpia(t.nombre)}); nIn.oninput=function(){ (G.k||[curId]).forEach(function(k){ DATA.temas[k].nombre=nIn.value; }); touch(); };
-  var dSel=h('select'); [['h','Horizontal (1280×720)'],['v','Vertical (720×1280)'],['u','Único: vale para ambas pantallas']].forEach(function(o){ var op=h('option',{value:o[0],txt:o[1]+(G[o[0]]?'':'  — crear…')}); if(o[0]===rr) op.selected=true; dSel.appendChild(op); });
-  dSel.onchange=function(){ var v=dSel.value; avisoDis=''; if(G[v]) elige(G[v]); else if(confirm('Todavía no hay diseño '+({h:'horizontal',v:'vertical',u:'único'})[v]+' en este tema. ¿Crearlo como copia del que estás viendo y colocar las piezas para esa pantalla?')) creaDiseno(v); else dSel.value=rr; };
+  var dSel=h('select'); [['h',RAN.h],['v',RAN.v],['h2',RAN.h2],['v2',RAN.v2],['u',RAN.u]].forEach(function(o){ var op=h('option',{value:o[0],txt:o[1]+(G[o[0]]?'':'  — crear…')}); if(o[0]===rr) op.selected=true; dSel.appendChild(op); });
+  dSel.onchange=function(){ var v=dSel.value; avisoDis=''; if(G[v]) elige(G[v]); else if(confirm('Todavía no hay diseño «'+RAN[v]+'» en este tema. ¿Crearlo como copia del que estás viendo y colocar las piezas para esa pantalla?')) creaDiseno(v); else dSel.value=rr; };
   var otros=['h','v'].filter(function(d){ return !G[d]; });
   s.appendChild(recuerda(sec('Tema',OPEN.tema,[h('div',{cls:'r'},[h('label',{txt:'Nombre'}),h('span',{cls:'v'},[nIn])]),
     h('div',{cls:'r'},[h('label',{txt:'Diseño'}),h('span',{cls:'v'},[dSel])]),
     avisoDis?h('p',{cls:'nota',style:'color:#0a7a3a;font-weight:600',txt:avisoDis}):null,
-    (G.u&&!G.h&&!G.v)?h('p',{cls:'nota',txt:'Este tema usa el mismo diseño en horizontal y en vertical. Si quieres una colocación distinta para cada pantalla, elige «Horizontal» o «Vertical» en «Diseño» para crearla.'}):(otros.length&&!G.u?h('p',{cls:'nota',style:'color:#b36b00;font-weight:600',txt:'⚠ Falta el diseño '+(otros[0]==='h'?'horizontal':'vertical')+': en una pantalla '+(otros[0]==='h'?'horizontal':'vertical')+' este tema no se verá. Créalo desde «Diseño».'}):null),
-    h('p',{cls:'nota',txt:'Cada tema puede tener un diseño para pantalla horizontal y otro para vertical, con las piezas colocadas como las dejes en cada uno. La TV elige sola el de su pantalla; basta con programar el tema (p. ej. «White Party»). La vista previa cambia a la resolución del diseño que estés editando.'}),
+    (G.u&&!G.h&&!G.v&&!G.h2&&!G.v2)?h('p',{cls:'nota',txt:'Este tema usa el mismo diseño en todas las pantallas. Si quieres una colocación distinta para cada pantalla o para las tarjetas nuevas, elige otra opción en «Diseño» para crearla.'}):(!G.u&&!(G.h||G.h2)?h('p',{cls:'nota',style:'color:#b36b00;font-weight:600',txt:'⚠ Falta el diseño horizontal: en una pantalla horizontal este tema no se verá.'}):(!G.u&&!(G.v||G.v2)?h('p',{cls:'nota',style:'color:#b36b00;font-weight:600',txt:'⚠ Falta el diseño vertical: en una pantalla vertical este tema no se verá.'}):null)),
+    (!G.u&&(G.h2||G.v2)&&!(G.h&&G.v)?h('p',{cls:'nota',txt:'Con las tarjetas nuevas se usa el diseño «nuevo» y, si falta, el de tarjetas originales de esa pantalla. Con las tarjetas originales solo se usa el original.'}):null),
+    h('p',{cls:'nota',txt:'Cada tema puede tener un diseño para pantalla horizontal y otro para vertical, y además uno para las tarjetas nuevas (diseño 2) en cada pantalla, con las piezas colocadas como las dejes en cada uno. La TV elige sola el que le corresponde; basta con programar el tema (p. ej. «White Party»). La vista previa cambia a la resolución y a las tarjetas del diseño que estés editando.'}),
     h('div',{cls:'r'},[h('label',{txt:'Identificador'}),h('span',{cls:'v'},[idIn])]),h('p',{cls:'nota',txt:'El identificador es el nombre interno del tema (minúsculas, números y _). Se usa con ?tema=… en la dirección de la TV.'}),
     h('p',{cls:'nota',txt:'Las fechas y horarios se programan desde Node-RED (/tema por Telegram o el panel «Temas de las TV» del dashboard), donde este tema aparecerá en la lista tras publicar el archivo.'})]),'tema'));
   /* fondo */
@@ -371,7 +373,8 @@ function ajustaEscala(){
   $('esc').textContent='Escala de la vista: '+Math.round(sc*100)+' % · la TV real ve '+RES[0]+'×'+RES[1];
   pintaAsas();
 }
-function cargaFrame(){ listo=false; var u=($('tUrl').value||'index.html'), q='tv=1&lang=esp&editor=1'+($('chDemo').checked?'&demo=4':''); $('fr').src=u+(u.indexOf('?')<0?'?':'&')+q+'&_='+Date.now(); }
+var frDis='1';
+function cargaFrame(){ listo=false; var u=($('tUrl').value||'index.html'), q='tv=1&lang=esp&editor=1&diseno='+frDis+($('chDemo').checked?'&demo=4':''); $('fr').src=u+(u.indexOf('?')<0?'?':'&')+q+'&_='+Date.now(); }
 $('fr').addEventListener('load',function(){ setTimeout(function(){ listo=true; enviar(); },700); });
 window.addEventListener('message',function(e){ if(e.data&&e.data.tmListo){ listo=true; enviar(); } });
 function pintaAsas(){
@@ -392,13 +395,15 @@ function pintaAsas(){
 
 /* ── lista de temas, archivos ── */
 function listaTemas(){ var s=$('selTema'); s.innerHTML=''; var G=grupos(), bs=Object.keys(G), cur=curId?baseDe(curId):''; if(!bs.length) s.appendChild(h('option',{value:'',txt:'(ninguno)'}));
-  bs.forEach(function(b){ var g=G[b], t=DATA.temas[g.h||g.v||g.u], dis=(g.u?'ambas':(g.h&&g.v?'H + V':(g.h?'solo H':'solo V'))); if(g.u&&(g.h||g.v)) dis='ambas · '+(g.h?'H':'')+(g.v?'V':''); var o=h('option',{value:b,txt:limpia(t.nombre||b)+'  ·  '+b+'  ['+dis+']'}); if(b===cur) o.selected=true; s.appendChild(o); }); }
-function elige(id){ $('selInt').value=''; if(id&&!DATA.temas[id]) id=claveGrupo(id,(RES[1]>RES[0])?'v':'h'); curId=id; selP=-1; var t=T(); if(t&&t.pantalla&&((t.pantalla==='v')!==(RES[1]>RES[0]))){ var so=$('selRes'); so.value=(t.pantalla==='v')?'720x1280':'1280x720'; so.onchange(); setTimeout(function(){ enviar(); pintaAsas(); },500); } listaTemas(); rehacer(); enviar(); pintaAsas(); }
-function creaDiseno(d){ var src=T(); if(!src) return; var b=baseDe(curId), k=(d==='u')?b:b+'_'+d; if(DATA.temas[k]){ alert('Ya existe ese diseño.'); return; } var c=clone(src); if(d==='u') delete c.pantalla; else c.pantalla=d; DATA.temas[k]=c; avisoDis='Diseño creado como copia del otro: recoloca las piezas para esta pantalla.'; touch(); elige(k); }
+  bs.forEach(function(b){ var g=G[b], t=DATA.temas[g.h||g.v||g.h2||g.v2||g.u], ds=['h','v','h2','v2'].filter(function(x){ return g[x]; }).map(function(x){ return {h:'H',v:'V',h2:'H nuevo',v2:'V nuevo'}[x]; }); var dis=(g.u?'ambas'+(ds.length?' + '+ds.join(', '):''):ds.join(', ')); var o=h('option',{value:b,txt:limpia(t.nombre||b)+'  ·  '+b+'  ['+dis+']'}); if(b===cur) o.selected=true; s.appendChild(o); }); }
+function elige(id){ $('selInt').value=''; if(id&&!DATA.temas[id]) id=claveGrupo(id,((RES[1]>RES[0])?'v':'h')+(frDis==='2'?'2':'')); curId=id; selP=-1; var t=T(); if(t&&t.pantalla&&((t.pantalla==='v')!==(RES[1]>RES[0]))){ var so=$('selRes'); so.value=(t.pantalla==='v')?'720x1280':'1280x720'; so.onchange(); setTimeout(function(){ enviar(); pintaAsas(); },500); }
+  var nd=(t&&t.diseno==='2')?'2':(t&&t.pantalla?'1':frDis); if(nd!==frDis){ frDis=nd; cargaFrame(); }
+  listaTemas(); rehacer(); enviar(); pintaAsas(); }
+function creaDiseno(d){ var src=T(); if(!src) return; var b=baseDe(curId), k=(d==='u')?b:b+'_'+d; if(DATA.temas[k]){ alert('Ya existe ese diseño.'); return; } var c=clone(src); if(d==='u'){ delete c.pantalla; delete c.diseno; } else { c.pantalla=d[0]; if(d.length>1) c.diseno='2'; else delete c.diseno; } DATA.temas[k]=c; avisoDis='Diseño creado como copia del otro: recoloca las piezas para esta pantalla.'; touch(); elige(k); }
 $('selTema').onchange=function(){ avisoDis=''; elige($('selTema').value); };
 $('bNuevo').onclick=function(){ var n=prompt('Nombre del tema nuevo:','Mi tema'); if(!n) return; var id=idLibre(n); var t0=nuevoVacio(n); var o=(RES[1]>RES[0])?'v':'h'; t0.pantalla=o; DATA.temas[id+'_'+o]=t0; avisoDis=''; touch(); elige(id+'_'+o); };
 $('bDup').onclick=function(){ if(!T()) return; var b=baseDe(curId), g=grupos()[b], nom=limpia(T().nombre||b)+' (copia)', nb=idLibre(nom), first=null; g.k.forEach(function(k){ var c=clone(DATA.temas[k]); c.nombre=nom; var nk=(k===b)?nb:nb+k.slice(b.length); DATA.temas[nk]=c; if(k===curId) first=nk; }); avisoDis=''; touch(); elige(first); };
-$('bDel').onclick=function(){ if(!T()) return; var b=baseDe(curId), g=grupos()[b], r=ranura(curId), nm={h:'horizontal',v:'vertical',u:'único (ambas pantallas)'}[r]; if(!confirm('¿Eliminar el diseño '+nm+' del tema «'+limpia(T().nombre||b)+'»?'+(g.k.length>1?'':' Es el único: desaparece el tema.')+' (No se borra nada hasta que subas el archivo.)')) return; delete DATA.temas[curId]; var rest=g.k.filter(function(k){ return k!==curId; }); var ks=Object.keys(DATA.temas); avisoDis=''; touch(); elige(rest[0]||ks[0]||''); };
+$('bDel').onclick=function(){ if(!T()) return; var b=baseDe(curId), g=grupos()[b], r=ranura(curId), nm='«'+RAN[r]+'»'; if(!confirm('¿Eliminar el diseño '+nm+' del tema «'+limpia(T().nombre||b)+'»?'+(g.k.length>1?'':' Es el único: desaparece el tema.')+' (No se borra nada hasta que subas el archivo.)')) return; delete DATA.temas[curId]; var rest=g.k.filter(function(k){ return k!==curId; }); var ks=Object.keys(DATA.temas); avisoDis=''; touch(); elige(rest[0]||ks[0]||''); };
 var sp=$('selPlantilla'); [['navidad','Navidad'],['playa','Fiesta en la playa'],['fiesta','Fiesta (discoteca)']].forEach(function(p){ sp.appendChild(h('option',{value:p[0],txt:p[1]})); });
 sp.onchange=function(){ var k=sp.value; sp.value=''; if(!k) return; var c=clone(PLANT[k]); c.fechas=[]; c.semanal=[]; var id=idLibre(c.nombre); DATA.temas[id]=c; touch(); elige(id); };
 $('bAbrir').onclick=function(){ $('fAbrir').click(); };
