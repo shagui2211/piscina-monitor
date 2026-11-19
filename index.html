@@ -2698,7 +2698,7 @@ setInterval(load, 15000);
 
 /* recarga automatica: si hay una version nueva publicada, la pagina se recarga sola (evita la cache de TV/navegador) */
 (function(){
-  var BUILD_ID='b6d41bd5c578';
+  var BUILD_ID='4f62fb06bcd4';
   var CADA_MS=5*60*1000;
   function recargar(nuevo){
     try{
@@ -5342,7 +5342,9 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
 #d2 .ic img{width:100%;height:100%;object-fit:contain}
 #d2 .cw .tp{font-size:8vh;font-weight:600;line-height:1}
 #d2 .cw .tx{font-size:2vh;opacity:.9}
-#d2 .cw .ex{font-size:1.8vh;opacity:.8;margin-top:.5vh}
+#d2 .cw .icc{flex:none;display:flex;flex-direction:column;align-items:center;text-align:center;width:16vh}
+#d2 .cw .ex{font-size:1.6vh;opacity:.85;margin-top:.6vh;line-height:1.25}#d2 .cw .ex span{display:block}
+#d2 .cw .cwt{min-width:0;flex:1}
 #d2 .fcl{margin-top:auto;display:grid;grid-template-columns:repeat(7,1fr);gap:.4vw;border-top:1px solid rgba(255,255,255,.25);padding-top:1.4vh}
 #d2 .d{text-align:center;display:flex;flex-direction:column;align-items:center;gap:.2vh}
 #d2 .df{font-size:1.5vh;font-weight:700;text-transform:uppercase}
@@ -5374,7 +5376,6 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
  /* alto fijo del tiempo actual: si el texto cambia (calculando clima...) no se mueve nada de lo de abajo */
  #d2 .cw > div:last-child{min-width:0;flex:1}
  #d2 .cw .tx{height:2.5em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
- #d2 .cw .ex{height:2.6em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
  #d2 .cw .tp{height:1.05em;overflow:hidden}
  #d2 .bd{grid-template-columns:1fr;gap:.4vh;padding:1vh 2vw}#d2 .cl{grid-column:1}
  #d2 .bn{display:flex;justify-content:space-between;align-items:baseline;gap:1vw}#d2 .bn h2{font-size:2vh}#d2 .bn i{margin:0;font-size:1.3vh}
@@ -5454,6 +5455,19 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
 #d2 .bd{background:linear-gradient(90deg,rgba(6,22,42,.46),rgba(6,22,42,.30)) !important;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.10)}
 #d2 .fcl{border-top-color:rgba(255,255,255,.4)}
 @media (orientation:portrait){#d2{background:linear-gradient(180deg,rgba(2,20,38,.30) 0,rgba(2,20,38,.06) 38%,rgba(2,20,38,.10) 100%) !important}}
+
+/* v24: humedad y sensacion termica debajo del icono del tiempo (columna izquierda del bloque) */
+#d2 .cw{align-items:flex-start;min-width:0}
+#d2 .cw .icc{width:17vh;gap:0}
+#d2 .cw .icc .ic{justify-content:center;width:10vh;height:10vh}
+#d2 .cw .ex{height:auto;min-height:2.7em;font-size:2vh;margin-top:.5vh;opacity:.92;white-space:nowrap}
+@media (orientation:portrait){
+ #d2 .l{grid-template-columns:minmax(0,1fr) auto}
+ #d2 .cw{grid-column:1 / -1 !important}
+ #d2 .l{grid-template-rows:auto auto auto auto}#d2 .l .dd{grid-row:2}#d2 .l .cw{grid-row:3}#d2 .l .fcl{grid-row:4}
+ #d2 .cw .icc{width:27vw}#d2 .cw .icc .ic{width:9vh;height:9vh}#d2 .cw .ex{font-size:1.9vh;min-height:2.7em}
+ #d2.many .cw .icc{width:25vw}#d2.many .cw .icc .ic{width:6vh;height:6vh}#d2.many .cw .ex{font-size:1.5vh;min-height:2.7em}
+}
 </style>
 <div id="d2" aria-hidden="true"></div>
 <script>
@@ -5467,7 +5481,8 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
   var root=document.getElementById('d2'), last='';
   var SH={ppm:{es:'Cloro libre',en:'Free chlorine',de:'Freies Chlor',fr:'Chlore libre',it:'Cloro libre'},
           temp:{es:'Agua',en:'Water',de:'Wasser',fr:'Eau',it:'Acqua'},
-          amb:{es:'Sala',en:'Room',de:'Raum',fr:'Salle',it:'Sala'}};
+          amb:{es:'Sala',en:'Room',de:'Raum',fr:'Salle',it:'Sala'},
+          st:{es:'Sensación',en:'Feels like',de:'Gefühlt',fr:'Ressenti',it:'Percepita'}};
   var UN={ph:'',orp:'mV',ppm:'',temp:'°C'};
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function $(s,c){return (c||document).querySelector(s);}
@@ -5516,14 +5531,14 @@ body.d2 > #debug-weather{z-index:9000 !important;position:fixed !important;top:a
     var tamb=txt('#val-tamb'), hum=txt('#val-hum'), st=txt('#val-st');
     var ic=$('#meteo-icon'), icH=ic?ic.innerHTML:'';
     var fr=txt('#meteo-frase');
-    var ex=[]; if(hum && hum!=='—') ex.push('💧 '+hum+' %'); if(st && st!=='—') ex.push(esc(t('lbl_st'))+' '+st+'°');
+    var ex=[]; if(hum && hum!=='—') ex.push('<span>💧 '+esc(hum)+' %</span>'); if(st && st!=='—') ex.push('<span>'+esc((SH.st[currentLang]||SH.st.es))+' '+esc(st)+'°</span>');
     var fc='';
     document.querySelectorAll('#prev-24h .prev7-dia').forEach(function(d){
       var f=txt('.p7-fecha',d).split(' ')[0], i=$('.p7-icon',d), mx=txt('.p7-tmax',d), mn=txt('.p7-tmin',d), ll=txt('.p7-lluvia',d).split(' ')[0];
       fc+='<div class="d"><div class="df">'+esc(f)+'</div><div class="di">'+(i?i.innerHTML:'')+'</div><div class="dt"><b>'+esc(mx)+'</b><span>'+esc(mn)+'</span></div><div class="dl">'+esc(ll)+'</div></div>';
     });
     return '<div class="l">'+(ls?'<img class="lg'+((logo&&logo.id==='hotel-logo')?' pk':'')+'" src="'+ls+'" alt="">':'')+'<div class="clk">'+esc(hora)+(ap?'<small class="ap">'+esc(ap)+'</small>':'')+'</div><div class="dd">'+esc(fecha)+'</div>'
-      +'<div class="cw"><div class="ic">'+icH+'</div><div><div class="tp">'+(tamb&&tamb!=='—'?esc(tamb)+'°':'—')+'</div><div class="tx">'+esc(fr)+'</div><div class="ex">'+ex.join(' · ')+'</div></div></div>'
+      +'<div class="cw"><div class="icc"><div class="ic">'+icH+'</div><div class="ex">'+ex.join('')+'</div></div><div class="cwt"><div class="tp">'+(tamb&&tamb!=='—'?esc(tamb)+'°':'—')+'</div><div class="tx">'+esc(fr)+'</div></div></div>'
       +'<div class="fcl">'+fc+'</div></div>';
   }
   function render(){
